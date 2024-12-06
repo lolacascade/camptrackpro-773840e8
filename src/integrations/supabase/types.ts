@@ -251,35 +251,53 @@ export type Database = {
         Row: {
           created_at: string | null
           customer_id: number | null
+          dock: string | null
+          electricity_voltage: string | null
+          has_water: boolean | null
           id: number
+          is_covered: boolean | null
+          length_ft: number | null
           location_coordinates: Json | null
           maintenance_id: number | null
           name: string
-          size: string
           status: string
           updated_at: string | null
+          width_ft: number | null
+          zone: string | null
         }
         Insert: {
           created_at?: string | null
           customer_id?: number | null
+          dock?: string | null
+          electricity_voltage?: string | null
+          has_water?: boolean | null
           id?: number
+          is_covered?: boolean | null
+          length_ft?: number | null
           location_coordinates?: Json | null
           maintenance_id?: number | null
           name: string
-          size: string
           status: string
           updated_at?: string | null
+          width_ft?: number | null
+          zone?: string | null
         }
         Update: {
           created_at?: string | null
           customer_id?: number | null
+          dock?: string | null
+          electricity_voltage?: string | null
+          has_water?: boolean | null
           id?: number
+          is_covered?: boolean | null
+          length_ft?: number | null
           location_coordinates?: Json | null
           maintenance_id?: number | null
           name?: string
-          size?: string
           status?: string
           updated_at?: string | null
+          width_ft?: number | null
+          zone?: string | null
         }
         Relationships: [
           {
