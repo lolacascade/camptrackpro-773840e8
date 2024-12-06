@@ -2,7 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { MarinaOverview } from "@/components/dashboard/MarinaOverview";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { Anchor, DollarSign, Ship, Tool } from "lucide-react";
+import { Anchor, DollarSign, Ship, Wrench } from "lucide-react";
 
 const Index = () => {
   return (
@@ -37,7 +37,7 @@ const Index = () => {
             title="Pending Maintenance"
             value="8"
             description="Maintenance requests"
-            icon={Tool}
+            icon={Wrench}
           />
         </div>
 
