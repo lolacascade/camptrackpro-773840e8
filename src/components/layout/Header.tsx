@@ -17,6 +17,7 @@ const navigation = [
   { name: "Dashboard", href: "/" },
   { name: "Marina Map", href: "/map" },
   { name: "Customers", href: "/customers" },
+  { name: "Boats", href: "/boats" },
   { name: "Maintenance", href: "/maintenance" },
   { name: "Settings", href: "/settings" },
 ];
