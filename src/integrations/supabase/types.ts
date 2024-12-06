@@ -9,35 +9,294 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      boats: {
+        Row: {
+          boat_name: string
+          boat_size: string | null
+          created_at: string | null
+          customer_id: number | null
+          id: number
+          slip_id: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          boat_name: string
+          boat_size?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          slip_id?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          boat_name?: string
+          boat_size?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          slip_id?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_slip_id"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
-          created_at: string
+          created_at: string | null
           email: string | null
           id: number
-          name: string | null
+          name: string
           phone: string | null
           updated_at: string | null
         }
         Insert: {
           address?: string | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           id?: number
-          name?: string | null
+          name: string
           phone?: string | null
           updated_at?: string | null
         }
         Update: {
           address?: string | null
-          created_at?: string
+          created_at?: string | null
           email?: string | null
           id?: number
-          name?: string | null
+          name?: string
           phone?: string | null
           updated_at?: string | null
         }
         Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string | null
+          customer_id: number | null
+          due_date: string
+          id: number
+          issued_date: string
+          slip_id: number | null
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          customer_id?: number | null
+          due_date: string
+          id?: number
+          issued_date: string
+          slip_id?: number | null
+          status: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          customer_id?: number | null
+          due_date?: string
+          id?: number
+          issued_date?: string
+          slip_id?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_slip_id"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_inventory: {
+        Row: {
+          id: number
+          item_name: string
+          last_updated: string | null
+          quantity: number
+          restock_threshold: number
+        }
+        Insert: {
+          id?: number
+          item_name: string
+          last_updated?: string | null
+          quantity: number
+          restock_threshold: number
+        }
+        Update: {
+          id?: number
+          item_name?: string
+          last_updated?: string | null
+          quantity?: number
+          restock_threshold?: number
+        }
+        Relationships: []
+      }
+      maintenance_requests: {
+        Row: {
+          assigned_to: number | null
+          completed_at: string | null
+          created_at: string | null
+          customer_id: number | null
+          description: string
+          id: number
+          slip_id: number | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          description: string
+          id?: number
+          slip_id?: number | null
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          customer_id?: number | null
+          description?: string
+          id?: number
+          slip_id?: number | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_assigned_to"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_slip_id"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marina_details: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string | null
+          id: number
+          name: string
+          total_slips: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: number
+          name: string
+          total_slips?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string | null
+          id?: number
+          name?: string
+          total_slips?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      slips: {
+        Row: {
+          created_at: string | null
+          customer_id: number | null
+          id: number
+          location_coordinates: Json | null
+          maintenance_id: number | null
+          name: string
+          size: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          location_coordinates?: Json | null
+          maintenance_id?: number | null
+          name: string
+          size: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          location_coordinates?: Json | null
+          maintenance_id?: number | null
+          name?: string
+          size?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_maintenance_id"
+            columns: ["maintenance_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_requests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
