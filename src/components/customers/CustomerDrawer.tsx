@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Customer } from "@/types/customer"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 
@@ -16,38 +16,73 @@ interface CustomerDrawerProps {
 
 export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: CustomerDrawerProps) {
   const { toast } = useToast()
-  const [formData, setFormData] = useState<Partial<Customer>>(customer || {})
+  const [formData, setFormData] = useState<Partial<Customer>>({})
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
+  // Update form data when customer changes or drawer opens
+  useEffect(() => {
+    if (open) {
+      setFormData(customer || {
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+      })
+    }
+  }, [customer, open])
+
   const handleSave = async () => {
-    if (!customer) return
+    if (!formData.name) {
+      toast({
+        title: "Error",
+        description: "Name is required.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSaving(true)
     try {
-      const { error } = await supabase
-        .from('customers')
-        .update({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          address: formData.address,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', customer.id)
+      if (customer) {
+        // Update existing customer
+        const { error } = await supabase
+          .from('customers')
+          .update({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', customer.id)
 
-      if (error) throw error
+        if (error) throw error
+      } else {
+        // Create new customer
+        const { error } = await supabase
+          .from('customers')
+          .insert([{
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+          }])
+
+        if (error) throw error
+      }
 
       toast({
         title: "Success",
-        description: "Customer updated successfully.",
+        description: `Customer ${customer ? 'updated' : 'added'} successfully.`,
       })
       onCustomerUpdated()
       onClose()
     } catch (error) {
-      console.error('Error updating customer:', error)
+      console.error('Error saving customer:', error)
       toast({
         title: "Error",
-        description: "Failed to update customer.",
+        description: `Failed to ${customer ? 'update' : 'add'} customer.`,
         variant: "destructive",
       })
     } finally {
@@ -88,11 +123,11 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Customer</SheetTitle>
+          <SheetTitle>{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Name *</Label>
             <Input
               id="name"
               value={formData.name || ''}
@@ -127,15 +162,17 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
         </div>
         <div className="flex flex-col gap-2 mt-6">
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? "Saving..." : `${customer ? 'Save Changes' : 'Add Customer'}`}
           </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete Customer"}
-          </Button>
+          {customer && (
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Customer"}
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>
