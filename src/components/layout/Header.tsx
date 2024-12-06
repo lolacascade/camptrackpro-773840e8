@@ -11,10 +11,39 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
+
+// Mock notifications - in a real app, this would come from an API
+const mockNotifications = [
+  {
+    id: "1",
+    title: "New Maintenance Request",
+    message: "Boat #123 requires urgent maintenance",
+    date: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+    read: false,
+  },
+  {
+    id: "2",
+    title: "Payment Received",
+    message: "Payment for slip B12 has been processed",
+    date: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+    read: false,
+  },
+];
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState(mockNotifications);
   const navigate = useNavigate();
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(notifications.map(n => 
+      n.id === id ? { ...n, read: true } : n
+    ));
+  };
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -44,8 +73,16 @@ export function Header() {
       </div>
       
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          className="relative"
+          onClick={() => setNotificationOpen(true)}
+        >
           <Bell className="h-5 w-5" />
+          {unreadCount > 0 && (
+            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
+          )}
         </Button>
         <div className="h-8 w-8 rounded-full bg-primary/10" />
       </div>
@@ -97,6 +134,13 @@ export function Header() {
           </CommandGroup>
         </CommandList>
       </CommandDialog>
+
+      <NotificationDrawer
+        open={notificationOpen}
+        onOpenChange={setNotificationOpen}
+        notifications={notifications}
+        onMarkAsRead={handleMarkAsRead}
+      />
     </div>
   );
 }
