@@ -1,5 +1,5 @@
 import { StatCard } from "@/components/dashboard/StatCard";
-import { Anchor, Tool, Ship } from "lucide-react";
+import { Anchor, Wrench, Ship } from "lucide-react";
 
 interface SlipStatsProps {
   totalSlips: number;
@@ -38,7 +38,7 @@ export function SlipStats({
         title="Under Maintenance"
         value={maintenanceSlips.toString()}
         description="Being serviced"
-        icon={Tool}
+        icon={Wrench}
       />
     </div>
   );

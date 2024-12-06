@@ -6,14 +6,14 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SlipCardProps {
-  id: string;
+  id: number;
   name: string;
   status: 'available' | 'occupied' | 'maintenance';
   boat?: Boat;
   customerName?: string;
   maintenanceDescription?: string;
   dock?: string;
-  onStatusChange: (id: string, status: 'available' | 'occupied' | 'maintenance') => void;
+  onStatusChange: (id: number, status: 'available' | 'occupied' | 'maintenance') => void;
 }
 
 export function SlipCard({
@@ -38,7 +38,7 @@ export function SlipCard({
         action: 'status_change',
         previous_status: status,
         new_status: newStatus,
-        details: { boat_id: boat?.id }
+        details: boat ? { boat_id: boat.id } : null
       });
 
       // Update the slip status

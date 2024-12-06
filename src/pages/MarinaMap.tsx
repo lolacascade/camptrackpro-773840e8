@@ -117,7 +117,16 @@ export default function MarinaMap() {
     try {
       const { error } = await supabase
         .from('slips')
-        .insert([values]);
+        .insert([{
+          name: values.name,
+          dock: values.dock,
+          length_ft: values.length_ft,
+          width_ft: values.width_ft,
+          is_covered: values.is_covered,
+          electricity_voltage: values.electricity_voltage,
+          has_water: values.has_water,
+          status: values.status
+        }]);
 
       if (error) throw error;
 
