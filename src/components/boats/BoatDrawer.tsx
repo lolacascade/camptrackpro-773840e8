@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Boat } from "@/types/boat"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 
@@ -19,6 +19,13 @@ export function BoatDrawer({ boat, open, onClose, onBoatUpdated }: BoatDrawerPro
   const [formData, setFormData] = useState<Partial<Boat>>(boat || {})
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Update form data when boat changes or drawer opens
+  useEffect(() => {
+    if (boat && open) {
+      setFormData(boat)
+    }
+  }, [boat, open])
 
   const handleSave = async () => {
     if (!boat) return
