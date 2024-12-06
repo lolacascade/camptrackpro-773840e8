@@ -247,6 +247,44 @@ export type Database = {
         }
         Relationships: []
       }
+      slip_audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: number
+          new_status: string | null
+          previous_status: string | null
+          slip_id: number | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: number
+          new_status?: string | null
+          previous_status?: string | null
+          slip_id?: number | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: number
+          new_status?: string | null
+          previous_status?: string | null
+          slip_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slip_audit_logs_slip_id_fkey"
+            columns: ["slip_id"]
+            isOneToOne: false
+            referencedRelation: "slips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       slips: {
         Row: {
           created_at: string | null

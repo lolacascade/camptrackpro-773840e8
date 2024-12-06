@@ -16,6 +16,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { SlipCard } from "@/components/marina/SlipCard";
+import { SlipFilters } from "@/components/marina/SlipFilters";
+import { SlipStats } from "@/components/marina/SlipStats";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -23,80 +35,114 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-interface DockSpot {
-  id: string;
-  name: string;
-  status: 'available' | 'occupied' | 'maintenance';
-  customerId?: string;
-  boatName?: string;
-}
 
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Dock spot name must be at least 2 characters.",
   }),
-  customerId: z.string().optional(),
-  status: z.enum(['available', 'occupied', 'maintenance']),
+  dock: z.string().min(1, "Dock is required"),
+  length_ft: z.number().min(1, "Length must be greater than 0"),
+  width_ft: z.number().min(1, "Width must be greater than 0"),
+  is_covered: z.boolean().default(false),
+  electricity_voltage: z.string().optional(),
+  has_water: z.boolean().default(false),
+  status: z.enum(['available', 'occupied', 'maintenance']).default('available'),
 });
 
 export default function MarinaMap() {
   const { toast } = useToast();
-  const [dockSpots, setDockSpots] = useState<DockSpot[]>([
-    { id: '1', name: 'A1', status: 'available' },
-    { id: '2', name: 'A2', status: 'occupied', boatName: 'Sea Spirit' },
-    { id: '3', name: 'A3', status: 'maintenance' },
-  ]);
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [dockFilter, setDockFilter] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
+      dock: '',
+      length_ft: 0,
+      width_ft: 0,
+      is_covered: false,
+      has_water: false,
       status: 'available',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const newDockSpot: DockSpot = {
-      id: Date.now().toString(),
-      name: values.name,
-      status: values.status,
-    };
+  const { data: slipsData, refetch: refetchSlips } = useQuery({
+    queryKey: ['slips'],
+    queryFn: async () => {
+      const { data: slips, error } = await supabase
+        .from('slips')
+        .select(`
+          *,
+          boats (
+            id,
+            boat_name,
+            customer_id,
+            customers (
+              name
+            )
+          ),
+          maintenance_requests (
+            description
+          )
+        `);
 
-    setDockSpots([...dockSpots, newDockSpot]);
-    setIsDialogOpen(false);
-    form.reset();
-    
-    toast({
-      title: "Dock Spot Added",
-      description: `New dock spot ${values.name} has been created.`,
-    });
+      if (error) throw error;
+      return slips;
+    },
+  });
+
+  const filteredSlips = slipsData?.filter((slip) => {
+    const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = !statusFilter || slip.status === statusFilter;
+    const matchesDock = !dockFilter || slip.dock === dockFilter;
+    return matchesSearch && matchesStatus && matchesDock;
+  });
+
+  const availableDocks = Array.from(
+    new Set(slipsData?.map((slip) => slip.dock).filter(Boolean) || [])
+  );
+
+  const stats = {
+    totalSlips: slipsData?.length || 0,
+    availableSlips: slipsData?.filter(s => s.status === 'available').length || 0,
+    occupiedSlips: slipsData?.filter(s => s.status === 'occupied').length || 0,
+    maintenanceSlips: slipsData?.filter(s => s.status === 'maintenance').length || 0,
   };
 
-  const handleStatusChange = (id: string, status: DockSpot['status']) => {
-    setDockSpots(spots => 
-      spots.map(spot => 
-        spot.id === id ? { ...spot, status } : spot
-      )
-    );
-    toast({
-      title: "Status Updated",
-      description: `Dock spot status has been updated.`,
-    });
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      const { error } = await supabase
+        .from('slips')
+        .insert([values]);
+
+      if (error) throw error;
+
+      setIsDialogOpen(false);
+      form.reset();
+      refetchSlips();
+      
+      toast({
+        title: "Dock Spot Added",
+        description: `New dock spot ${values.name} has been created.`,
+      });
+    } catch (error) {
+      console.error('Error creating slip:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create dock spot. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
     <Layout>
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">Marina Map</h1>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -125,26 +171,108 @@ export default function MarinaMap() {
                   />
                   <FormField
                     control={form.control}
-                    name="status"
+                    name="dock"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Initial Status</FormLabel>
+                        <FormLabel>Dock</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., A, B..." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="length_ft"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Length (ft)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="width_ft"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Width (ft)</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={e => field.onChange(Number(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="electricity_voltage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Electricity</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
+                              <SelectValue placeholder="Select voltage" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="available">Available</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
-                            <SelectItem value="occupied">Occupied</SelectItem>
+                            <SelectItem value="30A">30A</SelectItem>
+                            <SelectItem value="50A">50A</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="is_covered"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Covered Slip</FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_water"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>Water Access</FormLabel>
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -157,44 +285,33 @@ export default function MarinaMap() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          {dockSpots.map((spot) => (
-            <div
-              key={spot.id}
-              className={`p-4 rounded-lg border ${
-                spot.status === 'occupied'
-                  ? 'bg-primary/10'
-                  : spot.status === 'available'
-                  ? 'bg-success/10'
-                  : 'bg-warning/10'
-              }`}
-            >
-              <h3 className="font-semibold">{spot.name}</h3>
-              <p className="text-sm text-muted-foreground capitalize">
-                Status: {spot.status}
-              </p>
-              {spot.boatName && (
-                <p className="text-sm text-muted-foreground">
-                  Boat: {spot.boatName}
-                </p>
-              )}
-              <div className="mt-4 space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleStatusChange(spot.id, 'available')}
-                >
-                  Set Available
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleStatusChange(spot.id, 'maintenance')}
-                >
-                  Set Maintenance
-                </Button>
-              </div>
-            </div>
+        <SlipStats {...stats} />
+
+        <SlipFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+          dockFilter={dockFilter}
+          onDockFilterChange={setDockFilter}
+          availableDocks={availableDocks}
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredSlips?.map((slip) => (
+            <SlipCard
+              key={slip.id}
+              id={slip.id}
+              name={slip.name}
+              status={slip.status as 'available' | 'occupied' | 'maintenance'}
+              boat={slip.boats?.[0]}
+              customerName={slip.boats?.[0]?.customers?.name}
+              maintenanceDescription={slip.maintenance_requests?.[0]?.description}
+              dock={slip.dock}
+              onStatusChange={async () => {
+                await refetchSlips();
+              }}
+            />
           ))}
         </div>
       </div>
