@@ -10,8 +10,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
+import { cn } from "@/lib/utils";
+
+const navigation = [
+  { name: "Dashboard", href: "/" },
+  { name: "Marina Map", href: "/map" },
+  { name: "Customers", href: "/customers" },
+  { name: "Maintenance", href: "/maintenance" },
+  { name: "Settings", href: "/settings" },
+];
 
 // Mock notifications - in a real app, this would come from an API
 const mockNotifications = [
@@ -36,6 +45,7 @@ export function Header() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState(mockNotifications);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -72,7 +82,23 @@ export function Header() {
         </Button>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
+        <nav className="flex items-center space-x-4">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                location.pathname === item.href
+                  ? "text-primary"
+                  : "text-muted-foreground"
+              )}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </nav>
         <Button 
           variant="ghost" 
           size="icon"
@@ -84,7 +110,6 @@ export function Header() {
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
           )}
         </Button>
-        <div className="h-8 w-8 rounded-full bg-primary/10" />
       </div>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
