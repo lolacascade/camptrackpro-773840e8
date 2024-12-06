@@ -8,7 +8,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
@@ -68,7 +67,8 @@ export function Header() {
 
   return (
     <div className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-8">
+        <h1 className="text-xl font-bold text-primary">DockEase</h1>
         <Button
           variant="outline"
           className="relative h-9 w-60 justify-start text-sm text-muted-foreground"
