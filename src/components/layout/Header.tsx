@@ -68,19 +68,8 @@ export function Header() {
 
   return (
     <div className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm">
-      <div className="flex items-center gap-8">
+      <div className="flex items-center">
         <h1 className="text-xl font-bold text-primary">DockEase</h1>
-        <Button
-          variant="outline"
-          className="relative h-9 w-60 justify-start text-sm text-muted-foreground"
-          onClick={() => setOpen(true)}
-        >
-          <Search className="mr-2 h-4 w-4" />
-          Search...
-          <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-            <span className="text-xs">⌘</span>K
-          </kbd>
-        </Button>
       </div>
       
       <div className="flex items-center gap-6">
@@ -100,6 +89,19 @@ export function Header() {
             </Link>
           ))}
         </nav>
+        
+        <Button
+          variant="outline"
+          className="relative h-9 w-60 justify-start text-sm text-muted-foreground"
+          onClick={() => setOpen(true)}
+        >
+          <Search className="mr-2 h-4 w-4" />
+          Search...
+          <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </Button>
+
         <Button 
           variant="ghost" 
           size="icon"
