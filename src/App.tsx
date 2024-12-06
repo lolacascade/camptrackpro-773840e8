@@ -2,8 +2,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import MarinaMap from "./pages/MarinaMap";
+import Customers from "./pages/Customers";
+import Maintenance from "./pages/Maintenance";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -15,10 +19,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/map" element={<Navigate to="/" />} />
-          <Route path="/customers" element={<Navigate to="/" />} />
-          <Route path="/maintenance" element={<Navigate to="/" />} />
-          <Route path="/settings" element={<Navigate to="/" />} />
+          <Route path="/map" element={<MarinaMap />} />
+          <Route path="/customers" element={<Customers />} />
+          <Route path="/maintenance" element={<Maintenance />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
