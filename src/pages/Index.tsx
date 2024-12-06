@@ -5,9 +5,11 @@ import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { Anchor, DollarSign, Ship, Wrench, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -21,6 +23,38 @@ const suggestionQueries = [
   "Show revenue for this month",
 ];
 
+interface MarinaSummary {
+  totalSlips: number;
+  occupiedSlips: number;
+  activeBoats: number;
+}
+
+const fetchMarinaSummary = async (): Promise<MarinaSummary> => {
+  // Get total slips and occupied slips
+  const { data: slipsData, error: slipsError } = await supabase
+    .from('slips')
+    .select('status');
+
+  if (slipsError) throw slipsError;
+
+  // Get active boats
+  const { data: boatsData, error: boatsError } = await supabase
+    .from('boats')
+    .select('id');
+
+  if (boatsError) throw boatsError;
+
+  const totalSlips = slipsData.length;
+  const occupiedSlips = slipsData.filter(slip => slip.status === 'occupied').length;
+  const activeBoats = boatsData.length;
+
+  return {
+    totalSlips,
+    occupiedSlips,
+    activeBoats
+  };
+};
+
 export default function Index() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -29,6 +63,55 @@ export default function Index() {
     },
   ]);
   const [input, setInput] = useState("");
+
+  const { data: marinaSummary, refetch: refetchSummary } = useQuery({
+    queryKey: ['marinaSummary'],
+    queryFn: fetchMarinaSummary,
+    initialData: {
+      totalSlips: 0,
+      occupiedSlips: 0,
+      activeBoats: 0
+    }
+  });
+
+  useEffect(() => {
+    // Subscribe to changes in slips table
+    const slipsChannel = supabase
+      .channel('slips_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'slips'
+        },
+        () => {
+          refetchSummary();
+        }
+      )
+      .subscribe();
+
+    // Subscribe to changes in boats table
+    const boatsChannel = supabase
+      .channel('boats_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'boats'
+        },
+        () => {
+          refetchSummary();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      slipsChannel.unsubscribe();
+      boatsChannel.unsubscribe();
+    };
+  }, [refetchSummary]);
 
   const handleSendMessage = () => {
     if (!input.trim()) return;
@@ -43,6 +126,10 @@ export default function Index() {
     }, 1000);
     setInput("");
   };
+
+  const occupancyRate = marinaSummary.totalSlips > 0 
+    ? Math.round((marinaSummary.occupiedSlips / marinaSummary.totalSlips) * 100)
+    : 0;
 
   return (
     <Layout>
@@ -109,11 +196,11 @@ export default function Index() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 title="Total Occupancy"
-                value="85%"
-                description="Current marina occupancy"
+                value={`${occupancyRate}%`}
+                description={`${marinaSummary.occupiedSlips} of ${marinaSummary.totalSlips} slips occupied`}
                 icon={Anchor}
                 trend="up"
-                trendValue="5% from last month"
+                trendValue="Real-time updates enabled"
               />
               <StatCard
                 title="Monthly Revenue"
@@ -125,9 +212,11 @@ export default function Index() {
               />
               <StatCard
                 title="Active Boats"
-                value="42"
+                value={marinaSummary.activeBoats.toString()}
                 description="Boats currently in marina"
                 icon={Ship}
+                trend="up"
+                trendValue="Real-time updates enabled"
               />
               <StatCard
                 title="Pending Maintenance"
@@ -148,7 +237,7 @@ export default function Index() {
             <Card className="mt-8">
               <CardContent className="flex justify-between items-center p-4">
                 <div className="text-sm">
-                  <span className="font-medium">Total Slips:</span> 120
+                  <span className="font-medium">Total Slips:</span> {marinaSummary.totalSlips}
                 </div>
                 <div className="text-sm">
                   <span className="font-medium">Active Customers:</span> 95
