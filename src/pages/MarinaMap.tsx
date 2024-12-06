@@ -79,12 +79,16 @@ export default function MarinaMap() {
           boats (
             id,
             boat_name,
+            boat_size,
             customer_id,
+            slip_id,
+            created_at,
+            updated_at,
             customers (
               name
             )
           ),
-          maintenance_requests (
+          maintenance_requests!fk_slip_id (
             description
           )
         `);
