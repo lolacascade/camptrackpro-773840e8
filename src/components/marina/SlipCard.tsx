@@ -1,19 +1,24 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Boat } from "@/types/boat";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SlipCardProps {
   id: number;
   name: string;
   status: 'available' | 'occupied' | 'maintenance';
-  boat?: Boat;
+  boat?: {
+    boat_name: string;
+    boat_size?: string;
+    customers?: {
+      name: string;
+    };
+  };
   customerName?: string;
   maintenanceDescription?: string;
   dock?: string;
-  onStatusChange: (id: number, status: 'available' | 'occupied' | 'maintenance') => void;
+  onStatusChange: () => Promise<void>;
 }
 
 export function SlipCard({
@@ -26,93 +31,108 @@ export function SlipCard({
   dock,
   onStatusChange,
 }: SlipCardProps) {
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStatusChange = async (newStatus: 'available' | 'occupied' | 'maintenance') => {
     try {
-      setIsUpdating(true);
-      
-      // Log the status change
-      await supabase.from('slip_audit_logs').insert({
-        slip_id: id,
-        action: 'status_change',
-        previous_status: status,
-        new_status: newStatus,
-        details: boat ? { boat_id: boat.id } : null
-      });
-
-      // Update the slip status
-      await supabase
+      setIsLoading(true);
+      const { error } = await supabase
         .from('slips')
         .update({ status: newStatus })
         .eq('id', id);
 
-      onStatusChange(id, newStatus);
-      toast.success(`Slip ${name} status updated to ${newStatus}`);
+      if (error) throw error;
+
+      await onStatusChange();
+      toast({
+        title: "Status Updated",
+        description: `Slip status has been updated to ${newStatus}`,
+      });
     } catch (error) {
       console.error('Error updating slip status:', error);
-      toast.error('Failed to update slip status');
+      toast({
+        title: "Error",
+        description: "Failed to update slip status",
+        variant: "destructive",
+      });
     } finally {
-      setIsUpdating(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <Card className={`p-4 ${
-      status === 'occupied'
-        ? 'bg-primary/10'
-        : status === 'available'
-        ? 'bg-success/10'
-        : 'bg-warning/10'
-    }`}>
-      <div className="space-y-2">
-        <div className="flex justify-between items-start">
-          <div>
-            <h3 className="font-semibold">{name}</h3>
-            <p className="text-sm text-muted-foreground">
-              Dock: {dock || 'Not specified'}
-            </p>
-          </div>
-          <span className="text-sm font-medium capitalize px-2 py-1 rounded-full bg-background">
-            {status}
-          </span>
+    <Card className="p-6 border border-[#E8EBEB] bg-transparent">
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold text-[#133134]">{name}</h3>
+          <p className="text-[#3E4238]">{dock}</p>
         </div>
 
-        {boat && customerName && (
-          <div className="text-sm text-muted-foreground">
-            <p>Boat: {boat.boat_name}</p>
-            <p>Owner: {customerName}</p>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[#133134] font-medium">Status</span>
+            <span className="text-[#3E4238] capitalize">{status}</span>
           </div>
-        )}
 
-        {maintenanceDescription && (
-          <p className="text-sm text-muted-foreground">
-            Maintenance: {maintenanceDescription}
-          </p>
-        )}
+          {boat && (
+            <>
+              <div className="flex items-center justify-between">
+                <span className="text-[#133134] font-medium">Boat</span>
+                <span className="text-[#3E4238]">{boat.boat_name}</span>
+              </div>
+              {boat.boat_size && (
+                <div className="flex items-center justify-between">
+                  <span className="text-[#133134] font-medium">Size</span>
+                  <span className="text-[#3E4238]">{boat.boat_size}</span>
+                </div>
+              )}
+            </>
+          )}
 
-        <div className="flex flex-wrap gap-2 mt-4">
-          {status !== 'available' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange('available')}
-              disabled={isUpdating}
-            >
-              Set Available
-            </Button>
+          {customerName && (
+            <div className="flex items-center justify-between">
+              <span className="text-[#133134] font-medium">Customer</span>
+              <span className="text-[#3E4238]">{customerName}</span>
+            </div>
           )}
-          
-          {status !== 'maintenance' && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleStatusChange('maintenance')}
-              disabled={isUpdating}
-            >
-              Set Maintenance
-            </Button>
+
+          {maintenanceDescription && (
+            <div className="mt-2">
+              <span className="text-[#133134] font-medium block">Maintenance Note</span>
+              <p className="text-[#3E4238] mt-1">{maintenanceDescription}</p>
+            </div>
           )}
+        </div>
+
+        <div className="flex gap-2 pt-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleStatusChange('available')}
+            disabled={isLoading || status === 'available'}
+            className="flex-1"
+          >
+            Available
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleStatusChange('occupied')}
+            disabled={isLoading || status === 'occupied'}
+            className="flex-1"
+          >
+            Occupied
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleStatusChange('maintenance')}
+            disabled={isLoading || status === 'maintenance'}
+            className="flex-1"
+          >
+            Maintenance
+          </Button>
         </div>
       </div>
     </Card>
