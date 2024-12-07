@@ -10,18 +10,38 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
 export function MarinaOverview() {
-  const { data: slips } = useQuery({
+  const { data: slips, isError, error } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
+      console.log('Fetching slips data...');
       const { data, error } = await supabase
         .from('slips')
         .select('*, boats(*, customers(name))')
         .order('dock_number', { ascending: true });
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+      
+      console.log('Slips data received:', data);
+      return data || [];
     },
   });
+
+  if (isError) {
+    console.error('Query error:', error);
+    return (
+      <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent">
+        <CardHeader>
+          <CardTitle className="text-[#133134] text-base">Marina Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-base text-[#133134]">Error loading marina data. Please try again later.</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Process data for the chart
   const dockStats = slips?.reduce((acc: any, slip) => {
@@ -36,7 +56,9 @@ export function MarinaOverview() {
       };
     }
     acc[dock].total += 1;
-    acc[dock][slip.status] += 1;
+    if (slip.status) {
+      acc[dock][slip.status] += 1;
+    }
     return acc;
   }, {});
 
