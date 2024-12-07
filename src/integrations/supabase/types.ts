@@ -363,6 +363,30 @@ export type Database = {
           },
         ]
       }
+      stripe_checkout_sessions: {
+        Row: {
+          attrs: Json | null
+          customer: string | null
+          id: string | null
+          payment_intent: string | null
+          subscription: string | null
+        }
+        Insert: {
+          attrs?: Json | null
+          customer?: string | null
+          id?: string | null
+          payment_intent?: string | null
+          subscription?: string | null
+        }
+        Update: {
+          attrs?: Json | null
+          customer?: string | null
+          id?: string | null
+          payment_intent?: string | null
+          subscription?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
