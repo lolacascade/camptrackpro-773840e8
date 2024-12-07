@@ -7,13 +7,56 @@ import { CustomerTable } from "@/components/customers/CustomerTable"
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer"
 import { Customer } from "@/types/customer"
 import { supabase } from "@/integrations/supabase/client"
+import { useNavigate } from "react-router-dom"
+import { useQuery } from "@tanstack/react-query"
 
 export default function Customers() {
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [customers, setCustomers] = useState<Customer[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+
+  // Check authentication
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        navigate('/login')
+      }
+    }
+    checkAuth()
+  }, [navigate])
+
+  // Check subscription
+  const { data: subscriptionStatus, isError: subscriptionError } = useQuery({
+    queryKey: ['subscription'],
+    queryFn: async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('No session')
+      
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+      
+      if (error) throw error
+      return data
+    },
+  })
+
+  useEffect(() => {
+    if (subscriptionStatus && !subscriptionStatus.subscribed) {
+      toast({
+        title: "Subscription Required",
+        description: "Please subscribe to access the customers page",
+        variant: "destructive",
+      })
+      navigate('/')
+    }
+  }, [subscriptionStatus, navigate, toast])
 
   const fetchCustomers = async () => {
     try {
@@ -49,6 +92,45 @@ export default function Customers() {
   const handleAdd = () => {
     setSelectedCustomer(null)
     setIsDrawerOpen(true)
+  }
+
+  const handleSubscribe = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('No session')
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+
+      if (error) throw error
+      if (data?.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      toast({
+        title: "Error",
+        description: "Failed to start subscription process.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  if (subscriptionError) {
+    return (
+      <Layout>
+        <div className="flex h-[calc(100vh-4rem)] items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-[#133134] mb-4">Subscription Required</h2>
+            <p className="text-[#3E4238] mb-6">Please subscribe to access the customers page</p>
+            <Button onClick={handleSubscribe}>Subscribe Now</Button>
+          </div>
+        </div>
+      </Layout>
+    )
   }
 
   return (
