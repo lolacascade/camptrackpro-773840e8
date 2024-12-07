@@ -290,14 +290,17 @@ export type Database = {
           created_at: string | null
           customer_id: number | null
           dock: string | null
+          dock_number: string
           electricity_voltage: string | null
           has_water: boolean | null
           id: number
           is_covered: boolean | null
+          last_activity_at: string | null
           length_ft: number | null
           location_coordinates: Json | null
           maintenance_id: number | null
           name: string
+          power_connection_type: string | null
           status: string
           updated_at: string | null
           width_ft: number | null
@@ -307,14 +310,17 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           dock?: string | null
+          dock_number?: string
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
           is_covered?: boolean | null
+          last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
           maintenance_id?: number | null
           name: string
+          power_connection_type?: string | null
           status: string
           updated_at?: string | null
           width_ft?: number | null
@@ -324,14 +330,17 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           dock?: string | null
+          dock_number?: string
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
           is_covered?: boolean | null
+          last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
           maintenance_id?: number | null
           name?: string
+          power_connection_type?: string | null
           status?: string
           updated_at?: string | null
           width_ft?: number | null
