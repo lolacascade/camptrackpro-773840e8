@@ -114,16 +114,18 @@ export default function Boats() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Boats</h1>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" /> Add Boat
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
+      <div className="flex h-[calc(100vh-4rem)]">
+        <div className="flex-1 p-12">
+          <div className="bg-white rounded-[24px] p-12 space-y-8">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-[#133134]">Boats</h1>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" /> Add Boat
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add New Boat</DialogTitle>
               </DialogHeader>
@@ -164,28 +166,30 @@ export default function Boats() {
                 </div>
                 <Button onClick={handleSubmit}>Add Boat</Button>
               </div>
-            </DialogContent>
-          </Dialog>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            {isLoading ? (
+              <div>Loading boats...</div>
+            ) : (
+              <BoatTable
+                boats={boats}
+                onEdit={handleEdit}
+              />
+            )}
+
+            <BoatDrawer
+              boat={selectedBoat}
+              open={isDrawerOpen}
+              onClose={() => {
+                setIsDrawerOpen(false)
+                setSelectedBoat(null)
+              }}
+              onBoatUpdated={fetchBoats}
+            />
+          </div>
         </div>
-
-        {isLoading ? (
-          <div>Loading boats...</div>
-        ) : (
-          <BoatTable
-            boats={boats}
-            onEdit={handleEdit}
-          />
-        )}
-
-        <BoatDrawer
-          boat={selectedBoat}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false)
-            setSelectedBoat(null)
-          }}
-          onBoatUpdated={fetchBoats}
-        />
       </div>
     </Layout>
   )

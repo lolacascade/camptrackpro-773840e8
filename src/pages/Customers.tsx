@@ -54,32 +54,36 @@ export default function Customers() {
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Customers</h1>
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Customer
-          </Button>
+      <div className="flex h-[calc(100vh-4rem)]">
+        <div className="flex-1 p-12">
+          <div className="bg-white rounded-[24px] p-12 space-y-8">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
+              <Button onClick={handleAdd}>
+                <Plus className="mr-2 h-4 w-4" /> Add Customer
+              </Button>
+            </div>
+
+            {isLoading ? (
+              <div>Loading customers...</div>
+            ) : (
+              <CustomerTable
+                customers={customers}
+                onEdit={handleEdit}
+              />
+            )}
+
+            <CustomerDrawer
+              customer={selectedCustomer}
+              open={isDrawerOpen}
+              onClose={() => {
+                setIsDrawerOpen(false)
+                setSelectedCustomer(null)
+              }}
+              onCustomerUpdated={fetchCustomers}
+            />
+          </div>
         </div>
-
-        {isLoading ? (
-          <div>Loading customers...</div>
-        ) : (
-          <CustomerTable
-            customers={customers}
-            onEdit={handleEdit}
-          />
-        )}
-
-        <CustomerDrawer
-          customer={selectedCustomer}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false)
-            setSelectedCustomer(null)
-          }}
-          onCustomerUpdated={fetchCustomers}
-        />
       </div>
     </Layout>
   )
