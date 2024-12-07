@@ -183,8 +183,8 @@ export default function Index() {
         </div>
 
         {/* Main Dashboard Content */}
-        <div className="flex-1 p-6">
-          <div className="bg-white rounded-[24px] p-6 space-y-8 text-[#133134]">
+        <div className="flex-1 p-12">
+          <div className="bg-white rounded-[24px] p-12 space-y-8">
             <DashboardHeader />
 
             <StatsGrid 

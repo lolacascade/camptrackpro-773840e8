@@ -11,9 +11,9 @@ const slips = [
 
 export function MarinaOverview() {
   return (
-    <Card className="col-span-2">
+    <Card className="col-span-2 border border-[#19383C] rounded-xl bg-transparent">
       <CardHeader>
-        <CardTitle>Marina Overview</CardTitle>
+        <CardTitle className="text-[#133134]">Marina Overview</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4">
@@ -28,9 +28,9 @@ export function MarinaOverview() {
                   : "bg-warning/10"
               }`}
             >
-              <div className="font-bold">{slip.id}</div>
-              <div className="text-sm text-gray-600">{slip.size}</div>
-              <div className="mt-1 text-xs capitalize">{slip.status}</div>
+              <div className="font-bold text-[#133134]">{slip.id}</div>
+              <div className="text-base text-[#3E4238]">{slip.size}</div>
+              <div className="mt-1 text-base capitalize text-[#3E4238]">{slip.status}</div>
             </div>
           ))}
         </div>
