@@ -1,4 +1,4 @@
-import { Bell, Search } from "lucide-react";
+import { Bell, Search, Settings } from "lucide-react";
 import {
   CommandDialog,
   CommandEmpty,
@@ -19,7 +19,6 @@ const navigation = [
   { name: "Customers", href: "/customers" },
   { name: "Boats", href: "/boats" },
   { name: "Maintenance", href: "/maintenance" },
-  { name: "Settings", href: "/settings" },
 ];
 
 export function Header() {
@@ -53,20 +52,20 @@ export function Header() {
   return (
     <div className="flex h-16 items-center justify-between px-4 bg-background">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold">
+        <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
           <span className="text-primary">Dock</span>
           <span className="text-secondary">Ease</span>
-        </h1>
+        </Link>
       </div>
       
-      <div className="flex items-center gap-6">
-        <nav className="flex items-center space-x-4">
+      <div className="flex items-center">
+        <nav className="flex items-center mr-8">
           {navigation.map((item) => (
             <Link
               key={item.name}
               to={item.href}
               className={cn(
-                "text-sm font-medium transition-colors relative",
+                "text-sm font-medium transition-colors relative px-4",
                 "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
                 location.pathname === item.href
                   ? "text-primary after:scale-x-100 after:bg-primary"
@@ -78,7 +77,7 @@ export function Header() {
           ))}
         </nav>
         
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-8">
           <Button
             variant="ghost"
             size="icon"
@@ -95,6 +94,15 @@ export function Header() {
             onClick={() => setNotificationOpen(true)}
           >
             <Bell className="h-5 w-5" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-secondary hover:text-primary hover:bg-transparent"
+            onClick={() => navigate('/settings')}
+          >
+            <Settings className="h-5 w-5" />
           </Button>
         </div>
       </div>
