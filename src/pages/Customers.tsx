@@ -58,6 +58,31 @@ export default function Customers() {
     }
   }, [subscriptionStatus, navigate, toast])
 
+  const handleSubscribe = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) throw new Error('No session')
+
+      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+
+      if (error) throw error
+      if (data?.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error)
+      toast({
+        title: "Error",
+        description: "Failed to start subscription process.",
+        variant: "destructive",
+      })
+    }
+  }
+
   const fetchCustomers = async () => {
     try {
       const { data, error } = await supabase
@@ -92,31 +117,6 @@ export default function Customers() {
   const handleAdd = () => {
     setSelectedCustomer(null)
     setIsDrawerOpen(true)
-  }
-
-  const handleSubscribe = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) throw new Error('No session')
-
-      const { data, error } = await supabase.functions.invoke('create-checkout-session', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      })
-
-      if (error) throw error
-      if (data?.url) {
-        window.location.href = data.url
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error)
-      toast({
-        title: "Error",
-        description: "Failed to start subscription process.",
-        variant: "destructive",
-      })
-    }
   }
 
   if (subscriptionError) {
