@@ -217,33 +217,57 @@ export type Database = {
       marina_details: {
         Row: {
           address: string | null
+          approach_info: Json | null
           contact_email: string | null
           contact_phone: string | null
+          coordinates: Json | null
           created_at: string | null
           id: number
           name: string
+          other_features: Json | null
+          photos: string[] | null
+          services_amenities: Json | null
+          social_media: Json | null
           total_slips: number | null
           updated_at: string | null
+          videos: string[] | null
+          website: string | null
         }
         Insert: {
           address?: string | null
+          approach_info?: Json | null
           contact_email?: string | null
           contact_phone?: string | null
+          coordinates?: Json | null
           created_at?: string | null
           id?: number
           name: string
+          other_features?: Json | null
+          photos?: string[] | null
+          services_amenities?: Json | null
+          social_media?: Json | null
           total_slips?: number | null
           updated_at?: string | null
+          videos?: string[] | null
+          website?: string | null
         }
         Update: {
           address?: string | null
+          approach_info?: Json | null
           contact_email?: string | null
           contact_phone?: string | null
+          coordinates?: Json | null
           created_at?: string | null
           id?: number
           name?: string
+          other_features?: Json | null
+          photos?: string[] | null
+          services_amenities?: Json | null
+          social_media?: Json | null
           total_slips?: number | null
           updated_at?: string | null
+          videos?: string[] | null
+          website?: string | null
         }
         Relationships: []
       }
