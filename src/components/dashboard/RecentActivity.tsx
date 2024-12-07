@@ -26,17 +26,17 @@ const activities = [
 
 export function RecentActivity() {
   return (
-    <Card>
+    <Card className="border border-[#19383C] rounded-xl bg-transparent">
       <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
+        <CardTitle className="text-[#133134]">Recent Activity</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {activities.map((activity) => (
             <div key={activity.id} className="flex items-center justify-between">
               <div>
-                <div className="font-medium">{activity.customer}</div>
-                <div className="text-sm text-gray-600">
+                <div className="font-medium text-[#133134]">{activity.customer}</div>
+                <div className="text-base text-[#3E4238]">
                   {activity.type === "check-in"
                     ? "Checked in at"
                     : activity.type === "check-out"
@@ -45,7 +45,7 @@ export function RecentActivity() {
                   {activity.slip}
                 </div>
               </div>
-              <div className="text-sm text-gray-500">{activity.time}</div>
+              <div className="text-base text-[#3E4238]">{activity.time}</div>
             </div>
           ))}
         </div>

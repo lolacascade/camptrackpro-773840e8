@@ -12,16 +12,16 @@ interface StatCardProps {
 
 export function StatCard({ title, value, description, icon: Icon, trend, trendValue }: StatCardProps) {
   return (
-    <Card>
+    <Card className="border border-[#19383C] rounded-xl bg-transparent">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <CardTitle className="text-sm font-medium text-[#3E4238]">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-[#3E4238]" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{description}</p>
+        <div className="text-2xl font-bold text-[#133134]">{value}</div>
+        <p className="text-base text-[#3E4238]">{description}</p>
         {trend && (
-          <div className={`mt-2 text-xs ${trend === "up" ? "text-success" : "text-destructive"}`}>
+          <div className={`mt-2 text-base text-[#3E4238]`}>
             {trend === "up" ? "↑" : "↓"} {trendValue}
           </div>
         )}
