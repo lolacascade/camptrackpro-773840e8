@@ -7,13 +7,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DashboardFilters } from "./DashboardFilters";
-import { useState } from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 
 export function MarinaOverview() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [dockFilter, setDockFilter] = useState("all");
-
   const { data: slips } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
@@ -27,33 +23,72 @@ export function MarinaOverview() {
     },
   });
 
-  const availableDocks = Array.from(
-    new Set(slips?.map((slip) => slip.dock) || [])
-  ).filter(Boolean);
+  // Process data for the chart
+  const dockStats = slips?.reduce((acc: any, slip) => {
+    const dock = slip.dock || 'Unassigned';
+    if (!acc[dock]) {
+      acc[dock] = {
+        dock,
+        total: 0,
+        occupied: 0,
+        available: 0,
+        maintenance: 0
+      };
+    }
+    acc[dock].total += 1;
+    acc[dock][slip.status] += 1;
+    return acc;
+  }, {});
 
-  const filteredSlips = slips?.filter((slip) => {
-    const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDock = dockFilter === "all" || slip.dock === dockFilter;
-    return matchesSearch && matchesDock;
-  });
+  const chartData = Object.values(dockStats || {});
 
   return (
     <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader>
-        <CardTitle className="text-[#133134]">Marina Overview</CardTitle>
+        <CardTitle className="text-[#133134] text-base">Marina Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        <DashboardFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          dockFilter={dockFilter}
-          onDockFilterChange={setDockFilter}
-          availableDocks={availableDocks}
-        />
+        <div className="h-[400px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={chartData}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 20,
+                bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="dock" tick={{ fontSize: 16 }} />
+              <YAxis tick={{ fontSize: 16 }} />
+              <RechartsTooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-white p-4 rounded-lg shadow-lg border text-base">
+                        <p className="font-bold text-[#133134]">{`Dock ${label}`}</p>
+                        <p className="text-[#133134]">{`Total Slips: ${payload[0].payload.total}`}</p>
+                        <p className="text-[#133134]">{`Occupied: ${payload[0].payload.occupied}`}</p>
+                        <p className="text-[#133134]">{`Available: ${payload[0].payload.available}`}</p>
+                        <p className="text-[#133134]">{`Maintenance: ${payload[0].payload.maintenance}`}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Bar
+                dataKey="total"
+                fill="#C0CCAB"
+                radius={[4, 4, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredSlips?.map((slip) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          {slips?.map((slip) => (
             <TooltipProvider key={slip.id}>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -66,7 +101,7 @@ export function MarinaOverview() {
                         : "bg-warning/10"
                     }`}
                   >
-                    <div className="font-bold text-[#133134]">{slip.name}</div>
+                    <div className="font-bold text-[#133134] text-base">{slip.name}</div>
                     <div className="text-base text-[#3E4238]">
                       {slip.dock_number} - {slip.power_connection_type || 'No power'}
                     </div>
@@ -74,14 +109,14 @@ export function MarinaOverview() {
                       {slip.status}
                     </div>
                     {slip.last_activity_at && (
-                      <div className="text-sm text-[#3E4238] mt-1">
+                      <div className="text-base text-[#3E4238] mt-1">
                         Last activity: {new Date(slip.last_activity_at).toLocaleString()}
                       </div>
                     )}
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <div className="space-y-2">
+                  <div className="space-y-2 text-base">
                     <p><strong>Status:</strong> {slip.status}</p>
                     <p><strong>Power:</strong> {slip.power_connection_type || 'None'}</p>
                     {slip.boats?.[0] && (
