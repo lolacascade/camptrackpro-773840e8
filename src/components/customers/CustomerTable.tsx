@@ -87,11 +87,11 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   )
 
   return (
-    <Card className="border border-[rgb(212,219,224)] rounded-2xl">
+    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
         <div className="mb-4">
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-[#3E4238]" />
             <Input
               placeholder="Search customers..."
               value={searchTerm}
@@ -103,32 +103,32 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>
+              <TableHead className="text-[#133134]">
                 Name
                 <SortButton column="name" />
               </TableHead>
-              <TableHead>
+              <TableHead className="text-[#133134]">
                 Email
                 <SortButton column="email" />
               </TableHead>
-              <TableHead>
+              <TableHead className="text-[#133134]">
                 Phone
                 <SortButton column="phone" />
               </TableHead>
-              <TableHead>
+              <TableHead className="text-[#133134]">
                 Address
                 <SortButton column="address" />
               </TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[100px] text-[#133134]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {paginatedCustomers.map((customer) => (
               <TableRow key={customer.id}>
-                <TableCell className="font-medium">{customer.name}</TableCell>
-                <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.phone}</TableCell>
-                <TableCell>{customer.address}</TableCell>
+                <TableCell className="font-medium text-[#133134]">{customer.name}</TableCell>
+                <TableCell className="text-[#3E4238]">{customer.email}</TableCell>
+                <TableCell className="text-[#3E4238]">{customer.phone}</TableCell>
+                <TableCell className="text-[#3E4238]">{customer.address}</TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
@@ -157,6 +157,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
                     <PaginationLink
                       onClick={() => setCurrentPage(page)}
                       isActive={currentPage === page}
+                      className="text-[#133134]"
                     >
                       {page}
                     </PaginationLink>

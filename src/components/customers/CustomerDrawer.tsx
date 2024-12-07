@@ -123,11 +123,11 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
+          <SheetTitle className="text-[#133134]">{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
         </SheetHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Name *</Label>
+            <Label htmlFor="name" className="text-[#133134]">Name *</Label>
             <Input
               id="name"
               value={formData.name || ''}
@@ -135,7 +135,7 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-[#133134]">Email</Label>
             <Input
               id="email"
               type="email"
@@ -144,7 +144,7 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="phone">Phone</Label>
+            <Label htmlFor="phone" className="text-[#133134]">Phone</Label>
             <Input
               id="phone"
               value={formData.phone || ''}
@@ -152,7 +152,7 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor="address" className="text-[#133134]">Address</Label>
             <Input
               id="address"
               value={formData.address || ''}

@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useToast } from "@/components/ui/use-toast"
-import { Input } from "@/components/ui/input"
 import { CustomerTable } from "@/components/customers/CustomerTable"
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer"
 import { Customer } from "@/types/customer"
@@ -56,7 +55,7 @@ export default function Customers() {
     <Layout>
       <div className="flex h-[calc(100vh-4rem)]">
         <div className="flex-1 p-12">
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
+          <div className="bg-transparent rounded-[24px] space-y-8">
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
               <Button onClick={handleAdd}>
@@ -65,7 +64,7 @@ export default function Customers() {
             </div>
 
             {isLoading ? (
-              <div>Loading customers...</div>
+              <div className="text-[#3E4238]">Loading customers...</div>
             ) : (
               <CustomerTable
                 customers={customers}
