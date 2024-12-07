@@ -23,8 +23,8 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
   const [formData, setFormData] = useState(initialData || {
     name: '',
     address: '',
-    phone: '',
-    email: '',
+    contact_phone: '',
+    contact_email: '',
     website: '',
     coordinates: { latitude: '', longitude: '' },
     total_slips: '',
@@ -140,8 +140,8 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
                 <Label htmlFor="marina-phone">Phone</Label>
                 <Input
                   id="marina-phone"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange('phone', '', e.target.value)}
+                  value={formData.contact_phone}
+                  onChange={(e) => handleInputChange('contact_phone', '', e.target.value)}
                 />
               </div>
 
@@ -150,8 +150,8 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
                 <Input
                   id="marina-email"
                   type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', '', e.target.value)}
+                  value={formData.contact_email}
+                  onChange={(e) => handleInputChange('contact_email', '', e.target.value)}
                 />
               </div>
 
