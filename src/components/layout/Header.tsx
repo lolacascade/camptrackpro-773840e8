@@ -25,6 +25,7 @@ const navigation = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,6 +39,16 @@ export function Header() {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
+
+  const handleMarkAsRead = (id: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === id 
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+  };
 
   return (
     <div className="flex h-16 items-center justify-between px-4 bg-background">
@@ -139,6 +150,8 @@ export function Header() {
       <NotificationDrawer
         open={notificationOpen}
         onOpenChange={setNotificationOpen}
+        notifications={notifications}
+        onMarkAsRead={handleMarkAsRead}
       />
     </div>
   );
