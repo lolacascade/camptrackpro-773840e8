@@ -22,38 +22,11 @@ const navigation = [
   { name: "Settings", href: "/settings" },
 ];
 
-// Mock notifications - in a real app, this would come from an API
-const mockNotifications = [
-  {
-    id: "1",
-    title: "New Maintenance Request",
-    message: "Boat #123 requires urgent maintenance",
-    date: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-    read: false,
-  },
-  {
-    id: "2",
-    title: "Payment Received",
-    message: "Payment for slip B12 has been processed",
-    date: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
-    read: false,
-  },
-];
-
 export function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState(mockNotifications);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(notifications.map(n => 
-      n.id === id ? { ...n, read: true } : n
-    ));
-  };
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -67,9 +40,12 @@ export function Header() {
   }, []);
 
   return (
-    <div className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm">
+    <div className="flex h-16 items-center justify-between px-4 bg-background">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold text-primary">DockEase</h1>
+        <h1 className="text-xl font-bold">
+          <span className="text-primary">Dock</span>
+          <span className="text-secondary">Ease</span>
+        </h1>
       </div>
       
       <div className="flex items-center gap-6">
@@ -79,10 +55,11 @@ export function Header() {
               key={item.name}
               to={item.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-primary",
+                "text-sm font-medium transition-colors relative",
+                "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
                 location.pathname === item.href
-                  ? "text-primary"
-                  : "text-muted-foreground"
+                  ? "text-primary after:scale-x-100 after:bg-primary"
+                  : "text-secondary hover:text-primary after:bg-primary"
               )}
             >
               {item.name}
@@ -90,29 +67,25 @@ export function Header() {
           ))}
         </nav>
         
-        <Button
-          variant="outline"
-          className="relative h-9 w-60 justify-start text-sm text-muted-foreground"
-          onClick={() => setOpen(true)}
-        >
-          <Search className="mr-2 h-4 w-4" />
-          Search...
-          <kbd className="pointer-events-none absolute right-2 top-2 hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-            <span className="text-xs">⌘</span>K
-          </kbd>
-        </Button>
+        <div className="flex items-center gap-6">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setOpen(true)}
+            className="text-secondary hover:text-primary hover:bg-transparent"
+          >
+            <Search className="h-5 w-5" />
+          </Button>
 
-        <Button 
-          variant="ghost" 
-          size="icon"
-          className="relative"
-          onClick={() => setNotificationOpen(true)}
-        >
-          <Bell className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
-          )}
-        </Button>
+          <Button 
+            variant="ghost" 
+            size="icon"
+            className="relative text-secondary hover:text-primary hover:bg-transparent"
+            onClick={() => setNotificationOpen(true)}
+          >
+            <Bell className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -166,8 +139,6 @@ export function Header() {
       <NotificationDrawer
         open={notificationOpen}
         onOpenChange={setNotificationOpen}
-        notifications={notifications}
-        onMarkAsRead={handleMarkAsRead}
       />
     </div>
   );
