@@ -26,7 +26,7 @@ const activities = [
 
 export function RecentActivity() {
   return (
-    <Card className="border border-[#19383C] rounded-xl bg-transparent">
+    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader>
         <CardTitle className="text-[#133134]">Recent Activity</CardTitle>
       </CardHeader>

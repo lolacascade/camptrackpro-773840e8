@@ -12,7 +12,7 @@ interface StatCardProps {
 
 export function StatCard({ title, value, description, icon: Icon, trend, trendValue }: StatCardProps) {
   return (
-    <Card className="border border-[#19383C] rounded-xl bg-transparent">
+    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-[#3E4238]">{title}</CardTitle>
         <Icon className="h-4 w-4 text-[#3E4238]" />

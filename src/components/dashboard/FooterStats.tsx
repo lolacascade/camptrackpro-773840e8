@@ -6,8 +6,8 @@ interface FooterStatsProps {
 
 export function FooterStats({ totalSlips }: FooterStatsProps) {
   return (
-    <Card className="mt-8 border border-[#19383C] rounded-xl bg-transparent">
-      <CardContent className="flex justify-between items-center p-4">
+    <Card className="mt-8 border border-[#E8EBEB] rounded-xl bg-transparent">
+      <CardContent className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 space-y-4 sm:space-y-0">
         <div className="text-base text-[#3E4238]">
           <span className="font-medium">Total Slips:</span> {totalSlips}
         </div>

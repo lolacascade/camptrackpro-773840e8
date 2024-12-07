@@ -11,12 +11,12 @@ const slips = [
 
 export function MarinaOverview() {
   return (
-    <Card className="col-span-2 border border-[#19383C] rounded-xl bg-transparent">
+    <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader>
         <CardTitle className="text-[#133134]">Marina Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {slips.map((slip) => (
             <div
               key={slip.id}
