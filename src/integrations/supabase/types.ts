@@ -230,6 +230,7 @@ export type Database = {
           social_media: Json | null
           total_slips: number | null
           updated_at: string | null
+          user_id: string | null
           videos: string[] | null
           website: string | null
         }
@@ -248,6 +249,7 @@ export type Database = {
           social_media?: Json | null
           total_slips?: number | null
           updated_at?: string | null
+          user_id?: string | null
           videos?: string[] | null
           website?: string | null
         }
@@ -266,6 +268,7 @@ export type Database = {
           social_media?: Json | null
           total_slips?: number | null
           updated_at?: string | null
+          user_id?: string | null
           videos?: string[] | null
           website?: string | null
         }
