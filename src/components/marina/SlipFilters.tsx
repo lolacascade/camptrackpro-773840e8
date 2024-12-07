@@ -41,7 +41,7 @@ export function SlipFilters({
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Statuses</SelectItem>
+          <SelectItem value="all">All Statuses</SelectItem>
           <SelectItem value="available">Available</SelectItem>
           <SelectItem value="occupied">Occupied</SelectItem>
           <SelectItem value="maintenance">Maintenance</SelectItem>
@@ -52,7 +52,7 @@ export function SlipFilters({
           <SelectValue placeholder="Filter by dock" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">All Docks</SelectItem>
+          <SelectItem value="all">All Docks</SelectItem>
           {availableDocks.map((dock) => (
             <SelectItem key={dock} value={dock}>
               {dock}
