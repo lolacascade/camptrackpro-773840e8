@@ -1,15 +1,16 @@
 import { Layout } from "@/components/layout/Layout";
-import { StatCard } from "@/components/dashboard/StatCard";
 import { MarinaOverview } from "@/components/dashboard/MarinaOverview";
 import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { Anchor, DollarSign, Ship, Wrench, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import { StatsGrid } from "@/components/dashboard/StatsGrid";
+import { FooterStats } from "@/components/dashboard/FooterStats";
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -182,71 +183,23 @@ export default function Index() {
         </div>
 
         {/* Main Dashboard Content */}
-        <div className="flex-1 p-8 overflow-y-auto">
-          <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-primary">Marina Dashboard</h1>
-              <div className="flex gap-2">
-                <span className="text-sm text-muted-foreground">
-                  Last updated: {new Date().toLocaleDateString()}
-                </span>
-              </div>
-            </div>
+        <div className="flex-1 p-6">
+          <div className="bg-white rounded-[24px] p-6 space-y-8 text-[#133134]">
+            <DashboardHeader />
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                title="Total Occupancy"
-                value={`${occupancyRate}%`}
-                description={`${marinaSummary.occupiedSlips} of ${marinaSummary.totalSlips} slips occupied`}
-                icon={Anchor}
-                trend="up"
-                trendValue="Real-time updates enabled"
-              />
-              <StatCard
-                title="Monthly Revenue"
-                value="$45,231"
-                description="Total revenue this month"
-                icon={DollarSign}
-                trend="up"
-                trendValue="12% from last month"
-              />
-              <StatCard
-                title="Active Boats"
-                value={marinaSummary.activeBoats.toString()}
-                description="Boats currently in marina"
-                icon={Ship}
-                trend="up"
-                trendValue="Real-time updates enabled"
-              />
-              <StatCard
-                title="Pending Maintenance"
-                value="8"
-                description="Maintenance requests"
-                icon={Wrench}
-                trend="down"
-                trendValue="2 less than last week"
-              />
-            </div>
+            <StatsGrid 
+              occupancyRate={occupancyRate}
+              occupiedSlips={marinaSummary.occupiedSlips}
+              totalSlips={marinaSummary.totalSlips}
+              activeBoats={marinaSummary.activeBoats}
+            />
 
             <div className="grid gap-8 md:grid-cols-2">
               <MarinaOverview />
               <RecentActivity />
             </div>
 
-            {/* Footer Stats Panel */}
-            <Card className="mt-8">
-              <CardContent className="flex justify-between items-center p-4">
-                <div className="text-sm">
-                  <span className="font-medium">Total Slips:</span> {marinaSummary.totalSlips}
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Active Customers:</span> 95
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Pending Tasks:</span> 8
-                </div>
-              </CardContent>
-            </Card>
+            <FooterStats totalSlips={marinaSummary.totalSlips} />
           </div>
         </div>
       </div>
