@@ -4,6 +4,7 @@ import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { StatsGrid } from "@/components/dashboard/StatsGrid";
 import { FooterStats } from "@/components/dashboard/FooterStats";
+import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatAssistant } from "@/components/dashboard/ChatAssistant";
@@ -54,6 +55,8 @@ export default function Index() {
               totalSlips={marinaSummary?.totalSlips ?? 0}
               activeBoats={marinaSummary?.activeBoats ?? 0}
             />
+
+            <RevenueBreakdown />
 
             <div className="grid gap-8 md:grid-cols-2">
               <MarinaOverview />
