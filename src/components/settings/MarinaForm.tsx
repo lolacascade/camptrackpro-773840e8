@@ -27,7 +27,7 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
     contact_email: '',
     website: '',
     coordinates: { latitude: '', longitude: '' },
-    total_slips: '',
+    total_slips: null,
     approach_info: {
       min_approach_depth: '',
       min_channel_depth: '',
@@ -81,7 +81,9 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
         ? { ...prev[section], [field]: value }
         : section === 'services_amenities' || section === 'other_features'
           ? { ...prev[section], [field]: value }
-          : value
+          : section === 'total_slips'
+            ? value === '' ? null : parseInt(value, 10)
+            : value
     }));
   };
 
@@ -170,7 +172,7 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
                 <Input
                   id="marina-capacity"
                   type="number"
-                  value={formData.total_slips}
+                  value={formData.total_slips || ''}
                   onChange={(e) => handleInputChange('total_slips', '', e.target.value)}
                 />
               </div>
