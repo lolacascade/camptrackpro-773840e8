@@ -16,12 +16,6 @@ import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
-// Temporarily disabled authentication check
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  // Temporarily return children directly without auth check
-  return <>{children}</>;
-};
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -33,7 +27,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+          <Route path="/app" element={<Dashboard />}>
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="map" element={<MarinaMap />} />
             <Route path="customers" element={<Customers />} />
