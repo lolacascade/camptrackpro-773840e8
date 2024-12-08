@@ -52,25 +52,21 @@ export default function Dashboard() {
     <div className="flex h-[calc(100vh-4rem)]">
       <ChatAssistant />
       <div className="flex-1 p-12">
-        {isMainDashboard ? (
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
-            <DashboardHeader />
-            <StatsGrid 
-              occupancyRate={marinaSummary?.occupancyRate ?? 0}
-              occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-              totalSlips={marinaSummary?.totalSlips ?? 0}
-              activeBoats={marinaSummary?.activeBoats ?? 0}
-            />
-            <RevenueBreakdown />
-            <div className="grid gap-8 md:grid-cols-2">
-              <MarinaOverview />
-              <RecentActivity />
-            </div>
-            <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+        <div className="bg-white rounded-[24px] p-12 space-y-8">
+          <DashboardHeader />
+          <StatsGrid 
+            occupancyRate={marinaSummary?.occupancyRate ?? 0}
+            occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
+            totalSlips={marinaSummary?.totalSlips ?? 0}
+            activeBoats={marinaSummary?.activeBoats ?? 0}
+          />
+          <RevenueBreakdown />
+          <div className="grid gap-8 md:grid-cols-2">
+            <MarinaOverview />
+            <RecentActivity />
           </div>
-        ) : (
-          <Outlet />
-        )}
+          <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+        </div>
       </div>
     </div>
   );
