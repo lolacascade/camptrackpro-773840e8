@@ -38,51 +38,51 @@ export function RevenueBreakdown() {
   return (
     <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-[#133134] text-2xl">Revenue Breakdown</CardTitle>
+        <CardTitle className="text-[#0D1D1F] text-2xl">Revenue Breakdown</CardTitle>
         <div className="flex items-center gap-4">
-          <button className="text-[#133134] text-base">&lt;</button>
-          <span className="text-[#133134] text-base font-medium">
+          <button className="text-[#0D1D1F] text-base">&lt;</button>
+          <span className="text-[#0D1D1F] text-base font-medium">
             {format(currentDate, 'MMM yyyy')}
           </span>
-          <button className="text-[#133134] text-base">&gt;</button>
+          <button className="text-[#0D1D1F] text-base">&gt;</button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#0D1D1F]"></div>
-              <span className="text-[#133134] text-base">Slip Renewals</span>
+              <div className="w-3 h-3 rounded-full bg-[#FF1493]"></div>
+              <span className="text-[#0D1D1F] text-base">Slip Renewals</span>
             </div>
             <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
+              <div className="text-[#0D1D1F] text-2xl font-bold">
                 ${(7221.31).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
-              <div className="text-[#BFC6B3] text-base">↓ 5% compared to previous month</div>
+              <div className="text-[#3E4238] text-base">↑ 5% compared to previous month</div>
             </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#C0CCAB]"></div>
-              <span className="text-[#133134] text-base">New Slip Rentals</span>
+              <div className="w-3 h-3 rounded-full bg-[#32CD32]"></div>
+              <span className="text-[#0D1D1F] text-base">New Slip Rentals</span>
             </div>
             <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
+              <div className="text-[#0D1D1F] text-2xl font-bold">
                 ${(8874.56).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
-              <div className="text-[#BFC6B3] text-base">↑ 10% compared to previous month</div>
+              <div className="text-[#3E4238] text-base">↑ 10% compared to previous month</div>
             </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#0D1D1F]/60"></div>
-              <span className="text-[#133134] text-base">Maintenance Services</span>
+              <div className="w-3 h-3 rounded-full bg-[#FFA500]"></div>
+              <span className="text-[#0D1D1F] text-base">Maintenance Services</span>
             </div>
             <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
+              <div className="text-[#0D1D1F] text-2xl font-bold">
                 ${(3472.19).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
-              <div className="text-[#BFC6B3] text-base">Stable month-over-month</div>
+              <div className="text-[#3E4238] text-base">Stable month-over-month</div>
             </div>
           </div>
         </div>
@@ -115,18 +115,18 @@ export function RevenueBreakdown() {
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-[#FFF] p-4 rounded-lg shadow-lg border border-[#BFC6B3]/20 text-base">
+                      <div className="bg-white p-4 rounded-lg shadow-lg border border-[#BFC6B3]/20 text-base">
                         <p className="font-bold text-[#0D1D1F]">{`${label} ${payload[0]?.payload.year}`}</p>
                         <p className="text-[#0D1D1F]">
-                          <span className="inline-block w-3 h-3 rounded-full bg-[#0D1D1F] mr-2"></span>
+                          <span className="inline-block w-3 h-3 rounded-full bg-[#FF1493] mr-2"></span>
                           {`Slip Renewals: $${payload[0]?.value.toLocaleString()}`}
                         </p>
                         <p className="text-[#0D1D1F]">
-                          <span className="inline-block w-3 h-3 rounded-full bg-[#C0CCAB] mr-2"></span>
+                          <span className="inline-block w-3 h-3 rounded-full bg-[#32CD32] mr-2"></span>
                           {`New Rentals: $${payload[1]?.value.toLocaleString()}`}
                         </p>
                         <p className="text-[#0D1D1F]">
-                          <span className="inline-block w-3 h-3 rounded-full bg-[#0D1D1F]/60 mr-2"></span>
+                          <span className="inline-block w-3 h-3 rounded-full bg-[#FFA500] mr-2"></span>
                           {`Maintenance: $${payload[2]?.value.toLocaleString()}`}
                         </p>
                       </div>
@@ -135,9 +135,9 @@ export function RevenueBreakdown() {
                   return null;
                 }}
               />
-              <Bar dataKey="slipRenewals" stackId="a" fill="#0D1D1F" />
-              <Bar dataKey="newSlipRentals" stackId="a" fill="#C0CCAB" />
-              <Bar dataKey="maintenanceServices" stackId="a" fill="#0D1D1F60" />
+              <Bar dataKey="slipRenewals" stackId="a" fill="#FF1493" />
+              <Bar dataKey="newSlipRentals" stackId="a" fill="#32CD32" />
+              <Bar dataKey="maintenanceServices" stackId="a" fill="#FFA500" />
             </BarChart>
           </ResponsiveContainer>
         </div>
