@@ -47,62 +47,56 @@ export default function Maintenance() {
   };
 
   return (
-    <Layout>
-      <div className="flex h-[calc(100vh-4rem)]">
-        <div className="flex-1 p-12">
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-[#133134]">Maintenance Requests</h1>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" /> New Request
-              </Button>
-            </div>
+    <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-[#133134]">Maintenance Requests</h1>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" /> New Request
+        </Button>
+      </div>
 
-            <div className="grid gap-4">
-              {requests.map((request) => (
-                <div
-                  key={request.id}
-                  className="p-6 rounded-xl border border-[#E8EBEB] bg-white/50 backdrop-blur-sm"
+      <div className="grid gap-4">
+        {requests.map((request) => (
+          <div
+            key={request.id}
+            className="p-6 rounded-xl border border-[#E8EBEB] bg-white/50 backdrop-blur-sm"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-semibold">{request.title}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {request.description}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Boat: {request.boatName}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Date: {request.date.toLocaleDateString()}
+                </p>
+                <p className="text-sm font-medium mt-2">
+                  Status: {request.status}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange(request.id, 'in-progress')}
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold">{request.title}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {request.description}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Boat: {request.boatName}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Date: {request.date.toLocaleDateString()}
-                      </p>
-                      <p className="text-sm font-medium mt-2">
-                        Status: {request.status}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleStatusChange(request.id, 'in-progress')}
-                      >
-                        Start
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleStatusChange(request.id, 'completed')}
-                      >
-                        Complete
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                  Start
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleStatusChange(request.id, 'completed')}
+                >
+                  Complete
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
-    </Layout>
+    </div>
   );
 }

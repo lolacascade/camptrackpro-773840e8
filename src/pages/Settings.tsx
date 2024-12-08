@@ -32,34 +32,22 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <Layout>
-        <div className="flex h-[calc(100vh-4rem)]">
-          <div className="flex-1 p-12">
-            <div className="bg-white rounded-[24px] p-12 space-y-8">
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-                <p className="ml-2">Loading marina details...</p>
-              </div>
-            </div>
-          </div>
+      <div className="bg-white rounded-[24px] p-12 space-y-8">
+        <div className="flex items-center justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <p className="ml-2">Loading marina details...</p>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
-    <Layout>
-      <div className="flex h-[calc(100vh-4rem)]">
-        <div className="flex-1 p-12">
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
-            <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
-            <p className="text-muted-foreground">
-              {marinaDetails ? "Update your marina's information below." : "Get started by adding your marina's information."}
-            </p>
-            <MarinaForm initialData={marinaDetails} />
-          </div>
-        </div>
-      </div>
-    </Layout>
+    <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
+      <p className="text-muted-foreground">
+        {marinaDetails ? "Update your marina's information below." : "Get started by adding your marina's information."}
+      </p>
+      <MarinaForm initialData={marinaDetails} />
+    </div>
   );
 }

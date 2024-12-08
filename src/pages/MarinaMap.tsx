@@ -69,46 +69,40 @@ export default function MarinaMap() {
   };
 
   return (
-    <Layout>
-      <div className="flex h-[calc(100vh-4rem)]">
-        <div className="flex-1 p-12">
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
-            </div>
+    <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
+      </div>
 
-            <SlipStats {...stats} />
+      <SlipStats {...stats} />
 
-            <SlipFilters
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              statusFilter={statusFilter}
-              onStatusFilterChange={setStatusFilter}
-              dockFilter={dockFilter}
-              onDockFilterChange={setDockFilter}
-              availableDocks={availableDocks}
-            />
+      <SlipFilters
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        dockFilter={dockFilter}
+        onDockFilterChange={setDockFilter}
+        availableDocks={availableDocks}
+      />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredSlips?.map((slip) => (
-                <SlipCard
-                  key={slip.id}
-                  id={slip.id}
-                  name={slip.name}
-                  status={slip.status as 'available' | 'occupied' | 'maintenance'}
-                  boat={slip.boats?.[0]}
-                  customerName={slip.boats?.[0]?.customers?.name}
-                  maintenanceDescription={slip.maintenance_requests?.[0]?.description}
-                  dock={slip.dock}
-                  onStatusChange={async () => {
-                    await refetchSlips();
-                  }}
-                  onEdit={() => handleEditBoat(slip.boats?.[0] || null)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filteredSlips?.map((slip) => (
+          <SlipCard
+            key={slip.id}
+            id={slip.id}
+            name={slip.name}
+            status={slip.status as 'available' | 'occupied' | 'maintenance'}
+            boat={slip.boats?.[0]}
+            customerName={slip.boats?.[0]?.customers?.name}
+            maintenanceDescription={slip.maintenance_requests?.[0]?.description}
+            dock={slip.dock}
+            onStatusChange={async () => {
+              await refetchSlips();
+            }}
+            onEdit={() => handleEditBoat(slip.boats?.[0] || null)}
+          />
+        ))}
       </div>
 
       <BoatDrawer
@@ -122,6 +116,6 @@ export default function MarinaMap() {
           await refetchSlips();
         }}
       />
-    </Layout>
+    </div>
   );
 }
