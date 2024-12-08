@@ -14,11 +14,11 @@ import { NotificationDrawer } from "@/components/notifications/NotificationDrawe
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/" },
-  { name: "Marina Map", href: "/map" },
-  { name: "Customers", href: "/customers" },
-  { name: "Boats", href: "/boats" },
-  { name: "Maintenance", href: "/maintenance" },
+  { name: "Dashboard", href: "/app/dashboard" },
+  { name: "Marina Map", href: "/app/map" },
+  { name: "Customers", href: "/app/customers" },
+  { name: "Boats", href: "/app/boats" },
+  { name: "Maintenance", href: "/app/maintenance" },
 ];
 
 export function Header() {
@@ -100,7 +100,7 @@ export function Header() {
             variant="ghost"
             size="icon"
             className="text-white hover:text-primary hover:bg-transparent"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/app/settings')}
           >
             <Settings className="h-5 w-5" />
           </Button>
@@ -113,14 +113,14 @@ export function Header() {
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Boats">
             <CommandItem onSelect={() => {
-              navigate("/boats/1");
+              navigate("/app/boats/1");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
               Boat #1 - Sailboat
             </CommandItem>
             <CommandItem onSelect={() => {
-              navigate("/boats/2");
+              navigate("/app/boats/2");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
@@ -129,7 +129,7 @@ export function Header() {
           </CommandGroup>
           <CommandGroup heading="Maintenance">
             <CommandItem onSelect={() => {
-              navigate("/maintenance/1");
+              navigate("/app/maintenance/1");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
@@ -138,14 +138,14 @@ export function Header() {
           </CommandGroup>
           <CommandGroup heading="Quick Actions">
             <CommandItem onSelect={() => {
-              navigate("/maintenance/new");
+              navigate("/app/maintenance/new");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
               Create Maintenance Request
             </CommandItem>
             <CommandItem onSelect={() => {
-              navigate("/boats/new");
+              navigate("/app/boats/new");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />

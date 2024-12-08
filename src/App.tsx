@@ -28,14 +28,14 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route
-            path="/dashboard/*"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/app" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="map" element={<MarinaMap />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="boats" element={<Boats />} />
+            <Route path="maintenance" element={<Maintenance />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
