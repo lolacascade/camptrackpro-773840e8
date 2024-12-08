@@ -14,7 +14,7 @@ import { NotificationDrawer } from "@/components/notifications/NotificationDrawe
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/app/dashboard" },
+  { name: "Dashboard", href: "/app" },
   { name: "Marina Map", href: "/app/map" },
   { name: "Customers", href: "/app/customers" },
   { name: "Boats", href: "/app/boats" },

@@ -70,11 +70,11 @@ export default function Dashboard() {
                 <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
               </div>
             } />
-            <Route path="/map" element={<MarinaMap />} />
-            <Route path="/customers" element={<Customers />} />
-            <Route path="/boats" element={<Boats />} />
-            <Route path="/maintenance" element={<Maintenance />} />
-            <Route path="/settings" element={<Settings />} />
+            <Route path="map" element={<MarinaMap />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="boats" element={<Boats />} />
+            <Route path="maintenance" element={<Maintenance />} />
+            <Route path="settings" element={<Settings />} />
           </Routes>
         </div>
       </div>
