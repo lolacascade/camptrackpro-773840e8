@@ -41,9 +41,14 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
-  const siteUrl = window.location.origin.replace(/\/$/, '');
+  // Get the site URL and port dynamically
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const siteUrl = isDevelopment 
+    ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+    : window.location.origin;
   const redirectTo = `${siteUrl}/dashboard`;
   
+  console.log('Environment:', process.env.NODE_ENV);
   console.log('Site URL:', siteUrl);
   console.log('Redirect URL:', redirectTo);
 
