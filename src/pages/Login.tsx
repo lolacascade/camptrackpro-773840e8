@@ -1,10 +1,11 @@
 import { HeroSection } from "@/components/landing/HeroSection";
 import { PainPointsSection } from "@/components/landing/PainPointsSection";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import {
   Carousel,
   CarouselContent,
@@ -12,27 +13,61 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { useEffect } from "react";
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/');
+      }
+    };
+
+    checkUser();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        navigate('/');
+      }
     });
 
-    if (error) {
-      console.error('Error logging in:', error.message);
-    } else {
-      navigate('/');
-    }
-  };
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-background">
-      <HeroSection />
-      <PainPointsSection />
-      
+      {/* Login Section */}
+      <div className="py-12 bg-[#FFF]">
+        <div className="container mx-auto px-4">
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-center mb-8 text-[#0D1D1F]">Welcome to DockEase</h2>
+            <Card className="p-6">
+              <Auth
+                supabaseClient={supabase}
+                appearance={{
+                  theme: ThemeSupa,
+                  variables: {
+                    default: {
+                      colors: {
+                        brand: '#0D1D1F',
+                        brandAccent: '#BFC6B3',
+                      },
+                    },
+                  },
+                }}
+                providers={['google']}
+                redirectTo={`${window.location.origin}/`}
+              />
+            </Card>
+          </div>
+        </div>
+      </div>
+
       {/* Testimonials Section */}
       <div className="py-24 bg-background">
         <div className="container mx-auto px-4">
