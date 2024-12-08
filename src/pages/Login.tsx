@@ -3,7 +3,7 @@ import { PainPointsSection } from "@/components/landing/PainPointsSection";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Carousel,
