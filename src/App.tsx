@@ -20,14 +20,14 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="/map" element={<MarinaMap />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/boats" element={<Boats />} />
           <Route path="/maintenance" element={<Maintenance />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

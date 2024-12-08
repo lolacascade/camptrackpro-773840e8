@@ -1,22 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 
 export function HeroSection() {
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-    });
-
-    if (error) {
-      console.error('Error logging in:', error.message);
-    } else {
-      navigate('/');
-    }
+  const handleGetStarted = () => {
+    navigate('/login');
   };
 
   return (
@@ -31,7 +22,7 @@ export function HeroSection() {
         </p>
         <Button 
           size="lg" 
-          onClick={handleLogin}
+          onClick={handleGetStarted}
           className="text-[#FFF] bg-[#0D1D1F] hover:bg-[#0D1D1F]/90 text-lg px-8 py-6 h-auto"
         >
           Get Started
@@ -47,7 +38,7 @@ export function HeroSection() {
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#FFF] border-t border-[#BFC6B3]/20 md:hidden">
         <Button 
           size="lg" 
-          onClick={handleLogin}
+          onClick={handleGetStarted}
           className="w-full text-[#FFF] bg-[#0D1D1F] hover:bg-[#0D1D1F]/90"
         >
           Get Started
