@@ -8,14 +8,12 @@ import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatAssistant } from "@/components/dashboard/ChatAssistant";
-import { Routes, Route } from "react-router-dom";
-import MarinaMap from "./MarinaMap";
-import Customers from "./Customers";
-import Boats from "./Boats";
-import Maintenance from "./Maintenance";
-import Settings from "./Settings";
+import { Outlet, useLocation } from "react-router-dom";
 
 export default function Dashboard() {
+  const location = useLocation();
+  const isMainDashboard = location.pathname === "/app";
+
   const { data: marinaSummary } = useQuery({
     queryKey: ['marinaSummary'],
     queryFn: async () => {
@@ -52,30 +50,25 @@ export default function Dashboard() {
       <div className="flex h-[calc(100vh-4rem)]">
         <ChatAssistant />
         <div className="flex-1 p-12">
-          <Routes>
-            <Route path="/" element={
-              <div className="bg-white rounded-[24px] p-12 space-y-8">
-                <DashboardHeader />
-                <StatsGrid 
-                  occupancyRate={marinaSummary?.occupancyRate ?? 0}
-                  occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-                  totalSlips={marinaSummary?.totalSlips ?? 0}
-                  activeBoats={marinaSummary?.activeBoats ?? 0}
-                />
-                <RevenueBreakdown />
-                <div className="grid gap-8 md:grid-cols-2">
-                  <MarinaOverview />
-                  <RecentActivity />
-                </div>
-                <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+          {isMainDashboard ? (
+            <div className="bg-white rounded-[24px] p-12 space-y-8">
+              <DashboardHeader />
+              <StatsGrid 
+                occupancyRate={marinaSummary?.occupancyRate ?? 0}
+                occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
+                totalSlips={marinaSummary?.totalSlips ?? 0}
+                activeBoats={marinaSummary?.activeBoats ?? 0}
+              />
+              <RevenueBreakdown />
+              <div className="grid gap-8 md:grid-cols-2">
+                <MarinaOverview />
+                <RecentActivity />
               </div>
-            } />
-            <Route path="map" element={<MarinaMap />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="boats" element={<Boats />} />
-            <Route path="maintenance" element={<Maintenance />} />
-            <Route path="settings" element={<Settings />} />
-          </Routes>
+              <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+            </div>
+          ) : (
+            <Outlet />
+          )}
         </div>
       </div>
     </Layout>
