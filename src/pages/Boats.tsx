@@ -37,7 +37,16 @@ export default function Boats() {
       console.log('Fetching boats...');
       const { data, error } = await supabase
         .from('boats')
-        .select('*, customers(name)')
+        .select(`
+          *,
+          customers (
+            name
+          ),
+          slips (
+            name,
+            dock
+          )
+        `)
         .order('boat_name');
 
       if (error) {

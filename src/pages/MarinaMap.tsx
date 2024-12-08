@@ -14,7 +14,7 @@ export default function MarinaMap() {
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data: slipsData, refetch: refetchSlips } = useQuery({
+  const { data: slipsData, refetch: refetchSlips, isLoading } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
       console.log('Fetching slips data...');
@@ -45,7 +45,7 @@ export default function MarinaMap() {
       }
 
       console.log('Slips data:', slips);
-      return slips;
+      return slips || [];
     },
   });
 
@@ -72,6 +72,14 @@ export default function MarinaMap() {
     setSelectedBoat(boat);
     setIsDrawerOpen(true);
   };
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-[24px] p-12">
+        <div className="text-center text-gray-500">Loading marina data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white rounded-[24px] p-12 space-y-8">

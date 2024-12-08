@@ -19,7 +19,12 @@ export default function Customers() {
       console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
-        .select('*')
+        .select(`
+          *,
+          boats (
+            boat_name
+          )
+        `)
         .order('name');
 
       if (error) {
