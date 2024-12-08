@@ -41,6 +41,9 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
+  const redirectTo = window.location.origin + '/dashboard';
+  console.log('Redirect URL:', redirectTo); // Debug log
+
   return (
     <div className="min-h-screen bg-[#FFF] flex flex-col">
       <div className="flex-1 flex items-center justify-center p-4">
@@ -64,7 +67,7 @@ export default function Login() {
               }
             }}
             providers={['google']}
-            redirectTo={`${window.location.origin}/dashboard`}
+            redirectTo={redirectTo}
           />
         </Card>
       </div>
