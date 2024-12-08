@@ -41,8 +41,12 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
-  const redirectTo = window.location.origin + '/dashboard';
-  console.log('Redirect URL:', redirectTo); // Debug log
+  // Get the site URL without any trailing slashes or colons
+  const siteUrl = window.location.origin.replace(/\/$/, '');
+  const redirectTo = `${siteUrl}/dashboard`;
+  
+  console.log('Site URL:', siteUrl);
+  console.log('Redirect URL:', redirectTo);
 
   return (
     <div className="min-h-screen bg-[#FFF] flex flex-col">
