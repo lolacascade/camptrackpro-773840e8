@@ -6,11 +6,7 @@ export interface Customer {
   address: string | null
   created_at?: string | null
   updated_at?: string | null
-  boats?: BoatInfo[]
-}
-
-export interface BoatInfo {
-  name: string
-  type: string
-  length: string
+  boats?: {
+    boat_name: string
+  }[]
 }
