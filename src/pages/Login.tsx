@@ -41,7 +41,7 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
-  // Get the site URL without any trailing slashes or colons
+  // Get the site URL without any trailing slashes
   const siteUrl = window.location.origin.replace(/\/$/, '');
   const redirectTo = `${siteUrl}/dashboard`;
   
@@ -72,6 +72,14 @@ export default function Login() {
             }}
             providers={['google']}
             redirectTo={redirectTo}
+            onError={(error) => {
+              console.error('Auth error:', error);
+              toast({
+                title: "Authentication Error",
+                description: error.message,
+                variant: "destructive"
+              });
+            }}
           />
         </Card>
       </div>
