@@ -9,8 +9,8 @@ import { Boat } from "@/types/boat";
 
 export default function MarinaMap() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [dockFilter, setDockFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dockFilter, setDockFilter] = useState("all");
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -51,15 +51,23 @@ export default function MarinaMap() {
 
   if (error) {
     console.error('Query error:', error);
+    return (
+      <div className="bg-white rounded-[24px] p-12">
+        <div className="text-center text-red-500">Error loading marina data: {error.message}</div>
+      </div>
+    );
   }
 
   const filteredSlips = slipsData?.filter((slip) => {
+    console.log('Filtering slip:', slip);
     const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = !statusFilter || slip.status === statusFilter;
-    const matchesDock = !dockFilter || slip.dock === dockFilter;
+    const matchesStatus = statusFilter === 'all' || slip.status === statusFilter;
+    const matchesDock = dockFilter === 'all' || slip.dock === dockFilter;
     return matchesSearch && matchesStatus && matchesDock;
   });
+
+  console.log('Filtered slips:', filteredSlips);
 
   const availableDocks = Array.from(
     new Set(slipsData?.map((slip) => slip.dock).filter((dock): dock is string => typeof dock === 'string') || [])
@@ -71,6 +79,8 @@ export default function MarinaMap() {
     occupiedSlips: slipsData?.filter(s => s.status === 'occupied').length || 0,
     maintenanceSlips: slipsData?.filter(s => s.status === 'maintenance').length || 0,
   };
+
+  console.log('Marina stats:', stats);
 
   const handleEditBoat = (boat: Boat | null) => {
     setSelectedBoat(boat);
