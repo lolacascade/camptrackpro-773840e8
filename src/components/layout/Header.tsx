@@ -50,11 +50,11 @@ export function Header() {
   };
 
   return (
-    <div className="flex h-16 items-center justify-between px-4 bg-background">
+    <div className="flex h-16 items-center justify-between px-4 bg-secondary">
       <div className="flex items-center">
         <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
           <span className="text-primary">Dock</span>
-          <span className="text-secondary">Ease</span>
+          <span className="text-white">Ease</span>
         </Link>
       </div>
       
@@ -69,7 +69,7 @@ export function Header() {
                 "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
                 location.pathname === item.href
                   ? "text-primary after:scale-x-100 after:bg-primary"
-                  : "text-secondary hover:text-primary after:bg-primary"
+                  : "text-white hover:text-primary after:bg-primary"
               )}
             >
               {item.name}
@@ -82,7 +82,7 @@ export function Header() {
             variant="ghost"
             size="icon"
             onClick={() => setOpen(true)}
-            className="text-secondary hover:text-primary hover:bg-transparent"
+            className="text-white hover:text-primary hover:bg-transparent"
           >
             <Search className="h-5 w-5" />
           </Button>
@@ -90,7 +90,7 @@ export function Header() {
           <Button 
             variant="ghost" 
             size="icon"
-            className="relative text-secondary hover:text-primary hover:bg-transparent"
+            className="relative text-white hover:text-primary hover:bg-transparent"
             onClick={() => setNotificationOpen(true)}
           >
             <Bell className="h-5 w-5" />
@@ -99,7 +99,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="icon"
-            className="text-secondary hover:text-primary hover:bg-transparent"
+            className="text-white hover:text-primary hover:bg-transparent"
             onClick={() => navigate('/settings')}
           >
             <Settings className="h-5 w-5" />
