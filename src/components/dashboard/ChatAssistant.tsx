@@ -40,7 +40,7 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="w-96 bg-secondary p-4 flex flex-col">
+    <div className="w-96 bg-[#0D1D1F] p-4 flex flex-col">
       <h2 className="text-xl font-semibold mb-4 text-white">Marina Assistant</h2>
       <ScrollArea className="flex-1 pr-4">
         <div className="space-y-4">
@@ -49,8 +49,8 @@ export function ChatAssistant() {
               key={i}
               className={`p-3 rounded-lg ${
                 message.role === "assistant"
-                  ? "text-primary"
-                  : "text-white ml-4"
+                  ? "text-[#C0CCAB]"
+                  : "bg-white text-[#0D1D1F] ml-4"
               }`}
             >
               {message.content}
@@ -66,7 +66,7 @@ export function ChatAssistant() {
               variant="outline"
               size="sm"
               onClick={() => setInput(query)}
-              className="text-xs text-white hover:text-primary border-primary/50"
+              className="text-xs text-[#0D1D1F] hover:text-[#C0CCAB] border-[#C0CCAB]/50 bg-white"
             >
               {query}
             </Button>
@@ -78,9 +78,9 @@ export function ChatAssistant() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your question..."
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            className="bg-secondary text-white placeholder:text-white/50 border-primary/50"
+            className="bg-[#0D1D1F] text-white placeholder:text-white/50 border-[#C0CCAB]/50"
           />
-          <Button onClick={handleSendMessage} size="icon" className="bg-primary hover:bg-primary/90">
+          <Button onClick={handleSendMessage} size="icon" className="bg-[#C0CCAB] hover:bg-[#C0CCAB]/90">
             <Send className="h-4 w-4" />
           </Button>
         </div>
