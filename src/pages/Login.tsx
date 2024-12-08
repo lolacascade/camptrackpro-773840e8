@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/landing/HeroSection";
 import { PainPointsSection } from "@/components/landing/PainPointsSection";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowRight, ChevronRight } from "lucide-react";
@@ -39,10 +40,16 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const handleGetStarted = () => {
+    // Simply scroll to the login form
+    const loginSection = document.querySelector('#login-section');
+    loginSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Login Section */}
-      <div className="py-12 bg-[#FFF]">
+      <div id="login-section" className="py-12 bg-[#FFF]">
         <div className="container mx-auto px-4">
           <div className="max-w-md mx-auto">
             <h2 className="text-2xl font-bold text-center mb-8 text-[#0D1D1F]">Welcome to DockEase</h2>
@@ -138,7 +145,7 @@ export default function Login() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full" variant="outline">Select Plan</Button>
+                <Button className="w-full" variant="outline" onClick={handleGetStarted}>Select Plan</Button>
               </Card>
             ))}
           </div>
@@ -151,7 +158,7 @@ export default function Login() {
           <p className="text-lg font-semibold">Ready to revolutionize your marina?</p>
           <Button 
             size="lg" 
-            onClick={handleLogin}
+            onClick={handleGetStarted}
             className="w-full sm:w-auto"
           >
             Try DockEase for free
