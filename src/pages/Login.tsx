@@ -41,7 +41,6 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate, toast]);
 
-  // Get the site URL without any trailing slashes
   const siteUrl = window.location.origin.replace(/\/$/, '');
   const redirectTo = `${siteUrl}/dashboard`;
   
@@ -68,17 +67,34 @@ export default function Login() {
                     brandAccent: '#3E4238',
                   }
                 }
+              },
+              className: {
+                container: 'w-full',
+                button: 'w-full px-4 py-2 rounded',
+                input: 'w-full px-4 py-2 rounded border',
+                divider: 'my-4',
+                label: 'text-sm font-medium text-gray-700',
               }
             }}
             providers={['google']}
             redirectTo={redirectTo}
-            onError={(error) => {
-              console.error('Auth error:', error);
-              toast({
-                title: "Authentication Error",
-                description: error.message,
-                variant: "destructive"
-              });
+            magicLink={true}
+            showLinks={true}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: 'Email address',
+                  password_label: 'Your Password',
+                  button_label: 'Sign in',
+                  loading_button_label: 'Signing in...',
+                  social_provider_text: 'Sign in with {{provider}}',
+                  link_text: "Don't have an account? Sign up",
+                },
+                forgotten_password: {
+                  link_text: 'Forgot your password?',
+                  button_label: 'Send reset instructions',
+                }
+              }
             }}
           />
         </Card>
