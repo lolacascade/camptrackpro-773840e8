@@ -1,8 +1,10 @@
+import { HeroSection } from "@/components/landing/HeroSection";
+import { PainPointsSection } from "@/components/landing/PainPointsSection";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Anchor, Shield, Gauge, ChevronRight, BarChart3, MessageSquare, Calendar, DollarSign } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -28,100 +30,9 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <div className="relative h-screen flex items-center justify-center bg-[url('https://images.unsplash.com/photo-1588666309990-d68f08e3d4a6')] bg-cover bg-center">
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
-            Simplify Marina Management.
-            <br />
-            Maximize Efficiency.
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-            DockEase empowers marina operators to streamline operations, boost revenue, and enhance customer satisfaction.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={handleLogin}
-              className="text-lg px-8 py-6 h-auto bg-primary hover:bg-primary/90"
-            >
-              Get Started Today
-              <ArrowRight className="ml-2" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-lg px-8 py-6 h-auto text-white border-white hover:bg-white/10"
-            >
-              See How It Works
-              <ChevronRight className="ml-2" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      {/* Pain Points Section */}
-      <div className="py-24 bg-accent">
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-          <div className="grid grid-cols-2 gap-8">
-            <Card className="p-6 bg-background/60 backdrop-blur hover:scale-105 transition-transform">
-              <BarChart3 className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Revenue Management</h3>
-              <p className="text-muted-foreground">
-                Track and optimize your marina's revenue streams
-              </p>
-            </Card>
-            <Card className="p-6 bg-background/60 backdrop-blur hover:scale-105 transition-transform">
-              <Calendar className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Maintenance Tracking</h3>
-              <p className="text-muted-foreground">
-                Never miss important maintenance tasks
-              </p>
-            </Card>
-            <Card className="p-6 bg-background/60 backdrop-blur hover:scale-105 transition-transform">
-              <MessageSquare className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Customer Communication</h3>
-              <p className="text-muted-foreground">
-                Stay connected with your boaters
-              </p>
-            </Card>
-            <Card className="p-6 bg-background/60 backdrop-blur hover:scale-105 transition-transform">
-              <DollarSign className="w-12 h-12 text-primary mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Financial Reports</h3>
-              <p className="text-muted-foreground">
-                Get insights into your business
-              </p>
-            </Card>
-          </div>
-          <div>
-            <h2 className="text-3xl font-bold mb-6">Common Challenges We Solve</h2>
-            <ul className="space-y-4">
-              <li className="flex items-start">
-                <ChevronRight className="mt-1 mr-2 text-primary" />
-                <span>Struggling to manage slip availability efficiently?</span>
-              </li>
-              <li className="flex items-start">
-                <ChevronRight className="mt-1 mr-2 text-primary" />
-                <span>Losing track of maintenance schedules?</span>
-              </li>
-              <li className="flex items-start">
-                <ChevronRight className="mt-1 mr-2 text-primary" />
-                <span>Difficulty maximizing marina revenue?</span>
-              </li>
-              <li className="flex items-start">
-                <ChevronRight className="mt-1 mr-2 text-primary" />
-                <span>Limited tools to communicate with boaters?</span>
-              </li>
-            </ul>
-            <Button className="mt-8" size="lg">
-              Discover How DockEase Solves These Issues
-              <ArrowRight className="ml-2" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
+      <HeroSection />
+      <PainPointsSection />
+      
       {/* Testimonials Section */}
       <div className="py-24 bg-background">
         <div className="container mx-auto px-4">
