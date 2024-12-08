@@ -52,7 +52,6 @@ export default function MarinaMap() {
     return matchesSearch && matchesStatus && matchesDock;
   });
 
-  // Fix the type issue by ensuring we're working with strings
   const availableDocks = Array.from(
     new Set(slipsData?.map((slip) => slip.dock).filter((dock): dock is string => typeof dock === 'string') || [])
   );
