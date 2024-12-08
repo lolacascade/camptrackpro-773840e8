@@ -40,8 +40,8 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="w-96 border-r bg-background p-4 flex flex-col">
-      <h2 className="text-xl font-semibold mb-4">Marina Assistant</h2>
+    <div className="w-96 bg-secondary p-4 flex flex-col">
+      <h2 className="text-xl font-semibold mb-4 text-white">Marina Assistant</h2>
       <ScrollArea className="flex-1 pr-4">
         <div className="space-y-4">
           {messages.map((message, i) => (
@@ -49,8 +49,8 @@ export function ChatAssistant() {
               key={i}
               className={`p-3 rounded-lg ${
                 message.role === "assistant"
-                  ? "bg-primary/10"
-                  : "bg-secondary ml-4"
+                  ? "text-primary"
+                  : "text-white ml-4"
               }`}
             >
               {message.content}
@@ -58,7 +58,7 @@ export function ChatAssistant() {
           ))}
         </div>
       </ScrollArea>
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 space-y-4 pb-6">
         <div className="flex flex-wrap gap-2">
           {suggestionQueries.map((query, i) => (
             <Button
@@ -66,7 +66,7 @@ export function ChatAssistant() {
               variant="outline"
               size="sm"
               onClick={() => setInput(query)}
-              className="text-xs"
+              className="text-xs text-white hover:text-primary border-primary/50"
             >
               {query}
             </Button>
@@ -78,8 +78,9 @@ export function ChatAssistant() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your question..."
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+            className="bg-secondary text-white placeholder:text-white/50 border-primary/50"
           />
-          <Button onClick={handleSendMessage} size="icon">
+          <Button onClick={handleSendMessage} size="icon" className="bg-primary hover:bg-primary/90">
             <Send className="h-4 w-4" />
           </Button>
         </div>
