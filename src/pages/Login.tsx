@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Footer } from "@/components/layout/Footer";
 
@@ -12,45 +11,12 @@ export default function Login() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/dashboard');
-      }
-    };
-    
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully logged in.",
-        });
-        navigate('/dashboard');
-      }
-      if (event === 'SIGNED_OUT') {
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully.",
-        });
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, toast]);
-
   // Get the site URL and port dynamically
   const isDevelopment = process.env.NODE_ENV === 'development';
   const siteUrl = isDevelopment 
     ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
     : window.location.origin;
-  const redirectTo = `${siteUrl}/dashboard`;
-  
-  console.log('Environment:', process.env.NODE_ENV);
-  console.log('Site URL:', siteUrl);
-  console.log('Redirect URL:', redirectTo);
+  const redirectTo = `${siteUrl}/app`;
 
   return (
     <div className="min-h-screen bg-[#FFF] flex flex-col">
