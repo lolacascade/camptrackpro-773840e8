@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -17,13 +16,18 @@ export default function Customers() {
 
   const fetchCustomers = async () => {
     try {
+      console.log('Fetching customers...');
       const { data, error } = await supabase
         .from('customers')
         .select('*')
         .order('name');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching customers:', error);
+        throw error;
+      }
 
+      console.log('Customers data:', data);
       setCustomers(data || []);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -52,36 +56,32 @@ export default function Customers() {
   };
 
   return (
-    <Layout>
-      <div className="p-12">
-        <div className="bg-transparent rounded-[24px] space-y-8">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
-            <Button onClick={handleAdd}>
-              <Plus className="mr-2 h-4 w-4" /> Add Customer
-            </Button>
-          </div>
-
-          {isLoading ? (
-            <div className="text-[#3E4238]">Loading customers...</div>
-          ) : (
-            <CustomerTable
-              customers={customers}
-              onEdit={handleEdit}
-            />
-          )}
-
-          <CustomerDrawer
-            customer={selectedCustomer}
-            open={isDrawerOpen}
-            onClose={() => {
-              setIsDrawerOpen(false);
-              setSelectedCustomer(null);
-            }}
-            onCustomerUpdated={fetchCustomers}
-          />
-        </div>
+    <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
+        <Button onClick={handleAdd}>
+          <Plus className="mr-2 h-4 w-4" /> Add Customer
+        </Button>
       </div>
-    </Layout>
+
+      {isLoading ? (
+        <div className="text-[#3E4238]">Loading customers...</div>
+      ) : (
+        <CustomerTable
+          customers={customers}
+          onEdit={handleEdit}
+        />
+      )}
+
+      <CustomerDrawer
+        customer={selectedCustomer}
+        open={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setSelectedCustomer(null);
+        }}
+        onCustomerUpdated={fetchCustomers}
+      />
+    </div>
   );
 }

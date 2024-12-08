@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -35,13 +34,18 @@ export default function Boats() {
 
   const fetchBoats = async () => {
     try {
+      console.log('Fetching boats...');
       const { data, error } = await supabase
         .from('boats')
-        .select('*')
+        .select('*, customers(name)')
         .order('boat_name');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching boats:', error);
+        throw error;
+      }
 
+      console.log('Boats data:', data);
       setBoats(data || []);
     } catch (error) {
       console.error('Error fetching boats:', error);

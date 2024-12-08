@@ -1,4 +1,3 @@
-import { Layout } from "@/components/layout/Layout";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +17,7 @@ export default function MarinaMap() {
   const { data: slipsData, refetch: refetchSlips } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
+      console.log('Fetching slips data...');
       const { data: slips, error } = await supabase
         .from('slips')
         .select(`
@@ -39,7 +39,12 @@ export default function MarinaMap() {
           )
         `);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching slips:', error);
+        throw error;
+      }
+
+      console.log('Slips data:', slips);
       return slips;
     },
   });
