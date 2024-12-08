@@ -7,17 +7,13 @@ import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
 import { BoatDrawer } from "@/components/boats/BoatDrawer";
 import { Boat } from "@/types/boat";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { SlipDrawer } from "@/components/marina/SlipDrawer";
 
 export default function MarinaMap() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [dockFilter, setDockFilter] = useState("");
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
-  const [isBoatDrawerOpen, setIsBoatDrawerOpen] = useState(false);
-  const [isSlipDrawerOpen, setIsSlipDrawerOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { data: slipsData, refetch: refetchSlips } = useQuery({
     queryKey: ['slips'],
@@ -69,7 +65,7 @@ export default function MarinaMap() {
 
   const handleEditBoat = (boat: Boat | null) => {
     setSelectedBoat(boat);
-    setIsBoatDrawerOpen(true);
+    setIsDrawerOpen(true);
   };
 
   return (
@@ -79,13 +75,6 @@ export default function MarinaMap() {
           <div className="bg-white rounded-[24px] p-12 space-y-8">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
-              <Button
-                onClick={() => setIsSlipDrawerOpen(true)}
-                className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Slip
-              </Button>
             </div>
 
             <SlipStats {...stats} />
@@ -124,20 +113,12 @@ export default function MarinaMap() {
 
       <BoatDrawer
         boat={selectedBoat}
-        open={isBoatDrawerOpen}
+        open={isDrawerOpen}
         onClose={() => {
-          setIsBoatDrawerOpen(false);
+          setIsDrawerOpen(false);
           setSelectedBoat(null);
         }}
         onBoatUpdated={async () => {
-          await refetchSlips();
-        }}
-      />
-
-      <SlipDrawer
-        open={isSlipDrawerOpen}
-        onClose={() => setIsSlipDrawerOpen(false)}
-        onSlipAdded={async () => {
           await refetchSlips();
         }}
       />
