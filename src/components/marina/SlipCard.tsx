@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +20,7 @@ interface SlipCardProps {
   maintenanceDescription?: string;
   dock?: string;
   onStatusChange: () => Promise<void>;
+  onEdit: () => void;
 }
 
 export function SlipCard({
@@ -30,6 +32,7 @@ export function SlipCard({
   maintenanceDescription,
   dock,
   onStatusChange,
+  onEdit,
 }: SlipCardProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +65,18 @@ export function SlipCard({
   };
 
   return (
-    <Card className="p-6 border border-[#E8EBEB] bg-transparent">
+    <Card className="p-6 border border-[#E8EBEB] bg-transparent relative">
+      <Button 
+        variant="ghost" 
+        size="icon"
+        className="absolute top-4 right-4"
+        onClick={onEdit}
+      >
+        <MoreVertical className="h-5 w-5 text-[#133134]" />
+      </Button>
       <div className="space-y-4">
         <div>
-          <h3 className="text-lg font-semibold text-[#133134]">{name}</h3>
+          <h3 className="text-lg font-semibold text-[#133134] pr-8">{name}</h3>
           <p className="text-[#3E4238]">{dock}</p>
         </div>
 
@@ -103,36 +114,6 @@ export function SlipCard({
               <p className="text-[#3E4238] mt-1">{maintenanceDescription}</p>
             </div>
           )}
-        </div>
-
-        <div className="flex gap-2 pt-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleStatusChange('available')}
-            disabled={isLoading || status === 'available'}
-            className="flex-1"
-          >
-            Available
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleStatusChange('occupied')}
-            disabled={isLoading || status === 'occupied'}
-            className="flex-1"
-          >
-            Occupied
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleStatusChange('maintenance')}
-            disabled={isLoading || status === 'maintenance'}
-            className="flex-1"
-          >
-            Maintenance
-          </Button>
         </div>
       </div>
     </Card>

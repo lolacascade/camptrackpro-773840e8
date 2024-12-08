@@ -5,13 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { SlipCard } from "@/components/marina/SlipCard";
 import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
-import { AddDockSpotDialog } from "@/components/marina/AddDockSpotDialog";
+import { BoatDrawer } from "@/components/boats/BoatDrawer";
+import { Boat } from "@/types/boat";
 
 export default function MarinaMap() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [dockFilter, setDockFilter] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { data: slipsData, refetch: refetchSlips } = useQuery({
     queryKey: ['slips'],
@@ -61,6 +63,11 @@ export default function MarinaMap() {
     maintenanceSlips: slipsData?.filter(s => s.status === 'maintenance').length || 0,
   };
 
+  const handleEditBoat = (boat: Boat | null) => {
+    setSelectedBoat(boat);
+    setIsDrawerOpen(true);
+  };
+
   return (
     <Layout>
       <div className="flex h-[calc(100vh-4rem)]">
@@ -68,11 +75,6 @@ export default function MarinaMap() {
           <div className="bg-white rounded-[24px] p-12 space-y-8">
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
-              <AddDockSpotDialog
-                isOpen={isDialogOpen}
-                onOpenChange={setIsDialogOpen}
-                onDockSpotAdded={refetchSlips}
-              />
             </div>
 
             <SlipStats {...stats} />
@@ -101,12 +103,25 @@ export default function MarinaMap() {
                   onStatusChange={async () => {
                     await refetchSlips();
                   }}
+                  onEdit={() => handleEditBoat(slip.boats?.[0] || null)}
                 />
               ))}
             </div>
           </div>
         </div>
       </div>
+
+      <BoatDrawer
+        boat={selectedBoat}
+        open={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setSelectedBoat(null);
+        }}
+        onBoatUpdated={async () => {
+          await refetchSlips();
+        }}
+      />
     </Layout>
   );
 }
