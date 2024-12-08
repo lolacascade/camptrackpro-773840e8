@@ -4,7 +4,7 @@ import { FeatureCard } from "./FeatureCard";
 
 export function PainPointsSection() {
   return (
-    <div className="py-24 bg-accent">
+    <div className="py-24 bg-background border-y">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-4xl font-bold mb-6">Managing a Marina Was Never Meant to Feel This Overwhelming</h2>
@@ -48,7 +48,7 @@ export function PainPointsSection() {
             />
           </div>
           
-          <div className="space-y-8">
+          <div className="space-y-8 bg-accent rounded-2xl p-8">
             <h2 className="text-3xl font-bold mb-6">Transform Your Marina Operations</h2>
             <div className="space-y-6">
               <div>
@@ -96,7 +96,7 @@ export function PainPointsSection() {
         <div className="text-center">
           <Button 
             size="lg" 
-            className="bg-gradient-to-r from-secondary to-accent text-white hover:opacity-90 transition-all duration-300 text-lg px-8 py-6 h-auto"
+            className="bg-primary hover:bg-primary/90 text-white transition-all duration-300 text-lg px-8 py-6 h-auto"
           >
             Get Started Today – See How DockEase Can Transform Your Marina
             <ArrowRight className="ml-2" />
