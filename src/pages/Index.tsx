@@ -1,72 +1,44 @@
-import { Layout } from "@/components/layout/Layout";
-import { MarinaOverview } from "@/components/dashboard/MarinaOverview";
-import { RecentActivity } from "@/components/dashboard/RecentActivity";
-import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
-import { StatsGrid } from "@/components/dashboard/StatsGrid";
-import { FooterStats } from "@/components/dashboard/FooterStats";
-import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
-import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ChatAssistant } from "@/components/dashboard/ChatAssistant";
 
 export default function Index() {
-  const { data: marinaSummary } = useQuery({
-    queryKey: ['marinaSummary'],
-    queryFn: async () => {
-      const { data: slipsData, error: slipsError } = await supabase
-        .from('slips')
-        .select('status');
+  const navigate = useNavigate();
 
-      if (slipsError) throw slipsError;
-
-      const { data: boatsData, error: boatsError } = await supabase
-        .from('boats')
-        .select('id');
-
-      if (boatsError) throw boatsError;
-
-      const totalSlips = slipsData.length;
-      const occupiedSlips = slipsData.filter(slip => slip.status === 'occupied').length;
-      const activeBoats = boatsData.length;
-      const occupancyRate = totalSlips > 0 
-        ? Math.round((occupiedSlips / totalSlips) * 100)
-        : 0;
-
-      return {
-        totalSlips,
-        occupiedSlips,
-        activeBoats,
-        occupancyRate
-      };
-    }
-  });
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/dashboard');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
 
   return (
-    <Layout>
-      <div className="flex h-[calc(100vh-4rem)]">
-        <ChatAssistant />
-        <div className="flex-1 p-12">
-          <div className="bg-white rounded-[24px] p-12 space-y-8">
-            <DashboardHeader />
-
-            <StatsGrid 
-              occupancyRate={marinaSummary?.occupancyRate ?? 0}
-              occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-              totalSlips={marinaSummary?.totalSlips ?? 0}
-              activeBoats={marinaSummary?.activeBoats ?? 0}
-            />
-
-            <RevenueBreakdown />
-
-            <div className="grid gap-8 md:grid-cols-2">
-              <MarinaOverview />
-              <RecentActivity />
-            </div>
-
-            <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
-          </div>
+    <div className="min-h-screen bg-[#FFF]">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center justify-center min-h-screen text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-[#133134] mb-6">
+            Streamline Your Marina Operations
+          </h1>
+          <p className="text-xl text-[#3E4238] mb-12 max-w-2xl">
+            DockEase empowers marina operators with powerful tools to manage slips,
+            track maintenance, and boost revenue - all in one place.
+          </p>
+          <Button 
+            size="lg"
+            onClick={() => navigate('/login')}
+            className="bg-[#133134] hover:bg-[#133134]/90 text-white px-8 py-6 text-lg h-auto"
+          >
+            Get Started
+            <ArrowRight className="ml-2" />
+          </Button>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }
