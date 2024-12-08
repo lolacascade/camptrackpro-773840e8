@@ -59,13 +59,13 @@ export function Header() {
       </div>
       
       <div className="flex items-center">
-        <nav className="flex items-center mr-8">
+        <nav className="flex items-center mr-6">
           {navigation.map((item) => (
             <Link
               key={item.name}
               to={item.href}
               className={cn(
-                "text-sm font-medium transition-colors relative px-4",
+                "text-sm font-medium transition-colors relative px-3",
                 "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
                 location.pathname === item.href
                   ? "text-primary after:scale-x-100 after:bg-primary"
@@ -77,7 +77,7 @@ export function Header() {
           ))}
         </nav>
         
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
