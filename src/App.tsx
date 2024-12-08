@@ -27,15 +27,8 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/app" element={<Dashboard />}>
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="map" element={<MarinaMap />} />
-            <Route path="customers" element={<Customers />} />
-            <Route path="boats" element={<Boats />} />
-            <Route path="maintenance" element={<Maintenance />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/app/*" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

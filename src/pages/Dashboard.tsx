@@ -8,7 +8,7 @@ import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatAssistant } from "@/components/dashboard/ChatAssistant";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import MarinaMap from "./MarinaMap";
 import Customers from "./Customers";
 import Boats from "./Boats";
@@ -75,7 +75,6 @@ export default function Dashboard() {
             <Route path="/boats" element={<Boats />} />
             <Route path="/maintenance" element={<Maintenance />} />
             <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
       </div>
