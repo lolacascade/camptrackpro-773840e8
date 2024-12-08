@@ -8,6 +8,11 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import MarinaMap from "./pages/MarinaMap";
+import Customers from "./pages/Customers";
+import Boats from "./pages/Boats";
+import Maintenance from "./pages/Maintenance";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
