@@ -17,7 +17,7 @@ export default function MarinaMap() {
   const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
-      console.log('Fetching slips data...');
+      console.log('Starting slip data fetch...');
       const { data: slips, error } = await supabase
         .from('slips')
         .select(`
@@ -40,11 +40,11 @@ export default function MarinaMap() {
         `);
 
       if (error) {
-        console.error('Error fetching slips:', error);
+        console.error('Supabase error fetching slips:', error);
         throw error;
       }
 
-      console.log('Slips data:', slips);
+      console.log('Raw slips data from Supabase:', slips);
       return slips || [];
     },
   });
@@ -59,15 +59,23 @@ export default function MarinaMap() {
   }
 
   const filteredSlips = slipsData?.filter((slip) => {
-    console.log('Filtering slip:', slip);
+    console.log('Processing slip for filtering:', slip);
     const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || slip.status === statusFilter;
     const matchesDock = dockFilter === 'all' || slip.dock === dockFilter;
+    
+    console.log('Slip filtering results:', {
+      slip: slip.name,
+      matchesSearch,
+      matchesStatus,
+      matchesDock
+    });
+    
     return matchesSearch && matchesStatus && matchesDock;
   });
 
-  console.log('Filtered slips:', filteredSlips);
+  console.log('Final filtered slips:', filteredSlips);
 
   const availableDocks = Array.from(
     new Set(slipsData?.map((slip) => slip.dock).filter((dock): dock is string => typeof dock === 'string') || [])
@@ -80,7 +88,7 @@ export default function MarinaMap() {
     maintenanceSlips: slipsData?.filter(s => s.status === 'maintenance').length || 0,
   };
 
-  console.log('Marina stats:', stats);
+  console.log('Marina stats calculated:', stats);
 
   const handleEditBoat = (boat: Boat | null) => {
     setSelectedBoat(boat);
