@@ -7,7 +7,6 @@ import { CustomerTable } from "@/components/customers/CustomerTable";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
 
 export default function Customers() {
   const { toast } = useToast();
@@ -54,35 +53,33 @@ export default function Customers() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-4rem)]">
-        <div className="flex-1 p-12">
-          <div className="bg-transparent rounded-[24px] space-y-8">
-            <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
-              <Button onClick={handleAdd}>
-                <Plus className="mr-2 h-4 w-4" /> Add Customer
-              </Button>
-            </div>
-
-            {isLoading ? (
-              <div className="text-[#3E4238]">Loading customers...</div>
-            ) : (
-              <CustomerTable
-                customers={customers}
-                onEdit={handleEdit}
-              />
-            )}
-
-            <CustomerDrawer
-              customer={selectedCustomer}
-              open={isDrawerOpen}
-              onClose={() => {
-                setIsDrawerOpen(false);
-                setSelectedCustomer(null);
-              }}
-              onCustomerUpdated={fetchCustomers}
-            />
+      <div className="p-12">
+        <div className="bg-transparent rounded-[24px] space-y-8">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" /> Add Customer
+            </Button>
           </div>
+
+          {isLoading ? (
+            <div className="text-[#3E4238]">Loading customers...</div>
+          ) : (
+            <CustomerTable
+              customers={customers}
+              onEdit={handleEdit}
+            />
+          )}
+
+          <CustomerDrawer
+            customer={selectedCustomer}
+            open={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+              setSelectedCustomer(null);
+            }}
+            onCustomerUpdated={fetchCustomers}
+          />
         </div>
       </div>
     </Layout>

@@ -13,7 +13,7 @@ export default function Index() {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate('/dashboard');
+        navigate('/app');
       }
     };
     
