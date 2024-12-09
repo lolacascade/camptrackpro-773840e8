@@ -30,6 +30,9 @@ export default function MarinaMap() {
             boat_name,
             boat_size,
             customer_id,
+            slip_id,
+            created_at,
+            updated_at,
             customers (
               name
             )
