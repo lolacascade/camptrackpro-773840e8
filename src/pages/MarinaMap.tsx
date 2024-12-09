@@ -34,7 +34,7 @@ export default function MarinaMap() {
               name
             )
           ),
-          maintenance_requests!fk_slip_id (
+          maintenance_requests (
             description
           )
         `);
@@ -55,19 +55,19 @@ export default function MarinaMap() {
         const sampleSlips = [
           {
             name: 'Slip A1',
-            status: 'available',
+            status: 'available' as const,
             dock: 'A',
             dock_number: 'A1',
           },
           {
             name: 'Slip A2',
-            status: 'occupied',
+            status: 'occupied' as const,
             dock: 'A',
             dock_number: 'A2',
           },
           {
             name: 'Slip B1',
-            status: 'maintenance',
+            status: 'maintenance' as const,
             dock: 'B',
             dock_number: 'B1',
           }
@@ -90,13 +90,12 @@ export default function MarinaMap() {
         }
 
         console.log('Sample slips inserted:', insertedSlips);
-        return insertedSlips;
+        return insertedSlips as Slip[];
       }
 
       console.log('Slips fetched successfully:', slips);
-      return slips;
+      return slips as Slip[];
     },
-    retry: 1,
   });
 
   if (error) {
@@ -109,23 +108,13 @@ export default function MarinaMap() {
   }
 
   const filteredSlips = slipsData?.filter((slip) => {
-    console.log('Processing slip for filtering:', slip);
     const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || slip.status === statusFilter;
     const matchesDock = dockFilter === 'all' || slip.dock === dockFilter;
     
-    console.log('Slip filtering results:', {
-      slip: slip.name,
-      matchesSearch,
-      matchesStatus,
-      matchesDock
-    });
-    
     return matchesSearch && matchesStatus && matchesDock;
   });
-
-  console.log('Final filtered slips:', filteredSlips);
 
   const availableDocks = Array.from(
     new Set(slipsData?.map((slip) => slip.dock).filter((dock): dock is string => typeof dock === 'string') || [])
@@ -137,8 +126,6 @@ export default function MarinaMap() {
     occupiedSlips: slipsData?.filter(s => s.status === 'occupied').length || 0,
     maintenanceSlips: slipsData?.filter(s => s.status === 'maintenance').length || 0,
   };
-
-  console.log('Marina stats calculated:', stats);
 
   const handleEditBoat = (boat: Boat | null) => {
     setSelectedBoat(boat);
@@ -177,7 +164,7 @@ export default function MarinaMap() {
             key={slip.id}
             id={slip.id}
             name={slip.name}
-            status={slip.status as 'available' | 'occupied' | 'maintenance'}
+            status={slip.status}
             boat={slip.boats?.[0]}
             customerName={slip.boats?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
