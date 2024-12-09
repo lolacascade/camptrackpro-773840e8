@@ -6,6 +6,7 @@ import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
 import { BoatDrawer } from "@/components/boats/BoatDrawer";
 import { Boat } from "@/types/boat";
+import { Slip } from "@/types/slip";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function MarinaMap() {
@@ -16,7 +17,7 @@ export default function MarinaMap() {
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery({
+  const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery<Slip[]>({
     queryKey: ['slips'],
     queryFn: async () => {
       console.log('Starting slip data fetch...');
@@ -29,9 +30,6 @@ export default function MarinaMap() {
             boat_name,
             boat_size,
             customer_id,
-            slip_id,
-            created_at,
-            updated_at,
             customers (
               name
             )

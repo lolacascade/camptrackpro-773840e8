@@ -17,4 +17,16 @@ export interface Slip {
   dock_number: string;
   last_activity_at: string | null;
   power_connection_type: string | null;
+  boats?: Array<{
+    id: number;
+    boat_name: string;
+    boat_size: string | null;
+    customer_id: number | null;
+    customers?: {
+      name: string;
+    };
+  }>;
+  maintenance_requests?: Array<{
+    description: string;
+  }>;
 }
