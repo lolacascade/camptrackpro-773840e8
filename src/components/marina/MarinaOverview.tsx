@@ -1,6 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MarinaChart } from "@/components/dashboard/MarinaChart";
 import { format, subMonths, addMonths } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { AddDockSpotDialog } from "./AddDockSpotDialog";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DockStats {
   date: Date;
@@ -16,7 +22,24 @@ interface MarinaOverviewProps {
 }
 
 export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
+  const [isAddDockSpotOpen, setIsAddDockSpotOpen] = useState(false);
   const currentDate = new Date();
+
+  const { data: totalSlips } = useQuery({
+    queryKey: ['total-slips'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('slips')
+        .select('*', { count: 'exact' });
+
+      if (error) {
+        console.error('Error fetching total slips:', error);
+        return 0;
+      }
+
+      return count || 0;
+    },
+  });
   
   // Generate 24 months of data (12 before, current, 11 after)
   const generateMonthlyData = () => {
@@ -40,60 +63,36 @@ export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
     format(data.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
   );
 
+  const handleDockSpotAdded = () => {
+    // Refetch the total slips count
+    // The query will automatically refetch due to the invalidation
+  };
+
   return (
     <Card className={`col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8 ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-[#133134] text-2xl">Marina Overview</CardTitle>
+        <div className="space-y-1">
+          <CardTitle className="text-[#133134] text-2xl">Marina Overview</CardTitle>
+          <div className="text-base text-[#3E4238]">
+            Total Slips: {totalSlips}
+            <span className="ml-2 text-sm text-[#3E4238]">↓ 5% compared to February</span>
+          </div>
+        </div>
         <div className="flex items-center gap-4">
-          <button className="text-[#133134] text-base">&lt;</button>
-          <span className="text-[#133134] text-base font-medium">
-            {format(currentDate, 'MMM yyyy')}
-          </span>
-          <button className="text-[#133134] text-base">&gt;</button>
+          <Button onClick={() => setIsAddDockSpotOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Add Slip
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-8 mb-8">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FF1493]"></div>
-              <span className="text-[#133134] text-base">Occupied Slips</span>
-            </div>
-            <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
-                {currentMonthStats?.occupied || 0}
-              </div>
-              <div className="text-[#3E4238] text-base">↑ 8% compared to previous month</div>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#32CD32]"></div>
-              <span className="text-[#133134] text-base">Available Slips</span>
-            </div>
-            <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
-                {currentMonthStats?.available || 0}
-              </div>
-              <div className="text-[#3E4238] text-base">↓ 3% compared to previous month</div>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#FFA500]"></div>
-              <span className="text-[#133134] text-base">In Maintenance</span>
-            </div>
-            <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
-                {currentMonthStats?.maintenance || 0}
-              </div>
-              <div className="text-[#3E4238] text-base">Stable month-over-month</div>
-            </div>
-          </div>
-        </div>
-
         <MarinaChart chartData={chartData} />
       </CardContent>
+
+      <AddDockSpotDialog 
+        isOpen={isAddDockSpotOpen}
+        onOpenChange={setIsAddDockSpotOpen}
+        onDockSpotAdded={handleDockSpotAdded}
+      />
     </Card>
   );
 }
