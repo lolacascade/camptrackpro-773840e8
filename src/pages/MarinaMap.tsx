@@ -34,7 +34,7 @@ export default function MarinaMap() {
               name
             )
           ),
-          maintenance_requests (
+          maintenance_requests!fk_slip_id (
             description
           )
         `);
@@ -51,7 +51,6 @@ export default function MarinaMap() {
 
       if (!slips || slips.length === 0) {
         console.log('No slips found in the database');
-        // Let's create some sample data
         const sampleSlips = [
           {
             name: 'Slip A1',
