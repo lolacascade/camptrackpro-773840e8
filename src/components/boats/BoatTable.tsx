@@ -1,18 +1,11 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Boat } from "@/types/boat"
-import { Edit2, ArrowUpDown, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Edit2, ArrowUpDown } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
 import { useState, useMemo } from "react"
+import { BoatTableHeader } from "./BoatTableHeader"
+import { BoatTablePagination } from "./BoatTablePagination"
 
 interface BoatTableProps {
   boats: Boat[]
@@ -39,7 +32,6 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
   const filteredAndSortedBoats = useMemo(() => {
     let result = [...boats]
 
-    // Filter based on search term
     if (searchTerm) {
       result = result.filter(
         (boat) =>
@@ -48,7 +40,6 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
       )
     }
 
-    // Sort if sortConfig is set
     if (sortConfig) {
       result.sort((a, b) => {
         const aValue = a[sortConfig.key]
@@ -66,7 +57,6 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
     return result
   }, [boats, searchTerm, sortConfig])
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredAndSortedBoats.length / itemsPerPage)
   const paginatedBoats = filteredAndSortedBoats.slice(
     (currentPage - 1) * itemsPerPage,
@@ -87,17 +77,10 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
   return (
     <Card className="border border-[rgb(212,219,224)] rounded-2xl">
       <div className="p-4">
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search boats..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
-          </div>
-        </div>
+        <BoatTableHeader 
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
         <Table>
           <TableHeader>
             <TableRow>
@@ -140,37 +123,12 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
             ))}
           </TableBody>
         </Table>
-        {totalPages > 1 && (
-          <div className="mt-4">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => setCurrentPage(page)}
-                      isActive={currentPage === page}
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
-        )}
+        <BoatTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </Card>
-  )
+  );
 }
