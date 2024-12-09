@@ -110,7 +110,7 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
                 <SortButton column="boat_size" />
               </TableHead>
               <TableHead>
-                Slip ID
+                Slip Number
                 <SortButton column="slip_id" />
               </TableHead>
               <TableHead>
@@ -125,8 +125,8 @@ export function BoatTable({ boats, onEdit }: BoatTableProps) {
               <TableRow key={boat.id}>
                 <TableCell className="font-medium">{boat.boat_name}</TableCell>
                 <TableCell>{boat.boat_size}</TableCell>
-                <TableCell>{boat.slip_id}</TableCell>
-                <TableCell>{boat.customer_id}</TableCell>
+                <TableCell>{boat.slip_id ? `Slip ${boat.slip_id}` : '-'}</TableCell>
+                <TableCell>{boat.customer_id || '-'}</TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
