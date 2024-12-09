@@ -9,6 +9,9 @@ import { BoatDrawer } from "@/components/boats/BoatDrawer";
 import { Boat } from "@/types/boat";
 import { Slip } from "@/types/slip";
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { AddDockSpotDialog } from "@/components/marina/AddDockSpotDialog";
 
 export default function MarinaMap() {
   const { toast } = useToast();
@@ -17,6 +20,7 @@ export default function MarinaMap() {
   const [dockFilter, setDockFilter] = useState("all");
   const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isAddSlipOpen, setIsAddSlipOpen] = useState(false);
 
   const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery<Slip[]>({
     queryKey: ['slips'],
@@ -145,11 +149,17 @@ export default function MarinaMap() {
 
   return (
     <div className="bg-white rounded-[24px] p-12 space-y-8">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
+        <Button 
+          onClick={() => setIsAddSlipOpen(true)}
+          className="bg-primary hover:bg-primary/90"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Slip
+        </Button>
       </div>
 
-      <MarinaOverview />
+      <MarinaOverview className="mt-8" />
 
       <SlipStats {...stats} />
 
@@ -190,6 +200,14 @@ export default function MarinaMap() {
           setSelectedBoat(null);
         }}
         onBoatUpdated={async () => {
+          await refetchSlips();
+        }}
+      />
+
+      <AddDockSpotDialog 
+        isOpen={isAddSlipOpen}
+        onOpenChange={setIsAddSlipOpen}
+        onDockSpotAdded={async () => {
           await refetchSlips();
         }}
       />
