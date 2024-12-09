@@ -1,7 +1,7 @@
 import { DashboardHeader } from "./DashboardHeader";
 import { StatsGrid } from "./StatsGrid";
 import { RevenueBreakdown } from "./RevenueBreakdown";
-import { MarinaOverview } from "./MarinaOverview";
+import { MarinaOverview } from "@/components/marina/MarinaOverview";
 import { RecentActivity } from "./RecentActivity";
 import { FooterStats } from "./FooterStats";
 import { DashboardProps } from "@/types/dashboard";

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SlipCard } from "@/components/marina/SlipCard";
 import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
+import { MarinaOverview } from "@/components/marina/MarinaOverview";
 import { BoatDrawer } from "@/components/boats/BoatDrawer";
 import { Boat } from "@/types/boat";
 import { Slip } from "@/types/slip";
@@ -147,6 +148,8 @@ export default function MarinaMap() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
       </div>
+
+      <MarinaOverview />
 
       <SlipStats {...stats} />
 
