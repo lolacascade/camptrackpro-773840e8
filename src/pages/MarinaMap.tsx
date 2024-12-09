@@ -6,8 +6,10 @@ import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
 import { BoatDrawer } from "@/components/boats/BoatDrawer";
 import { Boat } from "@/types/boat";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function MarinaMap() {
+  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dockFilter, setDockFilter] = useState("all");
@@ -41,12 +43,62 @@ export default function MarinaMap() {
 
       if (error) {
         console.error('Supabase error fetching slips:', error);
+        toast({
+          title: "Error fetching data",
+          description: error.message,
+          variant: "destructive",
+        });
         throw error;
       }
 
-      console.log('Raw slips data from Supabase:', slips);
-      return slips || [];
+      if (!slips || slips.length === 0) {
+        console.log('No slips found in the database');
+        // Let's create some sample data
+        const sampleSlips = [
+          {
+            name: 'Slip A1',
+            status: 'available',
+            dock: 'A',
+            dock_number: 'A1',
+          },
+          {
+            name: 'Slip A2',
+            status: 'occupied',
+            dock: 'A',
+            dock_number: 'A2',
+          },
+          {
+            name: 'Slip B1',
+            status: 'maintenance',
+            dock: 'B',
+            dock_number: 'B1',
+          }
+        ];
+
+        console.log('Inserting sample slips...');
+        const { data: insertedSlips, error: insertError } = await supabase
+          .from('slips')
+          .insert(sampleSlips)
+          .select();
+
+        if (insertError) {
+          console.error('Error inserting sample slips:', insertError);
+          toast({
+            title: "Error creating sample data",
+            description: insertError.message,
+            variant: "destructive",
+          });
+          throw insertError;
+        }
+
+        console.log('Sample slips inserted:', insertedSlips);
+        return insertedSlips;
+      }
+
+      console.log('Slips fetched successfully:', slips);
+      return slips;
     },
+    retry: 1,
   });
 
   if (error) {
