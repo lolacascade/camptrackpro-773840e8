@@ -15,7 +15,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
   const onSubmit = async (values: DockSpotFormValues) => {
     try {
       const { error } = await supabase
-        .from('slips')
+        .from('slots')
         .insert([{
           name: values.name,
           dock: values.dock,

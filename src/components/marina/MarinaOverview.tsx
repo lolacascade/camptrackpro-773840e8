@@ -24,7 +24,7 @@ export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
     queryKey: ['total-slips'],
     queryFn: async () => {
       const { count, error } = await supabase
-        .from('slips')
+        .from('slots')
         .select('*', { count: 'exact' });
 
       if (error) {

@@ -26,7 +26,7 @@ export default function MarinaMap() {
   const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
-      const { data: slips, error } = await supabase
+      const { data: slots, error } = await supabase
         .from('slots')
         .select(`
           *,
@@ -35,14 +35,11 @@ export default function MarinaMap() {
             asset_name,
             asset_size,
             customer_id,
-            slot_id,
-            created_at,
-            updated_at,
             customers (
               name
             )
           ),
-          maintenance_requests!fk_slot_id (
+          maintenance_requests (
             description
           )
         `);
@@ -56,7 +53,7 @@ export default function MarinaMap() {
         throw error;
       }
 
-      return slips as Slip[];
+      return slots as Slip[];
     },
   });
 
@@ -77,28 +74,12 @@ export default function MarinaMap() {
     }
   };
 
-  if (error) {
-    return (
-      <div className="bg-white rounded-[24px] p-12">
-        <div className="text-center text-red-500">Error loading marina data: {error.message}</div>
-      </div>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <div className="bg-white rounded-[24px] p-12">
-        <div className="text-center text-gray-500">Loading marina data...</div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-[24px] p-12 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
         <Button 
-          onClick={handleAddSlip}
+          onClick={() => setIsAddSlipOpen(true)}
           className="bg-primary hover:bg-primary/90"
         >
           <Plus className="mr-2 h-4 w-4" /> Add Slip
@@ -141,13 +122,7 @@ export default function MarinaMap() {
             customerName={slip.assets?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
             dock={slip.dock}
-            onStatusChange={async () => {
-              try {
-                await refetchSlips();
-              } catch (error) {
-                console.error('Error refetching slips:', error);
-              }
-            }}
+            onStatusChange={refetchSlips}
             onEdit={() => {
               setSelectedAsset(slip.assets?.[0] || null);
               setIsDrawerOpen(true);
@@ -161,7 +136,13 @@ export default function MarinaMap() {
           <DialogHeader>
             <DialogTitle>Add New Slip</DialogTitle>
           </DialogHeader>
-          <AddSlipForm onSuccess={handleSlipAdded} onCancel={() => setIsAddSlipOpen(false)} />
+          <AddSlipForm 
+            onSuccess={() => {
+              setIsAddSlipOpen(false);
+              refetchSlips();
+            }} 
+            onCancel={() => setIsAddSlipOpen(false)} 
+          />
         </DialogContent>
       </Dialog>
 
@@ -172,13 +153,7 @@ export default function MarinaMap() {
           setIsDrawerOpen(false);
           setSelectedAsset(null);
         }}
-        onAssetUpdated={async () => {
-          try {
-            await refetchSlips();
-          } catch (error) {
-            console.error('Error refetching slips:', error);
-          }
-        }}
+        onAssetUpdated={refetchSlips}
       />
     </div>
   );

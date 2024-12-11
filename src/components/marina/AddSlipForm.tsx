@@ -27,7 +27,7 @@ export function AddSlipForm({ onSuccess, onCancel }: AddSlipFormProps) {
     try {
       setIsLoading(true);
       const { error } = await supabase
-        .from('slips')
+        .from('slots')
         .insert([
           {
             name: data.name,
