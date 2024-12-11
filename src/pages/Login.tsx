@@ -17,6 +17,8 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  const origin = window.location.origin;
+
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
@@ -35,7 +37,7 @@ export default function Login() {
             }
           }}
           providers={[]}
-          redirectTo={`${window.location.origin}/app`}
+          redirectTo={`${origin}/app`}
         />
       </div>
     </div>
