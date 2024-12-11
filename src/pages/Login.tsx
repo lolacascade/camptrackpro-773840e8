@@ -26,7 +26,7 @@ export default function Login() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/app');
-      } else if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+      } else if (event === 'SIGNED_OUT') {
         navigate('/login');
       }
     });
@@ -95,13 +95,6 @@ export default function Login() {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/app`}
-            onError={(error) => {
-              toast({
-                variant: "destructive",
-                title: "Authentication Error",
-                description: error.message || "There was a problem with authentication",
-              });
-            }}
           />
         </div>
       </div>
