@@ -6,6 +6,7 @@ import { CustomerTable } from "@/components/customers/CustomerTable";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from '@supabase/auth-helpers-react';
 
 export default function Customers() {
   const { toast } = useToast();
@@ -13,18 +14,20 @@ export default function Customers() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const session = useSession();
 
   const fetchCustomers = async () => {
     try {
       console.log('Fetching customers...');
+      if (!session?.user?.id) {
+        console.log('No user session found');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('customers')
-        .select(`
-          *,
-          assets (
-            asset_name
-          )
-        `)
+        .select('*')
+        .eq('user_id', session.user.id)
         .order('name');
 
       if (error) {
@@ -47,8 +50,10 @@ export default function Customers() {
   };
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    if (session?.user) {
+      fetchCustomers();
+    }
+  }, [session]);
 
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);

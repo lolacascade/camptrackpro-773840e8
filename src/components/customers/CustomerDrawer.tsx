@@ -6,6 +6,7 @@ import { Customer } from "@/types/customer"
 import { useEffect, useState } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
+import { useSession } from '@supabase/auth-helpers-react'
 
 interface CustomerDrawerProps {
   customer: Customer | null
@@ -19,8 +20,8 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
   const [formData, setFormData] = useState<Partial<Customer>>({})
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const session = useSession()
 
-  // Update form data when customer changes or drawer opens
   useEffect(() => {
     if (open) {
       setFormData(customer || {
@@ -42,6 +43,15 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
       return
     }
 
+    if (!session?.user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to perform this action.",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSaving(true)
     try {
       if (customer) {
@@ -56,6 +66,7 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             updated_at: new Date().toISOString(),
           })
           .eq('id', customer.id)
+          .eq('user_id', session.user.id)
 
         if (error) throw error
       } else {
@@ -67,6 +78,7 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             email: formData.email,
             phone: formData.phone,
             address: formData.address,
+            user_id: session.user.id
           }])
 
         if (error) throw error
@@ -91,13 +103,14 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
   }
 
   const handleDelete = async () => {
-    if (!customer) return
+    if (!customer || !session?.user?.id) return
     setIsDeleting(true)
     try {
       const { error } = await supabase
         .from('customers')
         .delete()
         .eq('id', customer.id)
+        .eq('user_id', session.user.id)
 
       if (error) throw error
 
