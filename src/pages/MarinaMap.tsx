@@ -11,7 +11,7 @@ import { Slip } from "@/types/slip";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AddSlipForm } from "@/components/marina/AddSlipForm";
 
 export default function MarinaMap() {
@@ -60,17 +60,21 @@ export default function MarinaMap() {
     },
   });
 
-  const handleAddSlip = async () => {
+  const handleAddSlip = () => {
     setIsAddSlipOpen(true);
   };
 
   const handleSlipAdded = async () => {
     setIsAddSlipOpen(false);
-    await refetchSlips();
-    toast({
-      title: "Success",
-      description: "New slip has been added successfully",
-    });
+    try {
+      await refetchSlips();
+      toast({
+        title: "Success",
+        description: "New slip has been added successfully",
+      });
+    } catch (error) {
+      console.error('Error refetching slips:', error);
+    }
   };
 
   if (error) {
@@ -137,7 +141,13 @@ export default function MarinaMap() {
             customerName={slip.boats?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
             dock={slip.dock}
-            onStatusChange={refetchSlips}
+            onStatusChange={async () => {
+              try {
+                await refetchSlips();
+              } catch (error) {
+                console.error('Error refetching slips:', error);
+              }
+            }}
             onEdit={() => {
               setSelectedBoat(slip.boats?.[0] || null);
               setIsDrawerOpen(true);
@@ -162,7 +172,13 @@ export default function MarinaMap() {
           setIsDrawerOpen(false);
           setSelectedBoat(null);
         }}
-        onBoatUpdated={refetchSlips}
+        onBoatUpdated={async () => {
+          try {
+            await refetchSlips();
+          } catch (error) {
+            console.error('Error refetching slips:', error);
+          }
+        }}
       />
     </div>
   );
