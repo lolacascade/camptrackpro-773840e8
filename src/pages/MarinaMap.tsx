@@ -54,7 +54,15 @@ export default function MarinaMap() {
         throw error;
       }
 
-      return slots as Slip[];
+      // Ensure maintenance_requests is always an array
+      return (slots as any[]).map(slot => ({
+        ...slot,
+        maintenance_requests: Array.isArray(slot.maintenance_requests) 
+          ? slot.maintenance_requests 
+          : slot.maintenance_requests 
+            ? [slot.maintenance_requests]
+            : []
+      })) as Slip[];
     },
   });
 
@@ -114,7 +122,7 @@ export default function MarinaMap() {
             key={slip.id}
             id={slip.id}
             name={slip.name}
-            status={slip.status}
+            status={slip.status as 'available' | 'occupied' | 'maintenance'}
             asset={slip.assets?.[0]}
             customerName={slip.assets?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
