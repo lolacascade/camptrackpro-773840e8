@@ -11,16 +11,28 @@ export function CustomerInsights() {
   const { data: averageValue } = useQuery({
     queryKey: ['customerAverageValue'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('invoices')
-        .select('amount')
-        .eq('status', 'paid')
+      const { data: bookings, error: bookingsError } = await supabase
+        .from('bookings')
+        .select(`
+          customer_id,
+          invoices!inner (
+            amount,
+            status
+          )
+        `)
+        .eq('invoices.status', 'paid')
         .eq('user_id', session?.user?.id);
       
-      if (error) throw error;
+      if (bookingsError) throw bookingsError;
       
-      const total = data.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const average = data.length > 0 ? total / data.length : 0;
+      if (!bookings || bookings.length === 0) return '$0.00';
+      
+      const totalAmount = bookings.reduce((sum, booking) => {
+        return sum + booking.invoices.reduce((invoiceSum: number, invoice: any) => 
+          invoiceSum + Number(invoice.amount), 0);
+      }, 0);
+      
+      const average = totalAmount / bookings.length;
       return average.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     },
     enabled: !!session?.user?.id
@@ -102,9 +114,9 @@ export function CustomerInsights() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
       <StatCard
-        title="Average Revenue Per Invoice"
-        value={averageValue || '$0'}
-        description="Average revenue per paid invoice"
+        title="Average Revenue Per Stay"
+        value={averageValue || '$0.00'}
+        description="Average revenue per booking"
         icon={ChartBar}
         trend="up"
         trendValue="Based on paid invoices"
