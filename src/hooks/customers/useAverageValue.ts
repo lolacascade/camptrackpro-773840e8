@@ -8,34 +8,45 @@ export function useAverageValue() {
   return useQuery({
     queryKey: ['customerAverageValue'],
     queryFn: async () => {
-      // First get the user's customers
-      const { data: customers, error: customersError } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('user_id', session?.user?.id);
-
-      if (customersError) throw customersError;
+      console.log('Calculating average value...');
       
-      if (!customers || customers.length === 0) return '$0.00';
-      
-      const customerIds = customers.map(c => c.id);
-      
+      // Get all paid invoices with their amounts
       const { data: invoices, error: invoicesError } = await supabase
         .from('invoices')
-        .select('amount, booking_id')
-        .eq('status', 'paid')
-        .in('customer_id', customerIds)
-        .not('booking_id', 'is', null);
-      
-      if (invoicesError) throw invoicesError;
-      
-      if (!invoices || invoices.length === 0) return '$0.00';
-      
+        .select(`
+          amount,
+          customer_id,
+          status
+        `)
+        .eq('status', 'paid');
+
+      if (invoicesError) {
+        console.error('Error fetching invoices:', invoicesError);
+        throw invoicesError;
+      }
+
+      console.log('Fetched invoices:', invoices);
+
+      if (!invoices || invoices.length === 0) {
+        console.log('No paid invoices found');
+        return '$0.00';
+      }
+
+      // Calculate total amount and count of paid invoices
       const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const uniqueBookings = new Set(invoices.map(invoice => invoice.booking_id)).size;
+      const totalInvoices = invoices.length;
+
+      console.log('Total amount:', totalAmount, 'Total invoices:', totalInvoices);
+
+      // Calculate average
+      const average = totalAmount / totalInvoices;
       
-      const average = totalAmount / uniqueBookings;
-      return average.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+      return average.toLocaleString('en-US', { 
+        style: 'currency', 
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     },
     enabled: !!session?.user?.id
   });
