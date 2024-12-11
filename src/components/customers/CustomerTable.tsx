@@ -12,7 +12,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
+import { supabase } from "@/integrations/supabase/client"
 
 interface CustomerTableProps {
   customers: Customer[]
@@ -26,7 +27,42 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
     direction: "asc" | "desc"
   } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers)
   const itemsPerPage = 25
+
+  useEffect(() => {
+    // Subscribe to realtime changes
+    const subscription = supabase
+      .channel('customers_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'customers'
+        },
+        async (payload) => {
+          console.log('Change received!', payload)
+          // Fetch fresh data when changes occur
+          const { data: freshCustomers } = await supabase
+            .from('customers')
+            .select('*')
+            .order('name');
+          if (freshCustomers) {
+            setLocalCustomers(freshCustomers)
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
+
+  useEffect(() => {
+    setLocalCustomers(customers)
+  }, [customers])
 
   const handleSort = (key: keyof Customer) => {
     setSortConfig((current) => ({
@@ -37,7 +73,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   }
 
   const filteredAndSortedCustomers = useMemo(() => {
-    let result = [...customers]
+    let result = [...localCustomers]
 
     // Filter based on search term
     if (searchTerm) {
@@ -66,7 +102,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
     }
 
     return result
-  }, [customers, searchTerm, sortConfig])
+  }, [localCustomers, searchTerm, sortConfig])
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredAndSortedCustomers.length / itemsPerPage)
