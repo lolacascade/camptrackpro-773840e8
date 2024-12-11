@@ -17,7 +17,7 @@ const navigation = [
   { name: "Dashboard", href: "/app" },
   { name: "Marina Map", href: "/app/map" },
   { name: "Customers", href: "/app/customers" },
-  { name: "Boats", href: "/app/boats" },
+  { name: "Assets", href: "/app/assets" },
   { name: "Maintenance", href: "/app/maintenance" },
 ];
 
@@ -111,20 +111,20 @@ export function Header() {
         <CommandInput placeholder="Type to search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Boats">
+          <CommandGroup heading="Assets">
             <CommandItem onSelect={() => {
-              navigate("/app/boats/1");
+              navigate("/app/assets/1");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
-              Boat #1 - Sailboat
+              Asset #1
             </CommandItem>
             <CommandItem onSelect={() => {
-              navigate("/app/boats/2");
+              navigate("/app/assets/2");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
-              Boat #2 - Yacht
+              Asset #2
             </CommandItem>
           </CommandGroup>
           <CommandGroup heading="Maintenance">
@@ -145,11 +145,11 @@ export function Header() {
               Create Maintenance Request
             </CommandItem>
             <CommandItem onSelect={() => {
-              navigate("/app/boats/new");
+              navigate("/app/assets/new");
               setOpen(false);
             }}>
               <Search className="mr-2 h-4 w-4" />
-              Register New Boat
+              Register New Asset
             </CommandItem>
           </CommandGroup>
         </CommandList>
