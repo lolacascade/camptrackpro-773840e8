@@ -14,6 +14,7 @@ import { AssetTable } from "@/components/assets/AssetTable";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { Asset } from "@/types/asset";
 import { supabase } from "@/integrations/supabase/client";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Assets() {
   const { toast } = useToast();
@@ -29,7 +30,7 @@ export default function Assets() {
     slot_id: null,
     created_at: null,
     updated_at: null,
-    asset_type: 'boat', // default to boat, can be changed as needed
+    asset_type: 'boat',
   });
 
   const fetchAssets = async () => {
@@ -73,7 +74,7 @@ export default function Assets() {
   }, []);
 
   const handleSubmit = async () => {
-    if (!newAsset.asset_name) {
+    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -88,8 +89,6 @@ export default function Assets() {
         .insert([{
           asset_name: newAsset.asset_name,
           asset_size: newAsset.asset_size,
-          customer_id: newAsset.customer_id,
-          slot_id: newAsset.slot_id,
           asset_type: newAsset.asset_type,
         }]);
 
@@ -146,33 +145,34 @@ export default function Assets() {
                   id="asset_name"
                   value={newAsset.asset_name}
                   onChange={(e) => setNewAsset(prev => ({ ...prev, asset_name: e.target.value }))}
+                  placeholder="Enter asset name"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="asset_size">Size</Label>
+                <Label htmlFor="asset_size">Size *</Label>
                 <Input
                   id="asset_size"
-                  value={newAsset.asset_size || ''}
+                  value={newAsset.asset_size}
                   onChange={(e) => setNewAsset(prev => ({ ...prev, asset_size: e.target.value }))}
+                  placeholder="e.g., 32 ft"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="customer_id">Customer ID</Label>
-                <Input
-                  id="customer_id"
-                  type="number"
-                  value={newAsset.customer_id || ''}
-                  onChange={(e) => setNewAsset(prev => ({ ...prev, customer_id: parseInt(e.target.value) || null }))}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="slot_id">Slot ID</Label>
-                <Input
-                  id="slot_id"
-                  type="number"
-                  value={newAsset.slot_id || ''}
-                  onChange={(e) => setNewAsset(prev => ({ ...prev, slot_id: parseInt(e.target.value) || null }))}
-                />
+                <Label htmlFor="asset_type">Asset Type *</Label>
+                <Select
+                  value={newAsset.asset_type}
+                  onValueChange={(value) => setNewAsset(prev => ({ ...prev, asset_type: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select asset type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="boat">Boat</SelectItem>
+                    <SelectItem value="jet_ski">Jet Ski</SelectItem>
+                    <SelectItem value="yacht">Yacht</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <Button onClick={handleSubmit}>Add Asset</Button>
             </div>
