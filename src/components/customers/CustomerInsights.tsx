@@ -11,11 +11,23 @@ export function CustomerInsights() {
   const { data: averageValue } = useQuery({
     queryKey: ['customerAverageValue'],
     queryFn: async () => {
+      // First get the user's customers
+      const { data: customers, error: customersError } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('user_id', session?.user?.id);
+
+      if (customersError) throw customersError;
+      
+      if (!customers || customers.length === 0) return '$0.00';
+      
+      const customerIds = customers.map(c => c.id);
+      
       const { data: invoices, error: invoicesError } = await supabase
         .from('invoices')
         .select('amount, booking_id')
         .eq('status', 'paid')
-        .eq('user_id', session?.user?.id)
+        .in('customer_id', customerIds)
         .not('booking_id', 'is', null);
       
       if (invoicesError) throw invoicesError;
