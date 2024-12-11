@@ -1,120 +1,15 @@
-import { useSession } from '@supabase/auth-helpers-react';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from "@/integrations/supabase/client";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ChartBar, Clock, MapPin, StickyNote } from "lucide-react";
+import { useAverageValue } from "@/hooks/customers/useAverageValue";
+import { useAverageStayDuration } from "@/hooks/customers/useAverageStayDuration";
+import { usePreferredSpot } from "@/hooks/customers/usePreferredSpot";
+import { useLatestNote } from "@/hooks/customers/useLatestNote";
 
 export function CustomerInsights() {
-  const session = useSession();
-
-  // Fetch average value per stay
-  const { data: averageValue } = useQuery({
-    queryKey: ['customerAverageValue'],
-    queryFn: async () => {
-      // First get the user's customers
-      const { data: customers, error: customersError } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('user_id', session?.user?.id);
-
-      if (customersError) throw customersError;
-      
-      if (!customers || customers.length === 0) return '$0.00';
-      
-      const customerIds = customers.map(c => c.id);
-      
-      const { data: invoices, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('amount, booking_id')
-        .eq('status', 'paid')
-        .in('customer_id', customerIds)
-        .not('booking_id', 'is', null);
-      
-      if (invoicesError) throw invoicesError;
-      
-      if (!invoices || invoices.length === 0) return '$0.00';
-      
-      const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const uniqueBookings = new Set(invoices.map(invoice => invoice.booking_id)).size;
-      
-      const average = totalAmount / uniqueBookings;
-      return average.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-    },
-    enabled: !!session?.user?.id
-  });
-
-  const { data: avgStayDuration } = useQuery({
-    queryKey: ['averageStayDuration'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('check_in_date, check_out_date');
-      
-      if (error) throw error;
-      
-      const durations = data.map(booking => {
-        const checkIn = new Date(booking.check_in_date);
-        const checkOut = new Date(booking.check_out_date);
-        return Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-      });
-      
-      const average = durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
-      return `${Math.round(average)} days`;
-    },
-    enabled: !!session?.user?.id
-  });
-
-  // Fetch preferred slot/zone
-  const { data: preferredSpot } = useQuery({
-    queryKey: ['preferredSpot'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          slot_id,
-          slots (
-            name,
-            zone
-          )
-        `)
-        .order('slot_id');
-      
-      if (error) throw error;
-      
-      // Find the most frequent slot
-      const slotCounts = data.reduce((acc: any, booking) => {
-        const slotId = booking.slot_id;
-        acc[slotId] = (acc[slotId] || 0) + 1;
-        return acc;
-      }, {});
-      
-      const mostFrequentSlotId = Object.entries(slotCounts)
-        .sort(([,a]: any, [,b]: any) => b - a)[0]?.[0];
-      
-      const preferredSlot = data.find(booking => booking.slot_id.toString() === mostFrequentSlotId);
-      return preferredSlot?.slots ? 
-        `${preferredSlot.slots.name} / ${preferredSlot.slots.zone || 'N/A'}` : 
-        'No preference yet';
-    },
-    enabled: !!session?.user?.id
-  });
-
-  // Fetch latest note/tag
-  const { data: latestNote } = useQuery({
-    queryKey: ['latestNote'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('customer_notes')
-        .select('note, tag')
-        .order('created_at', { ascending: false })
-        .limit(1);
-      
-      if (error) throw error;
-      
-      return data[0] ? `${data[0].tag}: ${data[0].note}` : 'No notes yet';
-    },
-    enabled: !!session?.user?.id
-  });
+  const { data: averageValue } = useAverageValue();
+  const { data: avgStayDuration } = useAverageStayDuration();
+  const { data: preferredSpot } = usePreferredSpot();
+  const { data: latestNote } = useLatestNote();
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
