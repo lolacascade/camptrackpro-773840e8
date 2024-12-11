@@ -19,6 +19,7 @@ export type Database = {
           id: number
           slip_id: number | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           asset_name: string
@@ -29,6 +30,7 @@ export type Database = {
           id?: number
           slip_id?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           asset_name?: string
@@ -39,6 +41,7 @@ export type Database = {
           id?: number
           slip_id?: number | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -66,6 +69,7 @@ export type Database = {
           name: string
           phone: string | null
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -75,6 +79,7 @@ export type Database = {
           name: string
           phone?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -84,6 +89,7 @@ export type Database = {
           name?: string
           phone?: string | null
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -97,6 +103,7 @@ export type Database = {
           issued_date: string
           slot_id: number | null
           status: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -107,6 +114,7 @@ export type Database = {
           issued_date: string
           slot_id?: number | null
           status: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -117,6 +125,7 @@ export type Database = {
           issued_date?: string
           slot_id?: number | null
           status?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -170,6 +179,7 @@ export type Database = {
           slot_id: number | null
           status: string
           updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           assigned_to?: number | null
@@ -181,6 +191,7 @@ export type Database = {
           slot_id?: number | null
           status: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           assigned_to?: number | null
@@ -192,6 +203,7 @@ export type Database = {
           slot_id?: number | null
           status?: string
           updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -359,6 +371,7 @@ export type Database = {
           name: string
           status: string
           updated_at: string | null
+          user_id: string | null
           utility_connection_type: string | null
           width_ft: number | null
           zone: string | null
@@ -379,6 +392,7 @@ export type Database = {
           name: string
           status: string
           updated_at?: string | null
+          user_id?: string | null
           utility_connection_type?: string | null
           width_ft?: number | null
           zone?: string | null
@@ -399,6 +413,7 @@ export type Database = {
           name?: string
           status?: string
           updated_at?: string | null
+          user_id?: string | null
           utility_connection_type?: string | null
           width_ft?: number | null
           zone?: string | null

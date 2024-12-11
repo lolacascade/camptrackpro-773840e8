@@ -17,28 +17,69 @@ export default function Login() {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const origin = window.location.origin;
-
   return (
-    <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
-        <h2 className="text-2xl font-bold text-center mb-8 text-[#133134]">Welcome to DockEase</h2>
-        <Auth
-          supabaseClient={supabase}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#133134',
-                  brandAccent: '#1d4547',
-                }
-              }
-            }
-          }}
-          providers={[]}
-          redirectTo={`${origin}/app`}
-        />
+    <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-2">
+            <span className="text-white">Dock</span>
+            <span className="text-blue-400">Ease</span>
+          </h1>
+          <p className="text-gray-400">Manage your marina with ease</p>
+        </div>
+        
+        <div className="bg-white rounded-lg shadow-xl p-8">
+          <Auth
+            supabaseClient={supabase}
+            appearance={{
+              theme: ThemeSupa,
+              variables: {
+                default: {
+                  colors: {
+                    brand: '#0D1D1F',
+                    brandAccent: '#1a3538',
+                    brandButtonText: 'white',
+                    defaultButtonBackground: '#E5E7EB',
+                    defaultButtonBackgroundHover: '#D1D5DB',
+                  },
+                  space: {
+                    inputPadding: '12px',
+                    buttonPadding: '12px',
+                  },
+                  borderWidths: {
+                    buttonBorderWidth: '0px',
+                    inputBorderWidth: '1px',
+                  },
+                  radii: {
+                    borderRadiusButton: '6px',
+                    buttonBorderRadius: '6px',
+                    inputBorderRadius: '6px',
+                  },
+                },
+              },
+              style: {
+                button: {
+                  fontSize: '16px',
+                  fontWeight: '500',
+                },
+                input: {
+                  fontSize: '16px',
+                },
+                label: {
+                  fontSize: '14px',
+                  color: '#374151',
+                },
+                anchor: {
+                  color: '#0D1D1F',
+                  textDecoration: 'none',
+                  fontWeight: '500',
+                },
+              },
+            }}
+            providers={[]}
+            redirectTo={`${window.location.origin}/app`}
+          />
+        </div>
       </div>
     </div>
   );
