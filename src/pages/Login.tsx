@@ -3,19 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
+    // Check for auth error in URL
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const error = hashParams.get('error');
+    const errorDescription = hashParams.get('error_description');
+    
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Authentication Error",
+        description: errorDescription || "There was a problem with authentication",
+      });
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
+      if (event === 'SIGNED_IN' && session) {
         navigate('/app');
+      } else if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+        navigate('/login');
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
@@ -78,6 +95,13 @@ export default function Login() {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/app`}
+            onError={(error) => {
+              toast({
+                variant: "destructive",
+                title: "Authentication Error",
+                description: error.message || "There was a problem with authentication",
+              });
+            }}
           />
         </div>
       </div>
