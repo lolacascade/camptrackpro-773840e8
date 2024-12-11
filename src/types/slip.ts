@@ -24,6 +24,7 @@ export interface Slip {
     asset_name: string;
     asset_size: string | null;
     customer_id: number | null;
+    asset_type: string;
     customers?: {
       name: string;
     };

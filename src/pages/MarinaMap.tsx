@@ -35,6 +35,7 @@ export default function MarinaMap() {
             asset_name,
             asset_size,
             customer_id,
+            asset_type,
             customers (
               name
             )
@@ -63,15 +64,11 @@ export default function MarinaMap() {
 
   const handleSlipAdded = async () => {
     setIsAddSlipOpen(false);
-    try {
-      await refetchSlips();
-      toast({
-        title: "Success",
-        description: "New slip has been added successfully",
-      });
-    } catch (error) {
-      console.error('Error refetching slips:', error);
-    }
+    await refetchSlips();
+    toast({
+      title: "Success",
+      description: "New slip has been added successfully",
+    });
   };
 
   return (
@@ -79,7 +76,7 @@ export default function MarinaMap() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-[#133134]">Marina Map</h1>
         <Button 
-          onClick={() => setIsAddSlipOpen(true)}
+          onClick={handleAddSlip}
           className="bg-primary hover:bg-primary/90"
         >
           <Plus className="mr-2 h-4 w-4" /> Add Slip
@@ -122,10 +119,17 @@ export default function MarinaMap() {
             customerName={slip.assets?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
             dock={slip.dock}
-            onStatusChange={refetchSlips}
+            onStatusChange={async () => {
+              await refetchSlips();
+            }}
             onEdit={() => {
-              setSelectedAsset(slip.assets?.[0] || null);
-              setIsDrawerOpen(true);
+              if (slip.assets?.[0]) {
+                setSelectedAsset({
+                  ...slip.assets[0],
+                  asset_type: slip.assets[0].asset_type || 'boat'
+                });
+                setIsDrawerOpen(true);
+              }
             }}
           />
         ))}
@@ -137,10 +141,7 @@ export default function MarinaMap() {
             <DialogTitle>Add New Slip</DialogTitle>
           </DialogHeader>
           <AddSlipForm 
-            onSuccess={() => {
-              setIsAddSlipOpen(false);
-              refetchSlips();
-            }} 
+            onSuccess={handleSlipAdded}
             onCancel={() => setIsAddSlipOpen(false)} 
           />
         </DialogContent>
@@ -153,7 +154,9 @@ export default function MarinaMap() {
           setIsDrawerOpen(false);
           setSelectedAsset(null);
         }}
-        onAssetUpdated={refetchSlips}
+        onAssetUpdated={async () => {
+          await refetchSlips();
+        }}
       />
     </div>
   );
