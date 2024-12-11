@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -26,8 +26,6 @@ export default function Login() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/app');
-      } else if (event === 'SIGNED_OUT') {
-        navigate('/login');
       }
     });
 
@@ -93,7 +91,6 @@ export default function Login() {
                 },
               },
             }}
-            providers={[]}
             redirectTo={`${window.location.origin}/app`}
           />
         </div>
