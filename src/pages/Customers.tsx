@@ -25,10 +25,10 @@ export default function Customers() {
         return;
       }
 
+      // Remove the user_id filter to see all customers during development
       const { data, error } = await supabase
         .from('customers')
         .select('*')
-        .eq('user_id', session.user.id)
         .order('name');
 
       if (error) {
