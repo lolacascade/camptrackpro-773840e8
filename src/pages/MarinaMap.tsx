@@ -26,7 +26,8 @@ export default function MarinaMap() {
   const { data: slipsData, refetch: refetchSlips, isLoading, error } = useQuery({
     queryKey: ['slips'],
     queryFn: async () => {
-      const { data: slots, error } = await supabase
+      // First fetch slots
+      const { data: slots, error: slotsError } = await supabase
         .from('slots')
         .select(`
           *,
@@ -39,30 +40,40 @@ export default function MarinaMap() {
             customers (
               name
             )
-          ),
-          maintenance_requests (
-            description
           )
         `);
 
-      if (error) {
+      if (slotsError) {
         toast({
-          title: "Error fetching data",
-          description: error.message,
+          title: "Error fetching slots",
+          description: slotsError.message,
           variant: "destructive",
         });
-        throw error;
+        throw slotsError;
       }
 
-      // Ensure maintenance_requests is always an array
-      return (slots as any[]).map(slot => ({
-        ...slot,
-        maintenance_requests: Array.isArray(slot.maintenance_requests) 
-          ? slot.maintenance_requests 
-          : slot.maintenance_requests 
-            ? [slot.maintenance_requests]
-            : []
-      })) as Slip[];
+      // Then fetch maintenance requests separately for each slot
+      const slotsWithMaintenance = await Promise.all(
+        (slots || []).map(async (slot) => {
+          const { data: maintenance, error: maintenanceError } = await supabase
+            .from('maintenance_requests')
+            .select('description')
+            .eq('slot_id', slot.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+          if (maintenanceError) {
+            console.error('Error fetching maintenance for slot:', maintenanceError);
+          }
+
+          return {
+            ...slot,
+            maintenance_requests: maintenance || []
+          };
+        })
+      );
+
+      return slotsWithMaintenance as Slip[];
     },
   });
 
@@ -78,6 +89,14 @@ export default function MarinaMap() {
       description: "New slip has been added successfully",
     });
   };
+
+  if (error) {
+    toast({
+      title: "Error fetching data",
+      description: "There was an error loading the marina map data. Please try again.",
+      variant: "destructive",
+    });
+  }
 
   return (
     <div className="bg-white rounded-[24px] p-12 space-y-8">
@@ -110,38 +129,44 @@ export default function MarinaMap() {
         availableDocks={Array.from(new Set(slipsData?.map(slip => slip.dock).filter(Boolean) || []))}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {slipsData?.filter(slip => {
-          const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
-          const matchesStatus = statusFilter === 'all' || slip.status === statusFilter;
-          const matchesDock = dockFilter === 'all' || slip.dock === dockFilter;
-          return matchesSearch && matchesStatus && matchesDock;
-        }).map((slip) => (
-          <SlipCard
-            key={slip.id}
-            id={slip.id}
-            name={slip.name}
-            status={slip.status as 'available' | 'occupied' | 'maintenance'}
-            asset={slip.assets?.[0]}
-            customerName={slip.assets?.[0]?.customers?.name}
-            maintenanceDescription={slip.maintenance_requests?.[0]?.description}
-            dock={slip.dock}
-            onStatusChange={async () => {
-              await refetchSlips();
-            }}
-            onEdit={() => {
-              if (slip.assets?.[0]) {
-                setSelectedAsset({
-                  ...slip.assets[0],
-                  asset_type: slip.assets[0].asset_type || 'boat'
-                });
-                setIsDrawerOpen(true);
-              }
-            }}
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="flex justify-center items-center h-32">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {slipsData?.filter(slip => {
+            const matchesSearch = slip.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              slip.dock?.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesStatus = statusFilter === 'all' || slip.status === statusFilter;
+            const matchesDock = dockFilter === 'all' || slip.dock === dockFilter;
+            return matchesSearch && matchesStatus && matchesDock;
+          }).map((slip) => (
+            <SlipCard
+              key={slip.id}
+              id={slip.id}
+              name={slip.name}
+              status={slip.status as 'available' | 'occupied' | 'maintenance'}
+              asset={slip.assets?.[0]}
+              customerName={slip.assets?.[0]?.customers?.name}
+              maintenanceDescription={slip.maintenance_requests?.[0]?.description}
+              dock={slip.dock}
+              onStatusChange={async () => {
+                await refetchSlips();
+              }}
+              onEdit={() => {
+                if (slip.assets?.[0]) {
+                  setSelectedAsset({
+                    ...slip.assets[0],
+                    asset_type: slip.assets[0].asset_type || 'boat'
+                  });
+                  setIsDrawerOpen(true);
+                }
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       <Dialog open={isAddSlipOpen} onOpenChange={setIsAddSlipOpen}>
         <DialogContent>
