@@ -77,8 +77,8 @@ export default function Assets() {
       )}
 
       <AddAssetDialog
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
         onAssetAdded={refetch}
       />
 
