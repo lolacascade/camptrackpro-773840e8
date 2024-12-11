@@ -7,32 +7,25 @@ import { ChartBar, Clock, MapPin, StickyNote } from "lucide-react";
 export function CustomerInsights() {
   const session = useSession();
 
-  // Fetch average value per client
+  // Fetch average value per stay
   const { data: averageValue } = useQuery({
     queryKey: ['customerAverageValue'],
     queryFn: async () => {
-      const { data: bookings, error: bookingsError } = await supabase
-        .from('bookings')
-        .select(`
-          customer_id,
-          invoices!inner (
-            amount,
-            status
-          )
-        `)
-        .eq('invoices.status', 'paid')
-        .eq('user_id', session?.user?.id);
+      const { data: invoices, error: invoicesError } = await supabase
+        .from('invoices')
+        .select('amount, booking_id')
+        .eq('status', 'paid')
+        .eq('user_id', session?.user?.id)
+        .not('booking_id', 'is', null);
       
-      if (bookingsError) throw bookingsError;
+      if (invoicesError) throw invoicesError;
       
-      if (!bookings || bookings.length === 0) return '$0.00';
+      if (!invoices || invoices.length === 0) return '$0.00';
       
-      const totalAmount = bookings.reduce((sum, booking) => {
-        return sum + booking.invoices.reduce((invoiceSum: number, invoice: any) => 
-          invoiceSum + Number(invoice.amount), 0);
-      }, 0);
+      const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
+      const uniqueBookings = new Set(invoices.map(invoice => invoice.booking_id)).size;
       
-      const average = totalAmount / bookings.length;
+      const average = totalAmount / uniqueBookings;
       return average.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     },
     enabled: !!session?.user?.id

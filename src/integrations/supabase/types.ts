@@ -240,6 +240,7 @@ export type Database = {
       invoices: {
         Row: {
           amount: number
+          booking_id: number | null
           created_at: string | null
           customer_id: number | null
           due_date: string
@@ -251,6 +252,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          booking_id?: number | null
           created_at?: string | null
           customer_id?: number | null
           due_date: string
@@ -262,6 +264,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          booking_id?: number | null
           created_at?: string | null
           customer_id?: number | null
           due_date?: string
@@ -272,6 +275,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_booking_id"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_customer_id"
             columns: ["customer_id"]
