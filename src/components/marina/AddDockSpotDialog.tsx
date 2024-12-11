@@ -61,7 +61,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const { error } = await supabase
-        .from('slips')
+        .from('slots')  // Changed from 'slips'
         .insert([{
           name: values.name,
           dock: values.dock,

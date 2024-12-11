@@ -10,7 +10,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import MarinaMap from "./pages/MarinaMap";
 import Customers from "./pages/Customers";
-import Boats from "./pages/Boats";
+import Assets from "./pages/Assets";
 import Maintenance from "./pages/Maintenance";
 import Settings from "./pages/Settings";
 import { Layout } from "@/components/layout/Layout";
@@ -46,7 +46,7 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="map" element={<MarinaMap />} />
             <Route path="customers" element={<Customers />} />
-            <Route path="boats" element={<Boats />} />
+            <Route path="assets" element={<Assets />} />
             <Route path="maintenance" element={<Maintenance />} />
             <Route path="settings" element={<Settings />} />
           </Route>

@@ -5,8 +5,8 @@ import { SlipCard } from "@/components/marina/SlipCard";
 import { SlipFilters } from "@/components/marina/SlipFilters";
 import { SlipStats } from "@/components/marina/SlipStats";
 import { MarinaOverview } from "@/components/marina/MarinaOverview";
-import { BoatDrawer } from "@/components/boats/BoatDrawer";
-import { Boat } from "@/types/boat";
+import { AssetDrawer } from "@/components/assets/AssetDrawer";
+import { Asset } from "@/types/asset";
 import { Slip } from "@/types/slip";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,7 @@ export default function MarinaMap() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [dockFilter, setDockFilter] = useState("all");
-  const [selectedBoat, setSelectedBoat] = useState<Boat | null>(null);
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAddSlipOpen, setIsAddSlipOpen] = useState(false);
 
@@ -27,22 +27,22 @@ export default function MarinaMap() {
     queryKey: ['slips'],
     queryFn: async () => {
       const { data: slips, error } = await supabase
-        .from('slips')
+        .from('slots')
         .select(`
           *,
-          boats (
+          assets (
             id,
-            boat_name,
-            boat_size,
+            asset_name,
+            asset_size,
             customer_id,
-            slip_id,
+            slot_id,
             created_at,
             updated_at,
             customers (
               name
             )
           ),
-          maintenance_requests!fk_slip_id (
+          maintenance_requests!fk_slot_id (
             description
           )
         `);
@@ -137,8 +137,8 @@ export default function MarinaMap() {
             id={slip.id}
             name={slip.name}
             status={slip.status}
-            boat={slip.boats?.[0]}
-            customerName={slip.boats?.[0]?.customers?.name}
+            asset={slip.assets?.[0]}
+            customerName={slip.assets?.[0]?.customers?.name}
             maintenanceDescription={slip.maintenance_requests?.[0]?.description}
             dock={slip.dock}
             onStatusChange={async () => {
@@ -149,7 +149,7 @@ export default function MarinaMap() {
               }
             }}
             onEdit={() => {
-              setSelectedBoat(slip.boats?.[0] || null);
+              setSelectedAsset(slip.assets?.[0] || null);
               setIsDrawerOpen(true);
             }}
           />
@@ -165,14 +165,14 @@ export default function MarinaMap() {
         </DialogContent>
       </Dialog>
 
-      <BoatDrawer
-        boat={selectedBoat}
+      <AssetDrawer
+        asset={selectedAsset}
         open={isDrawerOpen}
         onClose={() => {
           setIsDrawerOpen(false);
-          setSelectedBoat(null);
+          setSelectedAsset(null);
         }}
-        onBoatUpdated={async () => {
+        onAssetUpdated={async () => {
           try {
             await refetchSlips();
           } catch (error) {

@@ -21,8 +21,8 @@ export default function Customers() {
         .from('customers')
         .select(`
           *,
-          boats (
-            boat_name
+          assets (
+            asset_name
           )
         `)
         .order('name');

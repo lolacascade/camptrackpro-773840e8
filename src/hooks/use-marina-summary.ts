@@ -7,24 +7,24 @@ export const useMarinaSummary = () => {
     queryKey: ['marinaSummary'],
     queryFn: async (): Promise<MarinaSummary> => {
       console.log('Fetching marina summary...');
-      const { data: slipsData, error: slipsError } = await supabase
-        .from('slips')
+      const { data: slotsData, error: slotsError } = await supabase
+        .from('slots')
         .select('status');
 
-      if (slipsError) throw slipsError;
+      if (slotsError) throw slotsError;
 
-      const { data: boatsData, error: boatsError } = await supabase
-        .from('boats')
+      const { data: assetsData, error: assetsError } = await supabase
+        .from('assets')
         .select('id');
 
-      if (boatsError) throw boatsError;
+      if (assetsError) throw assetsError;
 
-      console.log('Slips data:', slipsData);
-      console.log('Boats data:', boatsData);
+      console.log('Slots data:', slotsData);
+      console.log('Assets data:', assetsData);
 
-      const totalSlips = slipsData.length;
-      const occupiedSlips = slipsData.filter(slip => slip.status === 'occupied').length;
-      const activeBoats = boatsData.length;
+      const totalSlips = slotsData.length;
+      const occupiedSlips = slotsData.filter(slot => slot.status === 'occupied').length;
+      const activeBoats = assetsData.length;
       const occupancyRate = totalSlips > 0 
         ? Math.round((occupiedSlips / totalSlips) * 100)
         : 0;

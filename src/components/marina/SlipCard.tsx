@@ -9,9 +9,9 @@ interface SlipCardProps {
   id: number;
   name: string;
   status: 'available' | 'occupied' | 'maintenance';
-  boat?: {
-    boat_name: string;
-    boat_size?: string;
+  asset?: {
+    asset_name: string;
+    asset_size?: string;
     customers?: {
       name: string;
     };
@@ -27,7 +27,7 @@ export function SlipCard({
   id,
   name,
   status,
-  boat,
+  asset,
   customerName,
   maintenanceDescription,
   dock,
@@ -41,7 +41,7 @@ export function SlipCard({
     try {
       setIsLoading(true);
       const { error } = await supabase
-        .from('slips')
+        .from('slots')
         .update({ status: newStatus })
         .eq('id', id);
 
@@ -50,13 +50,13 @@ export function SlipCard({
       await onStatusChange();
       toast({
         title: "Status Updated",
-        description: `Slip status has been updated to ${newStatus}`,
+        description: `Slot status has been updated to ${newStatus}`,
       });
     } catch (error) {
-      console.error('Error updating slip status:', error);
+      console.error('Error updating slot status:', error);
       toast({
         title: "Error",
-        description: "Failed to update slip status",
+        description: "Failed to update slot status",
         variant: "destructive",
       });
     } finally {
@@ -86,16 +86,16 @@ export function SlipCard({
             <span className="text-[#3E4238] capitalize">{status}</span>
           </div>
 
-          {boat && (
+          {asset && (
             <>
               <div className="flex items-center justify-between">
-                <span className="text-[#133134] font-medium">Boat</span>
-                <span className="text-[#3E4238]">{boat.boat_name}</span>
+                <span className="text-[#133134] font-medium">Asset</span>
+                <span className="text-[#3E4238]">{asset.asset_name}</span>
               </div>
-              {boat.boat_size && (
+              {asset.asset_size && (
                 <div className="flex items-center justify-between">
                   <span className="text-[#133134] font-medium">Size</span>
-                  <span className="text-[#3E4238]">{boat.boat_size}</span>
+                  <span className="text-[#3E4238]">{asset.asset_size}</span>
                 </div>
               )}
             </>
