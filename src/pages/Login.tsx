@@ -1,76 +1,43 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useToast } from "@/components/ui/use-toast";
-import { Footer } from "@/components/layout/Footer";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  // Get the site URL and port dynamically
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  const siteUrl = isDevelopment 
-    ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
-    : window.location.origin;
-  const redirectTo = `${siteUrl}/app`;
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        navigate('/app');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-[#FFF] flex flex-col">
-      <div className="flex-1 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-[#133134] mb-2">Welcome Back</h1>
-            <p className="text-[#3E4238]">Sign in to manage your marina</p>
-          </div>
-          
-          <Auth
-            supabaseClient={supabase}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: '#133134',
-                    brandAccent: '#3E4238',
-                  }
-                }
-              },
-              className: {
-                container: 'w-full',
-                button: 'w-full px-4 py-2 rounded',
-                input: 'w-full px-4 py-2 rounded border',
-                divider: 'my-4',
-                label: 'text-sm font-medium text-gray-700',
-              }
-            }}
-            providers={['google']}
-            redirectTo={redirectTo}
-            magicLink={true}
-            showLinks={true}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'Email address',
-                  password_label: 'Your Password',
-                  button_label: 'Sign in',
-                  loading_button_label: 'Signing in...',
-                  social_provider_text: 'Sign in with {{provider}}',
-                  link_text: "Don't have an account? Sign up",
-                },
-                forgotten_password: {
-                  link_text: 'Forgot your password?',
-                  button_label: 'Send reset instructions',
+    <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+        <h2 className="text-2xl font-bold text-center mb-8 text-[#133134]">Welcome to DockEase</h2>
+        <Auth
+          supabaseClient={supabase}
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                colors: {
+                  brand: '#133134',
+                  brandAccent: '#1d4547',
                 }
               }
-            }}
-          />
-        </Card>
+            }
+          }}
+          providers={[]}
+          redirectTo={`${window.location.origin}/app`}
+        />
       </div>
-      <Footer />
     </div>
   );
 }
