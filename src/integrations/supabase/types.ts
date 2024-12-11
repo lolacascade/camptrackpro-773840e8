@@ -9,10 +9,11 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      boats: {
+      assets: {
         Row: {
-          boat_name: string
-          boat_size: string | null
+          asset_name: string
+          asset_size: string | null
+          asset_type: string | null
           created_at: string | null
           customer_id: number | null
           id: number
@@ -20,8 +21,9 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          boat_name: string
-          boat_size?: string | null
+          asset_name: string
+          asset_size?: string | null
+          asset_type?: string | null
           created_at?: string | null
           customer_id?: number | null
           id?: number
@@ -29,8 +31,9 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          boat_name?: string
-          boat_size?: string | null
+          asset_name?: string
+          asset_size?: string | null
+          asset_type?: string | null
           created_at?: string | null
           customer_id?: number | null
           id?: number
@@ -49,7 +52,7 @@ export type Database = {
             foreignKeyName: "fk_slip_id"
             columns: ["slip_id"]
             isOneToOne: false
-            referencedRelation: "slips"
+            referencedRelation: "slots"
             referencedColumns: ["id"]
           },
         ]
@@ -92,7 +95,7 @@ export type Database = {
           due_date: string
           id: number
           issued_date: string
-          slip_id: number | null
+          slot_id: number | null
           status: string
         }
         Insert: {
@@ -102,7 +105,7 @@ export type Database = {
           due_date: string
           id?: number
           issued_date: string
-          slip_id?: number | null
+          slot_id?: number | null
           status: string
         }
         Update: {
@@ -112,7 +115,7 @@ export type Database = {
           due_date?: string
           id?: number
           issued_date?: string
-          slip_id?: number | null
+          slot_id?: number | null
           status?: string
         }
         Relationships: [
@@ -125,9 +128,9 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_slip_id"
-            columns: ["slip_id"]
+            columns: ["slot_id"]
             isOneToOne: false
-            referencedRelation: "slips"
+            referencedRelation: "slots"
             referencedColumns: ["id"]
           },
         ]
@@ -164,7 +167,7 @@ export type Database = {
           customer_id: number | null
           description: string
           id: number
-          slip_id: number | null
+          slot_id: number | null
           status: string
           updated_at: string | null
         }
@@ -175,7 +178,7 @@ export type Database = {
           customer_id?: number | null
           description: string
           id?: number
-          slip_id?: number | null
+          slot_id?: number | null
           status: string
           updated_at?: string | null
         }
@@ -186,7 +189,7 @@ export type Database = {
           customer_id?: number | null
           description?: string
           id?: number
-          slip_id?: number | null
+          slot_id?: number | null
           status?: string
           updated_at?: string | null
         }
@@ -207,9 +210,9 @@ export type Database = {
           },
           {
             foreignKeyName: "fk_slip_id"
-            columns: ["slip_id"]
+            columns: ["slot_id"]
             isOneToOne: false
-            referencedRelation: "slips"
+            referencedRelation: "slots"
             referencedColumns: ["id"]
           },
         ]
@@ -301,7 +304,7 @@ export type Database = {
         }
         Relationships: []
       }
-      slip_audit_logs: {
+      slot_audit_logs: {
         Row: {
           action: string
           created_at: string | null
@@ -309,7 +312,7 @@ export type Database = {
           id: number
           new_status: string | null
           previous_status: string | null
-          slip_id: number | null
+          slot_id: number | null
         }
         Insert: {
           action: string
@@ -318,7 +321,7 @@ export type Database = {
           id?: number
           new_status?: string | null
           previous_status?: string | null
-          slip_id?: number | null
+          slot_id?: number | null
         }
         Update: {
           action?: string
@@ -327,24 +330,23 @@ export type Database = {
           id?: number
           new_status?: string | null
           previous_status?: string | null
-          slip_id?: number | null
+          slot_id?: number | null
         }
         Relationships: [
           {
             foreignKeyName: "slip_audit_logs_slip_id_fkey"
-            columns: ["slip_id"]
+            columns: ["slot_id"]
             isOneToOne: false
-            referencedRelation: "slips"
+            referencedRelation: "slots"
             referencedColumns: ["id"]
           },
         ]
       }
-      slips: {
+      slots: {
         Row: {
           created_at: string | null
           customer_id: number | null
           dock: string | null
-          dock_number: string
           electricity_voltage: string | null
           has_water: boolean | null
           id: number
@@ -352,11 +354,12 @@ export type Database = {
           last_activity_at: string | null
           length_ft: number | null
           location_coordinates: Json | null
+          location_identifier: string
           maintenance_id: number | null
           name: string
-          power_connection_type: string | null
           status: string
           updated_at: string | null
+          utility_connection_type: string | null
           width_ft: number | null
           zone: string | null
         }
@@ -364,7 +367,6 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           dock?: string | null
-          dock_number?: string
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
@@ -372,11 +374,12 @@ export type Database = {
           last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
+          location_identifier?: string
           maintenance_id?: number | null
           name: string
-          power_connection_type?: string | null
           status: string
           updated_at?: string | null
+          utility_connection_type?: string | null
           width_ft?: number | null
           zone?: string | null
         }
@@ -384,7 +387,6 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           dock?: string | null
-          dock_number?: string
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
@@ -392,11 +394,12 @@ export type Database = {
           last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
+          location_identifier?: string
           maintenance_id?: number | null
           name?: string
-          power_connection_type?: string | null
           status?: string
           updated_at?: string | null
+          utility_connection_type?: string | null
           width_ft?: number | null
           zone?: string | null
         }

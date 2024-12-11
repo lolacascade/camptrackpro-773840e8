@@ -7,17 +7,17 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface BoatTablePaginationProps {
+interface AssetTablePaginationProps {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }
 
-export function BoatTablePagination({ 
+export function AssetTablePagination({ 
   currentPage, 
   totalPages, 
   onPageChange 
-}: BoatTablePaginationProps) {
+}: AssetTablePaginationProps) {
   if (totalPages <= 1) return null;
 
   return (

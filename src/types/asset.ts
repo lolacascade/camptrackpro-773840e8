@@ -1,11 +1,12 @@
-export interface Boat {
+export interface Asset {
   id: number;
-  boat_name: string;
-  boat_size: string | null;
+  asset_name: string;
+  asset_size: string | null;
   customer_id: number | null;
-  slip_id?: number | null;
+  slot_id?: number | null;
   created_at?: string | null;
   updated_at?: string | null;
+  asset_type: string;
   customers?: {
     name: string;
   };
