@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { CustomerTable } from "@/components/customers/CustomerTable";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
+import { CustomerInsights } from "@/components/customers/CustomerInsights";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
@@ -73,6 +74,8 @@ export default function Customers() {
           <Plus className="mr-2 h-4 w-4" /> Add Customer
         </Button>
       </div>
+
+      <CustomerInsights />
 
       {isLoading ? (
         <div className="text-[#3E4238]">Loading customers...</div>

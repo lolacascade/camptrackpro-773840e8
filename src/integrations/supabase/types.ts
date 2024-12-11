@@ -48,6 +48,13 @@ export type Database = {
             foreignKeyName: "fk_customer_id"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -60,12 +67,147 @@ export type Database = {
           },
         ]
       }
+      bookings: {
+        Row: {
+          check_in_date: string
+          check_out_date: string
+          created_at: string | null
+          customer_id: number
+          id: number
+          slot_id: number
+        }
+        Insert: {
+          check_in_date: string
+          check_out_date: string
+          created_at?: string | null
+          customer_id: number
+          id?: number
+          slot_id: number
+        }
+        Update: {
+          check_in_date?: string
+          check_out_date?: string
+          created_at?: string | null
+          customer_id?: number
+          id?: number
+          slot_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_notes: {
+        Row: {
+          created_at: string | null
+          customer_id: number | null
+          id: number
+          note: string | null
+          tag: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          note?: string | null
+          tag?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: number | null
+          id?: number
+          note?: string | null
+          tag?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_notes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_notes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customer_preferences: {
+        Row: {
+          customer_id: number | null
+          id: number
+          last_updated: string | null
+          preferred_slot_id: number | null
+          preferred_zone: string | null
+        }
+        Insert: {
+          customer_id?: number | null
+          id?: number
+          last_updated?: string | null
+          preferred_slot_id?: number | null
+          preferred_zone?: string | null
+        }
+        Update: {
+          customer_id?: number | null
+          id?: number
+          last_updated?: string | null
+          preferred_slot_id?: number | null
+          preferred_zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "customer_preferences_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_preferences_preferred_slot_id_fkey"
+            columns: ["preferred_slot_id"]
+            isOneToOne: false
+            referencedRelation: "slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
           created_at: string | null
           email: string | null
           id: number
+          lifetime_value: number | null
           name: string
           phone: string | null
           updated_at: string | null
@@ -76,6 +218,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
+          lifetime_value?: number | null
           name: string
           phone?: string | null
           updated_at?: string | null
@@ -86,6 +229,7 @@ export type Database = {
           created_at?: string | null
           email?: string | null
           id?: number
+          lifetime_value?: number | null
           name?: string
           phone?: string | null
           updated_at?: string | null
@@ -128,6 +272,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
           {
             foreignKeyName: "fk_customer_id"
             columns: ["customer_id"]
@@ -210,8 +361,22 @@ export type Database = {
             foreignKeyName: "fk_assigned_to"
             columns: ["assigned_to"]
             isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "fk_assigned_to"
+            columns: ["assigned_to"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
           },
           {
             foreignKeyName: "fk_customer_id"
@@ -423,6 +588,13 @@ export type Database = {
             foreignKeyName: "fk_customer_id"
             columns: ["customer_id"]
             isOneToOne: false
+            referencedRelation: "customer_insights"
+            referencedColumns: ["customer_id"]
+          },
+          {
+            foreignKeyName: "fk_customer_id"
+            columns: ["customer_id"]
+            isOneToOne: false
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
@@ -461,7 +633,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      customer_insights: {
+        Row: {
+          customer_id: number | null
+          email: string | null
+          lifetime_value: number | null
+          name: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
