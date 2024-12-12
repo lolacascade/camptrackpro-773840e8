@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { format, subMonths, addMonths } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";  // Added import for cn utility
 
 export function RevenueBreakdown() {
   const currentDate = new Date();
