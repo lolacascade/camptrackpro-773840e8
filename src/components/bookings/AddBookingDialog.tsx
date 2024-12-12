@@ -14,14 +14,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
 import { useForm } from "react-hook-form";
 import { CustomerSelect } from "./form-fields/CustomerSelect";
 import { DateSelect } from "./form-fields/DateSelect";
 import { SlotSelect } from "./form-fields/SlotSelect";
+import { useCreateBooking } from "@/hooks/bookings/use-create-booking";
+import { BookingFormValues } from "@/types/bookings";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const bookingFormSchema = z.object({
+  customerId: z.string().min(1, "Please select a customer"),
+  slotId: z.string().min(1, "Please select a slot"),
+  checkInDate: z.date(),
+  checkOutDate: z.date(),
+  specialRequirements: z.string().optional(),
+});
 
 interface AddBookingDialogProps {
   isOpen: boolean;
@@ -34,8 +44,8 @@ export function AddBookingDialog({
   onOpenChange,
   onBookingAdded,
 }: AddBookingDialogProps) {
-  const { toast } = useToast();
-  const form = useForm({
+  const form = useForm<BookingFormValues>({
+    resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       customerId: "",
       slotId: "",
@@ -68,37 +78,11 @@ export function AddBookingDialog({
     },
   });
 
-  const onSubmit = async (values: any) => {
-    try {
-      const bookingData = {
-        customer_id: parseInt(values.customerId),
-        slot_id: parseInt(values.slotId),
-        check_in_date: format(values.checkInDate, "yyyy-MM-dd"),
-        check_out_date: format(values.checkOutDate, "yyyy-MM-dd"),
-        special_requirements: values.specialRequirements,
-        status: "pending",
-      };
-
-      const { error } = await supabase.from("bookings").insert([bookingData]);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking has been created successfully.",
-      });
-
-      onBookingAdded();
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      toast({
-        title: "Error",
-        description: "Failed to create booking. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const { createBooking, isLoading } = useCreateBooking(() => {
+    onBookingAdded();
+    onOpenChange(false);
+    form.reset();
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -107,7 +91,7 @@ export function AddBookingDialog({
           <DialogTitle>Add New Booking</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(createBooking)} className="space-y-4">
             <CustomerSelect form={form} customers={customers} />
             <SlotSelect form={form} availableSlots={availableSlots} />
             <DateSelect
@@ -131,15 +115,19 @@ export function AddBookingDialog({
                     <Textarea
                       placeholder="Enter any special requirements..."
                       {...field}
-                      className="bg-white"
+                      className="bg-white resize-none min-h-[100px]"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Create Booking
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating..." : "Create Booking"}
             </Button>
           </form>
         </Form>
