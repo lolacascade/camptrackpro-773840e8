@@ -15,12 +15,14 @@ export default function Assets() {
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [customerFilter, setCustomerFilter] = useState("all");
 
   const { data: assets = [], isLoading, refetch } = useQuery({
-    queryKey: ['assets'],
+    queryKey: ['assets', typeFilter, customerFilter],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('assets')
           .select(`
             id,
@@ -39,12 +41,21 @@ export default function Assets() {
             )
           `);
 
+        if (typeFilter !== 'all') {
+          query = query.eq('asset_type', typeFilter);
+        }
+
+        if (customerFilter !== 'all') {
+          query = query.eq('customer_id', customerFilter);
+        }
+
+        const { data, error } = await query;
+
         if (error) {
           console.error('Error fetching assets:', error);
           throw error;
         }
 
-        // Transform the data to match the Asset type
         return (data || []).map(item => ({
           id: item.id,
           asset_name: item.asset_name,
@@ -101,6 +112,32 @@ export default function Assets() {
     },
   ];
 
+  const filters = [
+    {
+      name: "type",
+      options: [
+        { label: "All Types", value: "all" },
+        { label: "Boat", value: "boat" },
+        { label: "Jet Ski", value: "jet-ski" },
+        { label: "Yacht", value: "yacht" }
+      ],
+      value: typeFilter,
+      onChange: setTypeFilter
+    },
+    {
+      name: "customer",
+      options: [
+        { label: "All Customers", value: "all" },
+        ...(assets?.map(asset => ({
+          label: asset.customers?.name || 'Unassigned',
+          value: String(asset.customer_id || 'unassigned')
+        })) || [])
+      ],
+      value: customerFilter,
+      onChange: setCustomerFilter
+    }
+  ];
+
   const handleEdit = (asset: Asset) => {
     setSelectedAsset(asset);
     setIsDrawerOpen(true);
@@ -124,6 +161,7 @@ export default function Assets() {
           onEdit={handleEdit}
           onViewDetails={handleViewDetails}
           title="Assets"
+          filters={filters}
           headerContent={
             <Button onClick={() => setIsDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" /> Add Asset

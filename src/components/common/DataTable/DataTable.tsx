@@ -12,6 +12,11 @@ import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { useState, useMemo } from "react";
 
+interface FilterOption {
+  label: string;
+  value: string;
+}
+
 export interface Column<T> {
   header: string;
   accessorKey: keyof T;
@@ -28,6 +33,12 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   headerContent?: React.ReactNode;
   itemsPerPage?: number;
+  filters?: {
+    name: string;
+    options: FilterOption[];
+    value: string;
+    onChange: (value: string) => void;
+  }[];
 }
 
 export function DataTable<T extends { id?: number | string }>({ 
@@ -37,7 +48,8 @@ export function DataTable<T extends { id?: number | string }>({
   onViewDetails,
   title,
   headerContent,
-  itemsPerPage = 10
+  itemsPerPage = 10,
+  filters = []
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{
@@ -97,6 +109,7 @@ export function DataTable<T extends { id?: number | string }>({
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         title={title}
+        filters={filters}
       >
         {headerContent}
       </DataTableHeader>
