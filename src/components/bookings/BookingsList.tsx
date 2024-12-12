@@ -8,11 +8,10 @@ import type { Column } from "@/components/common/DataTable/DataTable";
 import type { Booking } from "@/hooks/bookings/use-bookings-list";
 
 export function BookingsList() {
-  const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [customerFilter, setCustomerFilter] = useState("all");
   const navigate = useNavigate();
-  const { data: bookings, isLoading } = useBookingsList(searchTerm);
+  const { data: bookings, isLoading } = useBookingsList("");
 
   const columns: Column<Booking>[] = [
     {
@@ -131,8 +130,6 @@ export function BookingsList() {
           onViewDetails={handleViewDetails}
           isLoading={isLoading}
           filters={filters}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
         />
       </div>
     </Card>

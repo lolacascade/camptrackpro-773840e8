@@ -5,7 +5,6 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 
 export default function BookingDetails() {
   const { id } = useParams();
@@ -90,17 +89,17 @@ export default function BookingDetails() {
               <div className="flex items-center space-x-4 mb-6">
                 <Avatar>
                   <AvatarFallback className="bg-primary/10 text-primary">
-                    {booking.customer.name.split(' ').map(n => n[0]).join('')}
+                    {booking.customer?.name?.split(' ').map(n => n[0]).join('') || '??'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-medium text-[#133134]">{booking.customer.name}</h3>
-                  <p className="text-sm text-[#3E4238]">{booking.customer.email}</p>
+                  <h3 className="font-medium text-[#133134]">{booking.customer?.name || 'Unknown'}</h3>
+                  <p className="text-sm text-[#3E4238]">{booking.customer?.email || 'No email'}</p>
                 </div>
               </div>
               <div className="space-y-2">
-                <p><span className="font-medium">Phone:</span> {booking.customer.phone || 'N/A'}</p>
-                <p><span className="font-medium">Address:</span> {booking.customer.address || 'N/A'}</p>
+                <p><span className="font-medium">Phone:</span> {booking.customer?.phone || 'N/A'}</p>
+                <p><span className="font-medium">Address:</span> {booking.customer?.address || 'N/A'}</p>
               </div>
             </CardContent>
           </Card>
@@ -134,36 +133,42 @@ export default function BookingDetails() {
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Slot Details</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <div>
-                <p className="font-medium">Slot Name</p>
-                <p className="text-[#3E4238]">{booking.slot.name}</p>
+        {booking.slot && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Slot Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <p className="font-medium">Slot Name</p>
+                  <p className="text-[#3E4238]">{booking.slot.name}</p>
+                </div>
+                <div>
+                  <p className="font-medium">Dock</p>
+                  <p className="text-[#3E4238]">{booking.slot.dock || 'N/A'}</p>
+                </div>
+                {booking.slot.length_ft && booking.slot.width_ft && (
+                  <div>
+                    <p className="font-medium">Dimensions</p>
+                    <p className="text-[#3E4238]">
+                      {booking.slot.length_ft}' x {booking.slot.width_ft}'
+                    </p>
+                  </div>
+                )}
+                <div>
+                  <p className="font-medium">Utilities</p>
+                  <p className="text-[#3E4238]">
+                    {[
+                      booking.slot.electricity_voltage && `${booking.slot.electricity_voltage}V`,
+                      booking.slot.has_water && 'Water'
+                    ].filter(Boolean).join(', ') || 'None'}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium">Dock</p>
-                <p className="text-[#3E4238]">{booking.slot.dock || 'N/A'}</p>
-              </div>
-              <div>
-                <p className="font-medium">Dimensions</p>
-                <p className="text-[#3E4238]">
-                  {booking.slot.length_ft}' x {booking.slot.width_ft}'
-                </p>
-              </div>
-              <div>
-                <p className="font-medium">Utilities</p>
-                <p className="text-[#3E4238]">
-                  {booking.slot.electricity_voltage && `${booking.slot.electricity_voltage}V`}
-                  {booking.slot.has_water && ', Water'}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
 
         {booking.bookings_assets && booking.bookings_assets.length > 0 && (
           <Card>
@@ -172,7 +177,7 @@ export default function BookingDetails() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {booking.bookings_assets.map(({ asset }, index) => (
+                {booking.bookings_assets.map(({ asset }) => (
                   <div key={asset.id} className="flex items-center justify-between p-4 rounded-lg border border-[#E8EBEB]">
                     <div>
                       <p className="font-medium text-[#133134]">{asset.asset_name}</p>
