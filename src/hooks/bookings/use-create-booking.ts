@@ -12,7 +12,7 @@ export function useCreateBooking(onSuccess: () => void) {
     try {
       setIsLoading(true);
       
-      const bookingData: BookingData = {
+      const bookingData: Omit<BookingData, 'reservation_code'> = {
         customer_id: parseInt(values.customerId),
         slot_id: parseInt(values.slotId),
         check_in_date: format(values.checkInDate, "yyyy-MM-dd"),
