@@ -42,6 +42,14 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
 
   const { trends, performanceNotes } = calculateTrends(chartData);
 
+  // Transform the data to include opacity directly in the data points
+  const transformedData = chartData.map(item => ({
+    ...item,
+    occupiedOpacity: item.isProjected ? 0.6 : 1,
+    availableOpacity: item.isProjected ? 0.6 : 1,
+    maintenanceOpacity: item.isProjected ? 0.6 : 1,
+  }));
+
   return (
     <div className="space-y-4">
       {/* Summary Stats */}
@@ -76,7 +84,7 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
-            data={chartData}
+            data={transformedData}
             margin={{
               top: 20,
               right: 30,
@@ -155,17 +163,17 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
             <Bar 
               dataKey="occupied" 
               fill={COLORS.occupied}
-              opacity={(data) => data.isProjected ? 0.6 : 1}
+              fillOpacity="occupiedOpacity"
             />
             <Bar 
               dataKey="available" 
               fill={COLORS.available}
-              opacity={(data) => data.isProjected ? 0.6 : 1}
+              fillOpacity="availableOpacity"
             />
             <Bar 
               dataKey="maintenance" 
               fill={COLORS.maintenance}
-              opacity={(data) => data.isProjected ? 0.6 : 1}
+              fillOpacity="maintenanceOpacity"
             />
           </BarChart>
         </ResponsiveContainer>
