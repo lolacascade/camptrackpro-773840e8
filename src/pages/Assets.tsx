@@ -19,11 +19,15 @@ export default function Assets() {
     queryKey: ['assets'],
     queryFn: async () => {
       try {
-        console.log('Fetching assets...');
         const { data, error } = await supabase
           .from('assets')
           .select(`
-            *,
+            id,
+            asset_name,
+            asset_size,
+            asset_type,
+            customer_id,
+            slot_id,
             customers (
               name
             ),
@@ -39,8 +43,19 @@ export default function Assets() {
           throw error;
         }
 
-        console.log('Assets data:', data);
-        return data || [];
+        // Transform the data to match the Asset interface
+        const transformedData = data.map(asset => ({
+          id: asset.id,
+          asset_name: asset.asset_name,
+          asset_size: asset.asset_size,
+          asset_type: asset.asset_type || '',
+          customer_id: asset.customer_id,
+          slot_id: asset.slot_id,
+          customers: asset.customers,
+          slots: asset.slots
+        }));
+
+        return transformedData;
       } catch (error) {
         console.error('Error fetching assets:', error);
         toast({
@@ -58,6 +73,12 @@ export default function Assets() {
     setIsDrawerOpen(true);
   };
 
+  const handleViewDetails = (asset: Asset) => {
+    // For now, we'll use the same drawer for both edit and view
+    setSelectedAsset(asset);
+    setIsDrawerOpen(true);
+  };
+
   return (
     <div className="bg-white rounded-[24px] p-12 space-y-8">
       <div className="flex justify-between items-center">
@@ -68,11 +89,14 @@ export default function Assets() {
       </div>
 
       {isLoading ? (
-        <div>Loading assets...</div>
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
       ) : (
         <AssetTable
           assets={assets}
           onEdit={handleEdit}
+          onViewDetails={handleViewDetails}
         />
       )}
 
