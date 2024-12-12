@@ -40,11 +40,11 @@ export function EnhancedStatCard({
           <div className="text-sm font-medium text-[#3E4238]">{title}</div>
           
           <div className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-[#133134]">{value}</div>
+            <div className="text-4xl font-bold text-[#133134]">{value}</div>
             {trend && (
               <Sparkline 
                 className={trend.isPositive ? "text-[#388E3C]" : "text-[#D32F2F]"}
-                height={32}
+                height={40}
               />
             )}
           </div>
@@ -58,7 +58,7 @@ export function EnhancedStatCard({
           )}
 
           {breakdown && (
-            <div className="space-y-2 pt-3">
+            <div className="space-y-2">
               {breakdown.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
                   <span className="text-[#3E4238]">{item.label}</span>
@@ -78,12 +78,12 @@ export function EnhancedStatCard({
           )}
 
           {recommendedActions && recommendedActions.length > 0 && (
-            <div className="space-y-2 pt-3">
+            <div className="space-y-2 mt-4">
               <h4 className="text-sm font-medium text-[#133134]">Recommended Actions</h4>
               {recommendedActions.map((action, index) => (
-                <div key={index} className="text-sm">
-                  <p className="text-[#3E4238]">{action.label}</p>
-                  <p className="text-[#388E3C] text-xs">{action.impact}</p>
+                <div key={index}>
+                  <p className="text-sm text-[#3E4238]">{action.label}</p>
+                  <p className="text-xs text-[#388E3C]">{action.impact}</p>
                 </div>
               ))}
             </div>

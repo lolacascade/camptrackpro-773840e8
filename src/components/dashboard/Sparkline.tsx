@@ -22,7 +22,7 @@ const defaultData = [
 
 export function Sparkline({ className, data = defaultData, height = 40 }: SparklineProps) {
   return (
-    <div className={`w-32 ${className}`} style={{ height }}>
+    <div className={`w-40 ${className}`} style={{ height }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <Line
