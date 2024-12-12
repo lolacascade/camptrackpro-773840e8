@@ -1,5 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Sparkline } from "./Sparkline";
 
 interface TrendInfo {
@@ -22,7 +21,6 @@ interface Action {
 interface EnhancedStatCardProps {
   title: string;
   value: string;
-  icon: LucideIcon;
   trend?: TrendInfo;
   breakdown?: Breakdown[];
   recommendedActions?: Action[];
@@ -31,24 +29,22 @@ interface EnhancedStatCardProps {
 export function EnhancedStatCard({
   title,
   value,
-  icon: Icon,
   trend,
   breakdown,
   recommendedActions,
 }: EnhancedStatCardProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-[#3E4238]">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-[#3E4238]" />
-      </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="space-y-4">
+          <div className="text-sm font-medium text-[#3E4238]">{title}</div>
+          
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-[#133134]">{value}</div>
             {trend && (
               <Sparkline 
                 className={trend.isPositive ? "text-[#388E3C]" : "text-[#D32F2F]"}
+                height={40}
               />
             )}
           </div>
