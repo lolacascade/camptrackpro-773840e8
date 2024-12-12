@@ -38,7 +38,7 @@ export function BookingsList() {
       accessorKey: "assets",
       cell: (booking) => (
         <>
-          {booking.assets?.map((asset: any, index: number) => (
+          {booking.assets?.map((asset, index) => (
             <div key={index}>
               <span className="font-medium">{asset.asset_name}</span>
               <Badge variant="secondary" className="ml-2">
