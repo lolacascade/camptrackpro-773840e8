@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
+import { AppRoutes } from "@/components/routing/AppRoutes";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,11 +25,6 @@ const App = () => {
         <SessionContextProvider 
           supabaseClient={supabase}
           initialSession={null}
-          // Add these options to persist the session
-          options={{
-            detectSessionInUrl: true,
-            persistSession: true,
-          }}
         >
           <TooltipProvider>
             <Toaster />

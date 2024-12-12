@@ -76,14 +76,14 @@ export function AddBookingDialog({ isOpen, onOpenChange, onBookingAdded }: AddBo
     try {
       const { error } = await supabase
         .from('bookings')
-        .insert([{
-          customer_id: values.customerId,
-          slot_id: values.slotId,
+        .insert({
+          customer_id: parseInt(values.customerId),
+          slot_id: parseInt(values.slotId),
           check_in_date: format(values.checkInDate, 'yyyy-MM-dd'),
           check_out_date: format(values.checkOutDate, 'yyyy-MM-dd'),
           special_requirements: values.specialRequirements,
           status: 'pending'
-        }]);
+        });
 
       if (error) throw error;
 
@@ -93,7 +93,9 @@ export function AddBookingDialog({ isOpen, onOpenChange, onBookingAdded }: AddBo
       });
       
       onBookingAdded();
+      onOpenChange(false);
     } catch (error) {
+      console.error('Error creating booking:', error);
       toast({
         title: "Error",
         description: "Failed to create booking. Please try again.",
