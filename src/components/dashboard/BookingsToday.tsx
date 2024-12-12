@@ -5,22 +5,28 @@ import { DataTable, Column } from "@/components/common/DataTable/DataTable";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
 
 interface Booking {
   id: number;
   customer: {
     name: string;
     email: string;
+    isVIP?: boolean;
   };
   slot: {
     name: string;
   };
   check_in_date: string;
   check_out_date: string;
+  status: 'pending' | 'checked_in' | 'overdue' | 'completed';
+  priority: 'high' | 'medium' | 'low';
 }
 
 export function BookingsToday() {
   const navigate = useNavigate();
+  const [priorityFilter, setPriorityFilter] = useState<string>("all");
   
   const { data: bookings, isLoading } = useQuery({
     queryKey: ['bookings-today'],
@@ -41,11 +47,39 @@ export function BookingsToday() {
         throw error;
       }
 
-      return data as Booking[];
+      // Add mock priority and status for demonstration
+      return data.map((booking: any) => ({
+        ...booking,
+        status: Math.random() > 0.5 ? 'checked_in' : 'pending',
+        priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
+        customer: {
+          ...booking.customer,
+          isVIP: Math.random() > 0.8
+        }
+      })) as Booking[];
     },
   });
 
+  const filteredBookings = bookings?.filter(booking => 
+    priorityFilter === "all" || booking.priority === priorityFilter
+  ) || [];
+
   const columns: Column<Booking>[] = [
+    {
+      header: "Priority",
+      accessorKey: "priority",
+      cell: (booking) => (
+        <Badge 
+          variant={
+            booking.priority === 'high' ? 'destructive' : 
+            booking.priority === 'medium' ? 'default' : 
+            'secondary'
+          }
+        >
+          {booking.priority}
+        </Badge>
+      ),
+    },
     {
       header: "Customer",
       accessorKey: "customer",
@@ -57,7 +91,14 @@ export function BookingsToday() {
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-medium text-[#133134]">{booking.customer.name}</p>
+            <div className="flex items-center gap-2">
+              <p className="font-medium text-[#133134]">{booking.customer.name}</p>
+              {booking.customer.isVIP && (
+                <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200">
+                  VIP
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-[#3E4238]">{booking.customer.email}</p>
           </div>
         </div>
@@ -105,15 +146,27 @@ export function BookingsToday() {
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-[#133134] text-2xl">Today's Check-ins</CardTitle>
+        <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filter by priority" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Priorities</SelectItem>
+            <SelectItem value="high">High Priority</SelectItem>
+            <SelectItem value="medium">Medium Priority</SelectItem>
+            <SelectItem value="low">Low Priority</SelectItem>
+          </SelectContent>
+        </Select>
       </CardHeader>
       <CardContent>
         <DataTable
-          data={bookings || []}
+          data={filteredBookings}
           columns={columns}
           onViewDetails={handleViewDetails}
           itemsPerPage={5}
+          isLoading={isLoading}
         />
       </CardContent>
     </Card>
