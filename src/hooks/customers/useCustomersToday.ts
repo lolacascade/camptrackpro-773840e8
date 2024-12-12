@@ -8,28 +8,26 @@ export function useCustomersToday() {
   return useQuery({
     queryKey: ['customersToday'],
     queryFn: async () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
+      console.log('Fetching customers checking in today...');
+      
+      const today = new Date().toISOString().split('T')[0];
+      
       const { data, error } = await supabase
         .from('bookings')
-        .select(`
-          id,
-          customers (
-            name
-          )
-        `)
-        .gte('check_in_date', today.toISOString())
-        .lt('check_in_date', new Date(today.getTime() + 86400000).toISOString());
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        return 'No check-ins today';
+        .select('customer_id')
+        .eq('check_in_date', today);
+      
+      if (error) {
+        console.error('Error fetching today\'s bookings:', error);
+        throw error;
       }
-
-      const uniqueCustomers = new Set(data.map(booking => booking.customers?.name).filter(Boolean));
-      return `${uniqueCustomers.size} check-in${uniqueCustomers.size !== 1 ? 's' : ''} today`;
+      
+      const uniqueCustomers = new Set(data?.map(booking => booking.customer_id));
+      const customerCount = uniqueCustomers.size;
+      
+      console.log(`Found ${customerCount} customers checking in today`);
+      
+      return customerCount === 0 ? '0' : customerCount.toString();
     },
     enabled: !!session?.user?.id
   });

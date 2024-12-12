@@ -8,6 +8,8 @@ export function usePreferredSpot() {
   return useQuery({
     queryKey: ['preferredSpot'],
     queryFn: async () => {
+      console.log('Fetching preferred spot...');
+      
       const { data, error } = await supabase
         .from('bookings')
         .select(`
@@ -20,31 +22,36 @@ export function usePreferredSpot() {
         `)
         .not('slot_id', 'is', null);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching bookings:', error);
+        throw error;
+      }
       
       if (!data || data.length === 0) {
+        console.log('No bookings found');
         return 'No bookings yet';
       }
       
       // Count occurrences of each slot
-      const slotCounts = data.reduce((acc: Record<string, number>, booking) => {
+      const slotCounts = data.reduce((acc: Record<string, { count: number; details: any }>, booking) => {
         const slotId = booking.slot_id;
-        acc[slotId] = (acc[slotId] || 0) + 1;
+        if (!acc[slotId]) {
+          acc[slotId] = { count: 0, details: booking.slots };
+        }
+        acc[slotId].count++;
         return acc;
       }, {});
       
       // Find the slot with the highest count
-      const [mostFrequentSlotId] = Object.entries(slotCounts)
-        .sort(([, a], [, b]) => b - a)[0];
+      const [, mostBooked] = Object.entries(slotCounts)
+        .sort(([, a], [, b]) => b.count - a.count)[0];
       
-      const mostBookedSlot = data.find(booking => 
-        booking.slot_id.toString() === mostFrequentSlotId && booking.slots
-      );
+      console.log('Most booked slot:', mostBooked);
       
-      if (!mostBookedSlot?.slots) return 'No preference yet';
+      if (!mostBooked?.details) return 'No preference yet';
       
-      return `${mostBookedSlot.slots.dock || ''} ${mostBookedSlot.slots.name}${
-        mostBookedSlot.slots.zone ? ` (${mostBookedSlot.slots.zone})` : ''
+      return `${mostBooked.details.dock || ''} ${mostBooked.details.name}${
+        mostBooked.details.zone ? ` (${mostBooked.details.zone})` : ''
       }`.trim();
     },
     enabled: !!session?.user?.id

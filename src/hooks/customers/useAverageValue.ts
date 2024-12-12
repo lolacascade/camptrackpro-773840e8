@@ -16,10 +16,7 @@ export function useAverageValue() {
         .select(`
           amount,
           booking_id,
-          bookings (
-            check_in_date,
-            check_out_date
-          )
+          status
         `)
         .eq('status', 'paid')
         .not('booking_id', 'is', null);
@@ -38,7 +35,7 @@ export function useAverageValue() {
       const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
       const totalBookings = invoices.length;
 
-      console.log('Total amount:', totalAmount, 'Total bookings:', totalBookings);
+      console.log(`Total amount: ${totalAmount}, Total bookings: ${totalBookings}`);
 
       // Calculate average per stay
       const average = totalAmount / totalBookings;
