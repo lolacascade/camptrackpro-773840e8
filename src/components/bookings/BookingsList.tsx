@@ -9,6 +9,8 @@ import type { Column } from "@/components/common/DataTable/DataTable";
 
 export function BookingsList() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [customerFilter, setCustomerFilter] = useState("all");
   const navigate = useNavigate();
   const { data: bookings, isLoading } = useBookingsList(searchTerm);
 
@@ -76,6 +78,50 @@ export function BookingsList() {
     navigate(`/app/bookings/${booking.id}`);
   };
 
+  const filters = [
+    {
+      name: "status",
+      options: [
+        { label: "All Statuses", value: "all" },
+        { label: "Active", value: "active" },
+        { label: "Completed", value: "completed" },
+        { label: "Upcoming", value: "upcoming" }
+      ],
+      value: statusFilter,
+      onChange: setStatusFilter
+    },
+    {
+      name: "customer",
+      options: [
+        { label: "All Customers", value: "all" },
+        ...(bookings?.map(booking => ({
+          label: booking.customer.name,
+          value: String(booking.customer.id)
+        })) || [])
+      ],
+      value: customerFilter,
+      onChange: setCustomerFilter
+    }
+  ];
+
+  const filteredBookings = bookings?.filter(booking => {
+    if (statusFilter !== "all") {
+      const today = new Date();
+      const checkOutDate = new Date(booking.check_out_date);
+      const checkInDate = new Date(booking.check_in_date);
+      
+      if (statusFilter === "active" && (checkOutDate < today || checkInDate > today)) return false;
+      if (statusFilter === "completed" && checkOutDate >= today) return false;
+      if (statusFilter === "upcoming" && checkInDate <= today) return false;
+    }
+
+    if (customerFilter !== "all" && booking.customer.id.toString() !== customerFilter) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <BookingsListFilters 
@@ -84,10 +130,11 @@ export function BookingsList() {
       />
       <div className="p-4">
         <DataTable
-          data={bookings || []}
+          data={filteredBookings || []}
           columns={columns}
           onViewDetails={handleViewDetails}
           isLoading={isLoading}
+          filters={filters}
         />
       </div>
     </Card>
