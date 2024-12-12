@@ -6,24 +6,41 @@ import { RecentActivity } from "./RecentActivity";
 import { FooterStats } from "./FooterStats";
 import { BookingsToday } from "./BookingsToday";
 import { DashboardProps } from "@/types/dashboard";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
     <div className="bg-white rounded-[24px] p-4 md:p-12 space-y-8">
       <DashboardHeader />
-      <StatsGrid 
-        occupancyRate={marinaSummary?.occupancyRate ?? 0}
-        occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-        totalSlips={marinaSummary?.totalSlips ?? 0}
-        activeBoats={marinaSummary?.activeBoats ?? 0}
-      />
-      <BookingsToday />
-      <RevenueBreakdown />
+      <ErrorBoundary>
+        <StatsGrid 
+          occupancyRate={marinaSummary?.occupancyRate ?? 0}
+          occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
+          totalSlips={marinaSummary?.totalSlips ?? 0}
+          activeBoats={marinaSummary?.activeBoats ?? 0}
+        />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <BookingsToday />
+      </ErrorBoundary>
+      
+      <ErrorBoundary>
+        <RevenueBreakdown />
+      </ErrorBoundary>
+      
       <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
-        <MarinaOverview />
-        <RecentActivity />
+        <ErrorBoundary>
+          <MarinaOverview />
+        </ErrorBoundary>
+        <ErrorBoundary>
+          <RecentActivity />
+        </ErrorBoundary>
       </div>
-      <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+      
+      <ErrorBoundary>
+        <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+      </ErrorBoundary>
     </div>
   );
 }
