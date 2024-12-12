@@ -12,6 +12,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   useEffect(() => {
+    // Persist the session
+    supabase.auth.getSession().then(({ data: { session: persistedSession }}) => {
+      if (!persistedSession) {
+        console.log('No persisted session found');
+      }
+    });
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, currentSession) => {
@@ -32,6 +39,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!session) {
+    // Store the current location to redirect back after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
