@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import type { Column } from "@/components/common/DataTable/DataTable";
+import type { Booking } from "@/hooks/bookings/use-bookings-list";
 
 export function BookingsList() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +15,7 @@ export function BookingsList() {
   const navigate = useNavigate();
   const { data: bookings, isLoading } = useBookingsList(searchTerm);
 
-  const columns: Column<any>[] = [
+  const columns: Column<Booking>[] = [
     {
       header: "Customer",
       accessorKey: "customer",
@@ -74,7 +75,7 @@ export function BookingsList() {
     },
   ];
 
-  const handleViewDetails = (booking: any) => {
+  const handleViewDetails = (booking: Booking) => {
     navigate(`/app/bookings/${booking.id}`);
   };
 
@@ -96,7 +97,7 @@ export function BookingsList() {
         { label: "All Customers", value: "all" },
         ...(bookings?.map(booking => ({
           label: booking.customer.name,
-          value: String(booking.customer.id)
+          value: booking.customer.id.toString()
         })) || [])
       ],
       value: customerFilter,

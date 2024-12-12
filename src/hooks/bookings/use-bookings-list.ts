@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 export interface Booking {
   id: number;
   customer: {
+    id: number;
     name: string;
     email: string;
   };
@@ -33,7 +34,7 @@ export function useBookingsList(searchTerm: string) {
           check_in_date,
           check_out_date,
           special_requirements,
-          customer:customers(name, email),
+          customer:customers(id, name, email),
           slot:slots(name),
           assets:bookings_assets(
             asset:assets(
