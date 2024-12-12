@@ -30,7 +30,7 @@ export function ChatAssistant() {
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
     
-    const userMessage = { role: "user", content: input };
+    const userMessage: ChatMessage = { role: "user", content: input };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -55,17 +55,19 @@ export function ChatAssistant() {
       const data = await response.json();
       
       if (data.choices && data.choices[0]) {
-        setMessages(prev => [...prev, {
+        const assistantMessage: ChatMessage = {
           role: "assistant",
           content: data.choices[0].message.content,
-        }]);
+        };
+        setMessages(prev => [...prev, assistantMessage]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      setMessages(prev => [...prev, {
+      const errorMessage: ChatMessage = {
         role: "assistant",
         content: "I apologize, but I encountered an error. Please try again.",
-      }]);
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
