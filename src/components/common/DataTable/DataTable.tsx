@@ -11,6 +11,7 @@ import { ArrowUpDown, Edit2, ExternalLink } from "lucide-react";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { useState, useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FilterOption {
   label: string;
@@ -33,6 +34,7 @@ interface DataTableProps<T> {
   searchPlaceholder?: string;
   headerContent?: React.ReactNode;
   itemsPerPage?: number;
+  isLoading?: boolean;
   filters?: {
     name: string;
     options: FilterOption[];
@@ -49,6 +51,7 @@ export function DataTable<T extends { id?: number | string }>({
   title,
   headerContent,
   itemsPerPage = 10,
+  isLoading = false,
   filters = []
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,7 +72,6 @@ export function DataTable<T extends { id?: number | string }>({
   const filteredAndSortedData = useMemo(() => {
     let result = [...data];
 
-    // Filter based on search term
     if (searchTerm) {
       result = result.filter((item) =>
         Object.values(item).some((value) =>
@@ -78,7 +80,6 @@ export function DataTable<T extends { id?: number | string }>({
       );
     }
 
-    // Sort if sortConfig is set
     if (sortConfig) {
       result.sort((a, b) => {
         const aValue = a[sortConfig.key];
@@ -96,12 +97,32 @@ export function DataTable<T extends { id?: number | string }>({
     return result;
   }, [data, searchTerm, sortConfig]);
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
   const paginatedData = filteredAndSortedData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <DataTableHeader
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          title={title}
+          filters={filters}
+        >
+          {headerContent}
+        </DataTableHeader>
+
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, index) => (
+            <Skeleton key={index} className="h-16 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
