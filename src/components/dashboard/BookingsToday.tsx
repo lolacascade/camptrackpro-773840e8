@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 interface Booking {
   id: number;
@@ -19,6 +20,8 @@ interface Booking {
 }
 
 export function BookingsToday() {
+  const navigate = useNavigate();
+  
   const { data: bookings, isLoading } = useQuery({
     queryKey: ['bookings-today'],
     queryFn: async () => {
@@ -97,7 +100,7 @@ export function BookingsToday() {
   ];
 
   const handleViewDetails = (booking: Booking) => {
-    console.log('View booking details:', booking.id);
+    navigate(`/app/bookings/${booking.id}`);
   };
 
   return (
