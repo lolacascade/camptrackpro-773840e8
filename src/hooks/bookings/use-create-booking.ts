@@ -1,8 +1,17 @@
 import { useState } from 'react';
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingFormValues, BookingData } from "@/types/bookings";
+import { BookingFormValues } from "@/types/bookings";
 import { format } from "date-fns";
+
+type CreateBookingData = {
+  customer_id: number;
+  slot_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  special_requirements: string | null;
+  status: 'pending';
+};
 
 export function useCreateBooking(onSuccess: () => void) {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +21,7 @@ export function useCreateBooking(onSuccess: () => void) {
     try {
       setIsLoading(true);
       
-      const bookingData: Omit<BookingData, 'reservation_code'> = {
+      const bookingData: CreateBookingData = {
         customer_id: parseInt(values.customerId),
         slot_id: parseInt(values.slotId),
         check_in_date: format(values.checkInDate, "yyyy-MM-dd"),
