@@ -3,14 +3,13 @@ export interface Asset {
   asset_name: string;
   asset_size: string | null;
   customer_id: number | null;
-  slot_id?: number | null;
-  created_at?: string | null;
-  updated_at?: string | null;
   asset_type: string;
   customers?: {
+    id: number;
     name: string;
   };
   slots?: {
+    id: number;
     name: string;
     dock?: string;
   };

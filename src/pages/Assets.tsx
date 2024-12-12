@@ -28,23 +28,32 @@ export default function Assets() {
             asset_size,
             asset_type,
             customer_id,
-            slot_id,
-            customers (
-              name
-            ),
             slots (
+              id,
               name,
               dock
+            ),
+            customers (
+              id,
+              name
             )
-          `)
-          .order('asset_name');
+          `);
 
         if (error) {
           console.error('Error fetching assets:', error);
           throw error;
         }
 
-        return data as Asset[];
+        // Transform the data to match the Asset type
+        return (data || []).map(item => ({
+          id: item.id,
+          asset_name: item.asset_name,
+          asset_size: item.asset_size,
+          customer_id: item.customer_id,
+          asset_type: item.asset_type || 'boat',
+          slots: item.slots,
+          customers: item.customers
+        })) as Asset[];
       } catch (error) {
         console.error('Error fetching assets:', error);
         toast({
