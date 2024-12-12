@@ -12,7 +12,7 @@ export function RevenueSummary() {
       
       const { data: currentMonth } = await supabase
         .from('invoices')
-        .select('amount, status')
+        .select('amount, status, type')  // Add 'type' to the select
         .gte('issued_date', startDate)
         .lte('issued_date', endDate);
       
