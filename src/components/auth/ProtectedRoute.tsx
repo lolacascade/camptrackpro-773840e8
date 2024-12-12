@@ -12,12 +12,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      console.log('Current session:', currentSession);
-    };
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      console.log('Auth state changed:', event, currentSession);
+    });
 
-    checkSession();
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   if (isLoading) {
