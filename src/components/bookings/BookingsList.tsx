@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { BookingsListFilters } from "./BookingsListFilters";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
@@ -125,10 +124,6 @@ export function BookingsList() {
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <BookingsListFilters 
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
       <div className="p-4">
         <DataTable
           data={filteredBookings || []}
@@ -136,6 +131,8 @@ export function BookingsList() {
           onViewDetails={handleViewDetails}
           isLoading={isLoading}
           filters={filters}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
         />
       </div>
     </Card>

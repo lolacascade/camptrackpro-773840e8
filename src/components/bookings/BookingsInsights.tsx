@@ -1,4 +1,4 @@
-import { StatCard } from "@/components/dashboard/StatCard";
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { ChartBar, Clock, MapPin, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,23 +33,74 @@ export function BookingsInsights() {
   });
 
   const stats = [
-    { title: "Total Bookings", value: String(insights?.totalBookings || 0), icon: Users },
-    { title: "Active Bookings", value: String(insights?.activeBookings || 0), icon: Clock },
-    { title: "Today's Check-ins", value: String(insights?.todayCheckIns || 0), icon: MapPin },
-    { title: "Total Revenue", value: `$${(insights?.totalRevenue || 0).toLocaleString()}`, icon: ChartBar },
+    {
+      title: "Total Bookings",
+      value: String(insights?.totalBookings || 0),
+      icon: Users,
+      trend: {
+        value: "+12%",
+        isPositive: true,
+        comparedTo: "last month"
+      },
+      breakdown: [
+        { label: "New", value: "45", percentage: 60 },
+        { label: "Returning", value: "30", percentage: 40 }
+      ]
+    },
+    {
+      title: "Active Bookings",
+      value: String(insights?.activeBookings || 0),
+      icon: Clock,
+      trend: {
+        value: "+5%",
+        isPositive: true,
+        comparedTo: "last week"
+      },
+      breakdown: [
+        { label: "Long-term", value: "25", percentage: 70 },
+        { label: "Short-term", value: "10", percentage: 30 }
+      ]
+    },
+    {
+      title: "Today's Check-ins",
+      value: String(insights?.todayCheckIns || 0),
+      icon: MapPin,
+      trend: {
+        value: "Same",
+        isPositive: true,
+        comparedTo: "yesterday"
+      },
+      breakdown: [
+        { label: "Morning", value: "8", percentage: 65 },
+        { label: "Afternoon", value: "4", percentage: 35 }
+      ]
+    },
+    {
+      title: "Total Revenue",
+      value: `$${(insights?.totalRevenue || 0).toLocaleString()}`,
+      icon: ChartBar,
+      trend: {
+        value: "+8%",
+        isPositive: true,
+        comparedTo: "last month"
+      },
+      breakdown: [
+        { label: "Slip Rental", value: "$45,000", percentage: 75 },
+        { label: "Services", value: "$15,000", percentage: 25 }
+      ]
+    },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
       {stats.map((stat, index) => (
-        <StatCard
+        <EnhancedStatCard
           key={index}
           title={stat.title}
           value={stat.value}
-          description=""
           icon={stat.icon}
-          trend="up"
-          trendValue=""
+          trend={stat.trend}
+          breakdown={stat.breakdown}
         />
       ))}
     </div>
