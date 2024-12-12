@@ -10,4 +10,8 @@ export interface Asset {
   customers?: {
     name: string;
   };
+  slots?: {
+    name: string;
+    dock?: string;
+  };
 }
