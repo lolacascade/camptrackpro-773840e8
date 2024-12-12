@@ -20,11 +20,11 @@ export default function Maintenance() {
   const [priorityFilter, setPriorityFilter] = useState("all");
 
   const { data: maintenanceRequests = [], isLoading, refetch } = useQuery({
-    queryKey: ['maintenance', statusFilter, priorityFilter],
+    queryKey: ['maintenance_requests', statusFilter, priorityFilter],
     queryFn: async () => {
       try {
         let query = supabase
-          .from('maintenance')
+          .from('maintenance_requests')
           .select(`
             id,
             title,
@@ -78,9 +78,9 @@ export default function Maintenance() {
       accessorKey: "status",
       cell: (maintenance) => (
         <Badge variant={
-          maintenance.status === 'completed' ? 'success' :
-          maintenance.status === 'in_progress' ? 'warning' :
-          'secondary'
+          maintenance.status === 'completed' ? 'default' :
+          maintenance.status === 'in_progress' ? 'secondary' :
+          'outline'
         }>
           {maintenance.status.replace('_', ' ')}
         </Badge>
@@ -93,8 +93,8 @@ export default function Maintenance() {
       cell: (maintenance) => (
         <Badge variant={
           maintenance.priority === 'high' ? 'destructive' :
-          maintenance.priority === 'medium' ? 'warning' :
-          'secondary'
+          maintenance.priority === 'medium' ? 'secondary' :
+          'outline'
         }>
           {maintenance.priority}
         </Badge>
