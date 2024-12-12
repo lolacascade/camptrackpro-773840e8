@@ -12,13 +12,21 @@ import {
 } from "recharts";
 import { format, subMonths, addMonths } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";  // Added import for cn utility
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function RevenueBreakdown() {
   const currentDate = new Date();
   const isMobile = useIsMobile();
-  
-  // Generate 24 months of data (12 before, current, 11 after)
+  const { data, isLoading } = useQuery({
+    queryKey: ['revenue-breakdown'],
+    queryFn: async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return generateMonthlyData();
+    }
+  });
+
   const generateMonthlyData = () => {
     const data = [];
     for (let i = -12; i <= 11; i++) {
@@ -35,19 +43,51 @@ export function RevenueBreakdown() {
     return data;
   };
 
-  const data = generateMonthlyData();
-  const currentMonth = format(currentDate, 'MMM');
+  if (isLoading) {
+    return (
+      <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <CardTitle className="text-[#0D1D1F] text-2xl">Revenue Breakdown</CardTitle>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-8 w-24" />
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            {[1, 2, 3].map((index) => (
+              <div key={index}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Skeleton className="h-3 w-3 rounded-full" />
+                  <Skeleton className="h-4 w-32" />
+                </div>
+                <div className="mt-2">
+                  <Skeleton className="h-8 w-24 mb-2" />
+                  <Skeleton className="h-4 w-48" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <Skeleton className={cn(
+            "w-full",
+            isMobile ? "h-[400px]" : "h-[300px]"
+          )} />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const currentMonthData = data?.find(item => 
+    format(item.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
+  );
 
   return (
     <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <CardTitle className="text-[#0D1D1F] text-2xl">Revenue Breakdown</CardTitle>
         <div className="flex items-center gap-4">
-          <button className="text-[#0D1D1F] text-base">&lt;</button>
-          <span className="text-[#0D1D1F] text-base font-medium">
+          <span className="text-[#3E4238] text-base font-medium">
             {format(currentDate, 'MMM yyyy')}
           </span>
-          <button className="text-[#0D1D1F] text-base">&gt;</button>
         </div>
       </CardHeader>
       <CardContent>
@@ -59,7 +99,7 @@ export function RevenueBreakdown() {
             </div>
             <div className="mt-2">
               <div className="text-[#0D1D1F] text-2xl font-bold">
-                ${(7221.31).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ${(currentMonthData?.slipRenewals || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <div className="text-[#3E4238] text-base">↑ 5% compared to previous month</div>
             </div>
@@ -71,7 +111,7 @@ export function RevenueBreakdown() {
             </div>
             <div className="mt-2">
               <div className="text-[#0D1D1F] text-2xl font-bold">
-                ${(8874.56).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ${(currentMonthData?.newSlipRentals || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <div className="text-[#3E4238] text-base">↑ 10% compared to previous month</div>
             </div>
@@ -83,7 +123,7 @@ export function RevenueBreakdown() {
             </div>
             <div className="mt-2">
               <div className="text-[#0D1D1F] text-2xl font-bold">
-                ${(3472.19).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                ${(currentMonthData?.maintenanceServices || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
               <div className="text-[#3E4238] text-base">Stable month-over-month</div>
             </div>

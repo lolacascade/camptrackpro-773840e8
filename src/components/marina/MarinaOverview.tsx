@@ -3,6 +3,7 @@ import { MarinaChart } from "@/components/dashboard/MarinaChart";
 import { format, subMonths, addMonths } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DockStats {
   date: Date;
@@ -20,7 +21,7 @@ interface MarinaOverviewProps {
 export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
   const currentDate = new Date();
 
-  const { data: totalSlips } = useQuery({
+  const { data: totalSlips, isLoading: isLoadingSlips } = useQuery({
     queryKey: ['total-slips'],
     queryFn: async () => {
       const { count, error } = await supabase
@@ -35,8 +36,16 @@ export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
       return count || 0;
     },
   });
-  
-  // Generate 24 months of data (12 before, current, 11 after)
+
+  const { data: chartData, isLoading: isLoadingChart } = useQuery({
+    queryKey: ['marina-stats'],
+    queryFn: async () => {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return generateMonthlyData();
+    },
+  });
+
   const generateMonthlyData = () => {
     const data: DockStats[] = [];
     for (let i = -12; i <= 11; i++) {
@@ -53,8 +62,25 @@ export function MarinaOverview({ className = "" }: MarinaOverviewProps) {
     return data;
   };
 
-  const chartData = generateMonthlyData();
-  const currentMonthStats = chartData.find(data => 
+  if (isLoadingSlips || isLoadingChart) {
+    return (
+      <Card className={`col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8 ${className}`}>
+        <CardHeader>
+          <div className="space-y-1">
+            <CardTitle className="text-[#133134] text-2xl">Marina Overview</CardTitle>
+            <div className="text-base text-[#3E4238]">
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[300px] w-full" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const currentMonthStats = chartData?.find(data => 
     format(data.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
   );
 
