@@ -20,7 +20,7 @@ interface Booking {
   };
   slot: {
     name: string;
-  };
+  } | null;
   check_in_date: string;
   check_out_date: string;
 }
@@ -77,7 +77,7 @@ export function BookingsList() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{booking.slot.name}</TableCell>
+                <TableCell>{booking.slot?.name ?? 'Unassigned'}</TableCell>
                 <TableCell>{new Date(booking.check_in_date).toLocaleDateString()}</TableCell>
                 <TableCell>{new Date(booking.check_out_date).toLocaleDateString()}</TableCell>
                 <TableCell>
