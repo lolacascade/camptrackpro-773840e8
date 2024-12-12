@@ -5,7 +5,6 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
-import { useFilteredBookings } from "@/hooks/bookings/use-filtered-bookings";
 import type { Column } from "@/components/common/DataTable/DataTable";
 import type { Booking } from "@/hooks/bookings/use-bookings-list";
 
@@ -14,9 +13,7 @@ export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [customerFilter, setCustomerFilter] = useState("all");
   const navigate = useNavigate();
-  
   const { data: bookings, isLoading } = useBookingsList(searchTerm);
-  const filteredBookings = useFilteredBookings(bookings, statusFilter, customerFilter);
 
   const columns: Column<Booking>[] = [
     {
@@ -25,7 +22,9 @@ export function BookingsList() {
       cell: (booking) => (
         <div>
           <div className="font-medium text-[#133134]">{booking.customer.name}</div>
-          <div className="text-sm text-[#3E4238]">{booking.customer.email}</div>
+          <div className="text-sm text-[#3E4238]">
+            {booking.customer.email}
+          </div>
         </div>
       ),
     },
@@ -106,6 +105,24 @@ export function BookingsList() {
     }
   ];
 
+  const filteredBookings = bookings?.filter(booking => {
+    if (statusFilter !== "all") {
+      const today = new Date();
+      const checkOutDate = new Date(booking.check_out_date);
+      const checkInDate = new Date(booking.check_in_date);
+      
+      if (statusFilter === "active" && (checkOutDate < today || checkInDate > today)) return false;
+      if (statusFilter === "completed" && checkOutDate >= today) return false;
+      if (statusFilter === "upcoming" && checkInDate <= today) return false;
+    }
+
+    if (customerFilter !== "all" && booking.customer.id.toString() !== customerFilter) {
+      return false;
+    }
+
+    return true;
+  });
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <BookingsListFilters 
@@ -114,7 +131,7 @@ export function BookingsList() {
       />
       <div className="p-4">
         <DataTable
-          data={filteredBookings}
+          data={filteredBookings || []}
           columns={columns}
           onViewDetails={handleViewDetails}
           isLoading={isLoading}
