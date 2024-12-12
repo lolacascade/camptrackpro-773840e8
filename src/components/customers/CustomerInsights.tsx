@@ -1,15 +1,15 @@
 import { StatCard } from "@/components/dashboard/StatCard";
-import { ChartBar, Clock, MapPin, StickyNote } from "lucide-react";
+import { ChartBar, Clock, MapPin, Users } from "lucide-react";
 import { useAverageValue } from "@/hooks/customers/useAverageValue";
 import { useAverageStayDuration } from "@/hooks/customers/useAverageStayDuration";
 import { usePreferredSpot } from "@/hooks/customers/usePreferredSpot";
-import { useLatestNote } from "@/hooks/customers/useLatestNote";
+import { useCustomersToday } from "@/hooks/customers/useCustomersToday";
 
 export function CustomerInsights() {
   const { data: averageValue } = useAverageValue();
   const { data: avgStayDuration } = useAverageStayDuration();
   const { data: preferredSpot } = usePreferredSpot();
-  const { data: latestNote } = useLatestNote();
+  const { data: customersToday } = useCustomersToday();
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -30,20 +30,20 @@ export function CustomerInsights() {
         trendValue="Calculated from bookings"
       />
       <StatCard
-        title="Preferred Location"
-        value={preferredSpot || 'No preference'}
-        description="Most commonly used spot"
+        title="Most Popular Location"
+        value={preferredSpot || 'No bookings yet'}
+        description="Most frequently booked spot"
         icon={MapPin}
         trend="up"
         trendValue="Based on booking history"
       />
       <StatCard
-        title="Latest Note"
-        value={latestNote || 'No notes'}
-        description="Most recent customer note"
-        icon={StickyNote}
+        title="Today's Check-ins"
+        value={customersToday || 'No check-ins today'}
+        description="Customers checking in today"
+        icon={Users}
         trend="up"
-        trendValue="From customer notes"
+        trendValue="Real-time updates"
       />
     </div>
   );

@@ -8,38 +8,40 @@ export function useAverageValue() {
   return useQuery({
     queryKey: ['customerAverageValue'],
     queryFn: async () => {
-      console.log('Calculating average value...');
+      console.log('Calculating average revenue per stay...');
       
-      // Get all paid invoices with their amounts
+      // Get all paid invoices with their booking details
       const { data: invoices, error: invoicesError } = await supabase
         .from('invoices')
         .select(`
           amount,
-          customer_id,
-          status
+          booking_id,
+          bookings (
+            check_in_date,
+            check_out_date
+          )
         `)
-        .eq('status', 'paid');
+        .eq('status', 'paid')
+        .not('booking_id', 'is', null);
 
       if (invoicesError) {
         console.error('Error fetching invoices:', invoicesError);
         throw invoicesError;
       }
 
-      console.log('Fetched invoices:', invoices);
-
       if (!invoices || invoices.length === 0) {
         console.log('No paid invoices found');
         return '$0.00';
       }
 
-      // Calculate total amount and count of paid invoices
+      // Calculate total amount and count of bookings
       const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const totalInvoices = invoices.length;
+      const totalBookings = invoices.length;
 
-      console.log('Total amount:', totalAmount, 'Total invoices:', totalInvoices);
+      console.log('Total amount:', totalAmount, 'Total bookings:', totalBookings);
 
-      // Calculate average
-      const average = totalAmount / totalInvoices;
+      // Calculate average per stay
+      const average = totalAmount / totalBookings;
       
       return average.toLocaleString('en-US', { 
         style: 'currency', 

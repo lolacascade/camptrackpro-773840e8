@@ -14,27 +14,38 @@ export function usePreferredSpot() {
           slot_id,
           slots (
             name,
-            zone
+            zone,
+            dock
           )
         `)
-        .order('slot_id');
+        .not('slot_id', 'is', null);
       
       if (error) throw error;
       
-      // Find the most frequent slot
-      const slotCounts = data.reduce((acc: any, booking) => {
+      if (!data || data.length === 0) {
+        return 'No bookings yet';
+      }
+      
+      // Count occurrences of each slot
+      const slotCounts = data.reduce((acc: Record<string, number>, booking) => {
         const slotId = booking.slot_id;
         acc[slotId] = (acc[slotId] || 0) + 1;
         return acc;
       }, {});
       
-      const mostFrequentSlotId = Object.entries(slotCounts)
-        .sort(([,a]: any, [,b]: any) => b - a)[0]?.[0];
+      // Find the slot with the highest count
+      const [mostFrequentSlotId] = Object.entries(slotCounts)
+        .sort(([, a], [, b]) => b - a)[0];
       
-      const preferredSlot = data.find(booking => booking.slot_id.toString() === mostFrequentSlotId);
-      return preferredSlot?.slots ? 
-        `${preferredSlot.slots.name} / ${preferredSlot.slots.zone || 'N/A'}` : 
-        'No preference yet';
+      const mostBookedSlot = data.find(booking => 
+        booking.slot_id.toString() === mostFrequentSlotId && booking.slots
+      );
+      
+      if (!mostBookedSlot?.slots) return 'No preference yet';
+      
+      return `${mostBookedSlot.slots.dock || ''} ${mostBookedSlot.slots.name}${
+        mostBookedSlot.slots.zone ? ` (${mostBookedSlot.slots.zone})` : ''
+      }`.trim();
     },
     enabled: !!session?.user?.id
   });
