@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingFormValues, CreateBookingData } from "@/types/bookings";
+import { BookingFormValues, BookingInsertData } from "@/types/bookings";
 import { useToast } from "@/hooks/use-toast";
 
 export const useCreateBooking = (onSuccess?: () => void) => {
@@ -10,7 +10,7 @@ export const useCreateBooking = (onSuccess?: () => void) => {
   const createBooking = async (formData: BookingFormValues) => {
     setIsLoading(true);
     try {
-      const bookingData: CreateBookingData = {
+      const bookingData: BookingInsertData = {
         customer_id: parseInt(formData.customerId),
         slot_id: parseInt(formData.slotId),
         check_in_date: formData.checkInDate.toISOString(),

@@ -15,7 +15,7 @@ export interface BookingData {
   check_out_date: string;
   special_requirements: string | null;
   status: 'pending' | 'confirmed' | 'cancelled';
-  reservation_code?: string;
+  reservation_code: string;
   created_at?: string;
 }
 
@@ -28,3 +28,6 @@ export type CreateBookingData = {
   special_requirements: string | null;
   status: 'pending';
 };
+
+// Type for Supabase insert operation
+export type BookingInsertData = Omit<BookingData, 'id' | 'reservation_code' | 'created_at'>;
