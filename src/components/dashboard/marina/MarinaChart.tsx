@@ -16,9 +16,9 @@ import { calculateTrends } from "../utils/chartUtils";
 import { MarinaChartProps } from "./types";
 
 const COLORS = {
-  available: "#F57C00",
-  occupied: "#1976D2",
-  maintenance: "#7B1FA2",
+  occupied: "#0EA5E9",  // Ocean Blue for occupied
+  available: "#33C3F0", // Sky Blue for available
+  maintenance: "#ea384c", // Red for maintenance
 };
 
 export function MarinaChart({ chartData }: MarinaChartProps) {
@@ -43,8 +43,9 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
           <BarChart
             data={transformedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            className="drop-shadow-lg"
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
             <XAxis 
               dataKey="month"
               tick={{ fontSize: 12, fill: '#133134' }}
@@ -55,45 +56,81 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
             />
             <YAxis 
               tick={{ fontSize: 12, fill: '#133134' }}
-              tickFormatter={(value) => `$${value.toLocaleString()}`}
+              tickFormatter={(value) => `${value} slips`}
               label={{ 
-                value: 'Monthly Revenue ($)', 
+                value: 'Number of Slips', 
                 angle: -90, 
                 position: 'insideLeft',
                 style: { textAnchor: 'middle' }
               }}
             />
-            <Tooltip content={(props) => <ChartTooltip {...props} trends={trends} />} />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (active && payload && payload.length) {
+                  const item = payload[0].payload;
+                  return (
+                    <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+                      <p className="font-semibold text-gray-900 mb-2">
+                        {`${label} ${item.year}`}
+                        {item.isProjected && " (Projected)"}
+                      </p>
+                      {payload.map((entry: any) => (
+                        <div 
+                          key={entry.name}
+                          className="flex items-center justify-between gap-4 text-sm"
+                        >
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: entry.color }}
+                            />
+                            <span className="capitalize">
+                              {entry.name}: {entry.value} slips
+                            </span>
+                          </div>
+                          <span className="text-gray-500">
+                            {Math.round((entry.value / (
+                              item.occupied + item.available + item.maintenance
+                            )) * 100)}%
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                }
+                return null;
+              }}
+            />
             <Legend 
               formatter={(value) => {
                 const labels = {
-                  occupied: 'Occupied Spots',
-                  available: 'Available Spots',
+                  occupied: 'Occupied',
+                  available: 'Available',
                   maintenance: 'In Maintenance'
                 };
                 return labels[value as keyof typeof labels];
               }}
             />
-            <ReferenceLine 
-              y={averageRevenue} 
-              label="Average Revenue" 
-              stroke="#666"
-              strokeDasharray="3 3"
-            />
             <Bar 
               dataKey="occupied" 
+              stackId="a"
               fill={COLORS.occupied}
               fillOpacity="occupiedOpacity"
+              radius={[4, 4, 0, 0]}
             />
             <Bar 
               dataKey="available" 
+              stackId="a"
               fill={COLORS.available}
               fillOpacity="availableOpacity"
+              radius={[4, 4, 0, 0]}
             />
             <Bar 
               dataKey="maintenance" 
+              stackId="a"
               fill={COLORS.maintenance}
               fillOpacity="maintenanceOpacity"
+              radius={[4, 4, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>
