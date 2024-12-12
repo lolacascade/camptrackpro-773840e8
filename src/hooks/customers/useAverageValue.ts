@@ -13,13 +13,8 @@ export function useAverageValue() {
       // Get all paid invoices with their booking details
       const { data: invoices, error: invoicesError } = await supabase
         .from('invoices')
-        .select(`
-          amount,
-          booking_id,
-          status
-        `)
-        .eq('status', 'paid')
-        .not('booking_id', 'is', null);
+        .select('amount')
+        .eq('status', 'paid');
 
       if (invoicesError) {
         console.error('Error fetching invoices:', invoicesError);
@@ -31,14 +26,14 @@ export function useAverageValue() {
         return '$0.00';
       }
 
-      // Calculate total amount and count of bookings
+      // Calculate total amount and count of invoices
       const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const totalBookings = invoices.length;
+      const totalInvoices = invoices.length;
 
-      console.log(`Total amount: ${totalAmount}, Total bookings: ${totalBookings}`);
+      console.log(`Total amount: ${totalAmount}, Total invoices: ${totalInvoices}`);
 
-      // Calculate average per stay
-      const average = totalAmount / totalBookings;
+      // Calculate average
+      const average = totalAmount / totalInvoices;
       
       return average.toLocaleString('en-US', { 
         style: 'currency', 
