@@ -51,11 +51,11 @@ export function BookingsList() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Customer</TableHead>
-              <TableHead>Slot</TableHead>
-              <TableHead>Check-in</TableHead>
-              <TableHead>Check-out</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="text-[#133134]">Customer</TableHead>
+              <TableHead className="text-[#133134]">Slot</TableHead>
+              <TableHead className="text-[#133134]">Check-in</TableHead>
+              <TableHead className="text-[#133134]">Check-out</TableHead>
+              <TableHead className="text-[#133134]">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -71,15 +71,15 @@ export function BookingsList() {
               <TableRow key={booking.id}>
                 <TableCell>
                   <div>
-                    <div className="font-medium">{booking.customer.name}</div>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="font-medium text-[#133134]">{booking.customer.name}</div>
+                    <div className="text-sm text-[#3E4238]">
                       {booking.customer.email}
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>{booking.slot?.name ?? 'Unassigned'}</TableCell>
-                <TableCell>{new Date(booking.check_in_date).toLocaleDateString()}</TableCell>
-                <TableCell>{new Date(booking.check_out_date).toLocaleDateString()}</TableCell>
+                <TableCell className="text-[#3E4238]">{booking.slot?.name ?? 'Unassigned'}</TableCell>
+                <TableCell className="text-[#3E4238]">{new Date(booking.check_in_date).toLocaleDateString()}</TableCell>
+                <TableCell className="text-[#3E4238]">{new Date(booking.check_out_date).toLocaleDateString()}</TableCell>
                 <TableCell>
                   <Badge variant="outline" className="bg-primary/10 text-primary">
                     {new Date(booking.check_out_date) > new Date() ? 'Active' : 'Completed'}
