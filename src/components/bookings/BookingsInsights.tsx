@@ -33,9 +33,9 @@ export function BookingsInsights() {
   });
 
   const stats = [
-    { title: "Total Bookings", value: insights?.totalBookings || 0, icon: Users },
-    { title: "Active Bookings", value: insights?.activeBookings || 0, icon: Clock },
-    { title: "Today's Check-ins", value: insights?.todayCheckIns || 0, icon: MapPin },
+    { title: "Total Bookings", value: String(insights?.totalBookings || 0), icon: Users },
+    { title: "Active Bookings", value: String(insights?.activeBookings || 0), icon: Clock },
+    { title: "Today's Check-ins", value: String(insights?.todayCheckIns || 0), icon: MapPin },
     { title: "Total Revenue", value: `$${(insights?.totalRevenue || 0).toLocaleString()}`, icon: ChartBar },
   ];
 
