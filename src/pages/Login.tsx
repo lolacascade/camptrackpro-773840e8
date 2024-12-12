@@ -1,15 +1,24 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
+import { useSessionContext } from '@supabase/auth-helpers-react';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+  const { session } = useSessionContext();
 
   useEffect(() => {
+    // If already authenticated, redirect to app
+    if (session) {
+      const from = location.state?.from?.pathname || '/app';
+      navigate(from, { replace: true });
+    }
+
     // Check for auth error in URL
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const error = hashParams.get('error');
@@ -22,15 +31,7 @@ export default function Login() {
         description: errorDescription || "There was a problem with authentication",
       });
     }
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
-        navigate('/app');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, toast]);
+  }, [session, navigate, location, toast]);
 
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">

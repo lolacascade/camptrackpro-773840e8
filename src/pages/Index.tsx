@@ -1,22 +1,19 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 import { HeroSection } from '@/components/landing/HeroSection';
 import { PainPointsSection } from '@/components/landing/PainPointsSection';
 import { Footer } from '@/components/layout/Footer';
 
 export default function Index() {
   const navigate = useNavigate();
+  const { session } = useSessionContext();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        navigate('/app');
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    if (session) {
+      navigate('/app');
+    }
+  }, [session, navigate]);
 
   return (
     <div className="min-h-screen">
