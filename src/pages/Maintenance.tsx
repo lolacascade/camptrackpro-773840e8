@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MaintenanceDrawer } from "@/components/maintenance/MaintenanceDrawer";
 import { AddMaintenanceDialog } from "@/components/maintenance/AddMaintenanceDialog";
-import { Maintenance } from "@/types/maintenance";
+import type { Maintenance } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";

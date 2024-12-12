@@ -1,6 +1,6 @@
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
-import { Maintenance } from "@/types/maintenance";
+import { type Maintenance } from "@/types/maintenance";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,7 +58,7 @@ export function MaintenanceDrawer({
     <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>{maintenance.title}</DrawerTitle>
+          <DrawerTitle>Maintenance Request Details</DrawerTitle>
         </DrawerHeader>
         <div className="p-4 space-y-4">
           <div>
