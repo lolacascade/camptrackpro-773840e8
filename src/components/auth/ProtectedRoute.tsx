@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, useLocation } from "react-router-dom";
 import { useSessionContext } from '@supabase/auth-helpers-react';
+import { supabase } from "@/integrations/supabase/client";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

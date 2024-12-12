@@ -86,7 +86,7 @@ export function AddBookingDialog({ isOpen, onOpenChange, onBookingAdded }: AddBo
 
       const { error } = await supabase
         .from('bookings')
-        .insert(bookingData);
+        .insert([bookingData]);
 
       if (error) throw error;
 

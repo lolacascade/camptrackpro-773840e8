@@ -25,7 +25,6 @@ const App = () => {
         <SessionContextProvider 
           supabaseClient={supabase}
           initialSession={null}
-          browserSessionPersistence={true}
         >
           <TooltipProvider>
             <Toaster />
