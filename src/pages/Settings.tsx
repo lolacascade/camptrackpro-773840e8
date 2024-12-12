@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { MarinaForm } from "@/components/settings/MarinaForm";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PageWithChat } from "@/components/layout/PageWithChat";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
@@ -32,22 +33,26 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="bg-white rounded-[24px] p-12 space-y-8">
-        <div className="flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          <p className="ml-2">Loading marina details...</p>
+      <PageWithChat>
+        <div className="bg-white rounded-[24px] p-12 space-y-8">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <p className="ml-2">Loading marina details...</p>
+          </div>
         </div>
-      </div>
+      </PageWithChat>
     );
   }
 
   return (
-    <div className="bg-white rounded-[24px] p-12 space-y-8">
-      <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
-      <p className="text-muted-foreground">
-        {marinaDetails ? "Update your marina's information below." : "Get started by adding your marina's information."}
-      </p>
-      <MarinaForm initialData={marinaDetails} />
-    </div>
+    <PageWithChat>
+      <div className="bg-white rounded-[24px] p-12 space-y-8">
+        <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
+        <p className="text-muted-foreground">
+          {marinaDetails ? "Update your marina's information below." : "Get started by adding your marina's information."}
+        </p>
+        <MarinaForm initialData={marinaDetails} />
+      </div>
+    </PageWithChat>
   );
 }

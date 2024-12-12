@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
+import { PageWithChat } from "@/components/layout/PageWithChat";
 
 export default function Assets() {
   const { toast } = useToast();
@@ -149,42 +150,44 @@ export default function Assets() {
   };
 
   return (
-    <div className="bg-white rounded-[24px] p-12 space-y-8">
-      {isLoading ? (
-        <div className="flex justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      ) : (
-        <DataTable
-          data={assets}
-          columns={columns}
-          onEdit={handleEdit}
-          onViewDetails={handleViewDetails}
-          title="Assets"
-          filters={filters}
-          headerContent={
-            <Button onClick={() => setIsDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" /> Add Asset
-            </Button>
-          }
+    <PageWithChat>
+      <div className="bg-white rounded-[24px] p-12 space-y-8">
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <DataTable
+            data={assets}
+            columns={columns}
+            onEdit={handleEdit}
+            onViewDetails={handleViewDetails}
+            title="Assets"
+            filters={filters}
+            headerContent={
+              <Button onClick={() => setIsDialogOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" /> Add Asset
+              </Button>
+            }
+          />
+        )}
+
+        <AddAssetDialog
+          isOpen={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onAssetAdded={refetch}
         />
-      )}
 
-      <AddAssetDialog
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onAssetAdded={refetch}
-      />
-
-      <AssetDrawer
-        asset={selectedAsset}
-        open={isDrawerOpen}
-        onClose={() => {
-          setIsDrawerOpen(false);
-          setSelectedAsset(null);
-        }}
-        onAssetUpdated={refetch}
-      />
-    </div>
+        <AssetDrawer
+          asset={selectedAsset}
+          open={isDrawerOpen}
+          onClose={() => {
+            setIsDrawerOpen(false);
+            setSelectedAsset(null);
+          }}
+          onAssetUpdated={refetch}
+        />
+      </div>
+    </PageWithChat>
   );
 }
