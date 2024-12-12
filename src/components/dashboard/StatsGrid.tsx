@@ -1,4 +1,5 @@
 import { EnhancedStatCard } from "./EnhancedStatCard";
+import { Anchor, DollarSign, Ship, Wrench } from "lucide-react";
 
 interface StatsGridProps {
   occupancyRate: number;
@@ -18,6 +19,7 @@ export function StatsGrid({
       <EnhancedStatCard
         title="Total Occupancy"
         value={`${occupancyRate}%`}
+        icon={Anchor}
         trend={{
           value: "5%",
           isPositive: false,
@@ -37,6 +39,7 @@ export function StatsGrid({
       <EnhancedStatCard
         title="Monthly Revenue"
         value="$45,231"
+        icon={DollarSign}
         trend={{
           value: "12%",
           isPositive: true,
@@ -51,6 +54,7 @@ export function StatsGrid({
       <EnhancedStatCard
         title="Active Boats"
         value={activeBoats.toString()}
+        icon={Ship}
         trend={{
           value: "3 boats",
           isPositive: true,
@@ -64,6 +68,7 @@ export function StatsGrid({
       <EnhancedStatCard
         title="Pending Maintenance"
         value="8"
+        icon={Wrench}
         trend={{
           value: "2 tasks",
           isPositive: true,

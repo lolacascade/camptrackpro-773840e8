@@ -13,11 +13,10 @@ interface ChatMessage {
 }
 
 const suggestionQueries = [
-  "Show customers with overdue payments",
-  "List VIP customers checking in today",
-  "Show available slips for this weekend",
-  "List urgent maintenance tasks",
-  "Show revenue trends for this month",
+  "Which slips are available this weekend?",
+  "Show pending maintenance tasks",
+  "What's the current occupancy rate?",
+  "Show revenue for this month",
 ];
 
 export function ChatAssistant() {
