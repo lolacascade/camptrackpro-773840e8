@@ -3,7 +3,6 @@ import { ChatAssistant } from "@/components/dashboard/ChatAssistant";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils";
 
 interface PageWithChatProps {
   children: React.ReactNode;
@@ -16,7 +15,7 @@ export function PageWithChat({ children }: PageWithChatProps) {
   if (isMobile) {
     return (
       <div className="relative min-h-[calc(100vh-4rem)]">
-        <div className="p-4 md:p-12 pb-20 w-full">
+        <div className="p-4 md:p-12 pb-20">
           {children}
         </div>
         
@@ -46,10 +45,8 @@ export function PageWithChat({ children }: PageWithChatProps) {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
-      <div className="w-96 flex-shrink-0">
-        <ChatAssistant />
-      </div>
-      <div className="flex-1 max-w-[calc(100vw-24rem)] overflow-x-hidden">
+      <ChatAssistant />
+      <div className="flex-1 p-12">
         {children}
       </div>
     </div>

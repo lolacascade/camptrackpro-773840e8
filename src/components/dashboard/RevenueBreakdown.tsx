@@ -12,7 +12,6 @@ import {
 } from "recharts";
 import { format, subMonths, addMonths } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils"; // Add this import
 
 export function RevenueBreakdown() {
   const currentDate = new Date();
@@ -151,4 +150,3 @@ export function RevenueBreakdown() {
     </Card>
   );
 }
-
