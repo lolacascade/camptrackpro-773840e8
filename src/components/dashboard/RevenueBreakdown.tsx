@@ -11,9 +11,11 @@ import {
   Tooltip,
 } from "recharts";
 import { format, subMonths, addMonths } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function RevenueBreakdown() {
   const currentDate = new Date();
+  const isMobile = useIsMobile();
   
   // Generate 24 months of data (12 before, current, 11 after)
   const generateMonthlyData = () => {
@@ -37,7 +39,7 @@ export function RevenueBreakdown() {
 
   return (
     <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <CardTitle className="text-[#0D1D1F] text-2xl">Revenue Breakdown</CardTitle>
         <div className="flex items-center gap-4">
           <button className="text-[#0D1D1F] text-base">&lt;</button>
@@ -48,7 +50,7 @@ export function RevenueBreakdown() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#FF1493]"></div>
@@ -87,7 +89,10 @@ export function RevenueBreakdown() {
           </div>
         </div>
 
-        <div className="h-[300px] w-full">
+        <div className={cn(
+          "w-full",
+          isMobile ? "h-[400px]" : "h-[300px]"
+        )}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={data}

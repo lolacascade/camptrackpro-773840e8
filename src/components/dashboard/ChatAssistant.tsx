@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -26,6 +27,7 @@ export function ChatAssistant() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -74,7 +76,10 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="w-96 bg-[#0D1D1F] p-4 flex flex-col h-full">
+    <div className={cn(
+      "bg-[#0D1D1F] flex flex-col",
+      isMobile ? "h-full w-full" : "w-96 p-4 h-full"
+    )}>
       <h2 className="text-xl font-semibold mb-4 text-white">Marina Assistant</h2>
       <ScrollArea className="flex-1 pr-4 mb-4">
         <div className="space-y-4">

@@ -9,7 +9,7 @@ import { DashboardProps } from "@/types/dashboard";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
-    <div className="bg-white rounded-[24px] p-12 space-y-8">
+    <div className="bg-white rounded-[24px] p-4 md:p-12 space-y-8">
       <DashboardHeader />
       <StatsGrid 
         occupancyRate={marinaSummary?.occupancyRate ?? 0}
@@ -19,7 +19,7 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       />
       <BookingsToday />
       <RevenueBreakdown />
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
         <MarinaOverview />
         <RecentActivity />
       </div>
