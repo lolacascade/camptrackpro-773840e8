@@ -49,7 +49,7 @@ export function PageWithChat({ children }: PageWithChatProps) {
       <div className="w-96 flex-shrink-0">
         <ChatAssistant />
       </div>
-      <div className="flex-1 max-w-[calc(100vw-24rem)] overflow-x-hidden">
+      <div className="flex-1 max-w-[calc(100vw-24rem)] overflow-x-hidden px-6">
         {children}
       </div>
     </div>
