@@ -21,8 +21,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_size: '',
     customer_id: null,
     slot_id: null,
-    created_at: null,
-    updated_at: null,
+    user_id: null,
     asset_type: 'boat',
   });
 
@@ -53,8 +52,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         asset_size: '',
         customer_id: null,
         slot_id: null,
-        created_at: null,
-        updated_at: null,
+        user_id: null,
         asset_type: 'boat',
       });
       
@@ -94,7 +92,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
             <Label htmlFor="asset_size">Size *</Label>
             <Input
               id="asset_size"
-              value={newAsset.asset_size}
+              value={newAsset.asset_size || ''}
               onChange={(e) => setNewAsset(prev => ({ ...prev, asset_size: e.target.value }))}
               placeholder="e.g., 32 ft"
             />

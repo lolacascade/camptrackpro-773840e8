@@ -4,6 +4,8 @@ export interface Asset {
   asset_size: string | null;
   customer_id: number | null;
   asset_type: string;
+  slot_id: number | null;
+  user_id: string | null;
   slots?: {
     id: number;
     name: string;
@@ -13,5 +15,4 @@ export interface Asset {
     id: number;
     name: string;
   } | null;
-  slot_id?: number | null;
 }
