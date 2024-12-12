@@ -6,6 +6,7 @@ import Login from "@/pages/Login";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Dashboard from "@/pages/Dashboard";
+import Bookings from "@/pages/Bookings";
 import MarinaMap from "@/pages/MarinaMap";
 import Customers from "@/pages/Customers";
 import Assets from "@/pages/Assets";
@@ -18,6 +19,7 @@ const AppLayout = () => (
     <Layout>
       <Routes>
         <Route index element={<Dashboard />} />
+        <Route path="bookings" element={<Bookings />} />
         <Route path="map" element={<MarinaMap />} />
         <Route path="customers" element={<Customers />} />
         <Route path="assets" element={<Assets />} />
