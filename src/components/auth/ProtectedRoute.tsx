@@ -11,9 +11,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   useEffect(() => {
-    // Log session state for debugging
-    console.log('Session state:', { session, isLoading });
-  }, [session, isLoading]);
+    const checkSession = async () => {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      console.log('Current session:', currentSession);
+    };
+
+    checkSession();
+  }, []);
 
   if (isLoading) {
     return (
@@ -24,7 +28,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!session) {
-    // Store the attempted URL to redirect back after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
