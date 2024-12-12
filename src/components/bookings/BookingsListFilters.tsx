@@ -1,7 +1,12 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-export function BookingsListFilters() {
+interface BookingsListFiltersProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+}
+
+export function BookingsListFilters({ searchTerm, onSearchChange }: BookingsListFiltersProps) {
   return (
     <div className="p-4 border-b border-[#E8EBEB]">
       <div className="flex gap-4">
@@ -10,6 +15,8 @@ export function BookingsListFilters() {
           <Input
             placeholder="Search bookings..."
             className="pl-10"
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
       </div>
