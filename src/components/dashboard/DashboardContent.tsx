@@ -4,6 +4,7 @@ import { RevenueBreakdown } from "./RevenueBreakdown";
 import { MarinaOverview } from "@/components/marina/MarinaOverview";
 import { RecentActivity } from "./RecentActivity";
 import { FooterStats } from "./FooterStats";
+import { BookingsToday } from "./BookingsToday";
 import { DashboardProps } from "@/types/dashboard";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
@@ -16,6 +17,7 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
         totalSlips={marinaSummary?.totalSlips ?? 0}
         activeBoats={marinaSummary?.activeBoats ?? 0}
       />
+      <BookingsToday />
       <RevenueBreakdown />
       <div className="grid gap-8 md:grid-cols-2">
         <MarinaOverview />
