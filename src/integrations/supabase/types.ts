@@ -75,6 +75,7 @@ export type Database = {
           customer_id: number
           id: number
           slot_id: number
+          special_requirements: string | null
         }
         Insert: {
           check_in_date: string
@@ -83,6 +84,7 @@ export type Database = {
           customer_id: number
           id?: number
           slot_id: number
+          special_requirements?: string | null
         }
         Update: {
           check_in_date?: string
@@ -91,6 +93,7 @@ export type Database = {
           customer_id?: number
           id?: number
           slot_id?: number
+          special_requirements?: string | null
         }
         Relationships: [
           {
@@ -112,6 +115,42 @@ export type Database = {
             columns: ["slot_id"]
             isOneToOne: false
             referencedRelation: "slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings_assets: {
+        Row: {
+          asset_id: number | null
+          booking_id: number | null
+          created_at: string | null
+          id: number
+        }
+        Insert: {
+          asset_id?: number | null
+          booking_id?: number | null
+          created_at?: string | null
+          id?: number
+        }
+        Update: {
+          asset_id?: number | null
+          booking_id?: number | null
+          created_at?: string | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_assets_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_assets_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
         ]

@@ -50,7 +50,12 @@ export function BookingsList() {
           special_requirements,
           customer:customers(name, email),
           slot:slots(name),
-          assets!bookings_assets(asset_name, asset_type)
+          assets:bookings_assets(
+            asset:assets(
+              asset_name,
+              asset_type
+            )
+          )
         `);
 
       if (searchTerm) {
@@ -67,7 +72,17 @@ export function BookingsList() {
         });
         throw error;
       }
-      return data as Booking[];
+
+      // Transform the data to match our Booking interface
+      const transformedData = data?.map(booking => ({
+        ...booking,
+        assets: booking.assets?.map(ba => ({
+          asset_name: ba.asset.asset_name,
+          asset_type: ba.asset.asset_type
+        })) || []
+      }));
+
+      return transformedData as Booking[];
     },
   });
 
