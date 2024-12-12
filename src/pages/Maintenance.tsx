@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MaintenanceDrawer } from "@/components/maintenance/MaintenanceDrawer";
 import { AddMaintenanceDialog } from "@/components/maintenance/AddMaintenanceDialog";
-import { Maintenance as MaintenanceType } from "@/types/maintenance";
+import { Maintenance } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";
@@ -13,38 +13,32 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 
 export default function Maintenance() {
   const { toast } = useToast();
-  const [selectedMaintenance, setSelectedMaintenance] = useState<MaintenanceType | null>(null);
+  const [selectedMaintenance, setSelectedMaintenance] = useState<Maintenance | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
-  const [priorityFilter, setPriorityFilter] = useState("all");
 
   const { data: maintenanceRequests = [], isLoading, refetch } = useQuery({
-    queryKey: ['maintenance_requests', statusFilter, priorityFilter],
+    queryKey: ['maintenance_requests', statusFilter],
     queryFn: async () => {
       try {
         let query = supabase
           .from('maintenance_requests')
           .select(`
             id,
-            title,
             description,
             status,
-            priority,
+            assigned_to,
             created_at,
-            asset_id,
-            assets (
-              id,
-              asset_name
-            )
+            updated_at,
+            completed_at,
+            customer_id,
+            slot_id,
+            user_id
           `);
 
         if (statusFilter !== 'all') {
           query = query.eq('status', statusFilter);
-        }
-
-        if (priorityFilter !== 'all') {
-          query = query.eq('priority', priorityFilter);
         }
 
         const { data, error } = await query;
@@ -67,10 +61,10 @@ export default function Maintenance() {
     },
   });
 
-  const columns: Column<MaintenanceType>[] = [
+  const columns: Column<Maintenance>[] = [
     {
-      header: "Title",
-      accessorKey: "title",
+      header: "Description",
+      accessorKey: "description",
       sortable: true,
     },
     {
@@ -88,31 +82,17 @@ export default function Maintenance() {
       sortable: true,
     },
     {
-      header: "Priority",
-      accessorKey: "priority",
-      cell: (maintenance) => (
-        <Badge variant={
-          maintenance.priority === 'high' ? 'destructive' :
-          maintenance.priority === 'medium' ? 'secondary' :
-          'outline'
-        }>
-          {maintenance.priority}
-        </Badge>
-      ),
-      sortable: true,
-    },
-    {
-      header: "Asset",
-      accessorKey: "assets",
-      cell: (maintenance) => maintenance.assets?.asset_name || 'Unassigned',
-      sortable: true,
-    },
-    {
       header: "Created",
       accessorKey: "created_at",
       cell: (maintenance) => new Date(maintenance.created_at).toLocaleDateString(),
       sortable: true,
     },
+    {
+      header: "Updated",
+      accessorKey: "updated_at",
+      cell: (maintenance) => maintenance.updated_at ? new Date(maintenance.updated_at).toLocaleDateString() : '-',
+      sortable: true,
+    }
   ];
 
   const filters = [
@@ -126,26 +106,15 @@ export default function Maintenance() {
       ],
       value: statusFilter,
       onChange: setStatusFilter
-    },
-    {
-      name: "priority",
-      options: [
-        { label: "All Priorities", value: "all" },
-        { label: "High", value: "high" },
-        { label: "Medium", value: "medium" },
-        { label: "Low", value: "low" }
-      ],
-      value: priorityFilter,
-      onChange: setPriorityFilter
     }
   ];
 
-  const handleEdit = (maintenance: MaintenanceType) => {
+  const handleEdit = (maintenance: Maintenance) => {
     setSelectedMaintenance(maintenance);
     setIsDrawerOpen(true);
   };
 
-  const handleViewDetails = (maintenance: MaintenanceType) => {
+  const handleViewDetails = (maintenance: Maintenance) => {
     setSelectedMaintenance(maintenance);
     setIsDrawerOpen(true);
   };
