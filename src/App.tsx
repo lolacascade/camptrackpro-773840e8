@@ -20,17 +20,6 @@ import Maintenance from "./pages/Maintenance";
 import Settings from "./pages/Settings";
 import { Layout } from "@/components/layout/Layout";
 
-// Configure React Query client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-      staleTime: 0,
-    },
-  },
-});
-
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
@@ -83,39 +72,52 @@ const AppLayout = () => (
   </ProtectedRoute>
 );
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <SessionContextProvider supabaseClient={supabase}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            
-            {/* Protected app routes */}
-            <Route path="/app" element={<AppLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="map" element={<MarinaMap />} />
-              <Route path="customers" element={<Customers />} />
-              <Route path="assets" element={<Assets />} />
-              <Route path="maintenance" element={<Maintenance />} />
-              <Route path="settings" element={<Settings />} />
-              {/* Catch all redirect for /app/* */}
-              <Route path="*" element={<Navigate to="/app" replace />} />
-            </Route>
-            
-            {/* Catch all redirect for unknown routes */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </SessionContextProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Initialize QueryClient inside the component
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+        staleTime: 0,
+      },
+    },
+  }));
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <SessionContextProvider supabaseClient={supabase}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              
+              {/* Protected app routes */}
+              <Route path="/app" element={<AppLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="map" element={<MarinaMap />} />
+                <Route path="customers" element={<Customers />} />
+                <Route path="assets" element={<Assets />} />
+                <Route path="maintenance" element={<Maintenance />} />
+                <Route path="settings" element={<Settings />} />
+                {/* Catch all redirect for /app/* */}
+                <Route path="*" element={<Navigate to="/app" replace />} />
+              </Route>
+              
+              {/* Catch all redirect for unknown routes */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </SessionContextProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
