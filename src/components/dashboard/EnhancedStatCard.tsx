@@ -31,7 +31,6 @@ interface EnhancedStatCardProps {
 export function EnhancedStatCard({
   title,
   value,
-  icon: Icon,
   trend,
   breakdown,
   recommendedActions,
@@ -39,12 +38,7 @@ export function EnhancedStatCard({
   return (
     <Card className="relative border border-[#E8EBEB] rounded-xl bg-white hover:shadow-lg transition-shadow duration-200">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <Icon className="h-6 w-6 text-[#3E4238]" />
-          </div>
-          <CardTitle className="text-base font-medium text-[#3E4238]">{title}</CardTitle>
-        </div>
+        <CardTitle className="text-base font-medium text-[#3E4238]">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
