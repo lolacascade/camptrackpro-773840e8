@@ -12,17 +12,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation();
 
   useEffect(() => {
-    // Persist the session
-    supabase.auth.getSession().then(({ data: { session: persistedSession }}) => {
+    const checkAndSetSession = async () => {
+      const { data: { session: persistedSession } } = await supabase.auth.getSession();
       if (!persistedSession) {
         console.log('No persisted session found');
       }
-    });
+    };
+
+    checkAndSetSession();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, currentSession) => {
-      console.log('Auth state changed:', event, currentSession);
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+      console.log('Auth state changed:', _event, !!currentSession);
     });
 
     return () => {
@@ -39,7 +41,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!session) {
-    // Store the current location to redirect back after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 

@@ -1,44 +1,44 @@
-import { useState } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BookingFormValues, CreateBookingData } from "@/types/bookings";
-import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
-export function useCreateBooking(onSuccess: () => void) {
+export const useCreateBooking = (onSuccess?: () => void) => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const createBooking = async (values: BookingFormValues) => {
+  const createBooking = async (formData: BookingFormValues) => {
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      
       const bookingData: CreateBookingData = {
-        customer_id: parseInt(values.customerId),
-        slot_id: parseInt(values.slotId),
-        check_in_date: format(values.checkInDate, "yyyy-MM-dd"),
-        check_out_date: format(values.checkOutDate, "yyyy-MM-dd"),
-        special_requirements: values.specialRequirements || null,
-        status: "pending"
+        customer_id: parseInt(formData.customerId),
+        slot_id: parseInt(formData.slotId),
+        check_in_date: formData.checkInDate.toISOString(),
+        check_out_date: formData.checkOutDate.toISOString(),
+        special_requirements: formData.specialRequirements || null,
+        status: 'pending'
       };
 
       const { error } = await supabase
         .from("bookings")
-        .insert(bookingData as any); // Type assertion needed due to Supabase client typing limitations
+        .insert(bookingData);
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Booking has been created successfully.",
+        description: "Booking created successfully",
       });
 
-      onSuccess();
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
-      console.error("Error creating booking:", error);
+      console.error('Error creating booking:', error);
       toast({
+        variant: "destructive",
         title: "Error",
         description: "Failed to create booking. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
@@ -46,4 +46,4 @@ export function useCreateBooking(onSuccess: () => void) {
   };
 
   return { createBooking, isLoading };
-}
+};
