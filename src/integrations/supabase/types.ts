@@ -74,6 +74,7 @@ export type Database = {
           created_at: string | null
           customer_id: number
           id: number
+          reservation_code: string
           slot_id: number
           special_requirements: string | null
           status: string
@@ -84,6 +85,7 @@ export type Database = {
           created_at?: string | null
           customer_id: number
           id?: number
+          reservation_code: string
           slot_id: number
           special_requirements?: string | null
           status?: string
@@ -94,6 +96,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: number
           id?: number
+          reservation_code?: string
           slot_id?: number
           special_requirements?: string | null
           status?: string
