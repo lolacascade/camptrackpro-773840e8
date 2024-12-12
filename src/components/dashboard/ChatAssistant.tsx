@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/lib/utils"; // Add this import
+import { cn } from "@/lib/utils";
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -77,28 +77,25 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className={cn(
-      "bg-[#0D1D1F] flex flex-col",
-      isMobile ? "h-full w-full" : "w-96 p-4 h-full"
-    )}>
-      <h2 className="text-xl font-semibold mb-4 text-white">Marina Assistant</h2>
+    <div className="flex flex-col h-full">
       <ScrollArea className="flex-1 pr-4 mb-4">
         <div className="space-y-4">
           {messages.map((message, i) => (
             <div
               key={i}
-              className={`p-3 rounded-lg ${
+              className={cn(
+                "p-3 rounded-lg",
                 message.role === "assistant"
-                  ? "text-[#C0CCAB]"
-                  : "bg-white text-[#0D1D1F] ml-4"
-              }`}
+                  ? "bg-accent text-accent-foreground"
+                  : "bg-secondary text-secondary-foreground ml-4"
+              )}
             >
               {message.content}
             </div>
           ))}
         </div>
       </ScrollArea>
-      <div className="space-y-4">
+      <div className="space-y-4 mt-auto">
         <div className="flex flex-wrap gap-2">
           {suggestionQueries.map((query, i) => (
             <Button
@@ -106,7 +103,7 @@ export function ChatAssistant() {
               variant="outline"
               size="sm"
               onClick={() => setInput(query)}
-              className="text-xs text-[#0D1D1F] hover:text-[#C0CCAB] border-[#C0CCAB]/50 bg-white"
+              className="text-xs"
             >
               {query}
             </Button>
@@ -118,13 +115,12 @@ export function ChatAssistant() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your question..."
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            className="bg-[#0D1D1F] text-white placeholder:text-white/50 border-[#C0CCAB]/50"
+            className="flex-1"
             disabled={isLoading}
           />
           <Button 
             onClick={handleSendMessage} 
-            size="icon" 
-            className="bg-[#C0CCAB] hover:bg-[#C0CCAB]/90"
+            size="icon"
             disabled={isLoading}
           >
             <Send className="h-4 w-4" />
