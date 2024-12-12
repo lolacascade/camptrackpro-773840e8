@@ -3,10 +3,19 @@ import { Chart } from "@/components/ui/chart";
 
 interface SparklineProps {
   className?: string;
-  data: { value: number }[];
+  data?: { value: number }[];
 }
 
-export function Sparkline({ className, data }: SparklineProps) {
+const defaultData = [
+  { value: 40 },
+  { value: 30 },
+  { value: 45 },
+  { value: 50 },
+  { value: 45 },
+  { value: 60 }
+];
+
+export function Sparkline({ className, data = defaultData }: SparklineProps) {
   return (
     <div className={`h-8 w-16 ${className}`}>
       <Chart data={data}>

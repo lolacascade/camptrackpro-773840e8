@@ -9,14 +9,14 @@ interface StatCardSparklineProps {
   icon: LucideIcon;
   trend?: "up" | "down";
   trendValue?: string;
-  sparklineData: { value: number }[];
+  sparklineData?: { value: number }[];
 }
 
 export function StatCardSparkline({
   title,
   value,
   description,
-  icon: Icon,
+  icon,
   trend,
   trendValue,
   sparklineData,
@@ -26,7 +26,7 @@ export function StatCardSparkline({
       title={title}
       value={value}
       description={description}
-      icon={Icon}
+      icon={icon}
       trend={trend}
       trendValue={trendValue}
     >

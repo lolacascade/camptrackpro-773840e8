@@ -8,9 +8,18 @@ interface StatCardProps {
   icon: LucideIcon;
   trend?: "up" | "down";
   trendValue?: string;
+  children?: React.ReactNode;
 }
 
-export function StatCard({ title, value, description, icon: Icon, trend, trendValue }: StatCardProps) {
+export function StatCard({ 
+  title, 
+  value, 
+  description, 
+  icon: Icon, 
+  trend, 
+  trendValue,
+  children 
+}: StatCardProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -25,6 +34,7 @@ export function StatCard({ title, value, description, icon: Icon, trend, trendVa
             {trend === "up" ? "↑" : "↓"} {trendValue}
           </div>
         )}
+        {children}
       </CardContent>
     </Card>
   );
