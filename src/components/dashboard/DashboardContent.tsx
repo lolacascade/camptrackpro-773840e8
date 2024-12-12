@@ -13,6 +13,15 @@ import { DashboardCallouts } from "./priority/DashboardCallouts";
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
     <div className="bg-white rounded-[24px] p-4 md:p-12 space-y-8">
+      <ErrorBoundary>
+        <StatsGrid 
+          occupancyRate={marinaSummary?.occupancyRate ?? 0}
+          occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
+          totalSlips={marinaSummary?.totalSlips ?? 0}
+          activeBoats={marinaSummary?.activeBoats ?? 0}
+        />
+      </ErrorBoundary>
+
       <DashboardHeader />
       
       <ErrorBoundary>
@@ -21,15 +30,6 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       
       <ErrorBoundary>
         <PrioritySection />
-      </ErrorBoundary>
-      
-      <ErrorBoundary>
-        <StatsGrid 
-          occupancyRate={marinaSummary?.occupancyRate ?? 0}
-          occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-          totalSlips={marinaSummary?.totalSlips ?? 0}
-          activeBoats={marinaSummary?.activeBoats ?? 0}
-        />
       </ErrorBoundary>
       
       <ErrorBoundary>
