@@ -76,6 +76,7 @@ export type Database = {
           id: number
           slot_id: number
           special_requirements: string | null
+          status: string
         }
         Insert: {
           check_in_date: string
@@ -85,6 +86,7 @@ export type Database = {
           id?: number
           slot_id: number
           special_requirements?: string | null
+          status?: string
         }
         Update: {
           check_in_date?: string
@@ -94,6 +96,7 @@ export type Database = {
           id?: number
           slot_id?: number
           special_requirements?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -287,6 +290,7 @@ export type Database = {
           issued_date: string
           slot_id: number | null
           status: string
+          type: string
           user_id: string | null
         }
         Insert: {
@@ -299,6 +303,7 @@ export type Database = {
           issued_date: string
           slot_id?: number | null
           status: string
+          type?: string
           user_id?: string | null
         }
         Update: {
@@ -311,6 +316,7 @@ export type Database = {
           issued_date?: string
           slot_id?: number | null
           status?: string
+          type?: string
           user_id?: string | null
         }
         Relationships: [
@@ -376,6 +382,7 @@ export type Database = {
           customer_id: number | null
           description: string
           id: number
+          priority: string
           slot_id: number | null
           status: string
           updated_at: string | null
@@ -388,6 +395,7 @@ export type Database = {
           customer_id?: number | null
           description: string
           id?: number
+          priority?: string
           slot_id?: number | null
           status: string
           updated_at?: string | null
@@ -400,6 +408,7 @@ export type Database = {
           customer_id?: number | null
           description?: string
           id?: number
+          priority?: string
           slot_id?: number | null
           status?: string
           updated_at?: string | null

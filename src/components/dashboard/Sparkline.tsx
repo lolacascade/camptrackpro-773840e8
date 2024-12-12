@@ -17,13 +17,13 @@ const defaultData = [
 
 export function Sparkline({ className, data = defaultData }: SparklineProps) {
   return (
-    <div className={`h-8 w-16 ${className}`}>
+    <div className={`h-12 w-24 ${className}`}>
       <Chart data={data}>
         <Line
           type="monotone"
           dataKey="value"
           stroke="currentColor"
-          strokeWidth={1.5}
+          strokeWidth={2}
           dot={false}
         />
       </Chart>
