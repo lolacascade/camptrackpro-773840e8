@@ -10,7 +10,7 @@ import {
   Tooltip,
   ReferenceLine,
 } from "recharts";
-import { RevenueCategory, RevenueData } from "./types";
+import { RevenueCategory, RevenueData, Annotation } from "./types";
 import { format } from "date-fns";
 import { useRevenueAnnotations } from "./useRevenueAnnotations";
 
