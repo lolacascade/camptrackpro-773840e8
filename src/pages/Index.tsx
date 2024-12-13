@@ -7,14 +7,20 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function Index() {
   const navigate = useNavigate();
-  const { session } = useSessionContext();
+  const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
-    if (session) {
+    if (!isLoading && session) {
       navigate('/app');
     }
-  }, [session, navigate]);
+  }, [session, isLoading, navigate]);
 
+  // If loading, show nothing (prevents flash)
+  if (isLoading) {
+    return null;
+  }
+
+  // If not authenticated, show landing page
   return (
     <div className="min-h-screen">
       <HeroSection />

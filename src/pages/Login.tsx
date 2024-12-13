@@ -10,34 +10,31 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { session } = useSessionContext();
+  const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
     // If already authenticated, redirect to app
-    if (session) {
+    if (!isLoading && session) {
       const from = location.state?.from?.pathname || '/app';
       navigate(from, { replace: true });
     }
+  }, [session, isLoading, navigate, location]);
 
-    // Check for auth error in URL
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    const error = hashParams.get('error');
-    const errorDescription = hashParams.get('error_description');
-    
-    if (error) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Error",
-        description: errorDescription || "There was a problem with authentication",
-      });
-    }
-  }, [session, navigate, location, toast]);
+  // If loading, show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+      </div>
+    );
+  }
 
+  // If not authenticated, show login form
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">
+          <h1 className="text-4xl font-bold mb-2">
             <span className="text-white">Dock</span>
             <span className="text-blue-400">Ease</span>
           </h1>

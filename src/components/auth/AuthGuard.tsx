@@ -11,36 +11,41 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const { session, isLoading } = useSessionContext();
   const location = useLocation();
   const [isSessionChecked, setIsSessionChecked] = useState(false);
-  const [persistedSession, setPersistedSession] = useState(null);
 
   useEffect(() => {
-    const checkAndSetSession = async () => {
+    const checkSession = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setPersistedSession(currentSession);
         setIsSessionChecked(true);
+        
+        if (!currentSession) {
+          // If no session, redirect to login
+          window.location.href = '/login';
+        }
       } catch (error) {
         console.error('Error checking session:', error);
         setIsSessionChecked(true);
       }
     };
 
-    checkAndSetSession();
+    if (!session && !isLoading) {
+      checkSession();
+    } else {
+      setIsSessionChecked(true);
+    }
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         window.location.href = '/login';
-      } else if (event === 'SIGNED_IN') {
-        setPersistedSession(currentSession);
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [session, isLoading]);
 
   if (isLoading || !isSessionChecked) {
     return (
@@ -50,8 +55,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (!session && !persistedSession) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  if (!session) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
