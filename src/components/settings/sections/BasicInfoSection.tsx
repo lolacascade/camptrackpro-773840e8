@@ -13,17 +13,20 @@ interface BasicInfoSectionProps {
 export function BasicInfoSection({ formData, handleInputChange }: BasicInfoSectionProps) {
   const isFieldComplete = (value: any) => value && value.toString().trim() !== '';
 
+  const completedFields = Object.values(formData).filter(isFieldComplete).length;
+  const totalFields = Object.keys(formData).length;
+
   return (
-    <AccordionItem value="basic" className="border rounded-lg bg-white shadow-sm">
-      <AccordionTrigger className="px-4 hover:no-underline">
-        <div className="flex items-center space-x-2">
-          <span>Basic Information</span>
-          {Object.values(formData).every(isFieldComplete) && (
-            <CheckCircle className="h-4 w-4 text-green-500" />
-          )}
+    <AccordionItem value="basic" className="border rounded-lg bg-white shadow-sm overflow-hidden">
+      <AccordionTrigger className="px-4 py-4 hover:no-underline bg-white hover:bg-gray-50/80">
+        <div className="flex items-center justify-between w-full">
+          <span className="text-[#133134] font-medium">Basic Information</span>
+          <span className="text-sm text-muted-foreground">
+            {completedFields}/{totalFields} fields completed
+          </span>
         </div>
       </AccordionTrigger>
-      <AccordionContent className="px-4 pb-4">
+      <AccordionContent className="px-4 pb-4 pt-2 bg-white">
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="marina-name" className="flex items-center space-x-2">

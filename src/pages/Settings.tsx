@@ -12,6 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { AlertCircle } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
@@ -121,6 +127,9 @@ export default function Settings() {
                       <div className="text-muted-foreground mb-4">
                         {marinaDetails?.address || 'Address Not Set'}
                       </div>
+                      <div className="text-sm text-muted-foreground mb-4">
+                        Total Slips: {marinaDetails?.total_slips || 'Not Set'}
+                      </div>
                       <Button 
                         onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
                         variant="outline" 
@@ -133,12 +142,24 @@ export default function Settings() {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span>Profile Completion</span>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help">Profile Completion</span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="max-w-xs">
+                                  Complete all sections including Basic Information, 
+                                  Location Coordinates, and Services to reach 100%
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                           <span>{Math.round(completionPercentage)}%</span>
                         </div>
                         <Progress 
                           value={completionPercentage} 
-                          className="h-2 bg-[#133134]/10" 
+                          className="h-2 bg-[#133134]/10 [&>div]:bg-gradient-to-r [&>div]:from-[#133134] [&>div]:to-[#C0CCAB] transition-all duration-500" 
                         />
                       </div>
                     </div>

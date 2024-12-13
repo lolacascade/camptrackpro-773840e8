@@ -163,10 +163,10 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         <SocialMediaSection formData={formData} handleInputChange={handleInputChange} />
       </Accordion>
 
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className="fixed bottom-6 right-6 z-50 flex gap-4">
         <Button 
           onClick={handleSubmit} 
-          className="shadow-lg"
+          className="shadow-lg bg-[#133134] hover:bg-[#133134]/90"
           size="lg"
           disabled={isLoading}
         >
