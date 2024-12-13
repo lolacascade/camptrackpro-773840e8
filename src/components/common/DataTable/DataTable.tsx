@@ -123,11 +123,20 @@ export function DataTable<T extends { id?: number | string }>({
     let result = [...localData];
 
     if (searchTerm) {
-      result = result.filter((item) =>
-        Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+      result = result.filter((item) => {
+        // Search through all values in the item
+        return Object.entries(item).some(([key, value]) => {
+          // Skip searching through complex objects or arrays
+          if (typeof value === 'object' || Array.isArray(value)) {
+            if (value && 'name' in value) {
+              // If the object has a name property, search through it
+              return String(value.name).toLowerCase().includes(searchTerm.toLowerCase());
+            }
+            return false;
+          }
+          return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+        });
+      });
     }
 
     if (sortConfig) {

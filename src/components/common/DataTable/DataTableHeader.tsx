@@ -28,11 +28,13 @@ export function DataTableHeader({
   searchTerm, 
   onSearchChange,
   title,
-  children,
   filters = [],
   showTodayOnly,
   onShowTodayChange
 }: DataTableHeaderProps) {
+  // Filter out the customer filter if it exists
+  const filteredFilters = filters.filter(filter => filter.name !== 'customer');
+
   return (
     <div className="flex flex-col gap-6 mb-6">
       {title && (
@@ -40,8 +42,8 @@ export function DataTableHeader({
       )}
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className="relative w-[280px]">
+          <div className="flex-1 flex items-center gap-4">
+            <div className="relative flex-1 max-w-md">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search..."
@@ -62,8 +64,7 @@ export function DataTableHeader({
             )}
           </div>
           <div className="flex items-center gap-2">
-            <DataTableFiltersBar filters={filters} />
-            {children}
+            <DataTableFiltersBar filters={filteredFilters} />
           </div>
         </div>
       </div>
