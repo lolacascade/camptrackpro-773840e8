@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { BookingWithRelations } from "@/types/bookings";
+import { BookingWithRelations } from "@/types/database/booking";
 
 export function useBookingsList(searchTerm: string) {
   const { toast } = useToast();

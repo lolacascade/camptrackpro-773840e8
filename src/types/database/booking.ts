@@ -10,27 +10,42 @@ export interface BookingDB {
   reservation_code: string;
 }
 
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'active';
+
+// Form values type for the booking form
+export interface BookingFormValues {
+  customerId: string;
+  slotId: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  specialRequirements?: string;
+}
 
 // Type for database insert operations - exclude auto-generated fields
-export type BookingInsert = Omit<BookingDB, 'id' | 'created_at' | 'reservation_code'>;
+export type BookingInsert = {
+  customer_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  slot_id: number;
+  special_requirements?: string | null;
+  status?: BookingStatus;
+};
 
 // Type for booking with related data
-export interface BookingData extends BookingDB {
-  customer?: CustomerData;
-  slot?: SlotData;
+export interface BookingData extends Omit<BookingDB, 'customer_id' | 'slot_id'> {
+  customer?: {
+    id: number;
+    name: string;
+    email: string | null;
+  };
+  slot?: {
+    id: number;
+    name: string;
+  };
+  assets?: {
+    asset_name: string;
+    asset_type: string;
+  }[];
 }
 
-export interface CustomerData {
-  id: number;
-  name: string;
-  email: string | null;
-  phone: string | null;
-}
-
-export interface SlotData {
-  id: number;
-  name: string;
-  dock: string | null;
-  status: string;
-}
+export type BookingWithRelations = BookingData;

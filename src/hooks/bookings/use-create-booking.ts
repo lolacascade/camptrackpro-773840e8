@@ -1,43 +1,39 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { BookingInsert } from "@/types/database/booking";
+import type { BookingFormValues, BookingInsert } from "@/types/database/booking";
 import { useToast } from "@/hooks/use-toast";
 
-export function useCreateBooking() {
+export function useCreateBooking(onSuccess: () => void) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const createBooking = async (booking: BookingInsert) => {
-    try {
+  const mutation = useMutation({
+    mutationFn: async (values: BookingFormValues) => {
+      const bookingData: BookingInsert = {
+        customer_id: parseInt(values.customerId),
+        slot_id: parseInt(values.slotId),
+        check_in_date: values.checkInDate.toISOString(),
+        check_out_date: values.checkOutDate.toISOString(),
+        special_requirements: values.specialRequirements || null,
+        status: 'pending'
+      };
+
       const { data, error } = await supabase
         .from('bookings')
-        .insert({
-          customer_id: booking.customer_id,
-          check_in_date: booking.check_in_date,
-          check_out_date: booking.check_out_date,
-          slot_id: booking.slot_id,
-          special_requirements: booking.special_requirements,
-          status: booking.status || 'pending'
-        })
+        .insert(bookingData)
         .select()
         .single();
 
       if (error) throw error;
       return data;
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      throw error;
-    }
-  };
-
-  return useMutation({
-    mutationFn: createBooking,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast({
         title: "Booking created",
         description: "The booking has been successfully created.",
       });
+      onSuccess();
     },
     onError: (error) => {
       toast({
@@ -47,4 +43,9 @@ export function useCreateBooking() {
       });
     },
   });
+
+  return {
+    createBooking: mutation.mutate,
+    isLoading: mutation.isPending
+  };
 }

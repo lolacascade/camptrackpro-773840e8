@@ -7,8 +7,8 @@ export function useBookingActions(refetch: () => void) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const duplicateBooking = async (booking: BookingInsert) => {
-    try {
+  const duplicateBookingMutation = useMutation({
+    mutationFn: async (booking: BookingInsert) => {
       const { data, error } = await supabase
         .from('bookings')
         .insert({
@@ -24,28 +24,7 @@ export function useBookingActions(refetch: () => void) {
 
       if (error) throw error;
       return data;
-    } catch (error) {
-      console.error('Error duplicating booking:', error);
-      throw error;
-    }
-  };
-
-  const deleteBooking = async (id: number) => {
-    try {
-      const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      throw error;
-    }
-  };
-
-  const duplicateBookingMutation = useMutation({
-    mutationFn: duplicateBooking,
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast({
@@ -64,7 +43,14 @@ export function useBookingActions(refetch: () => void) {
   });
 
   const deleteBookingMutation = useMutation({
-    mutationFn: deleteBooking,
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       toast({
