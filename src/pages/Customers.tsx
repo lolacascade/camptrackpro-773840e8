@@ -21,24 +21,14 @@ export default function Customers() {
 
   const fetchCustomers = async () => {
     try {
-      console.log('Fetching customers...');
-      if (!session?.user?.id) {
-        console.log('No user session found');
-        return;
-      }
-
-      // Remove the user_id filter to see all customers during development
+      if (!session?.user?.id) return;
+      
       const { data, error } = await supabase
         .from('customers')
         .select('*')
         .order('name');
 
-      if (error) {
-        console.error('Error fetching customers:', error);
-        throw error;
-      }
-
-      console.log('Customers data:', data);
+      if (error) throw error;
       setCustomers(data || []);
     } catch (error) {
       console.error('Error fetching customers:', error);
@@ -72,9 +62,9 @@ export default function Customers() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h1 className="text-2xl font-semibold text-[#133134]">Customers</h1>
-            <Button onClick={handleAdd}>
+            <Button onClick={handleAdd} className="bg-[#133134] hover:bg-[#0D1D1F]">
               <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </div>
@@ -83,7 +73,7 @@ export default function Customers() {
 
           {isLoading ? (
             <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#133134]"></div>
             </div>
           ) : (
             <CustomerTable

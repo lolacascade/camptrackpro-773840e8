@@ -9,7 +9,7 @@ export default function Bookings() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <BookingsHeader />
+          <h1 className="text-2xl font-semibold text-[#133134]">Bookings</h1>
           <BookingsInsights />
           <BookingsList />
         </div>
