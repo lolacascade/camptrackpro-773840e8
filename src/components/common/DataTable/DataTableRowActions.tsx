@@ -36,7 +36,9 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg z-50"
+        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg z-[100]"
+        sideOffset={5}
+        forceMount
       >
         {onViewDetails && (
           <DropdownMenuItem 
