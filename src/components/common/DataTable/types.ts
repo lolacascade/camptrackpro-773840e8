@@ -14,7 +14,7 @@ export interface Filter {
 
 export interface Column<T> {
   header: string;
-  accessorKey: keyof T;
+  accessorKey: string; // Changed from keyof T to string to allow nested paths
   cell?: (item: T) => ReactNode;
   sortable?: boolean;
 }
