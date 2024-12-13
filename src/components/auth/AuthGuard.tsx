@@ -17,11 +17,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setIsSessionChecked(true);
-        
-        if (!currentSession) {
-          // If no session, redirect to login
-          window.location.href = '/login';
-        }
       } catch (error) {
         console.error('Error checking session:', error);
         setIsSessionChecked(true);
@@ -36,8 +31,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
+        // Only redirect to login if explicitly signed out
         window.location.href = '/login';
       }
     });
@@ -56,6 +52,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!session) {
+    // Store the current location to redirect back after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
