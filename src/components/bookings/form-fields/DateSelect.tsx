@@ -21,6 +21,9 @@ interface DateSelectProps {
 }
 
 export function DateSelect({ form, name, label, minDate }: DateSelectProps) {
+  const today = new Date();
+  const maxDate = new Date(today.getFullYear() + 2, today.getMonth(), today.getDate());
+
   return (
     <FormField
       control={form.control}
@@ -53,9 +56,10 @@ export function DateSelect({ form, name, label, minDate }: DateSelectProps) {
                 selected={field.value}
                 onSelect={field.onChange}
                 disabled={(date) =>
-                  minDate ? date < minDate : date < new Date()
+                  (minDate ? date < minDate : date < new Date()) || date > maxDate
                 }
                 initialFocus
+                className="bg-white rounded-md border"
               />
             </PopoverContent>
           </Popover>
