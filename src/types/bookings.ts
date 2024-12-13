@@ -31,7 +31,6 @@ export interface BookingData {
   }[];
 }
 
-// Type for inserting a new booking - includes reservation_code as it's required by Supabase
 export interface BookingInsertData {
   customer_id: number;
   slot_id: number;
@@ -39,5 +38,5 @@ export interface BookingInsertData {
   check_out_date: string;
   special_requirements?: string | null;
   status: string;
-  reservation_code?: string; // Added this as it's required by Supabase
+  reservation_code: string; // Changed to required
 }
