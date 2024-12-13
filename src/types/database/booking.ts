@@ -1,54 +1,36 @@
-import { TimestampFields } from './common';
-
-export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'active' | 'completed';
-
-// Base booking type that matches the database schema
-export interface BookingDB extends TimestampFields {
+export interface BookingDB {
   id: number;
   customer_id: number;
-  slot_id: number;
   check_in_date: string;
   check_out_date: string;
+  slot_id: number;
+  created_at: string;
   special_requirements: string | null;
   status: BookingStatus;
   reservation_code: string;
 }
 
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
 // Type for database insert operations - exclude auto-generated fields
-export type BookingInsert = {
-  customer_id: number;
-  slot_id: number;
-  check_in_date: string;
-  check_out_date: string;
-  special_requirements?: string | null;
-  status?: BookingStatus;
-};
+export type BookingInsert = Omit<BookingDB, 'id' | 'created_at' | 'reservation_code'>;
 
 // Type for booking with related data
-export interface BookingWithRelations extends BookingDB {
-  customer?: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  slot?: {
-    id: number;
-    name: string;
-  };
-  assets?: {
-    asset_name: string;
-    asset_type: string;
-  }[];
+export interface BookingData extends BookingDB {
+  customer?: CustomerData;
+  slot?: SlotData;
 }
 
-// Form-specific type for handling booking creation/updates
-export interface BookingFormValues {
-  customerId: string;
-  slotId: string;
-  checkInDate: Date;
-  checkOutDate: Date;
-  specialRequirements?: string;
+export interface CustomerData {
+  id: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
 }
 
-// Type for the data displayed in the bookings list/table
-export type BookingData = BookingWithRelations;
+export interface SlotData {
+  id: number;
+  name: string;
+  dock: string | null;
+  status: string;
+}

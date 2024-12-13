@@ -1,49 +1,50 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingFormValues, BookingInsert } from "@/types/bookings";
+import type { BookingInsert } from "@/types/database/booking";
 import { useToast } from "@/hooks/use-toast";
 
-export const useCreateBooking = (onSuccess?: () => void) => {
-  const [isLoading, setIsLoading] = useState(false);
+export function useCreateBooking() {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const createBooking = async (formData: BookingFormValues) => {
-    setIsLoading(true);
+  const createBooking = async (booking: BookingInsert) => {
     try {
-      const bookingData: BookingInsert = {
-        customer_id: parseInt(formData.customerId),
-        slot_id: parseInt(formData.slotId),
-        check_in_date: formData.checkInDate.toISOString(),
-        check_out_date: formData.checkOutDate.toISOString(),
-        special_requirements: formData.specialRequirements || null,
-        status: 'pending'
-      };
-
-      const { error } = await supabase
-        .from("bookings")
-        .insert(bookingData);
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          customer_id: booking.customer_id,
+          check_in_date: booking.check_in_date,
+          check_out_date: booking.check_out_date,
+          slot_id: booking.slot_id,
+          special_requirements: booking.special_requirements,
+          status: booking.status || 'pending'
+        })
+        .select()
+        .single();
 
       if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking created successfully",
-      });
-
-      if (onSuccess) {
-        onSuccess();
-      }
+      return data;
     } catch (error) {
       console.error('Error creating booking:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to create booking. Please try again.",
-      });
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
 
-  return { createBooking, isLoading };
-};
+  return useMutation({
+    mutationFn: createBooking,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toast({
+        title: "Booking created",
+        description: "The booking has been successfully created.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error creating booking",
+        description: "There was an error creating the booking. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+}

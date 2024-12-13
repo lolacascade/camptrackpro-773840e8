@@ -1,83 +1,89 @@
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingWithRelations, BookingInsert } from "@/types/bookings";
+import type { BookingInsert } from "@/types/database/booking";
+import { useToast } from "@/hooks/use-toast";
 
-export function useBookingActions(onSuccess?: () => void) {
-  const [isLoading, setIsLoading] = useState(false);
+export function useBookingActions(refetch: () => void) {
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const duplicateBooking = async (booking: BookingWithRelations) => {
-    setIsLoading(true);
+  const duplicateBooking = async (booking: BookingInsert) => {
     try {
-      const bookingData: BookingInsert = {
-        customer_id: booking.customer_id,
-        slot_id: booking.slot_id,
-        check_in_date: booking.check_in_date,
-        check_out_date: booking.check_out_date,
-        special_requirements: booking.special_requirements,
-        status: 'pending'
-      };
-
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('bookings')
-        .insert(bookingData);
+        .insert({
+          customer_id: booking.customer_id,
+          check_in_date: booking.check_in_date,
+          check_out_date: booking.check_out_date,
+          slot_id: booking.slot_id,
+          special_requirements: booking.special_requirements,
+          status: booking.status || 'pending'
+        })
+        .select()
+        .single();
 
       if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking duplicated successfully",
-      });
-
-      if (onSuccess) {
-        onSuccess();
-      }
+      return data;
     } catch (error) {
       console.error('Error duplicating booking:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to duplicate booking",
-      });
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
 
-  const deleteBooking = async (booking: BookingWithRelations) => {
-    setIsLoading(true);
+  const deleteBooking = async (id: number) => {
     try {
       const { error } = await supabase
         .from('bookings')
         .delete()
-        .eq('id', booking.id);
+        .eq('id', id);
 
       if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking deleted successfully",
-      });
-
-      if (onSuccess) {
-        onSuccess();
-      }
     } catch (error) {
       console.error('Error deleting booking:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete booking",
-      });
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
 
+  const duplicateBookingMutation = useMutation({
+    mutationFn: duplicateBooking,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toast({
+        title: "Booking duplicated",
+        description: "The booking has been successfully duplicated.",
+      });
+      refetch();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error duplicating booking",
+        description: "There was an error duplicating the booking. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deleteBookingMutation = useMutation({
+    mutationFn: deleteBooking,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      toast({
+        title: "Booking deleted",
+        description: "The booking has been successfully deleted.",
+      });
+      refetch();
+    },
+    onError: (error) => {
+      toast({
+        title: "Error deleting booking",
+        description: "There was an error deleting the booking. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   return {
-    duplicateBooking,
-    deleteBooking,
-    isLoading
+    duplicateBooking: duplicateBookingMutation.mutate,
+    deleteBooking: deleteBookingMutation.mutate,
   };
 }
