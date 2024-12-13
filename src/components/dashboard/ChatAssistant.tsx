@@ -125,11 +125,12 @@ export function ChatAssistant() {
           {messages.map((message, i) => (
             <div
               key={i}
-              className={`p-3 rounded-lg ${
-                message.role === "assistant"
-                  ? "text-[#C0CCAB]"
-                  : "bg-white text-[#0D1D1F] ml-4"
-              }`}
+              className={cn(
+                "p-3 rounded-lg max-w-[80%]",
+                message.role === "assistant" 
+                  ? "text-[#C0CCAB]" 
+                  : "bg-[#C0CCAB] text-[#0D1D1F] ml-auto"
+              )}
             >
               {message.content}
             </div>
