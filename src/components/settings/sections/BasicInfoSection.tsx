@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { AlertCircle, CheckCircle } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface BasicInfoSectionProps {
   formData: any;
@@ -29,9 +29,16 @@ export function BasicInfoSection({ formData, handleInputChange }: BasicInfoSecti
             <Label htmlFor="marina-name" className="flex items-center space-x-2">
               <span>Marina Name</span>
               {!isFieldComplete(formData.name) && (
-                <Tooltip content="Required field">
-                  <AlertCircle className="h-4 w-4 text-amber-500" />
-                </Tooltip>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <AlertCircle className="h-4 w-4 text-amber-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Required field</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </Label>
             <Input

@@ -23,8 +23,10 @@ export default function Settings() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check for session first
     if (!session?.user?.id) {
-      navigate('/login');
+      setIsLoading(false);
+      setError("Please log in to access marina settings.");
       return;
     }
 
@@ -33,21 +35,18 @@ export default function Settings() {
       setError(null);
       
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from('marina_details')
           .select('*')
           .eq('user_id', session.user.id);
 
-        if (error) {
-          console.error('Error fetching marina details:', error);
-          setError("Failed to load marina details. Please try again.");
-          return;
-        }
+        if (fetchError) throw fetchError;
 
+        // Handle the case where no marina details exist yet
         const marinaData = data && data.length > 0 ? data[0] : null;
         setMarinaDetails(marinaData);
         
-        // Calculate completion percentage
+        // Calculate completion percentage if we have data
         if (marinaData) {
           const totalFields = Object.keys(marinaData).length;
           const filledFields = Object.values(marinaData).filter(value => 
@@ -57,22 +56,31 @@ export default function Settings() {
         }
       } catch (error) {
         console.error('Error:', error);
-        setError("An unexpected error occurred. Please try again.");
+        setError("Failed to load marina details. Please try again.");
+        toast({
+          title: "Error",
+          description: "Failed to load marina details. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMarinaDetails();
-  }, [session, navigate]);
-
-  const handleEdit = () => {
-    // Scroll to form
-    document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [session, navigate, toast]);
 
   if (!session?.user?.id) {
-    return null;
+    return (
+      <PageWithChat>
+        <div className="p-6">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>Please log in to access marina settings.</AlertDescription>
+          </Alert>
+        </div>
+      </PageWithChat>
+    );
   }
 
   return (
@@ -111,7 +119,9 @@ export default function Settings() {
                       <MapPin className="h-4 w-4 mr-2" />
                       {marinaDetails?.address || 'Address Not Set'}
                     </div>
-                    <Button onClick={handleEdit} variant="outline" size="sm">
+                    <Button onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
+                            variant="outline" 
+                            size="sm">
                       Edit Information
                     </Button>
                   </div>
