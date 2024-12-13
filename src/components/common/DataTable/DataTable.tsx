@@ -7,11 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, Edit2, ExternalLink } from "lucide-react";
+import { ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { useState, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface FilterOption {
   label: string;
@@ -28,10 +29,8 @@ export interface Column<T> {
 interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
-  onEdit?: (item: T) => void;
   onViewDetails?: (item: T) => void;
   title?: string;
-  searchPlaceholder?: string;
   headerContent?: React.ReactNode;
   itemsPerPage?: number;
   isLoading?: boolean;
@@ -41,33 +40,31 @@ interface DataTableProps<T> {
     value: string;
     onChange: (value: string) => void;
   }[];
+  sortConfig?: {
+    key: string;
+    direction: 'asc' | 'desc';
+  };
+  onSort?: (key: string) => void;
+  showTodayOnly?: boolean;
+  onShowTodayChange?: (checked: boolean) => void;
 }
 
 export function DataTable<T extends { id?: number | string }>({ 
   data,
   columns,
-  onEdit,
   onViewDetails,
   title,
   headerContent,
   itemsPerPage = 10,
   isLoading = false,
-  filters = []
+  filters = [],
+  sortConfig,
+  onSort,
+  showTodayOnly,
+  onShowTodayChange
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof T;
-    direction: "asc" | "desc";
-  } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const handleSort = (key: keyof T) => {
-    setSortConfig((current) => ({
-      key,
-      direction:
-        current?.key === key && current.direction === "asc" ? "desc" : "asc",
-    }));
-  };
 
   const filteredAndSortedData = useMemo(() => {
     let result = [...data];
@@ -82,8 +79,8 @@ export function DataTable<T extends { id?: number | string }>({
 
     if (sortConfig) {
       result.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+        const aValue = a[sortConfig.key as keyof T];
+        const bValue = b[sortConfig.key as keyof T];
 
         if (aValue === null) return 1;
         if (bValue === null) return -1;
@@ -111,6 +108,8 @@ export function DataTable<T extends { id?: number | string }>({
           onSearchChange={setSearchTerm}
           title={title}
           filters={filters}
+          showTodayOnly={showTodayOnly}
+          onShowTodayChange={onShowTodayChange}
         >
           {headerContent}
         </DataTableHeader>
@@ -131,84 +130,82 @@ export function DataTable<T extends { id?: number | string }>({
         onSearchChange={setSearchTerm}
         title={title}
         filters={filters}
+        showTodayOnly={showTodayOnly}
+        onShowTodayChange={onShowTodayChange}
       >
         {headerContent}
       </DataTableHeader>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column, index) => (
-              <TableHead key={index} className="text-[#133134]">
-                <div className="flex items-center gap-2">
-                  {column.header}
-                  {column.sortable && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 data-[state=sorted]:bg-muted"
-                      onClick={() => handleSort(column.accessorKey)}
-                    >
-                      <ArrowUpDown className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              </TableHead>
-            ))}
-            {(onEdit || onViewDetails) && (
-              <TableHead className="text-[#133134]">Actions</TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {paginatedData.length === 0 ? (
+      <div className="rounded-md border bg-white">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell
-                colSpan={columns.length + (onEdit || onViewDetails ? 1 : 0)}
-                className="text-center py-4"
-              >
-                No items found
-              </TableCell>
+              {columns.map((column, index) => (
+                <TableHead 
+                  key={index} 
+                  className="text-[#133134]"
+                  onClick={() => column.sortable && onSort?.(column.accessorKey as string)}
+                  style={{ cursor: column.sortable ? 'pointer' : 'default' }}
+                >
+                  <div className="flex items-center gap-2">
+                    {column.header}
+                    {column.sortable && sortConfig?.key === column.accessorKey && (
+                      <span className="inline-block">
+                        {sortConfig.direction === 'asc' ? (
+                          <ArrowUp className="h-4 w-4" />
+                        ) : (
+                          <ArrowDown className="h-4 w-4" />
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </TableHead>
+              ))}
+              {onViewDetails && (
+                <TableHead className="text-[#133134]">Actions</TableHead>
+              )}
             </TableRow>
-          ) : (
-            paginatedData.map((item) => (
-              <TableRow key={item.id}>
-                {columns.map((column, index) => (
-                  <TableCell key={index}>
-                    {column.cell
-                      ? column.cell(item)
-                      : String(item[column.accessorKey] || "")}
-                  </TableCell>
-                ))}
-                {(onEdit || onViewDetails) && (
-                  <TableCell>
-                    <div className="flex gap-2">
-                      {onEdit && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onEdit(item)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {onViewDetails && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onViewDetails(item)}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                )}
+          </TableHeader>
+          <TableBody>
+            {paginatedData.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + (onViewDetails ? 1 : 0)}
+                  className="text-center py-4"
+                >
+                  No items found
+                </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              paginatedData.map((item) => (
+                <TableRow 
+                  key={item.id}
+                  className="transition-all hover:shadow-md"
+                >
+                  {columns.map((column, index) => (
+                    <TableCell key={index}>
+                      {column.cell
+                        ? column.cell(item)
+                        : String(item[column.accessorKey] || "")}
+                    </TableCell>
+                  ))}
+                  {onViewDetails && (
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onViewDetails(item)}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <DataTablePagination
         currentPage={currentPage}

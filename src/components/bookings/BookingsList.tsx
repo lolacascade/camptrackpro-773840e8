@@ -6,12 +6,37 @@ import { useNavigate } from "react-router-dom";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import type { Column } from "@/components/common/DataTable/DataTable";
 import type { Booking } from "@/hooks/bookings/use-bookings-list";
+import { ArrowUp, ArrowDown } from "lucide-react";
+
+const getStatusColor = (status: string) => {
+  const statusColors = {
+    active: "bg-green-100 text-green-800 border-green-200",
+    completed: "bg-gray-100 text-gray-800 border-gray-200",
+    pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    cancelled: "bg-red-100 text-red-800 border-red-200",
+    confirmed: "bg-blue-100 text-blue-800 border-blue-200"
+  };
+  return statusColors[status.toLowerCase()] || statusColors.pending;
+};
 
 export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [customerFilter, setCustomerFilter] = useState("all");
+  const [showTodayOnly, setShowTodayOnly] = useState(false);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: 'asc' | 'desc';
+  }>({ key: 'check_in_date', direction: 'desc' });
+  
   const navigate = useNavigate();
   const { data: bookings, isLoading } = useBookingsList("");
+
+  const handleSort = (key: string) => {
+    setSortConfig(current => ({
+      key,
+      direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
 
   const columns: Column<Booking>[] = [
     {
@@ -27,11 +52,13 @@ export function BookingsList() {
           </div>
         </div>
       ),
+      sortable: true,
     },
     {
       header: "Slot",
       accessorKey: "slot",
       cell: (booking) => booking.slot?.name ?? 'Unassigned',
+      sortable: true,
     },
     {
       header: "Assets",
@@ -53,11 +80,13 @@ export function BookingsList() {
       header: "Check-in",
       accessorKey: "check_in_date",
       cell: (booking) => new Date(booking.check_in_date).toLocaleDateString(),
+      sortable: true,
     },
     {
       header: "Check-out",
       accessorKey: "check_out_date",
       cell: (booking) => new Date(booking.check_out_date).toLocaleDateString(),
+      sortable: true,
     },
     {
       header: "Requirements",
@@ -66,12 +95,16 @@ export function BookingsList() {
     },
     {
       header: "Status",
-      accessorKey: "check_out_date",
+      accessorKey: "status",
       cell: (booking) => (
-        <Badge variant="outline" className="bg-primary/10 text-primary">
-          {new Date(booking.check_out_date) > new Date() ? 'Active' : 'Completed'}
+        <Badge 
+          variant="outline" 
+          className={getStatusColor(booking.status)}
+        >
+          {booking.status}
         </Badge>
       ),
+      sortable: true,
     },
   ];
 
@@ -85,8 +118,10 @@ export function BookingsList() {
       options: [
         { label: "All Statuses", value: "all" },
         { label: "Active", value: "active" },
+        { label: "Pending", value: "pending" },
+        { label: "Confirmed", value: "confirmed" },
         { label: "Completed", value: "completed" },
-        { label: "Upcoming", value: "upcoming" }
+        { label: "Cancelled", value: "cancelled" }
       ],
       value: statusFilter,
       onChange: setStatusFilter
@@ -107,18 +142,20 @@ export function BookingsList() {
   ];
 
   const filteredBookings = bookings?.filter(booking => {
-    if (statusFilter !== "all") {
-      const today = new Date();
-      const checkOutDate = new Date(booking.check_out_date);
-      const checkInDate = new Date(booking.check_in_date);
-      
-      if (statusFilter === "active" && (checkOutDate < today || checkInDate > today)) return false;
-      if (statusFilter === "completed" && checkOutDate >= today) return false;
-      if (statusFilter === "upcoming" && checkInDate <= today) return false;
+    if (statusFilter !== "all" && booking.status !== statusFilter) {
+      return false;
     }
 
     if (customerFilter !== "all" && booking.customer?.id.toString() !== customerFilter) {
       return false;
+    }
+
+    if (showTodayOnly) {
+      const today = new Date();
+      const checkInDate = new Date(booking.check_in_date);
+      if (checkInDate.toDateString() !== today.toDateString()) {
+        return false;
+      }
     }
 
     return true;
@@ -133,6 +170,10 @@ export function BookingsList() {
           onViewDetails={handleViewDetails}
           isLoading={isLoading}
           filters={filters}
+          sortConfig={sortConfig}
+          onSort={handleSort}
+          showTodayOnly={showTodayOnly}
+          onShowTodayChange={setShowTodayOnly}
         />
       </div>
     </Card>
