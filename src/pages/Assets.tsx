@@ -3,9 +3,11 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import type { Column } from "@/components/common/DataTable/types";
 import type { Asset } from "@/types/asset";
 import { useAssets } from "@/hooks/assets/use-assets";
+import { useSession } from "@supabase/auth-helpers-react";
 
 export default function Assets() {
   const [searchTerm, setSearchTerm] = useState("");
+  const session = useSession();
   const { data: assets, isLoading } = useAssets();
 
   const columns: Column<Asset>[] = [
@@ -35,6 +37,14 @@ export default function Assets() {
       cell: (asset) => asset.slots?.name || 'Unassigned',
     },
   ];
+
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        <p className="text-lg text-gray-600">Please sign in to view assets</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
