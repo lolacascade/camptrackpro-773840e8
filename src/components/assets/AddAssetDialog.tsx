@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Asset } from "@/types/asset";
 import { useToast } from "@/components/ui/use-toast";
@@ -24,10 +24,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_size: '',
     customer_id: null,
     slip_id: null,
-    user_id: null,
     asset_type: 'boat',
-    created_at: null,
-    updated_at: null
   });
 
   useEffect(() => {
@@ -73,7 +70,10 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
       const { error } = await supabase
         .from('assets')
         .insert({
-          ...newAsset,
+          asset_name: newAsset.asset_name,
+          asset_size: newAsset.asset_size,
+          asset_type: newAsset.asset_type,
+          slip_id: newAsset.slip_id,
           user_id: session.user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -87,10 +87,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         asset_size: '',
         customer_id: null,
         slip_id: null,
-        user_id: null,
         asset_type: 'boat',
-        created_at: null,
-        updated_at: null
       });
       
       toast({
@@ -120,7 +117,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
             <Label htmlFor="asset_name">Asset Name *</Label>
             <Input
               id="asset_name"
-              value={newAsset.asset_name}
+              value={newAsset.asset_name || ''}
               onChange={(e) => setNewAsset(prev => ({ ...prev, asset_name: e.target.value }))}
               placeholder="Enter asset name"
             />
