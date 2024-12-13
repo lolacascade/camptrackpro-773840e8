@@ -71,33 +71,37 @@ export default function Customers() {
   return (
     <PageWithChat>
       <PageContainer>
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-[#133134]">Customers</h1>
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Customer
-          </Button>
-        </div>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold text-[#133134]">Customers</h1>
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" /> Add Customer
+            </Button>
+          </div>
 
-        <CustomerInsights />
+          <CustomerInsights />
 
-        {isLoading ? (
-          <div className="text-[#3E4238]">Loading customers...</div>
-        ) : (
-          <CustomerTable
-            customers={customers}
-            onEdit={handleEdit}
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <CustomerTable
+              customers={customers}
+              onEdit={handleEdit}
+            />
+          )}
+
+          <CustomerDrawer
+            customer={selectedCustomer}
+            open={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+              setSelectedCustomer(null);
+            }}
+            onCustomerUpdated={fetchCustomers}
           />
-        )}
-
-        <CustomerDrawer
-          customer={selectedCustomer}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false);
-            setSelectedCustomer(null);
-          }}
-          onCustomerUpdated={fetchCustomers}
-        />
+        </div>
       </PageContainer>
     </PageWithChat>
   );

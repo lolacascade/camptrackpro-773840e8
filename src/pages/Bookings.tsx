@@ -8,9 +8,11 @@ export default function Bookings() {
   return (
     <PageWithChat>
       <PageContainer>
-        <BookingsHeader />
-        <BookingsInsights />
-        <BookingsList />
+        <div className="space-y-6">
+          <BookingsHeader />
+          <BookingsInsights />
+          <BookingsList />
+        </div>
       </PageContainer>
     </PageWithChat>
   );

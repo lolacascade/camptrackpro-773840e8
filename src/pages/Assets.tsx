@@ -153,41 +153,44 @@ export default function Assets() {
   return (
     <PageWithChat>
       <PageContainer>
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold text-[#133134]">Assets</h1>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Asset
+            </Button>
           </div>
-        ) : (
-          <DataTable
-            data={assets}
-            columns={columns}
-            onEdit={handleEdit}
-            onViewDetails={handleViewDetails}
-            title="Assets"
-            filters={filters}
-            headerContent={
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" /> Add Asset
-              </Button>
-            }
+
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <DataTable
+              data={assets}
+              columns={columns}
+              onEdit={handleEdit}
+              onViewDetails={handleViewDetails}
+              filters={filters}
+            />
+          )}
+
+          <AddAssetDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            onAssetAdded={refetch}
           />
-        )}
 
-        <AddAssetDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          onAssetAdded={refetch}
-        />
-
-        <AssetDrawer
-          asset={selectedAsset}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false);
-            setSelectedAsset(null);
-          }}
-          onAssetUpdated={refetch}
-        />
+          <AssetDrawer
+            asset={selectedAsset}
+            open={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+              setSelectedAsset(null);
+            }}
+            onAssetUpdated={refetch}
+          />
+        </div>
       </PageContainer>
     </PageWithChat>
   );

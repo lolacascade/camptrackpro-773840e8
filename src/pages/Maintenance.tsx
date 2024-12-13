@@ -123,7 +123,14 @@ export default function Maintenance() {
   return (
     <PageWithChat>
       <PageContainer>
-        <div className="space-y-8">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-semibold text-[#133134]">Maintenance Requests</h1>
+            <Button onClick={() => setIsDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Request
+            </Button>
+          </div>
+
           {isLoading ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -134,13 +141,7 @@ export default function Maintenance() {
               columns={columns}
               onEdit={handleEdit}
               onViewDetails={handleViewDetails}
-              title="Maintenance Requests"
               filters={filters}
-              headerContent={
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <Plus className="mr-2 h-4 w-4" /> Add Request
-                </Button>
-              }
             />
           )}
 

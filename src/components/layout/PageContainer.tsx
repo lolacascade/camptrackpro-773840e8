@@ -12,7 +12,7 @@ export function PageContainer({ children, className }: PageContainerProps) {
       "min-h-[calc(100vh-4rem)]",
       className
     )}>
-      <div className="bg-white rounded-[24px] p-6 md:p-12 space-y-8">
+      <div className="bg-white rounded-[24px] p-6 md:p-12">
         {children}
       </div>
     </div>
