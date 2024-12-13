@@ -1,4 +1,4 @@
-import { Column } from "@/components/common/DataTable/DataTable";
+import { Column } from "@/components/common/DataTable/types";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Booking } from "./types";

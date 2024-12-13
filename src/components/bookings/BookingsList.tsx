@@ -4,7 +4,7 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
-import type { Column } from "@/components/common/DataTable/DataTable";
+import type { Column } from "@/components/common/DataTable/types";
 import type { Booking } from "@/hooks/bookings/use-bookings-list";
 import { toast } from "sonner";
 

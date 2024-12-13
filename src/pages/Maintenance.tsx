@@ -7,7 +7,8 @@ import { AddMaintenanceDialog } from "@/components/maintenance/AddMaintenanceDia
 import type { Maintenance } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
-import { DataTable, Column } from "@/components/common/DataTable/DataTable";
+import { DataTable } from "@/components/common/DataTable/DataTable";
+import type { Column } from "@/components/common/DataTable/types";
 import { Badge } from "@/components/ui/badge";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
