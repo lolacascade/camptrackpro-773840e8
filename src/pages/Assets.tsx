@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import type { Column } from "@/components/common/DataTable/types";
-import { Asset } from "@/types/asset";
+import type { Asset } from "@/types/asset";
 import { useAssets } from "@/hooks/assets/use-assets";
 
 export default function Assets() {
@@ -26,12 +26,12 @@ export default function Assets() {
     },
     {
       header: "Customer",
-      accessorKey: "customer",
+      accessorKey: "customers",
       cell: (asset) => asset.customers?.name || 'Unassigned',
     },
     {
       header: "Slot",
-      accessorKey: "slot",
+      accessorKey: "slots",
       cell: (asset) => asset.slots?.name || 'Unassigned',
     },
   ];
@@ -43,6 +43,7 @@ export default function Assets() {
         data={assets || []}
         columns={columns}
         isLoading={isLoading}
+        searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         title="Assets"
       />

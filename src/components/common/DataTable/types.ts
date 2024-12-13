@@ -40,4 +40,6 @@ export interface DataTableProps<T> {
   showTodayOnly?: boolean;
   onShowTodayChange?: (checked: boolean) => void;
   tableName?: string;
+  searchTerm?: string;
+  onSearchChange?: (value: string) => void;
 }
