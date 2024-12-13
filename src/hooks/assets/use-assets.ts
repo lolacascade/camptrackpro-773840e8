@@ -18,12 +18,20 @@ export function useAssets() {
         .select(`
           *,
           customers:customer_id(id, name),
-          slots:slot_id(id, name, dock)
+          slots:slip_id(id, name, dock)
         `)
         .eq('user_id', session.user.id);
 
       if (error) throw error;
-      return data as Asset[];
+
+      // Transform the data to match our Asset type
+      const transformedData = data?.map(item => ({
+        ...item,
+        customers: item.customers?.[0] || null,
+        slots: item.slots?.[0] || null
+      }));
+
+      return transformedData as Asset[];
     },
     enabled: !!session,
   });

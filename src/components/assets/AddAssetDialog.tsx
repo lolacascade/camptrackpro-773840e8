@@ -7,6 +7,7 @@ import { Asset } from "@/types/asset";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useEffect } from "react";
+import { useSession } from "@supabase/auth-helpers-react";
 
 interface AddAssetDialogProps {
   isOpen: boolean;
@@ -16,14 +17,17 @@ interface AddAssetDialogProps {
 
 export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialogProps) {
   const { toast } = useToast();
+  const session = useSession();
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
-  const [newAsset, setNewAsset] = useState<Omit<Asset, 'id'>>({
+  const [newAsset, setNewAsset] = useState<Partial<Asset>>({
     asset_name: '',
     asset_size: '',
     customer_id: null,
     slip_id: null,
     user_id: null,
     asset_type: 'boat',
+    created_at: null,
+    updated_at: null
   });
 
   useEffect(() => {
@@ -47,6 +51,15 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
   }, [isOpen]);
 
   const handleSubmit = async () => {
+    if (!session) {
+      toast({
+        title: "Error",
+        description: "You must be signed in to add assets.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.slip_id) {
       toast({
         title: "Error",
@@ -60,10 +73,10 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
       const { error } = await supabase
         .from('assets')
         .insert({
-          asset_name: newAsset.asset_name,
-          asset_size: newAsset.asset_size,
-          asset_type: newAsset.asset_type,
-          slip_id: newAsset.slip_id,
+          ...newAsset,
+          user_id: session.user.id,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
 
       if (error) throw error;
@@ -76,6 +89,8 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         slip_id: null,
         user_id: null,
         asset_type: 'boat',
+        created_at: null,
+        updated_at: null
       });
       
       toast({
@@ -122,7 +137,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
           <div className="grid gap-2">
             <Label htmlFor="asset_type">Asset Type *</Label>
             <Select
-              value={newAsset.asset_type}
+              value={newAsset.asset_type || ''}
               onValueChange={(value) => setNewAsset(prev => ({ ...prev, asset_type: value }))}
             >
               <SelectTrigger>
@@ -139,7 +154,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
           <div className="grid gap-2">
             <Label htmlFor="slip_id">Slot *</Label>
             <Select
-              value={newAsset.slip_id?.toString()}
+              value={newAsset.slip_id?.toString() || ''}
               onValueChange={(value) => setNewAsset(prev => ({ ...prev, slip_id: parseInt(value) }))}
             >
               <SelectTrigger>
