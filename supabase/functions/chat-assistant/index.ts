@@ -60,11 +60,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a marina assistant. Help users with information about slip availability, maintenance tasks, occupancy rates, and revenue. Keep responses concise and focused on marina management.'
+            content: 'You are a marina assistant. Provide brief, focused responses about slip availability, maintenance tasks, occupancy rates, and revenue. Keep responses under 50 words when possible.'
           },
           ...messages
         ],
-        max_tokens: 150, // Limit response length
+        max_tokens: 100, // Reduced from 150 to be more conservative
         temperature: 0.7,
       }),
     });
@@ -73,7 +73,6 @@ serve(async (req) => {
       const errorText = await openAIResponse.text();
       console.error('OpenAI error:', errorText);
       
-      // Check if it's a quota error
       if (errorText.includes('insufficient_quota')) {
         return new Response(
           JSON.stringify({
@@ -81,7 +80,7 @@ serve(async (req) => {
             type: 'quota_exceeded'
           }),
           {
-            status: 429, // Too Many Requests
+            status: 429,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
         );

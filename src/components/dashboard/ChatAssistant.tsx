@@ -11,6 +11,7 @@ import { ChatSuggestions } from "./chat/ChatSuggestions";
 import { ChatInput } from "./chat/ChatInput";
 import { chatService } from "@/services/chat-service";
 import { useSessionCheck } from "@/hooks/use-session-check";
+import { toast } from "sonner";
 
 const suggestionQueries = [
   "Which slips are available this weekend?",
@@ -48,6 +49,7 @@ export function ChatAssistant() {
         }
       } catch (error) {
         console.error('Error in loadMessages:', error);
+        toast.error("Failed to load chat history. Please try again.");
       }
     };
 
@@ -79,13 +81,22 @@ export function ChatAssistant() {
         };
         setMessages(prev => [...prev, assistantMessage]);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
-      const errorMessage: ChatMessageType = {
+      const errorMessage = error.message === "API quota exceeded" 
+        ? "The AI service is currently unavailable due to high demand. Please try again later."
+        : "I apologize, but I encountered an error. Please try again.";
+        
+      const errorResponse: ChatMessageType = {
         role: "assistant",
-        content: "I apologize, but I encountered an error. Please try again.",
+        content: errorMessage,
       };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorResponse]);
+      
+      // Show toast for quota exceeded error
+      if (error.message === "API quota exceeded") {
+        toast.error("AI service temporarily unavailable. Please try again later.");
+      }
     } finally {
       setIsLoading(false);
     }
