@@ -1,19 +1,19 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-import { corsHeaders } from '../_shared/cors.ts'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { corsHeaders } from "../_shared/cors.ts";
 
-const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const { messages, conversationId, userId } = await req.json()
+    const { messages, conversationId, userId } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
-      throw new Error('Invalid messages format')
+      throw new Error('Invalid messages format');
     }
 
     // Create a Supabase client
@@ -25,11 +25,11 @@ serve(async (req) => {
           headers: { Authorization: req.headers.get('Authorization')! },
         },
       }
-    )
+    );
 
     // Store the user's message in chat_history
     if (userId && messages.length > 0) {
-      const lastMessage = messages[messages.length - 1]
+      const lastMessage = messages[messages.length - 1];
       await supabaseClient
         .from('chat_history')
         .insert({
@@ -37,7 +37,7 @@ serve(async (req) => {
           message: lastMessage.content,
           role: lastMessage.role,
           conversation_id: conversationId,
-        })
+        });
     }
 
     // Make request to OpenAI
@@ -48,7 +48,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -59,11 +59,11 @@ serve(async (req) => {
         temperature: 0.7,
         max_tokens: 500,
       }),
-    })
+    });
 
     if (!response.ok) {
-      const error = await response.json()
-      console.error('OpenAI API error:', error)
+      const error = await response.json();
+      console.error('OpenAI API error:', error);
       
       if (response.status === 429) {
         return new Response(
@@ -75,13 +75,13 @@ serve(async (req) => {
             status: 429,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           }
-        )
+        );
       }
       
-      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`)
+      throw new Error(`OpenAI API error: ${error.error?.message || 'Unknown error'}`);
     }
 
-    const data = await response.json()
+    const data = await response.json();
 
     // Store the AI's response in chat_history
     if (userId && data.choices?.[0]?.message) {
@@ -92,20 +92,20 @@ serve(async (req) => {
           message: data.choices[0].message.content,
           role: 'assistant',
           conversation_id: conversationId,
-        })
+        });
     }
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    });
   } catch (error) {
-    console.error('Error:', error)
+    console.error('Error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
-    )
+    );
   }
-})
+});
