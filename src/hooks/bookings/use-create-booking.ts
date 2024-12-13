@@ -10,7 +10,7 @@ export const useCreateBooking = (onSuccess?: () => void) => {
   const createBooking = async (formData: BookingFormValues) => {
     setIsLoading(true);
     try {
-      const bookingData: BookingInsert = {
+      const bookingData: Omit<BookingInsert, 'reservation_code'> = {
         customer_id: parseInt(formData.customerId),
         slot_id: parseInt(formData.slotId),
         check_in_date: formData.checkInDate.toISOString(),
