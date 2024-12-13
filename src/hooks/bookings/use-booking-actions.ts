@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingWithRelations, BookingInsert } from "@/types/bookings";
+import { BookingWithRelations, BookingInsert } from "@/types/database/booking";
 
 export function useBookingActions(onSuccess?: () => void) {
   const [isLoading, setIsLoading] = useState(false);

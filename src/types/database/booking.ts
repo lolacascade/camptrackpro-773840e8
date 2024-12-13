@@ -11,12 +11,14 @@ export interface BookingDB extends TimestampFields {
   check_out_date: string;
   special_requirements: string | null;
   status: BookingStatus;
-  reservation_code: string; // Required in DB, but handled by trigger
+  reservation_code: string;
 }
 
 // Type for database insert operations
-// Excludes id (auto-generated) and reservation_code (handled by trigger)
-export type BookingInsert = Omit<BookingDB, 'id' | 'reservation_code'>;
+// Make reservation_code optional for insert since it's handled by trigger
+export type BookingInsert = Omit<BookingDB, 'id'> & {
+  reservation_code?: string;
+};
 
 // Type for booking with related data
 export interface BookingWithRelations extends BookingDB {
