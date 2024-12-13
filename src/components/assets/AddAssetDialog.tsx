@@ -21,7 +21,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_name: '',
     asset_size: '',
     customer_id: null,
-    slot_id: null,
+    slip_id: null,
     user_id: null,
     asset_type: 'boat',
   });
@@ -47,7 +47,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
   }, [isOpen]);
 
   const handleSubmit = async () => {
-    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.slot_id) {
+    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.slip_id) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -59,12 +59,12 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     try {
       const { error } = await supabase
         .from('assets')
-        .insert([{
+        .insert({
           asset_name: newAsset.asset_name,
           asset_size: newAsset.asset_size,
           asset_type: newAsset.asset_type,
-          slot_id: newAsset.slot_id,
-        }]);
+          slip_id: newAsset.slip_id,
+        });
 
       if (error) throw error;
 
@@ -73,7 +73,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         asset_name: '',
         asset_size: '',
         customer_id: null,
-        slot_id: null,
+        slip_id: null,
         user_id: null,
         asset_type: 'boat',
       });
@@ -137,10 +137,10 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="slot_id">Slot *</Label>
+            <Label htmlFor="slip_id">Slot *</Label>
             <Select
-              value={newAsset.slot_id?.toString()}
-              onValueChange={(value) => setNewAsset(prev => ({ ...prev, slot_id: parseInt(value) }))}
+              value={newAsset.slip_id?.toString()}
+              onValueChange={(value) => setNewAsset(prev => ({ ...prev, slip_id: parseInt(value) }))}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a slot" />
