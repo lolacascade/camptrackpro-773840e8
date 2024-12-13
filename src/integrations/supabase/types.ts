@@ -17,7 +17,7 @@ export type Database = {
           created_at: string | null
           customer_id: number | null
           id: number
-          slip_id: number | null
+          slip_id: number
           updated_at: string | null
           user_id: string | null
         }
@@ -28,7 +28,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           id?: number
-          slip_id?: number | null
+          slip_id: number
           updated_at?: string | null
           user_id?: string | null
         }
@@ -39,7 +39,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: number | null
           id?: number
-          slip_id?: number | null
+          slip_id?: number
           updated_at?: string | null
           user_id?: string | null
         }
