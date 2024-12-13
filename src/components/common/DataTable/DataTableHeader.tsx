@@ -28,9 +28,9 @@ export function DataTableHeader({
   filters = []
 }: DataTableHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 mb-4">
+    <div className="flex flex-col gap-6 mb-6">
       {title && (
-        <h2 className="text-2xl font-bold text-[#133134]">{title}</h2>
+        <h1 className="text-[#133134] text-2xl font-semibold">{title}</h1>
       )}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center gap-4">

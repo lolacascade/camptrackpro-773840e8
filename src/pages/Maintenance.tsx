@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function Maintenance() {
   const { toast } = useToast();
@@ -121,43 +122,45 @@ export default function Maintenance() {
 
   return (
     <PageWithChat>
-      <div className="bg-white rounded-[24px] p-12 space-y-8">
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        ) : (
-          <DataTable
-            data={maintenanceRequests}
-            columns={columns}
-            onEdit={handleEdit}
-            onViewDetails={handleViewDetails}
-            title="Maintenance Requests"
-            filters={filters}
-            headerContent={
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" /> Add Request
-              </Button>
-            }
+      <PageContainer>
+        <div className="space-y-8">
+          {isLoading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          ) : (
+            <DataTable
+              data={maintenanceRequests}
+              columns={columns}
+              onEdit={handleEdit}
+              onViewDetails={handleViewDetails}
+              title="Maintenance Requests"
+              filters={filters}
+              headerContent={
+                <Button onClick={() => setIsDialogOpen(true)}>
+                  <Plus className="mr-2 h-4 w-4" /> Add Request
+                </Button>
+              }
+            />
+          )}
+
+          <AddMaintenanceDialog
+            isOpen={isDialogOpen}
+            onClose={() => setIsDialogOpen(false)}
+            onMaintenanceAdded={refetch}
           />
-        )}
 
-        <AddMaintenanceDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          onMaintenanceAdded={refetch}
-        />
-
-        <MaintenanceDrawer
-          maintenance={selectedMaintenance}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false);
-            setSelectedMaintenance(null);
-          }}
-          onMaintenanceUpdated={refetch}
-        />
-      </div>
+          <MaintenanceDrawer
+            maintenance={selectedMaintenance}
+            open={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+              setSelectedMaintenance(null);
+            }}
+            onMaintenanceUpdated={refetch}
+          />
+        </div>
+      </PageContainer>
     </PageWithChat>
   );
 }
