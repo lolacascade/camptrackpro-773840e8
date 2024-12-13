@@ -1,8 +1,7 @@
-import { Layout } from "@/components/layout/Layout";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { MarinaForm } from "@/components/settings/MarinaForm";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { PageWithChat } from "@/components/layout/PageWithChat";
 import { useSession } from '@supabase/auth-helpers-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
@@ -72,20 +71,18 @@ export default function Settings() {
 
   if (!session?.user?.id) {
     return (
-      <PageWithChat>
-        <div className="p-6">
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Please log in to access marina settings.</AlertDescription>
-          </Alert>
-        </div>
-      </PageWithChat>
+      <PageContainer>
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>Please log in to access marina settings.</AlertDescription>
+        </Alert>
+      </PageContainer>
     );
   }
 
   return (
-    <PageWithChat>
-      <div className="space-y-8 px-4 md:px-8 py-6">
+    <PageContainer>
+      <div className="space-y-8">
         <div className="space-y-4">
           <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
           <p className="text-muted-foreground">
@@ -108,7 +105,7 @@ export default function Settings() {
           </Alert>
         ) : (
           <>
-            <Card className="bg-white shadow-sm">
+            <Card>
               <CardContent className="p-6">
                 <div className="grid gap-6 md:grid-cols-2">
                   <div>
@@ -119,9 +116,11 @@ export default function Settings() {
                       <MapPin className="h-4 w-4 mr-2" />
                       {marinaDetails?.address || 'Address Not Set'}
                     </div>
-                    <Button onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
-                            variant="outline" 
-                            size="sm">
+                    <Button 
+                      onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
+                      variant="outline" 
+                      size="sm"
+                    >
                       Edit Information
                     </Button>
                   </div>
@@ -152,6 +151,6 @@ export default function Settings() {
           </>
         )}
       </div>
-    </PageWithChat>
+    </PageContainer>
   );
 }
