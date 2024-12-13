@@ -39,19 +39,17 @@ export function BookingsList() {
   };
 
   const handleDuplicate = (booking: Booking) => {
-    // Implementation for duplicating a booking
     toast.success("Booking duplicated successfully");
   };
 
   const handleDelete = (booking: Booking) => {
-    // Implementation for deleting a booking
     toast.success("Booking deleted successfully");
   };
 
   const columns: Column<Booking>[] = [
     {
       header: "Customer",
-      accessorKey: "customer",
+      accessorKey: "customer.name",
       cell: (booking) => (
         <div>
           <div className="font-medium text-[#133134]">
@@ -66,7 +64,7 @@ export function BookingsList() {
     },
     {
       header: "Slot",
-      accessorKey: "slot",
+      accessorKey: "slot.name",
       cell: (booking) => booking.slot?.name ?? 'Unassigned',
       sortable: true,
     },
@@ -102,6 +100,7 @@ export function BookingsList() {
       header: "Requirements",
       accessorKey: "special_requirements",
       cell: (booking) => booking.special_requirements || 'None',
+      sortable: true,
     },
     {
       header: "Status",

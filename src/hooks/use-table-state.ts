@@ -12,33 +12,50 @@ export function useTableState<T>(initialData: T[]) {
   const [localData, setLocalData] = useState<T[]>(initialData);
 
   const getNestedValue = (obj: any, path: string) => {
-    const value = path.split('.').reduce((acc, part) => {
-      if (acc && typeof acc === 'object' && part in acc) {
+    // Handle nested paths like 'customer.name' or 'slot.name'
+    return path.split('.').reduce((acc, part) => {
+      if (acc === null || acc === undefined) return '';
+      
+      // Handle array access
+      if (Array.isArray(acc)) {
+        return acc.map(item => item[part]).join(', ');
+      }
+      
+      // Handle object access
+      if (typeof acc === 'object' && part in acc) {
         return acc[part];
       }
-      if (acc && Array.isArray(acc) && acc.length > 0) {
-        return acc[0][part];
-      }
-      return null;
+      
+      return '';
     }, obj);
-    
-    return value === null || value === undefined ? '' : value;
   };
 
   const compareValues = (a: any, b: any): number => {
-    if (a === b) return 0;
+    // Handle null/undefined values
     if (a === null || a === undefined) return 1;
     if (b === null || b === undefined) return -1;
+    if (a === b) return 0;
 
-    if (typeof a === 'string' && typeof b === 'string') {
-      return a.localeCompare(b);
+    // Convert dates to timestamps for comparison
+    if (a instanceof Date && b instanceof Date) {
+      return a.getTime() - b.getTime();
     }
 
+    // Try to parse dates from strings
+    if (typeof a === 'string' && typeof b === 'string') {
+      const dateA = new Date(a);
+      const dateB = new Date(b);
+      if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+        return dateA.getTime() - dateB.getTime();
+      }
+    }
+
+    // Handle numbers
     if (typeof a === 'number' && typeof b === 'number') {
       return a - b;
     }
 
-    // Convert to strings for comparison if types don't match
+    // Default string comparison
     return String(a).localeCompare(String(b));
   };
 
