@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Edit, MapPin, Anchor, Phone, Mail, Globe } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -120,47 +120,93 @@ export default function Settings() {
               <Card className="border-2 border-[#133134]/10">
                 <CardContent className="p-6">
                   <div className="grid gap-6 md:grid-cols-2">
-                    <div>
-                      <h2 className="text-xl font-semibold mb-2 text-[#133134]">
+                    <div className="space-y-4">
+                      <h2 className="text-xl font-semibold text-[#133134]">
                         {marinaDetails?.name || 'Marina Name Not Set'}
                       </h2>
-                      <div className="text-muted-foreground mb-4">
-                        {marinaDetails?.address || 'Address Not Set'}
+                      <div className="flex items-start space-x-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4 mt-1 shrink-0" />
+                        <span>{marinaDetails?.address || 'Address Not Set'}</span>
                       </div>
-                      <div className="text-sm text-muted-foreground mb-4">
-                        Total Slips: {marinaDetails?.total_slips || 'Not Set'}
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Anchor className="h-4 w-4 shrink-0" />
+                        <span>Total Slips: {marinaDetails?.total_slips || 'Not Set'}</span>
                       </div>
-                      <Button 
-                        onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
-                        variant="outline" 
-                        size="sm"
-                        className="border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
-                      >
-                        Edit Information
-                      </Button>
-                    </div>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <span className="cursor-help">Profile Completion</span>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p className="max-w-xs">
-                                  Complete all sections including Basic Information, 
-                                  Location Coordinates, and Services to reach 100%
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                          <span>{Math.round(completionPercentage)}%</span>
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Phone className="h-4 w-4 shrink-0" />
+                        <span>{marinaDetails?.contact_phone || 'Phone Not Set'}</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-muted-foreground">
+                        <Mail className="h-4 w-4 shrink-0" />
+                        <span>{marinaDetails?.contact_email || 'Email Not Set'}</span>
+                      </div>
+                      {marinaDetails?.website && (
+                        <div className="flex items-center space-x-2 text-muted-foreground">
+                          <Globe className="h-4 w-4 shrink-0" />
+                          <a href={marinaDetails.website} target="_blank" rel="noopener noreferrer" 
+                             className="hover:text-[#133134] transition-colors">
+                            Visit Website
+                          </a>
                         </div>
+                      )}
+                      <div className="pt-4">
+                        <Button 
+                          onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
+                          variant="outline" 
+                          size="sm"
+                          className="border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
+                        >
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Information
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex justify-between text-sm cursor-help">
+                                <span>Profile Completion</span>
+                                <span>{Math.round(completionPercentage)}%</span>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <p>
+                                Complete all sections including Basic Information, 
+                                Location Coordinates, and Services to reach 100%
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         <Progress 
                           value={completionPercentage} 
-                          className="h-2 bg-[#133134]/10 [&>div]:bg-gradient-to-r [&>div]:from-[#133134] [&>div]:to-[#C0CCAB] transition-all duration-500" 
+                          className="h-2 bg-[#133134]/10 transition-all duration-500"
+                          style={{
+                            background: 'linear-gradient(to right, #133134, #C0CCAB)',
+                            backgroundSize: `${completionPercentage}% 100%`,
+                            backgroundRepeat: 'no-repeat'
+                          }}
                         />
+                      </div>
+                      <div className="space-y-2">
+                        <h3 className="text-sm font-medium text-[#133134]">Quick Access</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['Basic Information', 'Location', 'Services', 'Features'].map((section) => (
+                            <Button
+                              key={section}
+                              variant="outline"
+                              size="sm"
+                              className="text-sm justify-start"
+                              onClick={() => {
+                                const element = document.querySelector(`[data-section="${section.toLowerCase()}"]`);
+                                element?.scrollIntoView({ behavior: 'smooth' });
+                              }}
+                            >
+                              {section}
+                            </Button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

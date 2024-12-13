@@ -12,15 +12,21 @@ interface BasicInfoSectionProps {
 
 export function BasicInfoSection({ formData, handleInputChange }: BasicInfoSectionProps) {
   const isFieldComplete = (value: any) => value && value.toString().trim() !== '';
-
   const completedFields = Object.values(formData).filter(isFieldComplete).length;
   const totalFields = Object.keys(formData).length;
 
   return (
-    <AccordionItem value="basic" className="border rounded-lg bg-white shadow-sm overflow-hidden">
+    <AccordionItem value="basic" className="border rounded-lg bg-white shadow-sm overflow-hidden" data-section="basic">
       <AccordionTrigger className="px-4 py-4 hover:no-underline bg-white hover:bg-gray-50/80">
         <div className="flex items-center justify-between w-full">
-          <span className="text-[#133134] font-medium">Basic Information</span>
+          <div className="flex items-center space-x-2">
+            <span className="text-[#133134] font-medium">Basic Information</span>
+            {completedFields === totalFields ? (
+              <CheckCircle className="h-4 w-4 text-green-500" />
+            ) : completedFields > 0 ? (
+              <AlertCircle className="h-4 w-4 text-amber-500" />
+            ) : null}
+          </div>
           <span className="text-sm text-muted-foreground">
             {completedFields}/{totalFields} fields completed
           </span>
