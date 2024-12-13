@@ -1,23 +1,9 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
-import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import type { Column } from "@/components/common/DataTable/types";
-import type { Booking } from "@/hooks/bookings/use-bookings-list";
-import { toast } from "sonner";
-
-const getStatusColor = (status: string) => {
-  const statusColors = {
-    active: "bg-green-100 text-green-800 border-green-200",
-    completed: "bg-gray-100 text-gray-800 border-gray-200",
-    pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-    cancelled: "bg-red-100 text-red-800 border-red-200",
-    confirmed: "bg-blue-100 text-blue-800 border-blue-200"
-  };
-  return statusColors[status.toLowerCase()] || statusColors.pending;
-};
+import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -28,7 +14,6 @@ export function BookingsList() {
     direction: 'asc' | 'desc';
   }>({ key: 'check_in_date', direction: 'desc' });
   
-  const navigate = useNavigate();
   const { data: bookings, isLoading } = useBookingsList("");
 
   const handleSort = (key: string) => {
@@ -38,25 +23,24 @@ export function BookingsList() {
     }));
   };
 
-  const handleDuplicate = (booking: Booking) => {
-    toast.success("Booking duplicated successfully");
-  };
-
-  const handleDelete = (booking: Booking) => {
-    toast.success("Booking deleted successfully");
-  };
-
-  const columns: Column<Booking>[] = [
+  const columns: Column<typeof bookings[0]>[] = [
     {
       header: "Customer",
       accessorKey: "customer.name",
       cell: (booking) => (
-        <div>
-          <div className="font-medium text-[#133134]">
-            {booking.customer?.name || 'Unknown Customer'}
-          </div>
-          <div className="text-sm text-[#3E4238]">
-            {booking.customer?.email || 'No email'}
+        <div className="flex items-center space-x-4">
+          <Avatar>
+            <AvatarFallback className="bg-primary/10 text-primary">
+              {booking.customer?.name?.split(' ').map(n => n[0]).join('') || '??'}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium text-[#133134]">
+              {booking.customer?.name || 'Unknown Customer'}
+            </div>
+            <div className="text-sm text-[#3E4238]">
+              {booking.customer?.email || 'No email'}
+            </div>
           </div>
         </div>
       ),
@@ -117,8 +101,15 @@ export function BookingsList() {
     },
   ];
 
-  const handleViewDetails = (booking: Booking) => {
-    navigate(`/app/bookings/${booking.id}`);
+  const getStatusColor = (status: string) => {
+    const statusColors = {
+      active: "bg-green-100 text-green-800 border-green-200",
+      completed: "bg-gray-100 text-gray-800 border-gray-200",
+      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+      cancelled: "bg-red-100 text-red-800 border-red-200",
+      confirmed: "bg-blue-100 text-blue-800 border-blue-200"
+    };
+    return statusColors[status.toLowerCase()] || statusColors.pending;
   };
 
   const filters = [
@@ -176,9 +167,6 @@ export function BookingsList() {
         <DataTable
           data={filteredBookings || []}
           columns={columns}
-          onViewDetails={handleViewDetails}
-          onDuplicate={handleDuplicate}
-          onDelete={handleDelete}
           isLoading={isLoading}
           filters={filters}
           sortConfig={sortConfig}
