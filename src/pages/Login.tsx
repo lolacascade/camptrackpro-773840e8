@@ -28,7 +28,6 @@ export default function Login() {
         localStorage.removeItem('supabase-session');
       }
 
-      // Handle password reset success
       if (event === 'PASSWORD_RECOVERY') {
         toast({
           title: "Password Reset Successful",
@@ -71,7 +70,6 @@ export default function Login() {
     );
   }
 
-  // If not authenticated, show login form
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -133,16 +131,16 @@ export default function Login() {
             }}
             providers={[]}
             redirectTo={`${window.location.origin}/app`}
-            onError={(error) => {
-              toast({
-                variant: "destructive",
-                title: "Authentication Error",
-                description: error.message,
-              });
-            }}
             magicLink={true}
             resetPassword={true}
-            rememberMe={true}
+            localization={{
+              variables: {
+                sign_in: {
+                  email_label: 'Email',
+                  password_label: 'Password',
+                },
+              },
+            }}
           />
         </div>
       </div>

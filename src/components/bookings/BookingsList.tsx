@@ -19,9 +19,11 @@ export function BookingsList() {
       accessorKey: "customer",
       cell: (booking) => (
         <div>
-          <div className="font-medium text-[#133134]">{booking.customer.name}</div>
+          <div className="font-medium text-[#133134]">
+            {booking.customer?.name || 'Unknown Customer'}
+          </div>
           <div className="text-sm text-[#3E4238]">
-            {booking.customer.email}
+            {booking.customer?.email || 'No email'}
           </div>
         </div>
       ),
@@ -93,10 +95,11 @@ export function BookingsList() {
       name: "customer",
       options: [
         { label: "All Customers", value: "all" },
-        ...(bookings?.map(booking => ({
-          label: booking.customer.name,
-          value: booking.customer.id.toString()
-        })) || [])
+        ...(bookings?.filter(booking => booking.customer)
+          .map(booking => ({
+            label: booking.customer.name,
+            value: booking.customer.id.toString()
+          })) || [])
       ],
       value: customerFilter,
       onChange: setCustomerFilter
@@ -114,7 +117,7 @@ export function BookingsList() {
       if (statusFilter === "upcoming" && checkInDate <= today) return false;
     }
 
-    if (customerFilter !== "all" && booking.customer.id.toString() !== customerFilter) {
+    if (customerFilter !== "all" && booking.customer?.id.toString() !== customerFilter) {
       return false;
     }
 
