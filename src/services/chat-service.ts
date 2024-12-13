@@ -19,6 +19,8 @@ export const chatService = {
   },
 
   async sendMessage(message: ChatMessage, conversationId: string, accessToken: string) {
+    console.log('Sending message:', { message, conversationId });
+    
     const response = await fetch(
       'https://mlptncnvjlforntqjvbo.functions.supabase.co/chat-assistant',
       {
@@ -35,6 +37,9 @@ export const chatService = {
     );
 
     if (!response.ok) {
+      console.error('Error response:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
       throw new Error('Failed to send message');
     }
 

@@ -13,6 +13,8 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Received request');
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
@@ -30,14 +32,17 @@ serve(async (req) => {
       throw new Error('No authorization header');
     }
 
+    console.log('Validating user token');
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
       authHeader.replace('Bearer ', '')
     );
 
     if (userError || !user) {
+      console.error('User validation error:', userError);
       throw new Error('Invalid user token');
     }
 
+    console.log('Sending request to OpenAI');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -45,7 +50,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -56,11 +61,17 @@ serve(async (req) => {
       }),
     });
 
+    if (!openAIResponse.ok) {
+      console.error('OpenAI error:', await openAIResponse.text());
+      throw new Error('OpenAI request failed');
+    }
+
     const data = await openAIResponse.json();
+    console.log('Received OpenAI response');
 
     if (data.choices && data.choices[0]) {
       // Store the conversation in the database
-      await supabaseClient.from('chat_history').insert([
+      const { error: insertError } = await supabaseClient.from('chat_history').insert([
         {
           user_id: user.id,
           message: messages[messages.length - 1].content,
@@ -74,12 +85,17 @@ serve(async (req) => {
           conversation_id: conversationId,
         },
       ]);
+
+      if (insertError) {
+        console.error('Error storing chat history:', insertError);
+      }
     }
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.error('Error in chat-assistant function:', error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
