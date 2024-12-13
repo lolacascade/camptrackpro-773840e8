@@ -9,11 +9,11 @@ export function MarinaOverviewCard({ marinaDetails }: MarinaOverviewCardProps) {
   return (
     <Card className="border-2 border-[#133134]/10">
       <CardContent className="p-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-[#133134]">
-              {marinaDetails?.name || 'Marina Name Not Set'}
-            </h2>
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold text-[#133134]">
+            {marinaDetails?.name || 'Marina Name Not Set'}
+          </h2>
+          <div className="grid gap-4">
             <div className="flex items-start space-x-2 text-muted-foreground">
               <MapPin className="h-4 w-4 mt-1 shrink-0" />
               <span>{marinaDetails?.address || 'Address Not Set'}</span>

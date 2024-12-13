@@ -163,18 +163,17 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         <SocialMediaSection formData={formData} handleInputChange={handleInputChange} />
       </Accordion>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-4 md:p-6">
-        <div className="container max-w-7xl mx-auto flex justify-end">
-          <Button 
-            onClick={handleSubmit} 
-            className="shadow-lg bg-[#133134] hover:bg-[#133134]/90"
-            size="lg"
-            disabled={isLoading}
-          >
-            <Save className="mr-2 h-4 w-4" />
-            {isLoading ? "Saving..." : "Save Changes"}
-          </Button>
-        </div>
+      <div className="fixed bottom-0 right-0 z-50 p-4 md:p-6">
+        <Button 
+          onClick={handleSubmit} 
+          variant="outline"
+          size="lg"
+          className="shadow-lg border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
+          disabled={isLoading}
+        >
+          <Save className="mr-2 h-4 w-4" />
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
       </div>
       <div className="h-20" /> {/* Spacer for the fixed button */}
     </div>
