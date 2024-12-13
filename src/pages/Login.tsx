@@ -5,6 +5,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
+import { Loader2 } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,18 +14,59 @@ export default function Login() {
   const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
-    // If already authenticated, redirect to app
+    // Persistent session handling
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+      if (event === 'SIGNED_IN') {
+        // Store session in localStorage for persistence
+        localStorage.setItem('supabase-session', JSON.stringify(currentSession));
+        
+        const from = location.state?.from?.pathname || '/app';
+        navigate(from, { replace: true });
+      }
+
+      if (event === 'SIGNED_OUT') {
+        localStorage.removeItem('supabase-session');
+      }
+
+      // Handle password reset success
+      if (event === 'PASSWORD_RECOVERY') {
+        toast({
+          title: "Password Reset Successful",
+          description: "Your password has been successfully reset.",
+        });
+      }
+    });
+
+    // Check for existing session on mount
+    const savedSession = localStorage.getItem('supabase-session');
+    if (savedSession && !session) {
+      const parsedSession = JSON.parse(savedSession);
+      if (parsedSession?.access_token) {
+        supabase.auth.setSession(parsedSession);
+      }
+    }
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [session, navigate, location.state?.from?.pathname, toast]);
+
+  // If already authenticated, redirect to app
+  useEffect(() => {
     if (!isLoading && session) {
       const from = location.state?.from?.pathname || '/app';
       navigate(from, { replace: true });
     }
   }, [session, isLoading, navigate, location]);
 
-  // If loading, show loading state
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-white text-sm">Loading authentication...</p>
+        </div>
       </div>
     );
   }
@@ -89,7 +131,18 @@ export default function Login() {
                 },
               },
             }}
+            providers={[]}
             redirectTo={`${window.location.origin}/app`}
+            onError={(error) => {
+              toast({
+                variant: "destructive",
+                title: "Authentication Error",
+                description: error.message,
+              });
+            }}
+            magicLink={true}
+            resetPassword={true}
+            rememberMe={true}
           />
         </div>
       </div>
