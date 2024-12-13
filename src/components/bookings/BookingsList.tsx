@@ -5,6 +5,9 @@ import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -16,12 +19,70 @@ export function BookingsList() {
   }>({ key: 'check_in_date', direction: 'desc' });
   
   const { data: bookings, isLoading } = useBookingsList("");
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSort = (key: string) => {
     setSortConfig(current => ({
       key,
       direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
     }));
+  };
+
+  const handleViewDetails = (booking: any) => {
+    navigate(`/app/bookings/${booking.id}`);
+  };
+
+  const handleDuplicate = async (booking: any) => {
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .insert({
+          customer_id: booking.customer.id,
+          slot_id: booking.slot?.id,
+          check_in_date: booking.check_in_date,
+          check_out_date: booking.check_out_date,
+          special_requirements: booking.special_requirements,
+          status: 'pending'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Booking duplicated successfully",
+      });
+    } catch (error) {
+      console.error('Error duplicating booking:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to duplicate booking",
+      });
+    }
+  };
+
+  const handleDelete = async (booking: any) => {
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .delete()
+        .eq('id', booking.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Booking deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting booking:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete booking",
+      });
+    }
   };
 
   const columns: Column<typeof bookings[0]>[] = [
@@ -175,6 +236,9 @@ export function BookingsList() {
           showTodayOnly={showTodayOnly}
           onShowTodayChange={setShowTodayOnly}
           tableName="bookings"
+          onViewDetails={handleViewDetails}
+          onDuplicate={handleDuplicate}
+          onDelete={handleDelete}
         />
       </div>
     </Card>
