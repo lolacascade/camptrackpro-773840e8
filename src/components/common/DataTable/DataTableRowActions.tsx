@@ -27,19 +27,20 @@ export function DataTableRowActions<T>({
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 hover:bg-transparent"
         >
-          <MoreHorizontal className="h-4 w-4" />
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4 text-[#133134]" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="bg-white border border-[#E8EBEB] shadow-lg"
+        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg"
       >
         {onViewDetails && (
           <DropdownMenuItem 
             onClick={() => onViewDetails(row)}
-            className="text-[#133134] hover:bg-[#F8F9F9]"
+            className="text-[#133134] hover:bg-[#F8F9F9] cursor-pointer"
           >
             <ExternalLink className="mr-2 h-4 w-4" />
             View Details
@@ -48,7 +49,7 @@ export function DataTableRowActions<T>({
         {onDuplicate && (
           <DropdownMenuItem 
             onClick={() => onDuplicate(row)}
-            className="text-[#133134] hover:bg-[#F8F9F9]"
+            className="text-[#133134] hover:bg-[#F8F9F9] cursor-pointer"
           >
             <Copy className="mr-2 h-4 w-4" />
             Duplicate
@@ -57,7 +58,7 @@ export function DataTableRowActions<T>({
         {onDelete && (
           <DropdownMenuItem
             onClick={() => onDelete(row)}
-            className="text-red-600 hover:bg-[#F8F9F9]"
+            className="text-red-600 hover:bg-[#F8F9F9] cursor-pointer"
           >
             <Trash className="mr-2 h-4 w-4" />
             Delete
