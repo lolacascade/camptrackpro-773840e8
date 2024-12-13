@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingWithRelations, BookingInsert } from "@/types/database/booking";
+import { BookingWithRelations, BookingInsert } from "@/types/bookings";
 
 export function useBookingActions(onSuccess?: () => void) {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,7 +10,7 @@ export function useBookingActions(onSuccess?: () => void) {
   const duplicateBooking = async (booking: BookingWithRelations) => {
     setIsLoading(true);
     try {
-      const newBooking: Omit<BookingInsert, 'reservation_code'> = {
+      const bookingData: BookingInsert = {
         customer_id: booking.customer_id,
         slot_id: booking.slot_id,
         check_in_date: booking.check_in_date,
@@ -21,7 +21,7 @@ export function useBookingActions(onSuccess?: () => void) {
 
       const { error } = await supabase
         .from('bookings')
-        .insert(newBooking);
+        .insert(bookingData);
 
       if (error) throw error;
 
