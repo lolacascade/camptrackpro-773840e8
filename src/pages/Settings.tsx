@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { AlertCircle } from "lucide-react";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
@@ -105,6 +106,7 @@ export default function Settings() {
             </div>
           ) : error ? (
             <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : (

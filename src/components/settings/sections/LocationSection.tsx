@@ -9,9 +9,11 @@ interface LocationSectionProps {
 
 export function LocationSection({ formData, handleInputChange }: LocationSectionProps) {
   return (
-    <AccordionItem value="coordinates">
-      <AccordionTrigger>Location Coordinates</AccordionTrigger>
-      <AccordionContent>
+    <AccordionItem value="coordinates" className="border rounded-lg bg-white shadow-sm">
+      <AccordionTrigger className="px-4 hover:no-underline">
+        <span>Location Coordinates</span>
+      </AccordionTrigger>
+      <AccordionContent className="px-4 pb-4">
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="latitude">Latitude</Label>
@@ -19,6 +21,7 @@ export function LocationSection({ formData, handleInputChange }: LocationSection
               id="latitude"
               value={formData.coordinates.latitude}
               onChange={(e) => handleInputChange('coordinates', 'latitude', e.target.value)}
+              className="border-input"
             />
           </div>
 
@@ -28,6 +31,7 @@ export function LocationSection({ formData, handleInputChange }: LocationSection
               id="longitude"
               value={formData.coordinates.longitude}
               onChange={(e) => handleInputChange('coordinates', 'longitude', e.target.value)}
+              className="border-input"
             />
           </div>
         </div>

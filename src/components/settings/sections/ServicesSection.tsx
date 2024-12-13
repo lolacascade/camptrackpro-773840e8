@@ -9,9 +9,11 @@ interface ServicesSectionProps {
 
 export function ServicesSection({ formData, handleInputChange }: ServicesSectionProps) {
   return (
-    <AccordionItem value="services">
-      <AccordionTrigger>Services & Amenities</AccordionTrigger>
-      <AccordionContent>
+    <AccordionItem value="services" className="border rounded-lg bg-white shadow-sm">
+      <AccordionTrigger className="px-4 hover:no-underline">
+        <span>Services & Amenities</span>
+      </AccordionTrigger>
+      <AccordionContent className="px-4 pb-4">
         <div className="grid gap-4">
           {Object.entries(formData.services_amenities).map(([key, value]) => (
             <div key={key} className="flex items-center space-x-2">
@@ -22,7 +24,7 @@ export function ServicesSection({ formData, handleInputChange }: ServicesSection
                   handleInputChange('services_amenities', key, checked)
                 }
               />
-              <Label htmlFor={key}>
+              <Label htmlFor={key} className="text-sm font-normal">
                 {key.split('_').map(word => 
                   word.charAt(0).toUpperCase() + word.slice(1)
                 ).join(' ')}
