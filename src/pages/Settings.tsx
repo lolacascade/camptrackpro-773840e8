@@ -3,33 +3,60 @@ import { MarinaForm } from "@/components/settings/MarinaForm";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { useSession } from '@supabase/auth-helpers-react';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const session = useSession();
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
+    if (!session) {
+      navigate('/login');
+      return;
+    }
+
     const fetchMarinaDetails = async () => {
       try {
         const { data, error } = await supabase
           .from('marina_details')
           .select('*')
-          .maybeSingle();
+          .eq('user_id', session.user.id)
+          .single();
 
-        if (!error) {
-          setMarinaDetails(data);
-        } else {
+        if (error && error.code !== 'PGRST116') {
           console.error('Error fetching marina details:', error);
+          toast({
+            title: "Error",
+            description: "Failed to load marina details. Please try again.",
+            variant: "destructive",
+          });
         }
+
+        // If data exists, set it. If not, leave as null for new marina creation
+        setMarinaDetails(data || null);
       } catch (error) {
         console.error('Error:', error);
+        toast({
+          title: "Error",
+          description: "An unexpected error occurred. Please try again.",
+          variant: "destructive",
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMarinaDetails();
-  }, []);
+  }, [session, navigate, toast]);
+
+  if (!session) {
+    return null; // Will redirect in useEffect
+  }
 
   if (isLoading) {
     return (

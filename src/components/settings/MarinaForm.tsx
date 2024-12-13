@@ -3,6 +3,7 @@ import { Accordion } from "@/components/ui/accordion";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from '@supabase/auth-helpers-react';
 import { BasicInfoSection } from "./sections/BasicInfoSection";
 import { LocationSection } from "./sections/LocationSection";
 import { ApproachSection } from "./sections/ApproachSection";
@@ -16,8 +17,9 @@ interface MarinaFormProps {
 
 export function MarinaForm({ initialData }: MarinaFormProps) {
   const { toast } = useToast();
+  const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState(initialData || {
+  const [formData, setFormData] = useState({
     name: '',
     address: '',
     contact_phone: '',
@@ -72,28 +74,10 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
   });
 
   useEffect(() => {
-    const fetchUserMarinaDetails = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase
-          .from('marina_details')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
-
-        if (error) {
-          console.error('Error fetching marina details:', error);
-          return;
-        }
-
-        if (data) {
-          setFormData(data);
-        }
-      }
-    };
-
-    fetchUserMarinaDetails();
-  }, []);
+    if (initialData) {
+      setFormData(initialData);
+    }
+  }, [initialData]);
 
   const handleInputChange = (section: string, field: string, value: any) => {
     setFormData(prev => ({
@@ -109,14 +93,20 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
   };
 
   const handleSubmit = async () => {
+    if (!session?.user?.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to save marina details.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No user found');
-
       const dataToSubmit = {
         ...formData,
-        user_id: user.id
+        user_id: session.user.id
       };
 
       const { error } = await supabase
