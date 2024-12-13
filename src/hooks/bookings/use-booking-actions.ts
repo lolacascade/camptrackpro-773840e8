@@ -11,8 +11,8 @@ export function useBookingActions(onSuccess?: () => void) {
     setIsLoading(true);
     try {
       const newBooking: BookingInsertData = {
-        customer_id: booking.customer?.id || 0,
-        slot_id: booking.slot?.id || 0,
+        customer_id: booking.customer_id,
+        slot_id: booking.slot_id,
         check_in_date: booking.check_in_date,
         check_out_date: booking.check_out_date,
         special_requirements: booking.special_requirements,

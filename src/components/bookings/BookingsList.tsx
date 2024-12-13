@@ -31,7 +31,7 @@ export function BookingsList() {
   };
 
   const { filters, showTodayOnly, setShowTodayOnly, applyFilters } = BookingFilters({
-    bookings,
+    bookings: bookings as BookingData[],
     onFilterChange: setFilteredBookings
   });
 
@@ -39,7 +39,7 @@ export function BookingsList() {
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
         <DataTable
-          data={applyFilters(bookings) || []}
+          data={applyFilters(bookings as BookingData[]) || []}
           columns={getBookingColumns()}
           isLoading={isLoading}
           filters={filters}

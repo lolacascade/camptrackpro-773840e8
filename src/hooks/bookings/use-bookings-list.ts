@@ -1,26 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-
-export interface Booking {
-  id: number;
-  customer: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  slot: {
-    name: string;
-  } | null;
-  check_in_date: string;
-  check_out_date: string;
-  special_requirements: string | null;
-  status: string;
-  assets: {
-    asset_name: string;
-    asset_type: string;
-  }[];
-}
+import type { BookingData } from "@/types/bookings";
 
 export function useBookingsList(searchTerm: string) {
   const { toast } = useToast();
@@ -32,10 +13,14 @@ export function useBookingsList(searchTerm: string) {
         .from('bookings')
         .select(`
           id,
+          customer_id,
+          slot_id,
           check_in_date,
           check_out_date,
           special_requirements,
           status,
+          reservation_code,
+          created_at,
           customer:customers(id, name, email),
           slot:slots(name),
           assets:bookings_assets(
@@ -67,7 +52,7 @@ export function useBookingsList(searchTerm: string) {
           asset_name: ba.asset.asset_name,
           asset_type: ba.asset.asset_type
         })) || []
-      })) as Booking[];
+      })) as BookingData[];
     },
   });
 }
