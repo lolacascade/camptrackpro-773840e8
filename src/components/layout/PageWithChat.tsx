@@ -15,7 +15,7 @@ export function PageWithChat({ children }: PageWithChatProps) {
   if (isMobile) {
     return (
       <div className="relative min-h-[calc(100vh-4rem)]">
-        <div className="p-4 md:p-12 pb-20">
+        <div className="p-2">
           {children}
         </div>
         
@@ -44,9 +44,11 @@ export function PageWithChat({ children }: PageWithChatProps) {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
-      <ChatAssistant />
-      <div className="flex-1 p-12">
+    <div className="grid grid-cols-12 min-h-[calc(100vh-4rem)]">
+      <div className="col-span-3">
+        <ChatAssistant />
+      </div>
+      <div className="col-span-9">
         {children}
       </div>
     </div>
