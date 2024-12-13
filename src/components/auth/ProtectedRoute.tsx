@@ -25,16 +25,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
+    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
       console.log('Auth state changed:', _event, currentSession?.user?.id);
       
       if (_event === 'SIGNED_OUT') {
-        // Clear any cached session data
-        await supabase.auth.signOut();
+        // Only redirect if we're actually signed out
         window.location.href = '/login';
-      } else if (_event === 'SIGNED_IN') {
-        // Refresh the page to ensure we have the latest session state
-        window.location.reload();
       }
     });
 
