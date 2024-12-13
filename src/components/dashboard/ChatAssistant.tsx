@@ -100,7 +100,7 @@ export function ChatAssistant() {
         </div>
       </ScrollArea>
 
-      <div className="p-4 border-t border-[#C0CCAB]/20 mt-auto">
+      <div className="p-4 mt-auto">
         <div className="space-y-4">
           <div className="flex flex-wrap gap-2">
             {suggestionQueries.map((query, i) => (
