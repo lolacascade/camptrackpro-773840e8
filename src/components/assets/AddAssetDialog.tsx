@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Asset } from "@/types/asset";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface AddAssetDialogProps {
   isOpen: boolean;
@@ -16,6 +16,7 @@ interface AddAssetDialogProps {
 
 export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialogProps) {
   const { toast } = useToast();
+  const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
   const [newAsset, setNewAsset] = useState<Omit<Asset, 'id'>>({
     asset_name: '',
     asset_size: '',
@@ -25,8 +26,28 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_type: 'boat',
   });
 
+  useEffect(() => {
+    const fetchAvailableSlots = async () => {
+      const { data, error } = await supabase
+        .from('slots')
+        .select('id, name')
+        .eq('status', 'available');
+
+      if (error) {
+        console.error('Error fetching slots:', error);
+        return;
+      }
+
+      setAvailableSlots(data || []);
+    };
+
+    if (isOpen) {
+      fetchAvailableSlots();
+    }
+  }, [isOpen]);
+
   const handleSubmit = async () => {
-    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type) {
+    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.slot_id) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -42,6 +63,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
           asset_name: newAsset.asset_name,
           asset_size: newAsset.asset_size,
           asset_type: newAsset.asset_type,
+          slot_id: newAsset.slot_id,
         }]);
 
       if (error) throw error;
@@ -111,6 +133,24 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
                 <SelectItem value="jet_ski">Jet Ski</SelectItem>
                 <SelectItem value="yacht">Yacht</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="slot_id">Slot *</Label>
+            <Select
+              value={newAsset.slot_id?.toString()}
+              onValueChange={(value) => setNewAsset(prev => ({ ...prev, slot_id: parseInt(value) }))}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a slot" />
+              </SelectTrigger>
+              <SelectContent>
+                {availableSlots.map((slot) => (
+                  <SelectItem key={slot.id} value={slot.id.toString()}>
+                    {slot.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
