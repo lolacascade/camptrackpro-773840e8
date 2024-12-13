@@ -56,7 +56,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4-mini',
+        model: 'gpt-4o-mini', // Fixed model name
         messages: [
           {
             role: 'system',
