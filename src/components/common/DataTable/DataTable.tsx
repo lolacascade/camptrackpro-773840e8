@@ -7,12 +7,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown, ExternalLink } from "lucide-react";
+import { ArrowUp, ArrowDown, ExternalLink, Edit2 } from "lucide-react";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
 import { useState, useMemo } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 interface FilterOption {
   label: string;
@@ -26,10 +25,11 @@ export interface Column<T> {
   sortable?: boolean;
 }
 
-interface DataTableProps<T> {
+export interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   onViewDetails?: (item: T) => void;
+  onEdit?: (item: T) => void;  // Added this prop
   title?: string;
   headerContent?: React.ReactNode;
   itemsPerPage?: number;
@@ -53,6 +53,7 @@ export function DataTable<T extends { id?: number | string }>({
   data,
   columns,
   onViewDetails,
+  onEdit,  // Added this prop
   title,
   headerContent,
   itemsPerPage = 10,
@@ -161,7 +162,7 @@ export function DataTable<T extends { id?: number | string }>({
                   </div>
                 </TableHead>
               ))}
-              {onViewDetails && (
+              {(onViewDetails || onEdit) && (
                 <TableHead className="text-[#133134]">Actions</TableHead>
               )}
             </TableRow>
@@ -170,7 +171,7 @@ export function DataTable<T extends { id?: number | string }>({
             {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length + (onViewDetails ? 1 : 0)}
+                  colSpan={columns.length + ((onViewDetails || onEdit) ? 1 : 0)}
                   className="text-center py-4"
                 >
                   No items found
@@ -189,15 +190,28 @@ export function DataTable<T extends { id?: number | string }>({
                         : String(item[column.accessorKey] || "")}
                     </TableCell>
                   ))}
-                  {onViewDetails && (
+                  {(onViewDetails || onEdit) && (
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onViewDetails(item)}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        {onEdit && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onEdit(item)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {onViewDetails && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onViewDetails(item)}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   )}
                 </TableRow>

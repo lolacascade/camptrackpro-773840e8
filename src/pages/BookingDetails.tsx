@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Edit, MessageSquare, Printer, ChevronDown, DollarSign, Users } from "lucide-react";
+import { useState } from "react";  // Added this import
 import {
   Collapsible,
   CollapsibleContent,
