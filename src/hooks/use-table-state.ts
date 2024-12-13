@@ -11,6 +11,37 @@ export function useTableState<T>(initialData: T[]) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [localData, setLocalData] = useState<T[]>(initialData);
 
+  const getNestedValue = (obj: any, path: string) => {
+    const value = path.split('.').reduce((acc, part) => {
+      if (acc && typeof acc === 'object' && part in acc) {
+        return acc[part];
+      }
+      if (acc && Array.isArray(acc) && acc.length > 0) {
+        return acc[0][part];
+      }
+      return null;
+    }, obj);
+    
+    return value === null || value === undefined ? '' : value;
+  };
+
+  const compareValues = (a: any, b: any): number => {
+    if (a === b) return 0;
+    if (a === null || a === undefined) return 1;
+    if (b === null || b === undefined) return -1;
+
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b);
+    }
+
+    if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    }
+
+    // Convert to strings for comparison if types don't match
+    return String(a).localeCompare(String(b));
+  };
+
   const filteredAndSortedData = useMemo(() => {
     let result = [...localData];
 
@@ -18,13 +49,8 @@ export function useTableState<T>(initialData: T[]) {
     if (searchTerm) {
       result = result.filter((item) => {
         return Object.entries(item).some(([key, value]) => {
-          if (typeof value === 'object' || Array.isArray(value)) {
-            if (value && 'name' in value) {
-              return String(value.name).toLowerCase().includes(searchTerm.toLowerCase());
-            }
-            return false;
-          }
-          return String(value).toLowerCase().includes(searchTerm.toLowerCase());
+          const stringValue = getNestedValue(item, key);
+          return String(stringValue).toLowerCase().includes(searchTerm.toLowerCase());
         });
       });
     }
@@ -34,11 +60,7 @@ export function useTableState<T>(initialData: T[]) {
       result.sort((a, b) => {
         const aValue = getNestedValue(a, sortConfig.key);
         const bValue = getNestedValue(b, sortConfig.key);
-
-        if (aValue === null || aValue === undefined) return 1;
-        if (bValue === null || bValue === undefined) return -1;
-        if (aValue === bValue) return 0;
-
+        
         const comparison = compareValues(aValue, bValue);
         return sortConfig.direction === "asc" ? comparison : -comparison;
       });
@@ -46,19 +68,6 @@ export function useTableState<T>(initialData: T[]) {
 
     return result;
   }, [localData, searchTerm, sortConfig]);
-
-  // Helper function to get nested object values
-  const getNestedValue = (obj: any, path: string) => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-  };
-
-  // Helper function to compare values of different types
-  const compareValues = (a: any, b: any) => {
-    if (typeof a === 'string' && typeof b === 'string') {
-      return a.localeCompare(b);
-    }
-    return a < b ? -1 : 1;
-  };
 
   return {
     searchTerm,

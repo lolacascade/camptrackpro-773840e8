@@ -4,6 +4,10 @@ import type { Column } from "@/components/common/DataTable/types";
 import type { Asset } from "@/types/asset";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { useSession } from "@supabase/auth-helpers-react";
+import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageStatsGrid } from "@/components/common/PageStatsGrid";
+import { Badge } from "@/components/ui/badge";
 
 export default function Assets() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,19 +28,36 @@ export default function Assets() {
     {
       header: "Type",
       accessorKey: "asset_type",
+      cell: (asset) => (
+        <Badge variant="secondary">
+          {asset.asset_type || 'Unspecified'}
+        </Badge>
+      ),
       sortable: true,
     },
     {
       header: "Customer",
       accessorKey: "customers",
       cell: (asset) => asset.customers?.name || 'Unassigned',
+      sortable: true,
     },
     {
       header: "Slot",
       accessorKey: "slots",
       cell: (asset) => asset.slots?.name || 'Unassigned',
+      sortable: true,
     },
   ];
+
+  // Mock stats for demonstration
+  const stats = {
+    occupancyRate: 85,
+    occupiedSlips: 42,
+    totalSlips: 50,
+    activeBoats: 38,
+    monthlyRevenue: 45231,
+    pendingMaintenance: 8
+  };
 
   if (!session) {
     return (
@@ -47,16 +68,20 @@ export default function Assets() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-semibold text-[#133134]">Assets</h1>
-      <DataTable
-        data={assets || []}
-        columns={columns}
-        isLoading={isLoading}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        title="Assets"
-      />
-    </div>
+    <PageWithChat>
+      <PageContainer>
+        <div className="space-y-6">
+          <PageStatsGrid title="Assets" stats={stats} />
+          <DataTable
+            data={assets || []}
+            columns={columns}
+            isLoading={isLoading}
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            tableName="assets"
+          />
+        </div>
+      </PageContainer>
+    </PageWithChat>
   );
 }
