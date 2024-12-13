@@ -43,7 +43,7 @@ export const chatService = {
         console.error('Error response:', response.status, errorData);
         
         if (response.status === 429) {
-          toast.error("OpenAI API quota exceeded. Please try again later.");
+          toast.error("AI service temporarily unavailable. Please try again later.");
           throw new Error("API quota exceeded");
         }
         
