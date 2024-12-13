@@ -29,35 +29,42 @@ export function ChatAssistant() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationId, setConversationId] = useState<string>("");
+  const [conversationId] = useState<string>(uuidv4()); // Initialize with UUID immediately
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    // Generate a new conversation ID when the component mounts
-    setConversationId(uuidv4());
-
-    // Load previous messages from the same conversation
+    // Load previous messages only if we have a valid conversation ID
     const loadMessages = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: chatHistory } = await supabase
-          .from('chat_history')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .eq('conversation_id', conversationId)
-          .order('created_at', { ascending: true });
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session && conversationId) {
+          console.log('Loading messages for conversation:', conversationId);
+          const { data: chatHistory, error } = await supabase
+            .from('chat_history')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .eq('conversation_id', conversationId)
+            .order('created_at', { ascending: true });
 
-        if (chatHistory && chatHistory.length > 0) {
-          setMessages(chatHistory.map(msg => ({
-            role: msg.role as "assistant" | "user",
-            content: msg.message,
-          })));
+          if (error) {
+            console.error('Error loading chat history:', error);
+            return;
+          }
+
+          if (chatHistory && chatHistory.length > 0) {
+            setMessages(chatHistory.map(msg => ({
+              role: msg.role as "assistant" | "user",
+              content: msg.message,
+            })));
+          }
         }
+      } catch (error) {
+        console.error('Error in loadMessages:', error);
       }
     };
 
     loadMessages();
-  }, []);
+  }, [conversationId]); // Only run when conversationId changes
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
