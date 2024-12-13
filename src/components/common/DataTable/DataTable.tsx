@@ -9,11 +9,11 @@ import {
 import { ArrowUp, ArrowDown } from "lucide-react";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
-import { DataTableColumns } from "./DataTableColumns";
 import { DataTableRowActions } from "./DataTableRowActions";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { useTableState } from "@/hooks/use-table-state";
 
 interface FilterOption {
   label: string;
@@ -35,7 +35,6 @@ export interface DataTableProps<T> {
   onDuplicate?: (item: T) => void;
   onDelete?: (item: T) => void;
   title?: string;
-  headerContent?: React.ReactNode;
   itemsPerPage?: number;
   isLoading?: boolean;
   filters?: {
@@ -51,7 +50,7 @@ export interface DataTableProps<T> {
   onSort?: (key: string) => void;
   showTodayOnly?: boolean;
   onShowTodayChange?: (checked: boolean) => void;
-  tableName?: string; // For real-time updates
+  tableName?: string;
 }
 
 export function DataTable<T extends { id?: number | string }>({ 
@@ -62,7 +61,6 @@ export function DataTable<T extends { id?: number | string }>({
   onDuplicate,
   onDelete,
   title,
-  headerContent,
   itemsPerPage = 10,
   isLoading = false,
   filters = [],
@@ -72,16 +70,23 @@ export function DataTable<T extends { id?: number | string }>({
   onShowTodayChange,
   tableName
 }: DataTableProps<T>) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     columns.map(col => col.accessorKey as string)
   );
-  const [localData, setLocalData] = useState<T[]>(data);
+
+  const {
+    searchTerm,
+    setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    localData,
+    setLocalData,
+    filteredAndSortedData
+  } = useTableState<T>(data);
 
   useEffect(() => {
     setLocalData(data);
-  }, [data]);
+  }, [data, setLocalData]);
 
   // Real-time updates
   useEffect(() => {
@@ -98,7 +103,6 @@ export function DataTable<T extends { id?: number | string }>({
         },
         (payload) => {
           console.log('Change received!', payload);
-          // Update local data based on the change
           if (payload.eventType === 'INSERT') {
             setLocalData(prev => [...prev, payload.new as T]);
           } else if (payload.eventType === 'DELETE') {
@@ -117,44 +121,7 @@ export function DataTable<T extends { id?: number | string }>({
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [tableName]);
-
-  const filteredAndSortedData = useMemo(() => {
-    let result = [...localData];
-
-    if (searchTerm) {
-      result = result.filter((item) => {
-        // Search through all values in the item
-        return Object.entries(item).some(([key, value]) => {
-          // Skip searching through complex objects or arrays
-          if (typeof value === 'object' || Array.isArray(value)) {
-            if (value && 'name' in value) {
-              // If the object has a name property, search through it
-              return String(value.name).toLowerCase().includes(searchTerm.toLowerCase());
-            }
-            return false;
-          }
-          return String(value).toLowerCase().includes(searchTerm.toLowerCase());
-        });
-      });
-    }
-
-    if (sortConfig) {
-      result.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof T];
-        const bValue = b[sortConfig.key as keyof T];
-
-        if (aValue === null) return 1;
-        if (bValue === null) return -1;
-        if (aValue === bValue) return 0;
-
-        const comparison = aValue < bValue ? -1 : 1;
-        return sortConfig.direction === "asc" ? comparison : -comparison;
-      });
-    }
-
-    return result;
-  }, [localData, searchTerm, sortConfig]);
+  }, [tableName, setLocalData]);
 
   const visibleColumnsData = columns.filter(
     col => visibleColumns.includes(col.accessorKey as string)
@@ -170,10 +137,9 @@ export function DataTable<T extends { id?: number | string }>({
           filters={filters}
           showTodayOnly={showTodayOnly}
           onShowTodayChange={onShowTodayChange}
-        >
-          {headerContent}
-        </DataTableHeader>
-
+          columns={columns}
+          onColumnVisibilityChange={setVisibleColumns}
+        />
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, index) => (
             <Skeleton key={index} className="h-16 w-full" />
@@ -185,22 +151,16 @@ export function DataTable<T extends { id?: number | string }>({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <DataTableHeader
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          title={title}
-          filters={filters}
-          showTodayOnly={showTodayOnly}
-          onShowTodayChange={onShowTodayChange}
-        >
-          {headerContent}
-        </DataTableHeader>
-        <DataTableColumns 
-          columns={columns}
-          onColumnVisibilityChange={setVisibleColumns}
-        />
-      </div>
+      <DataTableHeader
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        title={title}
+        filters={filters}
+        showTodayOnly={showTodayOnly}
+        onShowTodayChange={onShowTodayChange}
+        columns={columns}
+        onColumnVisibilityChange={setVisibleColumns}
+      />
 
       <div className="rounded-md border bg-white">
         <Table>

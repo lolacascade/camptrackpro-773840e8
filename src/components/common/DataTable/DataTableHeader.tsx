@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { DataTableFiltersBar } from "./DataTableFiltersBar";
+import { DataTableColumns } from "./DataTableColumns";
 
 interface FilterOption {
   label: string;
@@ -13,7 +14,6 @@ interface DataTableHeaderProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   title?: string;
-  children?: React.ReactNode;
   filters?: {
     name: string;
     options: FilterOption[];
@@ -22,6 +22,8 @@ interface DataTableHeaderProps {
   }[];
   showTodayOnly?: boolean;
   onShowTodayChange?: (checked: boolean) => void;
+  columns: any[];
+  onColumnVisibilityChange: (columns: string[]) => void;
 }
 
 export function DataTableHeader({ 
@@ -30,9 +32,11 @@ export function DataTableHeader({
   title,
   filters = [],
   showTodayOnly,
-  onShowTodayChange
+  onShowTodayChange,
+  columns,
+  onColumnVisibilityChange
 }: DataTableHeaderProps) {
-  // Filter out the customer filter if it exists
+  // Filter out the customer filter
   const filteredFilters = filters.filter(filter => filter.name !== 'customer');
 
   return (
@@ -65,6 +69,10 @@ export function DataTableHeader({
           </div>
           <div className="flex items-center gap-2">
             <DataTableFiltersBar filters={filteredFilters} />
+            <DataTableColumns 
+              columns={columns}
+              onColumnVisibilityChange={onColumnVisibilityChange}
+            />
           </div>
         </div>
       </div>
