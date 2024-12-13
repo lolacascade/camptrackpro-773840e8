@@ -44,36 +44,32 @@ export function DataTableHeader({
       {title && (
         <h1 className="text-3xl font-semibold text-[#133134]">{title}</h1>
       )}
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex-1 flex items-center gap-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8 bg-white"
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
+          <Input
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-9 bg-white h-11 text-base"
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <DataTableFiltersBar filters={filteredFilters} />
+          {onShowTodayChange && (
+            <div className="flex items-center gap-3">
+              <Switch
+                id="show-today"
+                checked={showTodayOnly}
+                onCheckedChange={onShowTodayChange}
               />
+              <Label htmlFor="show-today" className="text-base font-medium">Today only</Label>
             </div>
-            {onShowTodayChange && (
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="show-today"
-                  checked={showTodayOnly}
-                  onCheckedChange={onShowTodayChange}
-                />
-                <Label htmlFor="show-today">Today only</Label>
-              </div>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <DataTableFiltersBar filters={filteredFilters} />
-            <DataTableColumns 
-              columns={columns}
-              onColumnVisibilityChange={onColumnVisibilityChange}
-            />
-          </div>
+          )}
+          <DataTableColumns 
+            columns={columns}
+            onColumnVisibilityChange={onColumnVisibilityChange}
+          />
         </div>
       </div>
     </div>

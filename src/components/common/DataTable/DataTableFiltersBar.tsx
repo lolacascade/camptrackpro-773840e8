@@ -20,7 +20,7 @@ export function DataTableFiltersBar({ filters }: DataTableFiltersBarProps) {
   if (!filters.length) return null;
 
   return (
-    <div className="flex flex-wrap gap-4 mb-4">
+    <div className="flex items-center gap-4">
       {filters.map((filter) => (
         <DataTableFilterItem
           key={filter.name}
