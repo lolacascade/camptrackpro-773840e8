@@ -9,6 +9,7 @@ import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function Customers() {
   const { toast } = useToast();
@@ -69,9 +70,9 @@ export default function Customers() {
 
   return (
     <PageWithChat>
-      <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <PageContainer>
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-[#133134]">Customers</h1>
+          <h1 className="text-2xl font-semibold text-[#133134]">Customers</h1>
           <Button onClick={handleAdd}>
             <Plus className="mr-2 h-4 w-4" /> Add Customer
           </Button>
@@ -97,7 +98,7 @@ export default function Customers() {
           }}
           onCustomerUpdated={fetchCustomers}
         />
-      </div>
+      </PageContainer>
     </PageWithChat>
   );
 }

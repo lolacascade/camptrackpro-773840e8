@@ -30,7 +30,7 @@ export function DataTableHeader({
   return (
     <div className="flex flex-col gap-6 mb-6">
       {title && (
-        <h1 className="text-[#133134] text-2xl font-semibold">{title}</h1>
+        <h1 className="text-2xl font-semibold text-[#133134]">{title}</h1>
       )}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-center gap-4">

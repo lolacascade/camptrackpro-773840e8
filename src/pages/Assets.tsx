@@ -10,6 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DataTable, Column } from "@/components/common/DataTable/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function Assets() {
   const { toast } = useToast();
@@ -151,7 +152,7 @@ export default function Assets() {
 
   return (
     <PageWithChat>
-      <div className="bg-white rounded-[24px] p-12 space-y-8">
+      <PageContainer>
         {isLoading ? (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -187,7 +188,7 @@ export default function Assets() {
           }}
           onAssetUpdated={refetch}
         />
-      </div>
+      </PageContainer>
     </PageWithChat>
   );
 }
