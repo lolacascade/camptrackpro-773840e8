@@ -64,12 +64,29 @@ serve(async (req) => {
           },
           ...messages
         ],
+        max_tokens: 150, // Limit response length
+        temperature: 0.7,
       }),
     });
 
     if (!openAIResponse.ok) {
       const errorText = await openAIResponse.text();
       console.error('OpenAI error:', errorText);
+      
+      // Check if it's a quota error
+      if (errorText.includes('insufficient_quota')) {
+        return new Response(
+          JSON.stringify({
+            error: 'OpenAI API quota exceeded. Please try again later.',
+            type: 'quota_exceeded'
+          }),
+          {
+            status: 429, // Too Many Requests
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+      
       throw new Error(`OpenAI request failed: ${errorText}`);
     }
 
@@ -99,7 +116,6 @@ serve(async (req) => {
 
     if (insertError) {
       console.error('Error storing chat history:', insertError);
-      // Continue execution even if storage fails
     }
 
     return new Response(JSON.stringify(data), {
