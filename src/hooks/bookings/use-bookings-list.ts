@@ -15,6 +15,7 @@ export interface Booking {
   check_in_date: string;
   check_out_date: string;
   special_requirements: string | null;
+  status: string;
   assets: {
     asset_name: string;
     asset_type: string;
@@ -34,6 +35,7 @@ export function useBookingsList(searchTerm: string) {
           check_in_date,
           check_out_date,
           special_requirements,
+          status,
           customer:customers(id, name, email),
           slot:slots(name),
           assets:bookings_assets(
