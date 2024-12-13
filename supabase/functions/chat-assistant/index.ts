@@ -42,11 +42,17 @@ serve(async (req) => {
       throw new Error('Invalid user token');
     }
 
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
+    if (!openAIApiKey) {
+      console.error('OpenAI API key not found');
+      throw new Error('OpenAI API key not configured');
+    }
+
     console.log('Sending request to OpenAI');
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -62,33 +68,38 @@ serve(async (req) => {
     });
 
     if (!openAIResponse.ok) {
-      console.error('OpenAI error:', await openAIResponse.text());
-      throw new Error('OpenAI request failed');
+      const errorText = await openAIResponse.text();
+      console.error('OpenAI error:', errorText);
+      throw new Error(`OpenAI request failed: ${errorText}`);
     }
 
     const data = await openAIResponse.json();
     console.log('Received OpenAI response');
 
-    if (data.choices && data.choices[0]) {
-      // Store the conversation in the database
-      const { error: insertError } = await supabaseClient.from('chat_history').insert([
-        {
-          user_id: user.id,
-          message: messages[messages.length - 1].content,
-          role: 'user',
-          conversation_id: conversationId,
-        },
-        {
-          user_id: user.id,
-          message: data.choices[0].message.content,
-          role: 'assistant',
-          conversation_id: conversationId,
-        },
-      ]);
+    if (!data.choices?.[0]?.message?.content) {
+      console.error('Invalid OpenAI response format:', data);
+      throw new Error('Invalid response from OpenAI');
+    }
 
-      if (insertError) {
-        console.error('Error storing chat history:', insertError);
-      }
+    // Store the conversation in the database
+    const { error: insertError } = await supabaseClient.from('chat_history').insert([
+      {
+        user_id: user.id,
+        message: messages[messages.length - 1].content,
+        role: 'user',
+        conversation_id: conversationId,
+      },
+      {
+        user_id: user.id,
+        message: data.choices[0].message.content,
+        role: 'assistant',
+        conversation_id: conversationId,
+      },
+    ]);
+
+    if (insertError) {
+      console.error('Error storing chat history:', insertError);
+      // Continue execution even if storage fails
     }
 
     return new Response(JSON.stringify(data), {
@@ -96,9 +107,15 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error('Error in chat-assistant function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ 
+        error: error.message,
+        details: error.stack
+      }), 
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 });

@@ -43,6 +43,13 @@ export const chatService = {
       throw new Error('Failed to send message');
     }
 
-    return response.json();
+    const data = await response.json();
+    
+    if (data.error) {
+      console.error('API error:', data.error);
+      throw new Error(data.error);
+    }
+
+    return data;
   }
 };
