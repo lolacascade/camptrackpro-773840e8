@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingFormValues, BookingInsert } from "@/types/bookings";
+import { BookingFormValues, BookingInsert } from "@/types/database/booking";
 import { useToast } from "@/hooks/use-toast";
 
 export const useCreateBooking = (onSuccess?: () => void) => {
