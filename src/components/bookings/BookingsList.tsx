@@ -1,27 +1,23 @@
 import { useState } from "react";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import type { Column } from "@/components/common/DataTable/types";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import type { BookingInsertData } from "@/types/bookings";
+import { useBookingActions } from "@/hooks/bookings/use-booking-actions";
+import { BookingFilters } from "./filters/BookingFilters";
+import { getBookingColumns } from "./columns/BookingColumns";
+import type { BookingData } from "@/types/bookings";
 
 export function BookingsList() {
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [customerFilter, setCustomerFilter] = useState("all");
-  const [showTodayOnly, setShowTodayOnly] = useState(false);
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: 'asc' | 'desc';
   }>({ key: 'check_in_date', direction: 'desc' });
   
-  const { data: bookings, isLoading } = useBookingsList("");
-  const { toast } = useToast();
+  const { data: bookings, isLoading, refetch } = useBookingsList("");
   const navigate = useNavigate();
+  const { duplicateBooking, deleteBooking } = useBookingActions(refetch);
+  const [filteredBookings, setFilteredBookings] = useState<BookingData[]>([]);
 
   const handleSort = (key: string) => {
     setSortConfig(current => ({
@@ -30,208 +26,21 @@ export function BookingsList() {
     }));
   };
 
-  const handleViewDetails = (booking: any) => {
+  const handleViewDetails = (booking: BookingData) => {
     navigate(`/app/bookings/${booking.id}`);
   };
 
-  const handleDuplicate = async (booking: any) => {
-    try {
-      const newBooking: BookingInsertData = {
-        customer_id: booking.customer.id,
-        slot_id: booking.slot?.id,
-        check_in_date: booking.check_in_date,
-        check_out_date: booking.check_out_date,
-        special_requirements: booking.special_requirements,
-        status: 'pending'
-      };
-
-      const { error } = await supabase
-        .from('bookings')
-        .insert(newBooking);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking duplicated successfully",
-      });
-    } catch (error) {
-      console.error('Error duplicating booking:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to duplicate booking",
-      });
-    }
-  };
-
-  const handleDelete = async (booking: any) => {
-    try {
-      const { error } = await supabase
-        .from('bookings')
-        .delete()
-        .eq('id', booking.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Booking deleted successfully",
-      });
-    } catch (error) {
-      console.error('Error deleting booking:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to delete booking",
-      });
-    }
-  };
-
-  const columns: Column<typeof bookings[0]>[] = [
-    {
-      header: "Customer",
-      accessorKey: "customer.name",
-      cell: (booking) => (
-        <div className="flex items-center space-x-4">
-          <Avatar>
-            <AvatarFallback className="bg-primary/10 text-primary">
-              {booking.customer?.name?.split(' ').map(n => n[0]).join('') || '??'}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium text-[#133134]">
-              {booking.customer?.name || 'Unknown Customer'}
-            </div>
-            <div className="text-sm text-[#3E4238]">
-              {booking.customer?.email || 'No email'}
-            </div>
-          </div>
-        </div>
-      ),
-      sortable: true,
-    },
-    {
-      header: "Slot",
-      accessorKey: "slot.name",
-      cell: (booking) => booking.slot?.name ?? 'Unassigned',
-      sortable: true,
-    },
-    {
-      header: "Assets",
-      accessorKey: "assets",
-      cell: (booking) => (
-        <>
-          {booking.assets?.map((asset, index) => (
-            <div key={index}>
-              <span className="font-medium">{asset.asset_name}</span>
-              <Badge variant="secondary" className="ml-2">
-                {asset.asset_type}
-              </Badge>
-            </div>
-          ))}
-        </>
-      ),
-    },
-    {
-      header: "Check-in",
-      accessorKey: "check_in_date",
-      cell: (booking) => new Date(booking.check_in_date).toLocaleDateString(),
-      sortable: true,
-    },
-    {
-      header: "Check-out",
-      accessorKey: "check_out_date",
-      cell: (booking) => new Date(booking.check_out_date).toLocaleDateString(),
-      sortable: true,
-    },
-    {
-      header: "Requirements",
-      accessorKey: "special_requirements",
-      cell: (booking) => booking.special_requirements || 'None',
-      sortable: true,
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: (booking) => (
-        <Badge 
-          variant="outline" 
-          className={getStatusColor(booking.status)}
-        >
-          {booking.status}
-        </Badge>
-      ),
-      sortable: true,
-    },
-  ];
-
-  const getStatusColor = (status: string) => {
-    const statusColors = {
-      active: "bg-green-100 text-green-800 border-green-200",
-      completed: "bg-gray-100 text-gray-800 border-gray-200",
-      pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
-      cancelled: "bg-red-100 text-red-800 border-red-200",
-      confirmed: "bg-blue-100 text-blue-800 border-blue-200"
-    };
-    return statusColors[status.toLowerCase()] || statusColors.pending;
-  };
-
-  const filters = [
-    {
-      name: "status",
-      options: [
-        { label: "All Statuses", value: "all" },
-        { label: "Active", value: "active" },
-        { label: "Pending", value: "pending" },
-        { label: "Confirmed", value: "confirmed" },
-        { label: "Completed", value: "completed" },
-        { label: "Cancelled", value: "cancelled" }
-      ],
-      value: statusFilter,
-      onChange: setStatusFilter
-    },
-    {
-      name: "customer",
-      options: [
-        { label: "All Customers", value: "all" },
-        ...(bookings?.filter(booking => booking.customer)
-          .map(booking => ({
-            label: booking.customer.name,
-            value: booking.customer.id.toString()
-          })) || [])
-      ],
-      value: customerFilter,
-      onChange: setCustomerFilter
-    }
-  ];
-
-  const filteredBookings = bookings?.filter(booking => {
-    if (statusFilter !== "all" && booking.status !== statusFilter) {
-      return false;
-    }
-
-    if (customerFilter !== "all" && booking.customer?.id.toString() !== customerFilter) {
-      return false;
-    }
-
-    if (showTodayOnly) {
-      const today = new Date();
-      const checkInDate = new Date(booking.check_in_date);
-      if (checkInDate.toDateString() !== today.toDateString()) {
-        return false;
-      }
-    }
-
-    return true;
+  const { filters, showTodayOnly, setShowTodayOnly, applyFilters } = BookingFilters({
+    bookings,
+    onFilterChange: setFilteredBookings
   });
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
         <DataTable
-          data={filteredBookings || []}
-          columns={columns}
+          data={applyFilters(bookings) || []}
+          columns={getBookingColumns()}
           isLoading={isLoading}
           filters={filters}
           sortConfig={sortConfig}
@@ -240,8 +49,8 @@ export function BookingsList() {
           onShowTodayChange={setShowTodayOnly}
           tableName="bookings"
           onViewDetails={handleViewDetails}
-          onDuplicate={handleDuplicate}
-          onDelete={handleDelete}
+          onDuplicate={duplicateBooking}
+          onDelete={deleteBooking}
         />
       </div>
     </Card>
