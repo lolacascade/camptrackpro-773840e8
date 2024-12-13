@@ -75,7 +75,16 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData(prev => ({
+        ...prev,
+        ...initialData,
+        // Ensure nested objects exist
+        coordinates: initialData.coordinates || prev.coordinates,
+        approach_info: initialData.approach_info || prev.approach_info,
+        services_amenities: initialData.services_amenities || prev.services_amenities,
+        other_features: initialData.other_features || prev.other_features,
+        social_media: initialData.social_media || prev.social_media,
+      }));
     }
   }, [initialData]);
 

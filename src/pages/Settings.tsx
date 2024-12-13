@@ -15,7 +15,7 @@ export default function Settings() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!session) {
+    if (!session?.user?.id) {
       navigate('/login');
       return;
     }
@@ -25,20 +25,20 @@ export default function Settings() {
         const { data, error } = await supabase
           .from('marina_details')
           .select('*')
-          .eq('user_id', session.user.id)
-          .single();
+          .eq('user_id', session.user.id);
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error('Error fetching marina details:', error);
           toast({
             title: "Error",
             description: "Failed to load marina details. Please try again.",
             variant: "destructive",
           });
+          return;
         }
 
-        // If data exists, set it. If not, leave as null for new marina creation
-        setMarinaDetails(data || null);
+        // If data exists, set the first record. If not, leave as null for new marina creation
+        setMarinaDetails(data && data.length > 0 ? data[0] : null);
       } catch (error) {
         console.error('Error:', error);
         toast({
@@ -54,7 +54,7 @@ export default function Settings() {
     fetchMarinaDetails();
   }, [session, navigate, toast]);
 
-  if (!session) {
+  if (!session?.user?.id) {
     return null; // Will redirect in useEffect
   }
 
