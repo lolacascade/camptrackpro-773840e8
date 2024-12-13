@@ -16,7 +16,8 @@ export function useBookingActions(onSuccess?: () => void) {
         check_in_date: booking.check_in_date,
         check_out_date: booking.check_out_date,
         special_requirements: booking.special_requirements,
-        status: 'pending'
+        status: 'pending',
+        reservation_code: `COPY-${booking.reservation_code}` // Provide a temporary code that will be updated by the trigger
       };
 
       const { error } = await supabase

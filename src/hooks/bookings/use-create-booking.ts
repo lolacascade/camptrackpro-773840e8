@@ -16,7 +16,8 @@ export const useCreateBooking = (onSuccess?: () => void) => {
         check_in_date: formData.checkInDate.toISOString(),
         check_out_date: formData.checkOutDate.toISOString(),
         special_requirements: formData.specialRequirements || null,
-        status: 'pending'
+        status: 'pending',
+        reservation_code: `NEW-${Date.now()}` // Provide a temporary code that will be updated by the trigger
       };
 
       const { error } = await supabase
