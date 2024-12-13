@@ -204,7 +204,7 @@ export function DataTable<T extends { id?: number | string }>({
               filteredAndSortedData.map((item) => (
                 <TableRow 
                   key={item.id}
-                  className="group transition-all hover:shadow-md"
+                  className="hover:bg-[#F8F9F9] transition-colors"
                 >
                   {visibleColumnsData.map((column, index) => (
                     <TableCell key={index}>
@@ -214,15 +214,13 @@ export function DataTable<T extends { id?: number | string }>({
                     </TableCell>
                   ))}
                   <TableCell>
-                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      <DataTableRowActions
-                        row={item}
-                        onEdit={onEdit}
-                        onViewDetails={onViewDetails}
-                        onDuplicate={onDuplicate}
-                        onDelete={onDelete}
-                      />
-                    </div>
+                    <DataTableRowActions
+                      row={item}
+                      onEdit={onEdit}
+                      onViewDetails={onViewDetails}
+                      onDuplicate={onDuplicate}
+                      onDelete={onDelete}
+                    />
                   </TableCell>
                 </TableRow>
               ))

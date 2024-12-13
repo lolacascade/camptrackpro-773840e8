@@ -36,7 +36,6 @@ export function DataTableHeader({
   columns,
   onColumnVisibilityChange
 }: DataTableHeaderProps) {
-  // Filter out the customer filter
   const filteredFilters = filters.filter(filter => filter.name !== 'customer');
 
   return (
@@ -60,7 +59,7 @@ export function DataTableHeader({
           onColumnVisibilityChange={onColumnVisibilityChange}
         />
         {onShowTodayChange && (
-          <div className="flex items-center gap-3 ml-auto">
+          <div className="flex items-center gap-3">
             <Switch
               id="show-today"
               checked={showTodayOnly}
