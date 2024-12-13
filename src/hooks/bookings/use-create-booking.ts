@@ -21,7 +21,7 @@ export const useCreateBooking = (onSuccess?: () => void) => {
 
       const { error } = await supabase
         .from("bookings")
-        .insert(bookingData as any); // Type assertion needed due to Supabase types limitation
+        .insert(bookingData);
 
       if (error) throw error;
 

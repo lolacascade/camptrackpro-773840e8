@@ -1,3 +1,11 @@
+export interface BookingFormValues {
+  customerId: string;
+  slotId: string;
+  checkInDate: Date;
+  checkOutDate: Date;
+  specialRequirements?: string;
+}
+
 export interface BookingData {
   id: number;
   customer_id: number;
