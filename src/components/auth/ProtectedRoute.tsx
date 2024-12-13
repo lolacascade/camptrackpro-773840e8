@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from "react-router-dom";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
@@ -10,14 +10,19 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { session, isLoading } = useSessionContext();
   const location = useLocation();
+  const [isSessionChecked, setIsSessionChecked] = useState(false);
+  const [persistedSession, setPersistedSession] = useState(null);
 
   useEffect(() => {
     const checkAndSetSession = async () => {
-      const { data: { session: persistedSession } } = await supabase.auth.getSession();
-      if (!persistedSession) {
-        console.log('No persisted session found');
-      } else {
-        console.log('Persisted session found:', persistedSession.user.id);
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log('Checking persisted session:', currentSession?.user?.id);
+        setPersistedSession(currentSession);
+        setIsSessionChecked(true);
+      } catch (error) {
+        console.error('Error checking session:', error);
+        setIsSessionChecked(true);
       }
     };
 
@@ -25,12 +30,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      console.log('Auth state changed:', _event, currentSession?.user?.id);
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      console.log('Auth state changed:', event, currentSession?.user?.id);
       
-      if (_event === 'SIGNED_OUT' && !currentSession) {
-        // Only redirect if we're actually signed out and there's no session
+      if (event === 'SIGNED_OUT') {
+        // Only redirect on explicit sign out
         window.location.href = '/login';
+      } else if (event === 'SIGNED_IN') {
+        // Update the persisted session on sign in
+        setPersistedSession(currentSession);
       }
     });
 
@@ -39,7 +47,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     };
   }, []);
 
-  if (isLoading) {
+  // Show loading state while checking session
+  if (isLoading || !isSessionChecked) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-[#0D1D1F]">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -47,7 +56,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  if (!session) {
+  // Check both session contexts to ensure we don't lose authentication
+  if (!session && !persistedSession) {
+    console.log('No valid session found, redirecting to login');
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 

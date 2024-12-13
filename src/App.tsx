@@ -13,7 +13,8 @@ const queryClient = new QueryClient({
     queries: {
       retry: 1,
       refetchOnWindowFocus: false,
-      staleTime: 0,
+      staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
+      cacheTime: 10 * 60 * 1000, // Cache data for 10 minutes
     },
   },
 });
