@@ -12,7 +12,7 @@ import { DashboardCallouts } from "./priority/DashboardCallouts";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
-    <div className="bg-white rounded-[24px] p-4 md:p-12 space-y-8">
+    <div className="space-y-8">
       <DashboardHeader />
 
       <ErrorBoundary>

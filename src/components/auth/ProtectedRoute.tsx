@@ -28,8 +28,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     } = supabase.auth.onAuthStateChange((_event, currentSession) => {
       console.log('Auth state changed:', _event, currentSession?.user?.id);
       
-      if (_event === 'SIGNED_OUT') {
-        // Only redirect if we're actually signed out
+      if (_event === 'SIGNED_OUT' && !currentSession) {
+        // Only redirect if we're actually signed out and there's no session
         window.location.href = '/login';
       }
     });
