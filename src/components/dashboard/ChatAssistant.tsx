@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { v4 as uuidv4 } from 'uuid';
+import { useSessionContext } from '@supabase/auth-helpers-react';
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -29,34 +30,51 @@ export function ChatAssistant() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [conversationId] = useState<string>(uuidv4()); // Initialize with UUID immediately
+  const [conversationId] = useState<string>(uuidv4());
   const isMobile = useIsMobile();
+  const { session } = useSessionContext();
+
+  // Check session status periodically
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session: currentSession } } = await supabase.auth.getSession();
+      if (!currentSession) {
+        console.log('Session expired, redirecting to login');
+        window.location.href = '/login';
+      }
+    };
+
+    // Check session every 30 seconds
+    const interval = setInterval(checkSession, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
-    // Load previous messages only if we have a valid conversation ID
     const loadMessages = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session && conversationId) {
-          console.log('Loading messages for conversation:', conversationId);
-          const { data: chatHistory, error } = await supabase
-            .from('chat_history')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .eq('conversation_id', conversationId)
-            .order('created_at', { ascending: true });
+        if (!session?.user?.id || !conversationId) {
+          console.log('Missing user ID or conversation ID');
+          return;
+        }
 
-          if (error) {
-            console.error('Error loading chat history:', error);
-            return;
-          }
+        console.log('Loading messages for conversation:', conversationId);
+        const { data: chatHistory, error } = await supabase
+          .from('chat_history')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('conversation_id', conversationId)
+          .order('created_at', { ascending: true });
 
-          if (chatHistory && chatHistory.length > 0) {
-            setMessages(chatHistory.map(msg => ({
-              role: msg.role as "assistant" | "user",
-              content: msg.message,
-            })));
-          }
+        if (error) {
+          console.error('Error loading chat history:', error);
+          return;
+        }
+
+        if (chatHistory && chatHistory.length > 0) {
+          setMessages(chatHistory.map(msg => ({
+            role: msg.role as "assistant" | "user",
+            content: msg.message,
+          })));
         }
       } catch (error) {
         console.error('Error in loadMessages:', error);
@@ -64,7 +82,7 @@ export function ChatAssistant() {
     };
 
     loadMessages();
-  }, [conversationId]); // Only run when conversationId changes
+  }, [session?.user?.id, conversationId]);
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -76,6 +94,11 @@ export function ChatAssistant() {
 
     try {
       const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        console.log('No valid session found');
+        window.location.href = '/login';
+        return;
+      }
       
       const response = await fetch(
         'https://mlptncnvjlforntqjvbo.functions.supabase.co/chat-assistant',
@@ -83,7 +106,7 @@ export function ChatAssistant() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session?.access_token}`,
+            'Authorization': `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             messages: messages.concat(userMessage),
@@ -126,10 +149,10 @@ export function ChatAssistant() {
             <div
               key={i}
               className={cn(
-                "p-3 rounded-lg max-w-[80%]",
+                "p-3 rounded-lg inline-block",
                 message.role === "assistant" 
-                  ? "text-[#C0CCAB]" 
-                  : "bg-[#C0CCAB] text-[#0D1D1F] ml-auto"
+                  ? "text-[#C0CCAB] max-w-[80%]" 
+                  : "bg-[#C0CCAB] text-[#0D1D1F] ml-auto max-w-[80%]"
               )}
             >
               {message.content}
@@ -147,7 +170,7 @@ export function ChatAssistant() {
                 variant="outline"
                 size="sm"
                 onClick={() => setInput(query)}
-                className="text-xs text-[#0D1D1F] hover:text-[#C0CCAB] border-[#C0CCAB]/50 bg-white"
+                className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/80 border-none"
               >
                 {query}
               </Button>
