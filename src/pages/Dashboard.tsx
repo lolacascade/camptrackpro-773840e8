@@ -9,13 +9,10 @@ export default function Dashboard() {
   return (
     <PageWithChat>
       <PageContainer>
-        <div className="space-y-6">
-          <h1 className="text-2xl font-semibold text-[#133134]">Marina Dashboard</h1>
-          <DashboardContent 
-            marinaSummary={marinaSummary}
-            isLoading={isLoading}
-          />
-        </div>
+        <DashboardContent 
+          marinaSummary={marinaSummary}
+          isLoading={isLoading}
+        />
       </PageContainer>
     </PageWithChat>
   );

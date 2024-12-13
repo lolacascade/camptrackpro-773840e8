@@ -63,8 +63,11 @@ export default function Customers() {
       <PageContainer>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-[#133134]">Customers</h1>
-            <Button onClick={handleAdd} className="bg-[#133134] hover:bg-[#0D1D1F]">
+            <h1 className="text-3xl font-semibold text-[#133134]">Customers</h1>
+            <Button 
+              onClick={handleAdd} 
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+            >
               <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
 
 export default function MarinaMap() {
   const [selectedDock, setSelectedDock] = useState("all");
@@ -15,27 +16,12 @@ export default function MarinaMap() {
       <PageContainer>
         <div className="space-y-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-[#133134]">Marina Map</h1>
-            <div className="flex gap-4">
-              <Input
-                placeholder="Search slips..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-[200px]"
-              />
-              <Select value={selectedDock} onValueChange={setSelectedDock}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select dock" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Docks</SelectItem>
-                  <SelectItem value="a">Dock A</SelectItem>
-                  <SelectItem value="b">Dock B</SelectItem>
-                  <SelectItem value="c">Dock C</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button variant="outline">Reset View</Button>
-            </div>
+            <h1 className="text-3xl font-semibold text-[#133134]">Marina Map</h1>
+            <Button 
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add Dock
+            </Button>
           </div>
 
           <Card>
