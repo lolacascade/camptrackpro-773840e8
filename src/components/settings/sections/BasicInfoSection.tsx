@@ -2,6 +2,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 
 interface BasicInfoSectionProps {
   formData: any;
@@ -9,17 +11,34 @@ interface BasicInfoSectionProps {
 }
 
 export function BasicInfoSection({ formData, handleInputChange }: BasicInfoSectionProps) {
+  const isFieldComplete = (value: any) => value && value.toString().trim() !== '';
+
   return (
-    <AccordionItem value="basic">
-      <AccordionTrigger>Basic Information</AccordionTrigger>
-      <AccordionContent>
+    <AccordionItem value="basic" className="border rounded-lg bg-white shadow-sm">
+      <AccordionTrigger className="px-4 hover:no-underline">
+        <div className="flex items-center space-x-2">
+          <span>Basic Information</span>
+          {Object.values(formData).every(isFieldComplete) && (
+            <CheckCircle className="h-4 w-4 text-green-500" />
+          )}
+        </div>
+      </AccordionTrigger>
+      <AccordionContent className="px-4 pb-4">
         <div className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="marina-name">Marina Name</Label>
+            <Label htmlFor="marina-name" className="flex items-center space-x-2">
+              <span>Marina Name</span>
+              {!isFieldComplete(formData.name) && (
+                <Tooltip content="Required field">
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                </Tooltip>
+              )}
+            </Label>
             <Input
               id="marina-name"
               value={formData.name}
               onChange={(e) => handleInputChange('name', '', e.target.value)}
+              className="border-input"
             />
           </div>
 
@@ -29,6 +48,7 @@ export function BasicInfoSection({ formData, handleInputChange }: BasicInfoSecti
               id="marina-address"
               value={formData.address}
               onChange={(e) => handleInputChange('address', '', e.target.value)}
+              className="min-h-[100px]"
             />
           </div>
 

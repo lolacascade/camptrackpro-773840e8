@@ -11,7 +11,7 @@ import { ServicesSection } from "./sections/ServicesSection";
 import { FeaturesSection } from "./sections/FeaturesSection";
 import { SocialMediaSection } from "./sections/SocialMediaSection";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Save } from "lucide-react";
 
 interface MarinaFormProps {
   initialData?: any;
@@ -146,7 +146,7 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="relative space-y-8">
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
@@ -154,7 +154,7 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         </Alert>
       )}
       
-      <Accordion type="single" collapsible className="w-full">
+      <Accordion type="single" collapsible className="w-full space-y-4">
         <BasicInfoSection formData={formData} handleInputChange={handleInputChange} />
         <LocationSection formData={formData} handleInputChange={handleInputChange} />
         <ApproachSection formData={formData} handleInputChange={handleInputChange} />
@@ -163,13 +163,17 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         <SocialMediaSection formData={formData} handleInputChange={handleInputChange} />
       </Accordion>
 
-      <Button 
-        onClick={handleSubmit} 
-        className="w-full"
-        disabled={isLoading}
-      >
-        {isLoading ? "Saving..." : "Save Changes"}
-      </Button>
+      <div className="fixed bottom-6 right-6 z-50">
+        <Button 
+          onClick={handleSubmit} 
+          className="shadow-lg"
+          size="lg"
+          disabled={isLoading}
+        >
+          <Save className="mr-2 h-4 w-4" />
+          {isLoading ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
     </div>
   );
 }
