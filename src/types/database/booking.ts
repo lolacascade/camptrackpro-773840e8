@@ -14,10 +14,14 @@ export interface BookingDB extends TimestampFields {
   reservation_code: string;
 }
 
-// Type for database insert operations
-export type BookingInsert = Omit<BookingDB, 'id' | 'created_at' | 'reservation_code'> & {
-  created_at?: string;
-  id?: number;
+// Type for database insert operations - exclude auto-generated fields
+export type BookingInsert = {
+  customer_id: number;
+  slot_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  special_requirements?: string | null;
+  status?: BookingStatus;
 };
 
 // Type for booking with related data
