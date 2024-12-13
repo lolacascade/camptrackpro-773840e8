@@ -29,9 +29,13 @@ export function DataTableFilterItem({
       <SelectTrigger className="w-40 h-11 border-[#E8EBEB] text-[#133134] bg-white">
         <SelectValue placeholder={`All ${name}s`} />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white border border-[#E8EBEB] shadow-lg">
         {options.map((option) => (
-          <SelectItem key={option.value} value={option.value}>
+          <SelectItem 
+            key={option.value} 
+            value={option.value}
+            className="text-[#133134] hover:bg-[#F8F9F9]"
+          >
             {option.label}
           </SelectItem>
         ))}

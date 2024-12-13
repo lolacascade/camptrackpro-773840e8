@@ -45,7 +45,7 @@ export function DataTableHeader({
         <h1 className="text-3xl font-semibold text-[#133134]">{title}</h1>
       )}
       <div className="flex items-center gap-4">
-        <div className="relative w-64">
+        <div className="relative w-48">
           <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
           <Input
             placeholder="Search..."
