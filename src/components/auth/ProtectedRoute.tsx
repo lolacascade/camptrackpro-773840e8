@@ -25,12 +25,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, currentSession) => {
+    } = supabase.auth.onAuthStateChange(async (_event, currentSession) => {
       console.log('Auth state changed:', _event, currentSession?.user?.id);
       
-      // If we get a SIGNED_OUT event but have a valid session, refresh the page
-      // This helps prevent incorrect logout states
-      if (_event === 'SIGNED_OUT' && session) {
+      if (_event === 'SIGNED_OUT') {
+        // Clear any cached session data
+        await supabase.auth.signOut();
+        window.location.href = '/login';
+      } else if (_event === 'SIGNED_IN') {
+        // Refresh the page to ensure we have the latest session state
         window.location.reload();
       }
     });
@@ -38,7 +41,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [session]);
+  }, []);
 
   if (isLoading) {
     return (

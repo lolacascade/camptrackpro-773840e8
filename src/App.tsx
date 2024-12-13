@@ -21,11 +21,11 @@ const queryClient = new QueryClient({
 const App = () => {
   return (
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <SessionContextProvider 
-          supabaseClient={supabase}
-          initialSession={null}
-        >
+      <SessionContextProvider 
+        supabaseClient={supabase}
+        initialSession={null}
+      >
+        <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -33,8 +33,8 @@ const App = () => {
               <AppRoutes />
             </BrowserRouter>
           </TooltipProvider>
-        </SessionContextProvider>
-      </QueryClientProvider>
+        </QueryClientProvider>
+      </SessionContextProvider>
     </StrictMode>
   );
 };
