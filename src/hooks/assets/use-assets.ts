@@ -9,8 +9,8 @@ export function useAssets() {
   return useQuery({
     queryKey: ["assets"],
     queryFn: async () => {
-      if (!session) {
-        throw new Error("No session");
+      if (!session?.user?.id) {
+        throw new Error("No authenticated user");
       }
 
       const { data, error } = await supabase
@@ -23,7 +23,10 @@ export function useAssets() {
         .eq('user_id', session.user.id)
         .returns<Asset[]>();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
       
       return data.map(asset => ({
         ...asset,
@@ -31,6 +34,6 @@ export function useAssets() {
         slots: asset.slots || null
       }));
     },
-    enabled: !!session,
+    enabled: !!session?.user?.id,
   });
 }

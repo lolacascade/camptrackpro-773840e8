@@ -8,11 +8,16 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageStatsGrid } from "@/components/common/PageStatsGrid";
 import { Badge } from "@/components/ui/badge";
+import { AssetsHeader } from "@/components/assets/AssetsHeader";
+import { AddAssetDialog } from "@/components/assets/AddAssetDialog";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Assets() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isAddAssetOpen, setIsAddAssetOpen] = useState(false);
   const session = useSession();
-  const { data: assets, isLoading } = useAssets();
+  const { data: assets, isLoading, error, refetch } = useAssets();
+  const { toast } = useToast();
 
   const columns: Column<Asset>[] = [
     {
@@ -59,11 +64,22 @@ export default function Assets() {
     pendingMaintenance: 8
   };
 
+  if (error) {
+    toast({
+      title: "Error loading assets",
+      description: "Please try refreshing the page",
+      variant: "destructive",
+    });
+    console.error('Error loading assets:', error);
+  }
+
   if (!session) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <p className="text-lg text-gray-600">Please sign in to view assets</p>
-      </div>
+      <PageContainer>
+        <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+          <p className="text-lg text-gray-600">Please sign in to view assets</p>
+        </div>
+      </PageContainer>
     );
   }
 
@@ -71,6 +87,7 @@ export default function Assets() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
+          <AssetsHeader onAddAsset={() => setIsAddAssetOpen(true)} />
           <PageStatsGrid title="Assets" stats={stats} />
           <DataTable
             data={assets || []}
@@ -79,6 +96,17 @@ export default function Assets() {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             tableName="assets"
+          />
+          <AddAssetDialog 
+            isOpen={isAddAssetOpen}
+            onClose={() => setIsAddAssetOpen(false)}
+            onAssetAdded={() => {
+              refetch();
+              toast({
+                title: "Success",
+                description: "Asset added successfully",
+              });
+            }}
           />
         </div>
       </PageContainer>
