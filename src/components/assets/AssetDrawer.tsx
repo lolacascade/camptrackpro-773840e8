@@ -36,7 +36,7 @@ export function AssetDrawer({ asset, open, onClose, onAssetUpdated }: AssetDrawe
           asset_name: formData.asset_name,
           asset_size: formData.asset_size,
           customer_id: formData.customer_id,
-          slot_id: formData.slot_id,
+          slip_id: formData.slip_id,
           asset_type: formData.asset_type,
           updated_at: new Date().toISOString(),
         })
@@ -124,12 +124,12 @@ export function AssetDrawer({ asset, open, onClose, onAssetUpdated }: AssetDrawe
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="slot_id">Slot ID</Label>
+            <Label htmlFor="slip_id">Slip ID</Label>
             <Input
-              id="slot_id"
+              id="slip_id"
               type="number"
-              value={formData.slot_id || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, slot_id: parseInt(e.target.value) || null }))}
+              value={formData.slip_id || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, slip_id: parseInt(e.target.value) || null }))}
             />
           </div>
           <div className="grid gap-2">
