@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { BookingInsertData, assertBookingInsert } from "@/types/bookings";
+import type { BookingInsertData } from "@/types/bookings";
 
 export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -36,14 +36,14 @@ export function BookingsList() {
 
   const handleDuplicate = async (booking: any) => {
     try {
-      const newBooking = assertBookingInsert({
+      const newBooking: BookingInsertData = {
         customer_id: booking.customer.id,
         slot_id: booking.slot?.id,
         check_in_date: booking.check_in_date,
         check_out_date: booking.check_out_date,
         special_requirements: booking.special_requirements,
         status: 'pending'
-      });
+      };
 
       const { error } = await supabase
         .from('bookings')
