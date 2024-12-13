@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, MapPin, Anchor, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -89,10 +88,7 @@ export default function Settings() {
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Anchor className="h-6 w-6 text-[#133134]" />
-                <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
-              </div>
+              <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
               <p className="text-muted-foreground">
                 {marinaDetails 
                   ? "Manage your marina's information and settings below." 
@@ -109,7 +105,6 @@ export default function Settings() {
             </div>
           ) : error ? (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : (
@@ -121,8 +116,7 @@ export default function Settings() {
                       <h2 className="text-xl font-semibold mb-2 text-[#133134]">
                         {marinaDetails?.name || 'Marina Name Not Set'}
                       </h2>
-                      <div className="flex items-center text-muted-foreground mb-4">
-                        <MapPin className="h-4 w-4 mr-2" />
+                      <div className="text-muted-foreground mb-4">
                         {marinaDetails?.address || 'Address Not Set'}
                       </div>
                       <Button 
