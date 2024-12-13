@@ -78,12 +78,13 @@ export function ChatAssistant() {
 
   return (
     <div className={cn(
-      "bg-[#0D1D1F] flex flex-col",
-      isMobile ? "h-full w-full" : "w-96 p-4 h-full"
+      "bg-[#0D1D1F] flex flex-col h-full",
+      isMobile ? "w-full" : "w-full sticky top-0"
     )}>
-      <h2 className="text-xl font-semibold mb-4 text-white">Marina Assistant</h2>
-      <ScrollArea className="flex-1 pr-4 mb-4">
-        <div className="space-y-4">
+      <h2 className="text-xl font-semibold p-4 text-white">Marina Assistant</h2>
+      
+      <ScrollArea className="flex-1 px-4">
+        <div className="space-y-4 mb-4">
           {messages.map((message, i) => (
             <div
               key={i}
@@ -98,37 +99,40 @@ export function ChatAssistant() {
           ))}
         </div>
       </ScrollArea>
-      <div className="space-y-4">
-        <div className="flex flex-wrap gap-2">
-          {suggestionQueries.map((query, i) => (
-            <Button
-              key={i}
-              variant="outline"
-              size="sm"
-              onClick={() => setInput(query)}
-              className="text-xs text-[#0D1D1F] hover:text-[#C0CCAB] border-[#C0CCAB]/50 bg-white"
+
+      <div className="p-4 border-t border-[#C0CCAB]/20 mt-auto">
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-2">
+            {suggestionQueries.map((query, i) => (
+              <Button
+                key={i}
+                variant="outline"
+                size="sm"
+                onClick={() => setInput(query)}
+                className="text-xs text-[#0D1D1F] hover:text-[#C0CCAB] border-[#C0CCAB]/50 bg-white"
+              >
+                {query}
+              </Button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your question..."
+              onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+              className="bg-[#0D1D1F] text-white placeholder:text-white/50 border-[#C0CCAB]/50"
+              disabled={isLoading}
+            />
+            <Button 
+              onClick={handleSendMessage} 
+              size="icon" 
+              className="bg-[#C0CCAB] hover:bg-[#C0CCAB]/90"
+              disabled={isLoading}
             >
-              {query}
+              <Send className="h-4 w-4" />
             </Button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your question..."
-            onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            className="bg-[#0D1D1F] text-white placeholder:text-white/50 border-[#C0CCAB]/50"
-            disabled={isLoading}
-          />
-          <Button 
-            onClick={handleSendMessage} 
-            size="icon" 
-            className="bg-[#C0CCAB] hover:bg-[#C0CCAB]/90"
-            disabled={isLoading}
-          >
-            <Send className="h-4 w-4" />
-          </Button>
+          </div>
         </div>
       </div>
     </div>
