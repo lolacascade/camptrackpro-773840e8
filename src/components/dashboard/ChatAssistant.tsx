@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { v4 as uuidv4 } from 'uuid';
 
 interface ChatMessage {
   role: "assistant" | "user";
@@ -28,7 +29,35 @@ export function ChatAssistant() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [conversationId, setConversationId] = useState<string>("");
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    // Generate a new conversation ID when the component mounts
+    setConversationId(uuidv4());
+
+    // Load previous messages from the same conversation
+    const loadMessages = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const { data: chatHistory } = await supabase
+          .from('chat_history')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('conversation_id', conversationId)
+          .order('created_at', { ascending: true });
+
+        if (chatHistory && chatHistory.length > 0) {
+          setMessages(chatHistory.map(msg => ({
+            role: msg.role as "assistant" | "user",
+            content: msg.message,
+          })));
+        }
+      }
+    };
+
+    loadMessages();
+  }, []);
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -51,6 +80,7 @@ export function ChatAssistant() {
           },
           body: JSON.stringify({
             messages: messages.concat(userMessage),
+            conversationId,
           }),
         }
       );

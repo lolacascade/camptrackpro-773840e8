@@ -161,6 +161,33 @@ export type Database = {
           },
         ]
       }
+      chat_history: {
+        Row: {
+          conversation_id: string | null
+          created_at: string | null
+          id: number
+          message: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: never
+          message: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: never
+          message?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       customer_notes: {
         Row: {
           created_at: string | null
