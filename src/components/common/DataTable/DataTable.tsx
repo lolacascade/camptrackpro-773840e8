@@ -1,59 +1,15 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { Table } from "@/components/ui/table";
 import { DataTableHeader } from "./DataTableHeader";
+import { DataTableHeaderRow } from "./DataTableHeaderRow";
+import { DataTableBody } from "./DataTableBody";
 import { DataTablePagination } from "./DataTablePagination";
-import { DataTableRowActions } from "./DataTableRowActions";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useTableState } from "@/hooks/use-table-state";
+import { DataTableProps } from "./types";
 
-interface FilterOption {
-  label: string;
-  value: string;
-}
-
-export interface Column<T> {
-  header: string;
-  accessorKey: keyof T;
-  cell?: (item: T) => React.ReactNode;
-  sortable?: boolean;
-}
-
-export interface DataTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  onViewDetails?: (item: T) => void;
-  onEdit?: (item: T) => void;
-  onDuplicate?: (item: T) => void;
-  onDelete?: (item: T) => void;
-  title?: string;
-  itemsPerPage?: number;
-  isLoading?: boolean;
-  filters?: {
-    name: string;
-    options: FilterOption[];
-    value: string;
-    onChange: (value: string) => void;
-  }[];
-  sortConfig?: {
-    key: string;
-    direction: 'asc' | 'desc';
-  };
-  onSort?: (key: string) => void;
-  showTodayOnly?: boolean;
-  onShowTodayChange?: (checked: boolean) => void;
-  tableName?: string;
-}
-
-export function DataTable<T extends { id?: number | string }>({ 
+export function DataTable<T extends { id?: number | string }>({
   data,
   columns,
   onViewDetails,
@@ -68,7 +24,7 @@ export function DataTable<T extends { id?: number | string }>({
   onSort,
   showTodayOnly,
   onShowTodayChange,
-  tableName
+  tableName,
 }: DataTableProps<T>) {
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     columns.map(col => col.accessorKey as string)
@@ -123,10 +79,6 @@ export function DataTable<T extends { id?: number | string }>({
     };
   }, [tableName, setLocalData]);
 
-  const visibleColumnsData = columns.filter(
-    col => visibleColumns.includes(col.accessorKey as string)
-  );
-
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -149,6 +101,10 @@ export function DataTable<T extends { id?: number | string }>({
     );
   }
 
+  const visibleColumnsData = columns.filter(
+    col => visibleColumns.includes(col.accessorKey as string)
+  );
+
   return (
     <div className="space-y-4">
       <DataTableHeader
@@ -164,68 +120,19 @@ export function DataTable<T extends { id?: number | string }>({
 
       <div className="rounded-md border bg-white">
         <Table>
-          <TableHeader>
-            <TableRow>
-              {visibleColumnsData.map((column, index) => (
-                <TableHead 
-                  key={index} 
-                  className="text-[#133134]"
-                  onClick={() => column.sortable && onSort?.(column.accessorKey as string)}
-                  style={{ cursor: column.sortable ? 'pointer' : 'default' }}
-                >
-                  <div className="flex items-center gap-2">
-                    {column.header}
-                    {column.sortable && sortConfig?.key === column.accessorKey && (
-                      <span className="inline-block">
-                        {sortConfig.direction === 'asc' ? (
-                          <ArrowUp className="h-4 w-4" />
-                        ) : (
-                          <ArrowDown className="h-4 w-4" />
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </TableHead>
-              ))}
-              <TableHead className="text-[#133134]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredAndSortedData.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={visibleColumnsData.length + 1}
-                  className="text-center py-4"
-                >
-                  No items found
-                </TableCell>
-              </TableRow>
-            ) : (
-              filteredAndSortedData.map((item) => (
-                <TableRow 
-                  key={item.id}
-                  className="hover:bg-[#F8F9F9] transition-colors"
-                >
-                  {visibleColumnsData.map((column, index) => (
-                    <TableCell key={index}>
-                      {column.cell
-                        ? column.cell(item)
-                        : String(item[column.accessorKey] || "")}
-                    </TableCell>
-                  ))}
-                  <TableCell>
-                    <DataTableRowActions
-                      row={item}
-                      onEdit={onEdit}
-                      onViewDetails={onViewDetails}
-                      onDuplicate={onDuplicate}
-                      onDelete={onDelete}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
+          <DataTableHeaderRow
+            columns={visibleColumnsData}
+            sortConfig={sortConfig}
+            onSort={onSort}
+          />
+          <DataTableBody
+            data={filteredAndSortedData}
+            columns={visibleColumnsData}
+            onViewDetails={onViewDetails}
+            onEdit={onEdit}
+            onDuplicate={onDuplicate}
+            onDelete={onDelete}
+          />
         </Table>
       </div>
 
