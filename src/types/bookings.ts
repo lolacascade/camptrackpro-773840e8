@@ -1,42 +1,19 @@
-export interface BookingFormValues {
-  customerId: string;
-  slotId: string;
-  checkInDate: Date;
-  checkOutDate: Date;
-  specialRequirements?: string;
+export * from './database/booking';
+
+// Additional booking-related types that aren't directly tied to the database
+export interface BookingFilters {
+  status?: string[];
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+  customerIds?: number[];
+  slotIds?: number[];
 }
 
-export interface BookingData {
-  id: number;
-  customer_id: number;
-  slot_id: number;
-  check_in_date: string;
-  check_out_date: string;
-  special_requirements: string | null;
-  status: 'pending' | 'confirmed' | 'cancelled';
-  reservation_code: string;
-  created_at?: string;
-  customer?: {
-    id: number;
-    name: string;
-    email: string;
-  };
-  slot?: {
-    id: number;
-    name: string;
-  };
-  assets?: {
-    asset_name: string;
-    asset_type: string;
-  }[];
-}
-
-export interface BookingInsertData {
-  customer_id: number;
-  slot_id: number;
-  check_in_date: string;
-  check_out_date: string;
-  special_requirements?: string | null;
-  status: string;
-  reservation_code: string; // Changed to required
+export interface BookingStats {
+  total: number;
+  pending: number;
+  confirmed: number;
+  cancelled: number;
 }
