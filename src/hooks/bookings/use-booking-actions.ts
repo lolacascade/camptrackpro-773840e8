@@ -10,7 +10,7 @@ export function useBookingActions(onSuccess?: () => void) {
   const duplicateBooking = async (booking: BookingWithRelations) => {
     setIsLoading(true);
     try {
-      const newBooking: Omit<BookingInsert, 'reservation_code'> = {
+      const newBooking: BookingInsert = {
         customer_id: booking.customer_id,
         slot_id: booking.slot_id,
         check_in_date: booking.check_in_date,
