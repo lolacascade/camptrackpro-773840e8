@@ -45,7 +45,7 @@ export function DataTableHeader({
         <h1 className="text-3xl font-semibold text-[#133134]">{title}</h1>
       )}
       <div className="flex items-center gap-4">
-        <div className="relative flex-1">
+        <div className="relative w-64">
           <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
           <Input
             placeholder="Search..."
@@ -54,23 +54,21 @@ export function DataTableHeader({
             className="pl-9 bg-white h-11 text-base"
           />
         </div>
-        <div className="flex items-center gap-4">
-          <DataTableFiltersBar filters={filteredFilters} />
-          {onShowTodayChange && (
-            <div className="flex items-center gap-3">
-              <Switch
-                id="show-today"
-                checked={showTodayOnly}
-                onCheckedChange={onShowTodayChange}
-              />
-              <Label htmlFor="show-today" className="text-base font-medium">Today only</Label>
-            </div>
-          )}
-          <DataTableColumns 
-            columns={columns}
-            onColumnVisibilityChange={onColumnVisibilityChange}
-          />
-        </div>
+        <DataTableFiltersBar filters={filteredFilters} />
+        <DataTableColumns 
+          columns={columns}
+          onColumnVisibilityChange={onColumnVisibilityChange}
+        />
+        {onShowTodayChange && (
+          <div className="flex items-center gap-3 ml-auto">
+            <Switch
+              id="show-today"
+              checked={showTodayOnly}
+              onCheckedChange={onShowTodayChange}
+            />
+            <Label htmlFor="show-today" className="text-base font-medium">Today only</Label>
+          </div>
+        )}
       </div>
     </div>
   );
