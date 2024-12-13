@@ -4,6 +4,7 @@ import type { Column } from "@/components/common/DataTable/types";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
 
 export function BookingsList() {
   const [statusFilter, setStatusFilter] = useState("all");
