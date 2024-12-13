@@ -16,6 +16,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       const { data: { session: persistedSession } } = await supabase.auth.getSession();
       if (!persistedSession) {
         console.log('No persisted session found');
+      } else {
+        console.log('Persisted session found:', persistedSession.user.id);
       }
     };
 
@@ -24,13 +26,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, currentSession) => {
-      console.log('Auth state changed:', _event, !!currentSession);
+      console.log('Auth state changed:', _event, currentSession?.user?.id);
+      
+      // If we get a SIGNED_OUT event but have a valid session, refresh the page
+      // This helps prevent incorrect logout states
+      if (_event === 'SIGNED_OUT' && session) {
+        window.location.reload();
+      }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [session]);
 
   if (isLoading) {
     return (
