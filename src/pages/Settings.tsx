@@ -6,10 +6,14 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { useSession } from '@supabase/auth-helpers-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const session = useSession();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -21,6 +25,9 @@ export default function Settings() {
     }
 
     const fetchMarinaDetails = async () => {
+      setIsLoading(true);
+      setError(null);
+      
       try {
         const { data, error } = await supabase
           .from('marina_details')
@@ -29,56 +36,60 @@ export default function Settings() {
 
         if (error) {
           console.error('Error fetching marina details:', error);
-          toast({
-            title: "Error",
-            description: "Failed to load marina details. Please try again.",
-            variant: "destructive",
-          });
+          setError("Failed to load marina details. Please try again.");
           return;
         }
 
-        // If data exists, set the first record. If not, leave as null for new marina creation
         setMarinaDetails(data && data.length > 0 ? data[0] : null);
       } catch (error) {
         console.error('Error:', error);
-        toast({
-          title: "Error",
-          description: "An unexpected error occurred. Please try again.",
-          variant: "destructive",
-        });
+        setError("An unexpected error occurred. Please try again.");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchMarinaDetails();
-  }, [session, navigate, toast]);
+  }, [session, navigate]);
 
   if (!session?.user?.id) {
-    return null; // Will redirect in useEffect
-  }
-
-  if (isLoading) {
-    return (
-      <PageWithChat>
-        <div className="bg-white rounded-[24px] p-12 space-y-8">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <p className="ml-2">Loading marina details...</p>
-          </div>
-        </div>
-      </PageWithChat>
-    );
+    return null;
   }
 
   return (
     <PageWithChat>
       <div className="bg-white rounded-[24px] p-12 space-y-8">
-        <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
-        <p className="text-muted-foreground">
-          {marinaDetails ? "Update your marina's information below." : "Get started by adding your marina's information."}
-        </p>
-        <MarinaForm initialData={marinaDetails} />
+        <div className="space-y-4">
+          <h1 className="text-2xl font-bold text-[#133134]">Marina Settings</h1>
+          <p className="text-muted-foreground">
+            {marinaDetails 
+              ? "Update your marina's information below." 
+              : "Get started by adding your marina's information."}
+          </p>
+        </div>
+
+        {isLoading ? (
+          <div className="space-y-4">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-3/4" />
+            <Skeleton className="h-12 w-1/2" />
+          </div>
+        ) : error ? (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : (
+          <MarinaForm 
+            initialData={marinaDetails} 
+            onSuccess={() => {
+              toast({
+                title: "Success",
+                description: "Marina details have been saved successfully.",
+              });
+            }}
+          />
+        )}
       </div>
     </PageWithChat>
   );

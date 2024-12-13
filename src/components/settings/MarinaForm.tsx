@@ -10,15 +10,19 @@ import { ApproachSection } from "./sections/ApproachSection";
 import { ServicesSection } from "./sections/ServicesSection";
 import { FeaturesSection } from "./sections/FeaturesSection";
 import { SocialMediaSection } from "./sections/SocialMediaSection";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 interface MarinaFormProps {
   initialData?: any;
+  onSuccess?: () => void;
 }
 
-export function MarinaForm({ initialData }: MarinaFormProps) {
+export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
   const { toast } = useToast();
   const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     address: '',
@@ -78,7 +82,6 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
       setFormData(prev => ({
         ...prev,
         ...initialData,
-        // Ensure nested objects exist
         coordinates: initialData.coordinates || prev.coordinates,
         approach_info: initialData.approach_info || prev.approach_info,
         services_amenities: initialData.services_amenities || prev.services_amenities,
@@ -112,10 +115,13 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
     }
 
     setIsLoading(true);
+    setError(null);
+
     try {
       const dataToSubmit = {
         ...formData,
-        user_id: session.user.id
+        user_id: session.user.id,
+        updated_at: new Date().toISOString()
       };
 
       const { error } = await supabase
@@ -125,12 +131,10 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Marina details have been saved successfully.",
-      });
+      onSuccess?.();
     } catch (error) {
       console.error('Error saving marina details:', error);
+      setError("Failed to save marina details. Please try again.");
       toast({
         title: "Error",
         description: "Failed to save marina details. Please try again.",
@@ -143,6 +147,13 @@ export function MarinaForm({ initialData }: MarinaFormProps) {
 
   return (
     <div className="space-y-8">
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+      
       <Accordion type="single" collapsible className="w-full">
         <BasicInfoSection formData={formData} handleInputChange={handleInputChange} />
         <LocationSection formData={formData} handleInputChange={handleInputChange} />
