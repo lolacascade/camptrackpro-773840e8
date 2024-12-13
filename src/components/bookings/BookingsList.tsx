@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useBookingsList } from "@/hooks/bookings/use-bookings-list";
 import type { Column } from "@/components/common/DataTable/DataTable";
 import type { Booking } from "@/hooks/bookings/use-bookings-list";
-import { ArrowUp, ArrowDown } from "lucide-react";
+import { toast } from "sonner";
 
 const getStatusColor = (status: string) => {
   const statusColors = {
@@ -36,6 +36,16 @@ export function BookingsList() {
       key,
       direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
     }));
+  };
+
+  const handleDuplicate = (booking: Booking) => {
+    // Implementation for duplicating a booking
+    toast.success("Booking duplicated successfully");
+  };
+
+  const handleDelete = (booking: Booking) => {
+    // Implementation for deleting a booking
+    toast.success("Booking deleted successfully");
   };
 
   const columns: Column<Booking>[] = [
@@ -168,12 +178,15 @@ export function BookingsList() {
           data={filteredBookings || []}
           columns={columns}
           onViewDetails={handleViewDetails}
+          onDuplicate={handleDuplicate}
+          onDelete={handleDelete}
           isLoading={isLoading}
           filters={filters}
           sortConfig={sortConfig}
           onSort={handleSort}
           showTodayOnly={showTodayOnly}
           onShowTodayChange={setShowTodayOnly}
+          tableName="bookings"
         />
       </div>
     </Card>

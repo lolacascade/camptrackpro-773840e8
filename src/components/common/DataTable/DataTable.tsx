@@ -6,12 +6,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ArrowUp, ArrowDown, ExternalLink, Edit2 } from "lucide-react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTablePagination } from "./DataTablePagination";
-import { useState, useMemo } from "react";
+import { DataTableColumns } from "./DataTableColumns";
+import { DataTableRowActions } from "./DataTableRowActions";
+import { useState, useMemo, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FilterOption {
   label: string;
@@ -29,7 +31,9 @@ export interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
   onViewDetails?: (item: T) => void;
-  onEdit?: (item: T) => void;  // Added this prop
+  onEdit?: (item: T) => void;
+  onDuplicate?: (item: T) => void;
+  onDelete?: (item: T) => void;
   title?: string;
   headerContent?: React.ReactNode;
   itemsPerPage?: number;
@@ -47,13 +51,16 @@ export interface DataTableProps<T> {
   onSort?: (key: string) => void;
   showTodayOnly?: boolean;
   onShowTodayChange?: (checked: boolean) => void;
+  tableName?: string; // For real-time updates
 }
 
 export function DataTable<T extends { id?: number | string }>({ 
   data,
   columns,
   onViewDetails,
-  onEdit,  // Added this prop
+  onEdit,
+  onDuplicate,
+  onDelete,
   title,
   headerContent,
   itemsPerPage = 10,
@@ -62,13 +69,58 @@ export function DataTable<T extends { id?: number | string }>({
   sortConfig,
   onSort,
   showTodayOnly,
-  onShowTodayChange
+  onShowTodayChange,
+  tableName
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(
+    columns.map(col => col.accessorKey as string)
+  );
+  const [localData, setLocalData] = useState<T[]>(data);
+
+  useEffect(() => {
+    setLocalData(data);
+  }, [data]);
+
+  // Real-time updates
+  useEffect(() => {
+    if (!tableName) return;
+
+    const channel = supabase
+      .channel('table_db_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: tableName
+        },
+        (payload) => {
+          console.log('Change received!', payload);
+          // Update local data based on the change
+          if (payload.eventType === 'INSERT') {
+            setLocalData(prev => [...prev, payload.new as T]);
+          } else if (payload.eventType === 'DELETE') {
+            setLocalData(prev => prev.filter(item => item.id !== payload.old.id));
+          } else if (payload.eventType === 'UPDATE') {
+            setLocalData(prev => 
+              prev.map(item => 
+                item.id === payload.new.id ? { ...item, ...payload.new } : item
+              )
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [tableName]);
 
   const filteredAndSortedData = useMemo(() => {
-    let result = [...data];
+    let result = [...localData];
 
     if (searchTerm) {
       result = result.filter((item) =>
@@ -93,12 +145,10 @@ export function DataTable<T extends { id?: number | string }>({
     }
 
     return result;
-  }, [data, searchTerm, sortConfig]);
+  }, [localData, searchTerm, sortConfig]);
 
-  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
-  const paginatedData = filteredAndSortedData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+  const visibleColumnsData = columns.filter(
+    col => visibleColumns.includes(col.accessorKey as string)
   );
 
   if (isLoading) {
@@ -125,23 +175,29 @@ export function DataTable<T extends { id?: number | string }>({
   }
 
   return (
-    <div>
-      <DataTableHeader
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        title={title}
-        filters={filters}
-        showTodayOnly={showTodayOnly}
-        onShowTodayChange={onShowTodayChange}
-      >
-        {headerContent}
-      </DataTableHeader>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <DataTableHeader
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          title={title}
+          filters={filters}
+          showTodayOnly={showTodayOnly}
+          onShowTodayChange={onShowTodayChange}
+        >
+          {headerContent}
+        </DataTableHeader>
+        <DataTableColumns 
+          columns={columns}
+          onColumnVisibilityChange={setVisibleColumns}
+        />
+      </div>
 
       <div className="rounded-md border bg-white">
         <Table>
           <TableHeader>
             <TableRow>
-              {columns.map((column, index) => (
+              {visibleColumnsData.map((column, index) => (
                 <TableHead 
                   key={index} 
                   className="text-[#133134]"
@@ -162,58 +218,43 @@ export function DataTable<T extends { id?: number | string }>({
                   </div>
                 </TableHead>
               ))}
-              {(onViewDetails || onEdit) && (
-                <TableHead className="text-[#133134]">Actions</TableHead>
-              )}
+              <TableHead className="text-[#133134]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedData.length === 0 ? (
+            {filteredAndSortedData.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length + ((onViewDetails || onEdit) ? 1 : 0)}
+                  colSpan={visibleColumnsData.length + 1}
                   className="text-center py-4"
                 >
                   No items found
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedData.map((item) => (
+              filteredAndSortedData.map((item) => (
                 <TableRow 
                   key={item.id}
-                  className="transition-all hover:shadow-md"
+                  className="group transition-all hover:shadow-md"
                 >
-                  {columns.map((column, index) => (
+                  {visibleColumnsData.map((column, index) => (
                     <TableCell key={index}>
                       {column.cell
                         ? column.cell(item)
                         : String(item[column.accessorKey] || "")}
                     </TableCell>
                   ))}
-                  {(onViewDetails || onEdit) && (
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {onEdit && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onEdit(item)}
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {onViewDetails && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => onViewDetails(item)}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
+                  <TableCell>
+                    <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                      <DataTableRowActions
+                        row={item}
+                        onEdit={onEdit}
+                        onViewDetails={onViewDetails}
+                        onDuplicate={onDuplicate}
+                        onDelete={onDelete}
+                      />
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))
             )}
@@ -223,7 +264,7 @@ export function DataTable<T extends { id?: number | string }>({
 
       <DataTablePagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={Math.ceil(filteredAndSortedData.length / itemsPerPage)}
         onPageChange={setCurrentPage}
       />
     </div>
