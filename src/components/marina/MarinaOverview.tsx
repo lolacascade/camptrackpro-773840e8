@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MarinaChart } from "./chart/MarinaChart";
+import { MarinaChart } from "@/components/dashboard/marina/MarinaChart";
 import { format, subMonths, addMonths } from "date-fns";
 import { useState } from "react";
 
