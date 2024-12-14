@@ -1,55 +1,49 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { DollarSign, CalendarCheck, AlertCircle, Star } from "lucide-react";
+import { Users, UserPlus, Activity, Star } from "lucide-react";
 
 export function CustomerInsights() {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
-        title="Total Spend"
-        value="$15,000"
-        icon={DollarSign}
+        title="Total Customers"
+        value="152"
+        icon={Users}
         trend={{
-          value: "10%",
-          isPositive: true,
-          comparedTo: "last quarter"
-        }}
-        breakdown={[
-          { label: "Slip Rentals", value: "$10,000", percentage: 67 },
-          { label: "Maintenance", value: "$5,000", percentage: 33 }
-        ]}
-      />
-      <EnhancedStatCard
-        title="Active Bookings"
-        value="3"
-        icon={CalendarCheck}
-        trend={{
-          value: "1 booking",
+          value: "5%",
           isPositive: true,
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Long-term", value: "2", percentage: 67 },
-          { label: "Short-term", value: "1", percentage: 33 }
+          { label: "Active", value: "140", percentage: 92 },
+          { label: "Inactive", value: "12", percentage: 8 }
         ]}
       />
       <EnhancedStatCard
-        title="Pending Payments"
-        value="$2,000"
-        icon={AlertCircle}
+        title="New Customers"
+        value="8"
+        icon={UserPlus}
         trend={{
-          value: "2 invoices",
-          isPositive: false,
-          comparedTo: "overdue"
+          value: "2 customers",
+          isPositive: true,
+          comparedTo: "last month"
         }}
         breakdown={[
-          { label: "30 days", value: "$1,200", percentage: 60 },
-          { label: "60 days", value: "$800", percentage: 40 }
+          { label: "Website", value: "5", percentage: 63 },
+          { label: "Referrals", value: "3", percentage: 37 }
         ]}
-        recommendedActions={[
-          { 
-            label: "Send payment reminder",
-            impact: "Reduce outstanding balance"
-          }
+      />
+      <EnhancedStatCard
+        title="Active Engagement"
+        value="78%"
+        icon={Activity}
+        trend={{
+          value: "3%",
+          isPositive: true,
+          comparedTo: "last month"
+        }}
+        breakdown={[
+          { label: "Bookings", value: "60%", percentage: 60 },
+          { label: "Reviews", value: "18%", percentage: 18 }
         ]}
       />
       <EnhancedStatCard
@@ -57,13 +51,13 @@ export function CustomerInsights() {
         value="4.8/5"
         icon={Star}
         trend={{
-          value: "0.3",
+          value: "0.2",
           isPositive: true,
           comparedTo: "last rating"
         }}
         breakdown={[
-          { label: "Service", value: "5.0/5", percentage: 100 },
-          { label: "Timeliness", value: "4.5/5", percentage: 90 }
+          { label: "Service", value: "4.9/5", percentage: 95 },
+          { label: "Communication", value: "4.7/5", percentage: 90 }
         ]}
       />
     </div>
