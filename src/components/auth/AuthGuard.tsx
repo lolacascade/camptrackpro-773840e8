@@ -57,8 +57,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') {
         window.location.href = '/login';
       }
       
