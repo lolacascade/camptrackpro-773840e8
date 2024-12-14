@@ -13,6 +13,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
 
+interface ChartDataItem {
+  month: string;
+  Maintenance: number;
+  Utilities: number;
+  Supplies: number;
+  Other: number;
+  isProjected: boolean;
+}
+
 export function FinancialsOverview() {
   const { data: chartData = [] } = useQuery({
     queryKey: ['expense-trends'],
@@ -40,12 +49,12 @@ export function FinancialsOverview() {
       });
 
       // Generate data for the past 6 months, current month, and 5 future months
-      const allData = [];
+      const allData: ChartDataItem[] = [];
       for (let i = -6; i <= 5; i++) {
         const date = i <= 0 ? subMonths(currentDate, Math.abs(i)) : addMonths(currentDate, i);
         const monthKey = format(date, 'MMM yyyy');
         
-        const monthData = {
+        const monthData: ChartDataItem = {
           month: monthKey,
           Maintenance: monthlyData[monthKey]?.Maintenance || 0,
           Utilities: monthlyData[monthKey]?.Utilities || 0,
@@ -57,14 +66,10 @@ export function FinancialsOverview() {
         // For projected months, estimate based on average
         if (i > 0) {
           const avgGrowth = 1.05; // 5% projected growth
-          Object.keys(monthData).forEach(key => {
-            if (key !== 'month' && key !== 'isProjected') {
-              monthData[key as keyof typeof monthData] = 
-                typeof monthData[key as keyof typeof monthData] === 'number'
-                  ? (monthData[key as keyof typeof monthData] as number) * avgGrowth
-                  : 0;
-            }
-          });
+          monthData.Maintenance *= avgGrowth;
+          monthData.Utilities *= avgGrowth;
+          monthData.Supplies *= avgGrowth;
+          monthData.Other *= avgGrowth;
         }
 
         allData.push(monthData);
