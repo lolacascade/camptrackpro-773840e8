@@ -204,17 +204,10 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
             </div>
             <div className="space-y-2">
               <Label htmlFor="postal_code">Postal/Zip Code</Label>
-              <InputMask
-                mask="99999-9999"
+              <Input
+                id="postal_code"
                 {...register("postal_code")}
-              >
-                {(inputProps: any) => (
-                  <Input
-                    id="postal_code"
-                    {...inputProps}
-                  />
-                )}
-              </InputMask>
+              />
             </div>
           </div>
 
