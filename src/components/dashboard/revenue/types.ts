@@ -7,6 +7,7 @@ export interface RevenueData {
   slipRenewals: number;
   newSlipRentals: number;
   maintenanceServices: number;
+  isProjected?: boolean;
 }
 
 export interface Annotation {
