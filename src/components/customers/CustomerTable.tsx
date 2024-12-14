@@ -82,7 +82,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
       <div className="p-4">
         <DataTable
           data={localCustomers}
-          columns={getCustomerColumns(onEdit)}
+          columns={getCustomerColumns()}
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           tableName="customers"
