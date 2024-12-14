@@ -8,7 +8,7 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Badge } from "@/components/ui/badge";
 import { AssetsHeader } from "@/components/assets/AssetsHeader";
-import { AddAssetDialog } from "@/components/assets/AddAssetDialog";
+import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { useToast } from "@/components/ui/use-toast";
 import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 
@@ -99,8 +99,8 @@ export default function Assets() {
               console.log('Delete asset:', asset);
             }}
           />
-          <AddAssetDialog 
-            isOpen={isAddAssetOpen}
+          <AssetDrawer 
+            open={isAddAssetOpen}
             onClose={() => setIsAddAssetOpen(false)}
             onAssetAdded={() => {
               refetch();

@@ -1,64 +1,40 @@
-import { EntityDrawer } from "@/components/common/EntityDrawer"
-import type { Asset } from "@/types/asset"
+import { Button } from "@/components/ui/button"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { AssetFormFields } from "./form/AssetFormFields"
+import { useAssetForm } from "./hooks/useAssetForm"
 
 interface AssetDrawerProps {
-  asset: Asset | null
   open: boolean
   onClose: () => void
-  onAssetUpdated: () => void
+  onAssetAdded: () => void
 }
 
-const ASSET_FIELDS = [
-  {
-    name: "asset_name",
-    label: "Asset Name",
-    type: "text" as const,
-    required: true
-  },
-  {
-    name: "asset_size",
-    label: "Size",
-    type: "text" as const,
-    required: true
-  },
-  {
-    name: "asset_type",
-    label: "Asset Type",
-    type: "select" as const,
-    required: true,
-    options: [
-      { value: "Speed Boat", label: "Speed Boat" },
-      { value: "Sailboat", label: "Sailboat" },
-      { value: "Fishing Boat", label: "Fishing Boat" },
-      { value: "Pontoon Boat", label: "Pontoon Boat" },
-      { value: "Yacht", label: "Yacht" },
-      { value: "Jet Ski", label: "Jet Ski" },
-      { value: "Other", label: "Other" }
-    ]
-  },
-  {
-    name: "slip_id",
-    label: "Slip ID",
-    type: "number" as const,
-    required: true
-  }
-]
+export function AssetDrawer({ open, onClose, onAssetAdded }: AssetDrawerProps) {
+  const { newAsset, setNewAsset, availableSlots, handleSubmit } = useAssetForm({ 
+    onClose, 
+    onAssetAdded 
+  })
 
-export function AssetDrawer({
-  asset,
-  open,
-  onClose,
-  onAssetUpdated
-}: AssetDrawerProps) {
   return (
-    <EntityDrawer
-      entity={asset}
-      open={open}
-      onClose={onClose}
-      onEntityUpdated={onAssetUpdated}
-      title="Asset"
-      fields={ASSET_FIELDS}
-      tableName="assets"
-    />
+    <Sheet open={open} onOpenChange={onClose}>
+      <SheetContent>
+        <SheetHeader>
+          <SheetTitle>Add New Asset</SheetTitle>
+        </SheetHeader>
+        <div className="space-y-6 py-4">
+          <AssetFormFields
+            newAsset={newAsset}
+            setNewAsset={setNewAsset}
+            availableSlots={availableSlots}
+          />
+          <Button 
+            onClick={handleSubmit}
+            className="w-full bg-[#133134] text-white hover:bg-[#133134]/90"
+          >
+            Add Asset
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }
