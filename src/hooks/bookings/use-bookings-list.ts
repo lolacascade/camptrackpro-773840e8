@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { BookingWithRelations } from "@/types/database/booking";
+import { useToast } from "@/hooks/use-toast";
+import type { BookingWithRelations } from "@/types/database/booking";
 
 export function useBookingsList(searchTerm: string) {
   const { toast } = useToast();
@@ -13,8 +13,6 @@ export function useBookingsList(searchTerm: string) {
         .from('bookings')
         .select(`
           id,
-          customer_id,
-          slot_id,
           check_in_date,
           check_out_date,
           special_requirements,
@@ -22,7 +20,7 @@ export function useBookingsList(searchTerm: string) {
           reservation_code,
           created_at,
           customer:customers(id, name, email),
-          slot:slots(name),
+          slot:slots(id, name),
           assets:bookings_assets(
             asset:assets(
               asset_name,

@@ -84,6 +84,10 @@ export function AddBookingDialog({
     form.reset();
   });
 
+  const onSubmit = (data: BookingFormValues) => {
+    createBooking(data);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -91,7 +95,7 @@ export function AddBookingDialog({
           <DialogTitle>Add New Booking</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(createBooking)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <CustomerSelect form={form} customers={customers} />
             <SlotSelect form={form} availableSlots={availableSlots} />
             <DateSelect

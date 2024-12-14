@@ -12,7 +12,6 @@ export interface BookingDB {
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'active';
 
-// Form values type for the booking form
 export interface BookingFormValues {
   customerId: string;
   slotId: string;
@@ -21,17 +20,8 @@ export interface BookingFormValues {
   specialRequirements?: string;
 }
 
-// Type for database insert operations - exclude auto-generated fields
-export type BookingInsert = {
-  customer_id: number;
-  check_in_date: string;
-  check_out_date: string;
-  slot_id: number;
-  special_requirements?: string | null;
-  status?: BookingStatus;
-};
+export type BookingInsert = Omit<BookingDB, 'id' | 'created_at' | 'reservation_code'>;
 
-// Type for booking with related data
 export interface BookingData extends Omit<BookingDB, 'customer_id' | 'slot_id'> {
   customer?: {
     id: number;

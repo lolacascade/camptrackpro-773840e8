@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { BookingInsert } from "@/types/database/booking";
+import type { BookingData, BookingInsert } from "@/types/database/booking";
 import { useToast } from "@/hooks/use-toast";
 
 export function useBookingActions(refetch: () => void) {
@@ -8,17 +8,19 @@ export function useBookingActions(refetch: () => void) {
   const { toast } = useToast();
 
   const duplicateBookingMutation = useMutation({
-    mutationFn: async (booking: BookingInsert) => {
+    mutationFn: async (booking: BookingData) => {
+      const bookingData: BookingInsert = {
+        customer_id: booking.customer?.id || 0,
+        check_in_date: booking.check_in_date,
+        check_out_date: booking.check_out_date,
+        slot_id: booking.slot?.id || 0,
+        special_requirements: booking.special_requirements,
+        status: 'pending'
+      };
+
       const { data, error } = await supabase
         .from('bookings')
-        .insert({
-          customer_id: booking.customer_id,
-          check_in_date: booking.check_in_date,
-          check_out_date: booking.check_out_date,
-          slot_id: booking.slot_id,
-          special_requirements: booking.special_requirements,
-          status: booking.status || 'pending'
-        })
+        .insert(bookingData)
         .select()
         .single();
 
@@ -43,11 +45,11 @@ export function useBookingActions(refetch: () => void) {
   });
 
   const deleteBookingMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (booking: BookingData) => {
       const { error } = await supabase
         .from('bookings')
         .delete()
-        .eq('id', id);
+        .eq('id', booking.id);
 
       if (error) throw error;
     },
