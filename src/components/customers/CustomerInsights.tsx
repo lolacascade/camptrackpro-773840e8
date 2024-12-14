@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startOfMonth, subMonths, endOfMonth } from "date-fns";
 import { CustomerStatsCards } from "./insights/CustomerStatsCards";
 import { CustomerAcquisitionChart } from "./insights/CustomerAcquisitionChart";
-import { generateMonthlyData } from "./insights/utils";
+import { fetchMonthlyCustomerData } from "./insights/utils";
 
 export function CustomerInsights() {
   // Get current month's customers with proper ISO string formatting
@@ -74,15 +74,24 @@ export function CustomerInsights() {
     }
   });
 
-  const chartData = generateMonthlyData();
-  const currentMonthData = chartData.find(data => 
+  const { data: chartData, isLoading: isLoadingChartData } = useQuery({
+    queryKey: ['customer-growth-data'],
+    queryFn: fetchMonthlyCustomerData
+  });
+
+  const currentMonthData = chartData?.find(data => 
     data.month === new Date().toLocaleString('default', { month: 'short' })
   );
 
   return (
     <div className="space-y-6">
       <CustomerStatsCards customerStats={customerStats} />
-      <CustomerAcquisitionChart chartData={chartData} currentMonthData={currentMonthData} />
+      {!isLoadingChartData && chartData && (
+        <CustomerAcquisitionChart 
+          chartData={chartData} 
+          currentMonthData={currentMonthData} 
+        />
+      )}
     </div>
   );
 }

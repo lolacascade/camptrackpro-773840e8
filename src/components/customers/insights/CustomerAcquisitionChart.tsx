@@ -16,8 +16,7 @@ interface ChartData {
   month: string;
   year: string;
   newCustomers: number;
-  websiteAcquisitions: number;
-  referralAcquisitions: number;
+  existingCustomers: number;
   isProjected?: boolean;
 }
 
@@ -30,7 +29,7 @@ export function CustomerAcquisitionChart({ chartData, currentMonthData }: Custom
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-[#133134] text-2xl">Customer Acquisition Trends</CardTitle>
+        <CardTitle className="text-[#133134] text-2xl">Customer Growth Trends</CardTitle>
         <div className="flex items-center gap-4">
           <button className="text-[#133134] text-base">&lt;</button>
           <span className="text-[#133134] text-base font-medium">
@@ -40,7 +39,7 @@ export function CustomerAcquisitionChart({ chartData, currentMonthData }: Custom
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#0EA5E9]"></div>
@@ -50,31 +49,23 @@ export function CustomerAcquisitionChart({ chartData, currentMonthData }: Custom
               <div className="text-[#133134] text-2xl font-bold">
                 {currentMonthData?.newCustomers || 0}
               </div>
-              <div className="text-[#3E4238] text-base">↑ 8% compared to previous month</div>
-            </div>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-[#F97316]"></div>
-              <span className="text-[#133134] text-base">Website Acquisitions</span>
-            </div>
-            <div className="mt-2">
-              <div className="text-[#133134] text-2xl font-bold">
-                {currentMonthData?.websiteAcquisitions || 0}
+              <div className="text-[#3E4238] text-base">
+                This month's acquisitions
               </div>
-              <div className="text-[#3E4238] text-base">↑ 12% compared to previous month</div>
             </div>
           </div>
           <div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-[#8B5CF6]"></div>
-              <span className="text-[#133134] text-base">Referral Acquisitions</span>
+              <span className="text-[#133134] text-base">Existing Customers</span>
             </div>
             <div className="mt-2">
               <div className="text-[#133134] text-2xl font-bold">
-                {currentMonthData?.referralAcquisitions || 0}
+                {currentMonthData?.existingCustomers || 0}
               </div>
-              <div className="text-[#3E4238] text-base">↓ 3% compared to previous month</div>
+              <div className="text-[#3E4238] text-base">
+                Total retained customers
+              </div>
             </div>
           </div>
         </div>
@@ -124,7 +115,7 @@ export function CustomerAcquisitionChart({ chartData, currentMonthData }: Custom
                                 style={{ backgroundColor: entry.color }}
                               />
                               <span className="capitalize">
-                                {entry.name}: {entry.value}
+                                {entry.name === 'newCustomers' ? 'New Customers' : 'Existing Customers'}: {entry.value}
                               </span>
                             </div>
                           </div>
@@ -141,18 +132,14 @@ export function CustomerAcquisitionChart({ chartData, currentMonthData }: Custom
                 name="New Customers"
                 fill="#0EA5E9"
                 radius={[4, 4, 0, 0]}
+                stackId="a"
               />
               <Bar 
-                dataKey="websiteAcquisitions" 
-                name="Website"
-                fill="#F97316"
-                radius={[4, 4, 0, 0]}
-              />
-              <Bar 
-                dataKey="referralAcquisitions" 
-                name="Referrals"
+                dataKey="existingCustomers" 
+                name="Existing Customers"
                 fill="#8B5CF6"
                 radius={[4, 4, 0, 0]}
+                stackId="a"
               />
             </BarChart>
           </ResponsiveContainer>
