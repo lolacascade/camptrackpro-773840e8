@@ -8,7 +8,7 @@ interface RevenueFilterProps {
 
 export function RevenueFilter({ value, onChange }: RevenueFilterProps) {
   return (
-    <Select value={value} onValueChange={(value) => onChange(value as RevenueCategory)}>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger className="w-[200px]">
         <SelectValue placeholder="Filter by category" />
       </SelectTrigger>

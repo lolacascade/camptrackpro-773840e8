@@ -6,6 +6,7 @@ import { RevenueFilter } from "./RevenueFilter";
 import { useState } from "react";
 import { useRevenueData } from "./useRevenueData";
 import { RevenueCategory } from "./types";
+import { RevenueBreakdownSkeleton } from "./RevenueBreakdownSkeleton";
 
 export function RevenueBreakdown() {
   const [selectedCategory, setSelectedCategory] = useState<RevenueCategory>("all");
@@ -27,20 +28,6 @@ export function RevenueBreakdown() {
           <RevenueAnnotations />
           <RevenueChart data={data} selectedCategory={selectedCategory} />
         </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function RevenueBreakdownSkeleton() {
-  return (
-    <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
-      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <CardTitle className="text-[#0D1D1F] text-2xl">Revenue Breakdown</CardTitle>
-        <div className="h-10 w-[200px] bg-gray-200 animate-pulse" />
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px] bg-gray-200 animate-pulse" />
       </CardContent>
     </Card>
   );

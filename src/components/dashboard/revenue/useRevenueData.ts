@@ -12,27 +12,30 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
     }
   });
 
+  const currentDate = new Date();
   const currentMonthData = data?.find(item => 
-    format(item.date, 'MMM yyyy') === format(new Date(), 'MMM yyyy')
+    format(item.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
   );
 
   return { data, isLoading, currentMonthData };
 }
 
 function generateMonthlyData() {
-  const data: RevenueData[] = [];
   const currentDate = new Date();
+  const data = [];
   
   for (let i = -12; i <= 11; i++) {
     const date = i === 0 ? currentDate : (i < 0 ? subMonths(currentDate, Math.abs(i)) : addMonths(currentDate, i));
-    data.push({
+    const monthData = {
       date: date,
       month: format(date, 'MMM'),
       year: format(date, 'yyyy'),
       slipRenewals: Math.random() * 8000 + 2000,
       newSlipRentals: Math.random() * 8000 + 2000,
       maintenanceServices: Math.random() * 3000 + 1000,
-    });
+      isProjected: i > 0
+    };
+    data.push(monthData);
   }
   
   return data;
