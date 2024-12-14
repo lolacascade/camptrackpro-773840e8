@@ -1,10 +1,11 @@
-import { ReactNode } from "react"
 import { Database } from "@/integrations/supabase/types"
 
 // Get table names from Database type
 type DatabaseTables = Database['public']['Tables']
-// We only want tables, not views, since we need to perform CRUD operations
-export type TableNames = keyof DatabaseTables
+type DatabaseViews = Database['public']['Views']
+
+// We want both tables and views since some views might be queryable
+export type TableNames = keyof (DatabaseTables & DatabaseViews)
 
 export interface Field {
   name: string
