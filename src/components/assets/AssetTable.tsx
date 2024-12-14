@@ -26,6 +26,7 @@ const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
   'houseboat': 'Houseboat',
   'cruise_boat': 'Cruise Boat',
   'jet_ski': 'Jet Ski',
+  'boat': 'Boat',
   'other': 'Other'
 };
 
@@ -44,9 +45,10 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
       name: "type",
       options: [
         { label: "All Types", value: "all" },
-        { label: "Boat", value: "boat" },
-        { label: "Jet Ski", value: "jet-ski" },
-        { label: "Yacht", value: "yacht" }
+        { label: "Speed Boat", value: "speed_boat" },
+        { label: "Jet Ski", value: "jet_ski" },
+        { label: "Yacht", value: "yacht" },
+        { label: "Boat", value: "boat" }
       ],
       value: typeFilter,
       onChange: setTypeFilter
