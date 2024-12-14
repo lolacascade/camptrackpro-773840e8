@@ -35,43 +35,43 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="bg-white border border-[#E8EBEB] shadow-lg rounded-md min-w-[160px]"
-        style={{ zIndex: 50 }}
+        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg rounded-md"
+        style={{ zIndex: 1000 }}
       >
         {onEdit && (
           <DropdownMenuItem 
             onClick={() => onEdit(row)}
-            className="text-[#133134] hover:bg-[#F8F9F9] cursor-pointer flex items-center px-3 py-2"
+            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
           >
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
+            <Edit className="h-4 w-4" />
+            <span>Edit</span>
           </DropdownMenuItem>
         )}
         {onViewDetails && (
           <DropdownMenuItem 
             onClick={() => onViewDetails(row)}
-            className="text-[#133134] hover:bg-[#F8F9F9] cursor-pointer flex items-center px-3 py-2"
+            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
-            View Details
+            <ExternalLink className="h-4 w-4" />
+            <span>View Details</span>
           </DropdownMenuItem>
         )}
         {onDuplicate && (
           <DropdownMenuItem 
             onClick={() => onDuplicate(row)}
-            className="text-[#133134] hover:bg-[#F8F9F9] cursor-pointer flex items-center px-3 py-2"
+            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
           >
-            <Copy className="mr-2 h-4 w-4" />
-            Duplicate
+            <Copy className="h-4 w-4" />
+            <span>Duplicate</span>
           </DropdownMenuItem>
         )}
         {onDelete && (
           <DropdownMenuItem
             onClick={() => onDelete(row)}
-            className="text-red-600 hover:bg-[#F8F9F9] cursor-pointer flex items-center px-3 py-2"
+            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-[#F8F9F9]"
           >
-            <Trash className="mr-2 h-4 w-4" />
-            Delete
+            <Trash className="h-4 w-4" />
+            <span>Delete</span>
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
