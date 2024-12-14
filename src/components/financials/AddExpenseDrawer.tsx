@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Expense } from "@/types/expense";
@@ -23,15 +23,16 @@ export function AddExpenseDrawer({
 }: AddExpenseDrawerProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<Partial<Expense>>(
-    expense || {
-      description: "",
-      amount: 0,
-      category: "",
-      date: new Date().toISOString().split('T')[0],
-      status: "completed"
-    }
-  );
+  const [formData, setFormData] = useState<Omit<Expense, 'id'>>({
+    description: expense?.description || "",
+    amount: expense?.amount || 0,
+    category: expense?.category || "",
+    date: expense?.date || new Date().toISOString().split('T')[0],
+    status: expense?.status || "completed",
+    notes: expense?.notes || "",
+    payment_method: expense?.payment_method || "",
+    receipt_url: expense?.receipt_url || ""
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

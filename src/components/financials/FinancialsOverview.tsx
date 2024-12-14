@@ -14,7 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
 
 export function FinancialsOverview() {
-  const { data: chartData } = useQuery({
+  const { data: chartData = [] } = useQuery({
     queryKey: ['expense-trends'],
     queryFn: async () => {
       const currentDate = new Date();
@@ -29,14 +29,14 @@ export function FinancialsOverview() {
         .order('date');
 
       // Process and aggregate data by month
-      const monthlyData: { [key: string]: { [category: string]: number } } = {};
+      const monthlyData: Record<string, Record<string, number>> = {};
       
       expenses?.forEach(expense => {
         const monthKey = format(new Date(expense.date), 'MMM yyyy');
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = {};
         }
-        monthlyData[monthKey][expense.category] = (monthlyData[monthKey][expense.category] || 0) + expense.amount;
+        monthlyData[monthKey][expense.category] = (monthlyData[monthKey][expense.category] || 0) + Number(expense.amount);
       });
 
       // Generate data for the past 6 months, current month, and 5 future months
