@@ -45,10 +45,10 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
       name: "type",
       options: [
         { label: "All Types", value: "all" },
-        { label: "Speed Boat", value: "speed_boat" },
-        { label: "Jet Ski", value: "jet_ski" },
-        { label: "Yacht", value: "yacht" },
-        { label: "Boat", value: "boat" }
+        ...Object.entries(ASSET_TYPE_DISPLAY_NAMES).map(([value, label]) => ({
+          label,
+          value
+        }))
       ],
       value: typeFilter,
       onChange: setTypeFilter
