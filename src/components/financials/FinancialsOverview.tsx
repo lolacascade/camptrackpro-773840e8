@@ -1,13 +1,15 @@
+import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { AddExpenseDrawer } from "./AddExpenseDrawer";
 import { ExpenseTable } from "./ExpenseTable";
 import { FinancialsStatsCards } from "./FinancialsStatsCards";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
+import type { Expense } from "@/types/expense";
 
 interface ExpenseData {
   Maintenance: number;
@@ -21,16 +23,32 @@ interface ChartDataItem extends ExpenseData {
   isProjected: boolean;
 }
 
-interface MonthlyExpenseData {
-  [key: string]: ExpenseData;
-}
-
 const GROWTH_RATE = 1.05; // 5% projected growth
 const MONTHS_BACK = 6;
 const MONTHS_FORWARD = 5;
 const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies', 'Other'] as const;
 
 export function FinancialsOverview() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+
+  const { data: expenses = [], isLoading, refetch } = useQuery({
+    queryKey: ['expenses'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .order('date', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching expenses:', error);
+        return [];
+      }
+
+      return data;
+    },
+  });
+
   const { data: chartData = [] } = useQuery({
     queryKey: ["expenses-chart"],
     queryFn: async () => {
@@ -44,7 +62,7 @@ export function FinancialsOverview() {
       const currentDate = new Date();
       
       // Group expenses by month and category
-      const monthlyData = expenses.reduce<MonthlyExpenseData>((acc, expense) => {
+      const monthlyData = expenses.reduce<Record<string, ExpenseData>>((acc, expense) => {
         const monthKey = format(new Date(expense.date), 'MMM yyyy');
         if (!acc[monthKey]) {
           acc[monthKey] = {
@@ -65,18 +83,66 @@ export function FinancialsOverview() {
         return acc;
       }, {});
 
-      // Generate data for past, current, and future months
-      return generateTimelineData(currentDate, monthlyData);
+      // Generate timeline data
+      const timelineData: ChartDataItem[] = [];
+      
+      // Past and current months
+      for (let i = -MONTHS_BACK; i <= 0; i++) {
+        const date = subMonths(currentDate, Math.abs(i));
+        const monthKey = format(date, 'MMM yyyy');
+        
+        timelineData.push({
+          month: monthKey,
+          ...monthlyData[monthKey] || {
+            Maintenance: 0,
+            Utilities: 0,
+            Supplies: 0,
+            Other: 0,
+          },
+          isProjected: false,
+        });
+      }
+      
+      // Future months (projected)
+      let lastMonth = timelineData[timelineData.length - 1];
+      for (let i = 1; i <= MONTHS_FORWARD; i++) {
+        const date = addMonths(currentDate, i);
+        const projectedData: ChartDataItem = {
+          month: format(date, 'MMM yyyy'),
+          Maintenance: lastMonth.Maintenance * GROWTH_RATE,
+          Utilities: lastMonth.Utilities * GROWTH_RATE,
+          Supplies: lastMonth.Supplies * GROWTH_RATE,
+          Other: lastMonth.Other * GROWTH_RATE,
+          isProjected: true,
+        };
+        timelineData.push(projectedData);
+        lastMonth = projectedData;
+      }
+
+      return timelineData;
     },
   });
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const handleEdit = (expense: Expense) => {
+    setSelectedExpense(expense);
+    setIsDrawerOpen(true);
+  };
+
+  const handleAdd = () => {
+    setSelectedExpense(null);
+    setIsDrawerOpen(true);
+  };
 
   return (
-    <div className="space-y-8 p-8">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Financial Overview</h2>
-        <Button onClick={() => setIsDrawerOpen(true)}>Add Expense</Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-semibold text-[#133134]">Financial Overview</h1>
+        <Button 
+          onClick={handleAdd}
+          className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+        >
+          <Plus className="mr-2 h-4 w-4" /> Add Expense
+        </Button>
       </div>
 
       <FinancialsStatsCards />
@@ -140,38 +206,26 @@ export function FinancialsOverview() {
         </div>
       </Card>
 
-      <ExpenseTable />
-      
-      <AddExpenseDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} />
+      {isLoading ? (
+        <div className="flex justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#133134]"></div>
+        </div>
+      ) : (
+        <ExpenseTable
+          expenses={expenses}
+          onEdit={handleEdit}
+        />
+      )}
+
+      <AddExpenseDrawer
+        expense={selectedExpense}
+        open={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setSelectedExpense(null);
+        }}
+        onExpenseUpdated={refetch}
+      />
     </div>
   );
-}
-
-function generateTimelineData(currentDate: Date, monthlyData: MonthlyExpenseData): ChartDataItem[] {
-  const allData: ChartDataItem[] = [];
-  
-  for (let i = -MONTHS_BACK; i <= MONTHS_FORWARD; i++) {
-    const date = i <= 0 ? subMonths(currentDate, Math.abs(i)) : addMonths(currentDate, i);
-    const monthKey = format(date, 'MMM yyyy');
-    
-    const monthData: ChartDataItem = {
-      month: monthKey,
-      Maintenance: monthlyData[monthKey]?.Maintenance || 0,
-      Utilities: monthlyData[monthKey]?.Utilities || 0,
-      Supplies: monthlyData[monthKey]?.Supplies || 0,
-      Other: monthlyData[monthKey]?.Other || 0,
-      isProjected: i > 0,
-    };
-
-    // Apply growth rate to projected months
-    if (i > 0) {
-      EXPENSE_CATEGORIES.forEach(category => {
-        monthData[category] *= GROWTH_RATE;
-      });
-    }
-
-    allData.push(monthData);
-  }
-
-  return allData;
 }
