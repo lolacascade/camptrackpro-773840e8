@@ -1,7 +1,10 @@
 import { ReactNode } from "react"
 import { Database } from "@/integrations/supabase/types"
 
-export type TableNames = keyof Database['public']['Tables'] | keyof Database['public']['Views']
+// Get table names from Database type
+type DatabaseTables = Database['public']['Tables']
+type DatabaseViews = Database['public']['Views']
+export type TableNames = keyof (DatabaseTables & DatabaseViews)
 
 export interface Field {
   name: string
