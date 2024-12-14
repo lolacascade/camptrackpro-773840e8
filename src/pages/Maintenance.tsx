@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MaintenanceDrawer } from "@/components/maintenance/MaintenanceDrawer";
 import { AddMaintenanceDialog } from "@/components/maintenance/AddMaintenanceDialog";
+import { MaintenanceStatsCards } from "@/components/maintenance/insights/MaintenanceStatsCards";
 import type { Maintenance } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -125,7 +126,7 @@ export default function Maintenance() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold text-[#133134]">Maintenance Requests</h1>
             <Button 
               onClick={() => setIsDialogOpen(true)}
@@ -134,6 +135,8 @@ export default function Maintenance() {
               <Plus className="mr-2 h-4 w-4" /> Add Request
             </Button>
           </div>
+
+          <MaintenanceStatsCards />
 
           {isLoading ? (
             <div className="flex justify-center py-8">
