@@ -1,26 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
-
-export interface MaintenanceStats {
-  totalRequests: {
-    open: number;
-    inProgress: number;
-    completed: number;
-  };
-  resolutionTime: {
-    average: number;
-    target: number;
-  };
-  criticalIssues: {
-    critical: number;
-    scheduled: number;
-  };
-  equipmentStatus: {
-    underMaintenance: number;
-    operational: number;
-  };
-}
+import type { MaintenanceStats } from "../types/maintenance-stats";
 
 export function useMaintenanceStats() {
   const session = useSession();
@@ -45,14 +26,6 @@ export function useMaintenanceStats() {
 
       if (requestsError) throw requestsError;
 
-      // Fetch assets
-      const { data: assets, error: assetsError } = await supabase
-        .from('assets')
-        .select('id, asset_type')
-        .eq('user_id', session.user.id);
-
-      if (assetsError) throw assetsError;
-
       // Calculate total requests by status
       const open = requests?.filter(r => r.status === 'pending').length || 0;
       const inProgress = requests?.filter(r => r.status === 'in_progress').length || 0;
@@ -74,9 +47,15 @@ export function useMaintenanceStats() {
       const scheduled = requests?.filter(r => r.priority === 'medium' || r.priority === 'low').length || 0;
 
       // Calculate equipment status
-      const total = assets?.length || 0;
       const underMaintenance = requests?.filter(r => r.status === 'in_progress').length || 0;
-      const operationalPercentage = total > 0 ? Math.round(((total - underMaintenance) / total) * 100) : 0;
+      const total = await supabase
+        .from('slots')
+        .select('id', { count: 'exact' })
+        .eq('user_id', session.user.id)
+        .single();
+
+      const totalSlots = total?.count || 0;
+      const operationalPercentage = totalSlots > 0 ? Math.round(((totalSlots - underMaintenance) / totalSlots) * 100) : 0;
 
       return {
         totalRequests: {

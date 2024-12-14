@@ -5,16 +5,20 @@ import { useMaintenanceStats } from "./hooks/useMaintenanceStats";
 export function MaintenanceStatsCards() {
   const { data: stats } = useMaintenanceStats();
 
+  const totalRequests = (stats?.totalRequests.open || 0) + 
+    (stats?.totalRequests.inProgress || 0) + 
+    (stats?.totalRequests.completed || 0);
+
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Total Maintenance Requests"
-        value={`${(stats?.totalRequests.open || 0) + (stats?.totalRequests.inProgress || 0) + (stats?.totalRequests.completed || 0)}`}
+        value={totalRequests.toString()}
         icon={ClipboardList}
         breakdown={[
-          { label: "Open", value: stats?.totalRequests.open.toString() || "0", percentage: 30 },
-          { label: "In Progress", value: stats?.totalRequests.inProgress.toString() || "0", percentage: 20 },
-          { label: "Completed", value: stats?.totalRequests.completed.toString() || "0", percentage: 50 }
+          { label: "Open", value: stats?.totalRequests.open.toString() || "0", percentage: Math.round((stats?.totalRequests.open || 0) / totalRequests * 100) || 0 },
+          { label: "In Progress", value: stats?.totalRequests.inProgress.toString() || "0", percentage: Math.round((stats?.totalRequests.inProgress || 0) / totalRequests * 100) || 0 },
+          { label: "Completed", value: stats?.totalRequests.completed.toString() || "0", percentage: Math.round((stats?.totalRequests.completed || 0) / totalRequests * 100) || 0 }
         ]}
       />
       <EnhancedStatCard
@@ -41,8 +45,8 @@ export function MaintenanceStatsCards() {
           comparedTo: "last week"
         }}
         breakdown={[
-          { label: "Critical", value: stats?.criticalIssues.critical.toString() || "0", percentage: 30 },
-          { label: "Scheduled", value: stats?.criticalIssues.scheduled.toString() || "0", percentage: 70 }
+          { label: "Critical", value: stats?.criticalIssues.critical.toString() || "0", percentage: Math.round((stats?.criticalIssues.critical || 0) / ((stats?.criticalIssues.critical || 0) + (stats?.criticalIssues.scheduled || 0)) * 100) || 0 },
+          { label: "Scheduled", value: stats?.criticalIssues.scheduled.toString() || "0", percentage: Math.round((stats?.criticalIssues.scheduled || 0) / ((stats?.criticalIssues.critical || 0) + (stats?.criticalIssues.scheduled || 0)) * 100) || 0 }
         ]}
       />
       <EnhancedStatCard
