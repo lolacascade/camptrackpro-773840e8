@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from "react-router-dom";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -15,7 +16,32 @@ export function AuthGuard({ children }: AuthGuardProps) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        const { data: { session: currentSession }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session check error:', error);
+          toast.error("Authentication error. Please log in again.");
+          window.location.href = '/login';
+          return;
+        }
+
+        if (!currentSession) {
+          console.log('No active session found');
+          setIsSessionChecked(true);
+          return;
+        }
+
+        // Attempt to refresh the session if we have one
+        const { data: { session: refreshedSession }, error: refreshError } = 
+          await supabase.auth.refreshSession();
+
+        if (refreshError) {
+          console.error('Session refresh error:', refreshError);
+          toast.error("Your session has expired. Please log in again.");
+          window.location.href = '/login';
+          return;
+        }
+
         setIsSessionChecked(true);
       } catch (error) {
         console.error('Error checking session:', error);
@@ -32,8 +58,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
         window.location.href = '/login';
+      }
+      
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Token refreshed successfully');
       }
     });
 
