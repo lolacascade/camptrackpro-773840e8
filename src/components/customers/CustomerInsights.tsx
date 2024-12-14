@@ -5,40 +5,54 @@ import { supabase } from "@/integrations/supabase/client";
 import { startOfMonth, subMonths, endOfMonth } from "date-fns";
 
 export function CustomerInsights() {
-  // Get current month's customers
+  // Get current month's customers with proper ISO string formatting
   const currentMonthStart = startOfMonth(new Date());
   const currentMonthEnd = endOfMonth(new Date());
   const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
   const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
+  const threeMonthsAgo = subMonths(new Date(), 3);
 
   const { data: customerStats } = useQuery({
     queryKey: ['customer-stats'],
     queryFn: async () => {
+      console.log('Fetching customer stats...');
+      
       // Get current month's total customers
       const { data: currentMonthCustomers, error: currentError } = await supabase
         .from('customers')
-        .select('id, created_at')
-        .lte('created_at', currentMonthEnd.toISOString())
-        .order('created_at', { ascending: false });
+        .select('id')
+        .lte('created_at', currentMonthEnd.toISOString());
 
-      if (currentError) throw currentError;
+      if (currentError) {
+        console.error('Current month error:', currentError);
+        throw currentError;
+      }
 
       // Get last month's total customers
       const { data: lastMonthCustomers, error: lastError } = await supabase
         .from('customers')
-        .select('id, created_at')
-        .lte('created_at', lastMonthEnd.toISOString())
-        .order('created_at', { ascending: false });
+        .select('id')
+        .lte('created_at', lastMonthEnd.toISOString());
 
-      if (lastError) throw lastError;
+      if (lastError) {
+        console.error('Last month error:', lastError);
+        throw lastError;
+      }
 
-      // Get active/inactive breakdown
+      // Get active customers (created in last 3 months)
       const { data: activeCustomers, error: activeError } = await supabase
         .from('customers')
         .select('id')
-        .gt('created_at', subMonths(new Date(), 3)); // Consider active if created in last 3 months
+        .gte('created_at', threeMonthsAgo.toISOString());
 
-      if (activeError) throw activeError;
+      if (activeError) {
+        console.error('Active customers error:', activeError);
+        throw activeError;
+      }
+
+      console.log('Current month customers:', currentMonthCustomers?.length);
+      console.log('Last month customers:', lastMonthCustomers?.length);
+      console.log('Active customers:', activeCustomers?.length);
 
       const currentTotal = currentMonthCustomers?.length || 0;
       const lastTotal = lastMonthCustomers?.length || 0;
