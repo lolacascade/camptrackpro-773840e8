@@ -25,16 +25,15 @@ export function FinancialsStatsCards() {
         .gte('date', new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString())
         .lte('date', new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString());
 
-      // Get monthly budget
+      // Get monthly budget - handle case where no budget exists
       const { data: budgets } = await supabase
         .from('monthly_budgets')
         .select('amount')
-        .eq('month', firstDayOfMonth.toISOString().split('T')[0])
-        .single();
+        .eq('month', firstDayOfMonth.toISOString().split('T')[0]);
 
       const currentTotal = currentExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
       const previousTotal = previousExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const monthlyBudget = budgets?.amount || 0;
+      const monthlyBudget = budgets?.[0]?.amount || 0; // Access first item if exists, otherwise default to 0
 
       // Calculate category percentages
       const categoryTotals: { [key: string]: number } = {};
