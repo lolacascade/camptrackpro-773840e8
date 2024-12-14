@@ -76,7 +76,7 @@ export default function Login() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-2">
             <span className="text-white">Dock</span>
-            <span className="text-blue-400">Ease</span>
+            <span className="text-primary">Ease</span>
           </h1>
           <p className="text-gray-400">Manage your marina with ease</p>
         </div>
@@ -89,9 +89,9 @@ export default function Login() {
               variables: {
                 default: {
                   colors: {
-                    brand: '#0D1D1F',
-                    brandAccent: '#1a3538',
-                    brandButtonText: 'white',
+                    brand: '#C0CCAB',
+                    brandAccent: '#b3c196',
+                    brandButtonText: '#0D1D1F',
                     defaultButtonBackground: '#E5E7EB',
                     defaultButtonBackgroundHover: '#D1D5DB',
                   },
