@@ -13,6 +13,22 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
 
+// Map of asset types to their display names
+const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
+  'speed_boat': 'Speed Boat',
+  'sailboat': 'Sailboat',
+  'fishing_boat': 'Fishing Boat',
+  'pontoon_boat': 'Pontoon Boat',
+  'yacht': 'Yacht',
+  'catamaran': 'Catamaran',
+  'kayak': 'Kayak',
+  'rowboat': 'Rowboat',
+  'houseboat': 'Houseboat',
+  'cruise_boat': 'Cruise Boat',
+  'jet_ski': 'Jet Ski',
+  'other': 'Other'
+};
+
 interface AssetTableProps {
   assets: Asset[];
   onEdit: (asset: Asset) => void;
@@ -55,6 +71,11 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
     return true;
   });
 
+  const getAssetTypeDisplayName = (type: string | null): string => {
+    if (!type) return 'Unspecified';
+    return ASSET_TYPE_DISPLAY_NAMES[type] || type;
+  };
+
   return (
     <div className="space-y-4">
       <DataTableFiltersBar filters={filters} />
@@ -83,7 +104,7 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
                 <TableCell>{asset.asset_size || 'N/A'}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">
-                    {asset.asset_type || 'Unspecified'}
+                    {getAssetTypeDisplayName(asset.asset_type)}
                   </Badge>
                 </TableCell>
                 <TableCell>{asset.customers?.name || 'Unassigned'}</TableCell>
