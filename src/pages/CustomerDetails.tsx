@@ -5,9 +5,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomerInsights } from "@/components/customers/CustomerInsights";
+import { CustomerHeader } from "@/components/customers/details/CustomerHeader";
+import { BookingsTab } from "@/components/customers/details/tabs/BookingsTab";
+import { MaintenanceTab } from "@/components/customers/details/tabs/MaintenanceTab";
+import { AssetsTab } from "@/components/customers/details/tabs/AssetsTab";
+import { NotesTab } from "@/components/customers/details/tabs/NotesTab";
 
 export default function CustomerDetails() {
   const { id } = useParams();
@@ -88,7 +91,7 @@ export default function CustomerDetails() {
     },
   });
 
-  if (isLoadingCustomer || isLoadingBookings || isLoadingMaintenance || isLoadingAssets || isLoadingNotes) {
+  if (isLoadingCustomer) {
     return (
       <PageWithChat>
         <PageContainer>
@@ -119,17 +122,7 @@ export default function CustomerDetails() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-semibold text-[#133134]">{customer.name}</h1>
-              <div className="mt-2 text-gray-600">
-                <p>{customer.email}</p>
-                <p>{customer.phone}</p>
-                <p>{customer.address}</p>
-              </div>
-            </div>
-          </div>
-
+          <CustomerHeader customer={customer} />
           <CustomerInsights />
 
           <Tabs defaultValue="bookings" className="w-full">
@@ -141,103 +134,19 @@ export default function CustomerDetails() {
             </TabsList>
 
             <TabsContent value="bookings">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Booking History</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    data={bookings || []}
-                    columns={[
-                      { 
-                        header: "Slot",
-                        accessorKey: "slot.name"
-                      },
-                      {
-                        header: "Check In",
-                        accessorKey: "check_in_date",
-                        cell: (item) => new Date(item.check_in_date).toLocaleDateString()
-                      },
-                      {
-                        header: "Check Out",
-                        accessorKey: "check_out_date",
-                        cell: (item) => new Date(item.check_out_date).toLocaleDateString()
-                      },
-                      {
-                        header: "Status",
-                        accessorKey: "status"
-                      },
-                      {
-                        header: "Reservation",
-                        accessorKey: "reservation_code"
-                      }
-                    ]}
-                  />
-                </CardContent>
-              </Card>
+              <BookingsTab bookings={bookings || []} isLoading={isLoadingBookings} />
             </TabsContent>
 
             <TabsContent value="maintenance">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Maintenance Requests</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    data={maintenanceRequests || []}
-                    columns={[
-                      { header: "Description", accessorKey: "description" },
-                      { header: "Status", accessorKey: "status" },
-                      { header: "Priority", accessorKey: "priority" },
-                      {
-                        header: "Created",
-                        accessorKey: "created_at",
-                        cell: (item) => new Date(item.created_at).toLocaleDateString()
-                      }
-                    ]}
-                  />
-                </CardContent>
-              </Card>
+              <MaintenanceTab maintenanceRequests={maintenanceRequests || []} isLoading={isLoadingMaintenance} />
             </TabsContent>
 
             <TabsContent value="assets">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Assets</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    data={assets || []}
-                    columns={[
-                      { header: "Name", accessorKey: "asset_name" },
-                      { header: "Type", accessorKey: "asset_type" },
-                      { header: "Size", accessorKey: "asset_size" }
-                    ]}
-                  />
-                </CardContent>
-              </Card>
+              <AssetsTab assets={assets || []} isLoading={isLoadingAssets} />
             </TabsContent>
 
             <TabsContent value="notes">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Customer Notes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <DataTable
-                    data={notes || []}
-                    columns={[
-                      { header: "Note", accessorKey: "note" },
-                      { header: "Tag", accessorKey: "tag" },
-                      {
-                        header: "Created",
-                        accessorKey: "created_at",
-                        cell: (item) => new Date(item.created_at).toLocaleDateString()
-                      }
-                    ]}
-                  />
-                </CardContent>
-              </Card>
+              <NotesTab notes={notes || []} isLoading={isLoadingNotes} />
             </TabsContent>
           </Tabs>
         </div>
