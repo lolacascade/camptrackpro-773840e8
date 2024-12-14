@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
 
-// Map of asset types to their display names - matching database values
 const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
   'Speed Boat': 'Speed Boat',
   'Sailboat': 'Sailboat',
