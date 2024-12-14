@@ -35,8 +35,7 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg rounded-md"
-        style={{ zIndex: 1000 }}
+        className="bg-white border border-[#E8EBEB] shadow-lg rounded-md"
       >
         {onEdit && (
           <DropdownMenuItem 

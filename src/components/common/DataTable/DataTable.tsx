@@ -37,7 +37,9 @@ export function DataTable<T extends { id?: number | string }>({
     setCurrentPage,
     localData,
     setLocalData,
-    filteredAndSortedData
+    filteredAndSortedData,
+    sortConfig: localSortConfig,
+    handleSort
   } = useTableState<T>(data);
 
   useEffect(() => {
@@ -122,8 +124,8 @@ export function DataTable<T extends { id?: number | string }>({
         <Table>
           <DataTableHeaderRow
             columns={visibleColumnsData}
-            sortConfig={sortConfig}
-            onSort={onSort}
+            sortConfig={localSortConfig}
+            onSort={handleSort}
           />
           <DataTableBody
             data={filteredAndSortedData}
