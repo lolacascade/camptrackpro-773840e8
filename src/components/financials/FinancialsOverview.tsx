@@ -8,6 +8,7 @@ import { FinancialsChart } from "./chart/FinancialsChart";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
+import { useSession } from '@supabase/auth-helpers-react';
 import type { Expense } from "@/types/expense";
 import type { ChartDataItem, ExpenseData } from "./types";
 
@@ -19,13 +20,15 @@ const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies', 'Other'] as 
 export function FinancialsOverview() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const session = useSession();
 
   const { data: expenses = [], isLoading, refetch } = useQuery({
-    queryKey: ['expenses'],
+    queryKey: ['expenses', session?.user.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
+        .eq('user_id', session?.user.id)
         .order('date', { ascending: false });
 
       if (error) {
@@ -35,14 +38,16 @@ export function FinancialsOverview() {
 
       return data;
     },
+    enabled: !!session?.user.id,
   });
 
   const { data: chartData = [] } = useQuery({
-    queryKey: ["expenses-chart"],
+    queryKey: ["expenses-chart", session?.user.id],
     queryFn: async () => {
       const { data: expenses } = await supabase
         .from("expenses")
         .select("amount, category, date")
+        .eq('user_id', session?.user.id)
         .order("date", { ascending: true });
 
       if (!expenses) return [];
@@ -109,6 +114,7 @@ export function FinancialsOverview() {
 
       return timelineData;
     },
+    enabled: !!session?.user.id,
   });
 
   const handleEdit = (expense: Expense) => {
