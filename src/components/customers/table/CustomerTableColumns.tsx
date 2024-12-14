@@ -1,39 +1,61 @@
-import { Column } from "@/components/common/DataTable/types";
+import { ColumnDef } from "@tanstack/react-table";
 import { Customer } from "@/types/customer";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
-import { Edit2, ArrowUpDown } from "lucide-react";
+import { Edit } from "lucide-react";
 
-export const getCustomerColumns = (onEdit: (customer: Customer) => void): Column<Customer>[] => [
+export const columns: ColumnDef<Customer>[] = [
   {
-    header: "Name",
     accessorKey: "name",
-    sortable: true,
-    cell: (customer) => (
-      <span className="font-medium text-[#133134]">{customer.name}</span>
-    ),
+    header: "Name",
+    cell: ({ row }) => {
+      const customer = row.original;
+      const isVip = customer.lifetime_value >= 10000; // Example threshold for VIP status
+      
+      return (
+        <div className="flex items-center gap-2">
+          <span>{customer.name}</span>
+          {isVip && (
+            <Badge variant="secondary" className="bg-purple-100 text-purple-800">
+              VIP
+            </Badge>
+          )}
+        </div>
+      );
+    },
   },
   {
-    header: "Email",
     accessorKey: "email",
-    sortable: true,
-    cell: (customer) => (
-      <span className="text-[#3E4238]">{customer.email}</span>
-    ),
+    header: "Email",
   },
   {
-    header: "Phone",
     accessorKey: "phone",
-    sortable: true,
-    cell: (customer) => (
-      <span className="text-[#3E4238]">{customer.phone}</span>
-    ),
+    header: "Phone",
   },
   {
-    header: "Address",
-    accessorKey: "address",
-    sortable: true,
-    cell: (customer) => (
-      <span className="text-[#3E4238]">{customer.address}</span>
-    ),
+    accessorKey: "created_at",
+    header: "Member Since",
+    cell: ({ row }) => {
+      const date = row.getValue("created_at");
+      if (!date) return null;
+      return format(new Date(date as string), "MMM d, yyyy");
+    },
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      const customer = row.original;
+      
+      return (
+        <Button
+          variant="ghost"
+          className="h-8 w-8 p-0"
+          onClick={() => console.log('Edit customer:', customer.id)}
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+      );
+    },
   },
 ];

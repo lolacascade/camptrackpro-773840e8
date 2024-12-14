@@ -53,14 +53,12 @@ export function ChartContainer({ chartData }: ChartContainerProps) {
             dataKey="newCustomers" 
             name="New Customers"
             fill="#0EA5E9"
-            radius={[4, 4, 0, 0]}
             stackId="a"
           />
           <Bar 
             dataKey="existingCustomers" 
             name="Existing Customers"
             fill="#8B5CF6"
-            radius={[4, 4, 0, 0]}
             stackId="a"
           />
         </BarChart>
