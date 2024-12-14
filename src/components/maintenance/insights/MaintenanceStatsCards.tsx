@@ -32,10 +32,17 @@ export function MaintenanceStatsCards() {
     queryFn: async (): Promise<MaintenanceStats> => {
       if (!session?.user?.id) throw new Error("No authenticated user");
 
-      // Fetch maintenance requests
+      // Fetch maintenance requests with explicit status field
       const { data: requests, error } = await supabase
         .from('maintenance_requests')
-        .select('status, priority, created_at, completed_at')
+        .select(`
+          id,
+          description,
+          status,
+          priority,
+          created_at,
+          completed_at
+        `)
         .eq('user_id', session.user.id);
 
       if (error) throw error;
