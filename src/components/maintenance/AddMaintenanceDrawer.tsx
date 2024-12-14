@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,17 +7,17 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-interface AddMaintenanceDialogProps {
+interface AddMaintenanceDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   onMaintenanceAdded: () => void;
 }
 
-export function AddMaintenanceDialog({ 
+export function AddMaintenanceDrawer({ 
   isOpen, 
   onClose,
   onMaintenanceAdded 
-}: AddMaintenanceDialogProps) {
+}: AddMaintenanceDrawerProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,12 +64,12 @@ export function AddMaintenanceDialog({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add Maintenance Request</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <Sheet open={isOpen} onOpenChange={onClose}>
+      <SheetContent className="sm:max-w-[500px]">
+        <SheetHeader>
+          <SheetTitle>Add Maintenance Request</SheetTitle>
+        </SheetHeader>
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           <div>
             <Input
               placeholder="Title"
@@ -110,7 +110,7 @@ export function AddMaintenanceDialog({
             </Button>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </SheetContent>
+    </Sheet>
   );
 }

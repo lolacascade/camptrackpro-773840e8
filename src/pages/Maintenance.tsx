@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MaintenanceDrawer } from "@/components/maintenance/MaintenanceDrawer";
-import { AddMaintenanceDialog } from "@/components/maintenance/AddMaintenanceDialog";
+import { AddMaintenanceDrawer } from "@/components/maintenance/AddMaintenanceDrawer";
 import { MaintenanceStatsCards } from "@/components/maintenance/insights/MaintenanceStatsCards";
 import { MaintenanceHeader } from "@/components/maintenance/MaintenanceHeader";
 import { MaintenanceTable } from "@/components/maintenance/MaintenanceTable";
@@ -14,7 +14,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 export default function Maintenance() {
   const { toast } = useToast();
   const [selectedMaintenance, setSelectedMaintenance] = useState<Maintenance | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
 
@@ -76,7 +76,7 @@ export default function Maintenance() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <MaintenanceHeader onAddRequest={() => setIsDialogOpen(true)} />
+          <MaintenanceHeader onAddRequest={() => setIsAddDrawerOpen(true)} />
           <MaintenanceStatsCards />
 
           {isLoading ? (
@@ -93,9 +93,9 @@ export default function Maintenance() {
             />
           )}
 
-          <AddMaintenanceDialog
-            isOpen={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
+          <AddMaintenanceDrawer
+            isOpen={isAddDrawerOpen}
+            onClose={() => setIsAddDrawerOpen(false)}
             onMaintenanceAdded={refetch}
           />
 
