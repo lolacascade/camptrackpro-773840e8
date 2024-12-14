@@ -1,11 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Asset } from "@/types/asset"
-import { useEffect, useState } from "react"
-import { useToast } from "@/components/ui/use-toast"
-import { supabase } from "@/integrations/supabase/client"
+import { EntityDrawer } from "@/components/common/EntityDrawer"
+import type { Asset } from "@/types/asset"
 
 interface AssetDrawerProps {
   asset: Asset | null
@@ -14,146 +8,57 @@ interface AssetDrawerProps {
   onAssetUpdated: () => void
 }
 
-export function AssetDrawer({ asset, open, onClose, onAssetUpdated }: AssetDrawerProps) {
-  const { toast } = useToast()
-  const [formData, setFormData] = useState<Partial<Asset>>(asset || {})
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-
-  useEffect(() => {
-    if (asset && open) {
-      setFormData(asset)
-    }
-  }, [asset, open])
-
-  const handleSave = async () => {
-    if (!asset) return
-    setIsSaving(true)
-    try {
-      const { error } = await supabase
-        .from('assets')
-        .update({
-          asset_name: formData.asset_name,
-          asset_size: formData.asset_size,
-          customer_id: formData.customer_id,
-          slip_id: formData.slip_id,
-          asset_type: formData.asset_type,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', asset.id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Asset updated successfully.",
-      })
-      onAssetUpdated()
-      onClose()
-    } catch (error) {
-      console.error('Error updating asset:', error)
-      toast({
-        title: "Error",
-        description: "Failed to update asset.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSaving(false)
-    }
+const ASSET_FIELDS = [
+  {
+    name: "asset_name",
+    label: "Asset Name",
+    type: "text" as const,
+    required: true
+  },
+  {
+    name: "asset_size",
+    label: "Size",
+    type: "text" as const,
+    required: true
+  },
+  {
+    name: "asset_type",
+    label: "Asset Type",
+    type: "select" as const,
+    required: true,
+    options: [
+      { value: "Speed Boat", label: "Speed Boat" },
+      { value: "Sailboat", label: "Sailboat" },
+      { value: "Fishing Boat", label: "Fishing Boat" },
+      { value: "Pontoon Boat", label: "Pontoon Boat" },
+      { value: "Yacht", label: "Yacht" },
+      { value: "Jet Ski", label: "Jet Ski" },
+      { value: "Other", label: "Other" }
+    ]
+  },
+  {
+    name: "slip_id",
+    label: "Slip ID",
+    type: "number" as const,
+    required: true
   }
+]
 
-  const handleDelete = async () => {
-    if (!asset) return
-    setIsDeleting(true)
-    try {
-      const { error } = await supabase
-        .from('assets')
-        .delete()
-        .eq('id', asset.id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Asset deleted successfully.",
-      })
-      onAssetUpdated()
-      onClose()
-    } catch (error) {
-      console.error('Error deleting asset:', error)
-      toast({
-        title: "Error",
-        description: "Failed to delete asset.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsDeleting(false)
-    }
-  }
-
+export function AssetDrawer({
+  asset,
+  open,
+  onClose,
+  onAssetUpdated
+}: AssetDrawerProps) {
   return (
-    <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent>
-        <SheetHeader>
-          <SheetTitle>Edit Asset</SheetTitle>
-        </SheetHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="asset_name">Asset Name</Label>
-            <Input
-              id="asset_name"
-              value={formData.asset_name || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, asset_name: e.target.value }))}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="asset_size">Size</Label>
-            <Input
-              id="asset_size"
-              value={formData.asset_size || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, asset_size: e.target.value }))}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="customer_id">Customer ID</Label>
-            <Input
-              id="customer_id"
-              type="number"
-              value={formData.customer_id || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, customer_id: parseInt(e.target.value) || null }))}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="slip_id">Slip ID</Label>
-            <Input
-              id="slip_id"
-              type="number"
-              value={formData.slip_id || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, slip_id: parseInt(e.target.value) || null }))}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="asset_type">Asset Type</Label>
-            <Input
-              id="asset_type"
-              value={formData.asset_type || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, asset_type: e.target.value }))}
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-2 mt-6">
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            {isDeleting ? "Deleting..." : "Delete Asset"}
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
+    <EntityDrawer
+      entity={asset}
+      open={open}
+      onClose={onClose}
+      onEntityUpdated={onAssetUpdated}
+      title="Asset"
+      fields={ASSET_FIELDS}
+      tableName="assets"
+    />
   )
 }
