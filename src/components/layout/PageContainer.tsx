@@ -3,7 +3,7 @@ import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -16,8 +16,12 @@ export function PageContainer({ children, className }: PageContainerProps) {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
-      navigate('/login');
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      // Clear any local storage or state if needed
+      navigate('/login', { replace: true });
+      
       toast({
         title: "Logged out successfully",
         description: "You have been logged out of your account.",

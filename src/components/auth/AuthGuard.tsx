@@ -31,9 +31,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
-        // Only redirect to login if explicitly signed out
         window.location.href = '/login';
       }
     });
@@ -52,7 +51,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!session) {
-    // Store the current location to redirect back after login
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
