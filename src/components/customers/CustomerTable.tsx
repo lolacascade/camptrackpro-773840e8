@@ -51,7 +51,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   }, [customers]);
 
   const handleViewDetails = (customer: Customer) => {
-    navigate(`/customers/${customer.id}`);
+    navigate(`/app/customers/${customer.id}`);
   };
 
   const handleDelete = async (customer: Customer) => {
