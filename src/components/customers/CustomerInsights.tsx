@@ -1,21 +1,86 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Users, UserPlus, Activity, Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { startOfMonth, subMonths, endOfMonth } from "date-fns";
 
 export function CustomerInsights() {
+  // Get current month's customers
+  const currentMonthStart = startOfMonth(new Date());
+  const currentMonthEnd = endOfMonth(new Date());
+  const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
+  const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
+
+  const { data: customerStats } = useQuery({
+    queryKey: ['customer-stats'],
+    queryFn: async () => {
+      // Get current month's total customers
+      const { data: currentMonthCustomers, error: currentError } = await supabase
+        .from('customers')
+        .select('id, created_at')
+        .lte('created_at', currentMonthEnd.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (currentError) throw currentError;
+
+      // Get last month's total customers
+      const { data: lastMonthCustomers, error: lastError } = await supabase
+        .from('customers')
+        .select('id, created_at')
+        .lte('created_at', lastMonthEnd.toISOString())
+        .order('created_at', { ascending: false });
+
+      if (lastError) throw lastError;
+
+      // Get active/inactive breakdown
+      const { data: activeCustomers, error: activeError } = await supabase
+        .from('customers')
+        .select('id')
+        .gt('created_at', subMonths(new Date(), 3)); // Consider active if created in last 3 months
+
+      if (activeError) throw activeError;
+
+      const currentTotal = currentMonthCustomers?.length || 0;
+      const lastTotal = lastMonthCustomers?.length || 0;
+      const activeTotal = activeCustomers?.length || 0;
+      const inactiveTotal = currentTotal - activeTotal;
+
+      const percentageChange = lastTotal > 0 
+        ? ((currentTotal - lastTotal) / lastTotal) * 100 
+        : 0;
+
+      return {
+        currentTotal,
+        lastTotal,
+        activeTotal,
+        inactiveTotal,
+        percentageChange: Math.round(percentageChange * 10) / 10 // Round to 1 decimal
+      };
+    }
+  });
+
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Total Customers"
-        value="152"
+        value={customerStats?.currentTotal.toString() || "0"}
         icon={Users}
         trend={{
-          value: "5%",
-          isPositive: true,
+          value: `${Math.abs(customerStats?.percentageChange || 0)}%`,
+          isPositive: (customerStats?.percentageChange || 0) >= 0,
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Active", value: "140", percentage: 92 },
-          { label: "Inactive", value: "12", percentage: 8 }
+          { 
+            label: "Active", 
+            value: customerStats?.activeTotal.toString() || "0", 
+            percentage: customerStats?.currentTotal ? Math.round((customerStats.activeTotal / customerStats.currentTotal) * 100) : 0 
+          },
+          { 
+            label: "Inactive", 
+            value: customerStats?.inactiveTotal.toString() || "0", 
+            percentage: customerStats?.currentTotal ? Math.round((customerStats.inactiveTotal / customerStats.currentTotal) * 100) : 0 
+          }
         ]}
       />
       <EnhancedStatCard
