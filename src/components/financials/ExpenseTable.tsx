@@ -42,7 +42,7 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
   ];
 
   const typeOptions = [
-    { label: "All Types", value: "" },
+    { label: "All Types", value: "all" }, // Changed from empty string to "all"
     { label: "Maintenance", value: "Maintenance" },
     { label: "Utilities", value: "Utilities" },
     { label: "Supplies", value: "Supplies" },
@@ -52,7 +52,7 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
   ];
 
   const statusOptions = [
-    { label: "All Statuses", value: "" },
+    { label: "All Statuses", value: "all" }, // Changed from empty string to "all"
     { label: "Completed", value: "completed" },
     { label: "Pending", value: "pending" },
   ];
@@ -67,13 +67,13 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
         {
           name: "type",
           options: typeOptions,
-          value: "",
+          value: "all", // Changed from empty string to "all"
           onChange: () => {},
         },
         {
           name: "status",
           options: statusOptions,
-          value: "",
+          value: "all", // Changed from empty string to "all"
           onChange: () => {},
         },
       ]}
