@@ -1,49 +1,70 @@
-import { StatCard } from "@/components/dashboard/StatCard";
-import { ChartBar, Clock, MapPin, Users } from "lucide-react";
-import { useAverageValue } from "@/hooks/customers/useAverageValue";
-import { useAverageStayDuration } from "@/hooks/customers/useAverageStayDuration";
-import { usePreferredSpot } from "@/hooks/customers/usePreferredSpot";
-import { useCustomersToday } from "@/hooks/customers/useCustomersToday";
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { DollarSign, CalendarCheck, AlertCircle, Star } from "lucide-react";
 
 export function CustomerInsights() {
-  const { data: averageValue } = useAverageValue();
-  const { data: avgStayDuration } = useAverageStayDuration();
-  const { data: preferredSpot } = usePreferredSpot();
-  const { data: customersToday } = useCustomersToday();
-
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-      <StatCard
-        title="Average Revenue Per Stay"
-        value={averageValue || '$0.00'}
-        description="Average revenue per booking"
-        icon={ChartBar}
-        trend="up"
-        trendValue="Based on paid invoices"
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <EnhancedStatCard
+        title="Total Spend"
+        value="$15,000"
+        icon={DollarSign}
+        trend={{
+          value: "10%",
+          isPositive: true,
+          comparedTo: "last quarter"
+        }}
+        breakdown={[
+          { label: "Slip Rentals", value: "$10,000", percentage: 67 },
+          { label: "Maintenance", value: "$5,000", percentage: 33 }
+        ]}
       />
-      <StatCard
-        title="Average Stay Duration"
-        value={avgStayDuration || '0 days'}
-        description="Average length of stay per visit"
-        icon={Clock}
-        trend="up"
-        trendValue="Calculated from bookings"
+      <EnhancedStatCard
+        title="Active Bookings"
+        value="3"
+        icon={CalendarCheck}
+        trend={{
+          value: "1 booking",
+          isPositive: true,
+          comparedTo: "last month"
+        }}
+        breakdown={[
+          { label: "Long-term", value: "2", percentage: 67 },
+          { label: "Short-term", value: "1", percentage: 33 }
+        ]}
       />
-      <StatCard
-        title="Most Popular Location"
-        value={preferredSpot || 'No bookings yet'}
-        description="Most frequently booked spot"
-        icon={MapPin}
-        trend="up"
-        trendValue="Based on booking history"
+      <EnhancedStatCard
+        title="Pending Payments"
+        value="$2,000"
+        icon={AlertCircle}
+        trend={{
+          value: "2 invoices",
+          isPositive: false,
+          comparedTo: "overdue"
+        }}
+        breakdown={[
+          { label: "30 days", value: "$1,200", percentage: 60 },
+          { label: "60 days", value: "$800", percentage: 40 }
+        ]}
+        recommendedActions={[
+          { 
+            label: "Send payment reminder",
+            impact: "Reduce outstanding balance"
+          }
+        ]}
       />
-      <StatCard
-        title="Today's Check-ins"
-        value={customersToday || 'No check-ins today'}
-        description="Customers checking in today"
-        icon={Users}
-        trend="up"
-        trendValue="Real-time updates"
+      <EnhancedStatCard
+        title="Customer Rating"
+        value="4.8/5"
+        icon={Star}
+        trend={{
+          value: "0.3",
+          isPositive: true,
+          comparedTo: "last rating"
+        }}
+        breakdown={[
+          { label: "Service", value: "5.0/5", percentage: 100 },
+          { label: "Timeliness", value: "4.5/5", percentage: 90 }
+        ]}
       />
     </div>
   );

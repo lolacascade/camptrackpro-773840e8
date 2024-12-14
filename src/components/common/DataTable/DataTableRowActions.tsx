@@ -27,7 +27,6 @@ export function DataTableRowActions<T>({
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
-          size="icon"
           className="h-8 w-8 p-0 hover:bg-transparent"
         >
           <span className="sr-only">Open menu</span>
@@ -36,9 +35,8 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg z-[100]"
-        sideOffset={5}
-        forceMount
+        className="w-[160px] bg-white border border-[#E8EBEB] shadow-lg"
+        style={{ zIndex: 100 }}
       >
         {onViewDetails && (
           <DropdownMenuItem 
