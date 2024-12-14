@@ -1,4 +1,4 @@
-import { Database } from "@/integrations/supabase/types"
+import type { Database } from "@/integrations/supabase/types"
 
 // Get table names from Database type, excluding views since they don't support CRUD
 type DatabaseTables = Database['public']['Tables']

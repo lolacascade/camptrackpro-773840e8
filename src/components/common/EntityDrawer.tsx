@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { EntityField } from "./EntityField"
-import { useEntityForm } from "./useEntityForm"
-import type { EntityDrawerProps } from "./types"
+import { EntityField } from "@/components/common/EntityDrawer/EntityField"
+import { useEntityForm } from "@/components/common/EntityDrawer/useEntityForm"
+import type { EntityDrawerProps } from "@/components/common/EntityDrawer/types"
 
 export function EntityDrawer({
   entity,

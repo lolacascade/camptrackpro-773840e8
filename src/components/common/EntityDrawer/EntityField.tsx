@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FormField } from "./types"
+import type { FormField } from "./types"
 
 export function EntityField({ field }: { field: FormField }) {
   const renderField = () => {
