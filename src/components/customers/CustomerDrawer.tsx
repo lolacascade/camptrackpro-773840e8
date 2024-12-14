@@ -3,10 +3,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Customer } from "@/types/customer"
-import { useEffect, useState } from "react"
-import { useToast } from "@/components/ui/use-toast"
+import { useEffect } from "react"
+import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useSession } from '@supabase/auth-helpers-react'
+import { useForm } from "react-hook-form"
+import InputMask from "react-input-mask"
 
 interface CustomerDrawerProps {
   customer: Customer | null
@@ -15,34 +17,56 @@ interface CustomerDrawerProps {
   onCustomerUpdated: () => void
 }
 
+interface CustomerFormData {
+  name: string
+  email: string
+  phone: string
+  address: string
+  city: string
+  state: string
+  country: string
+  postal_code: string
+  emergency_contact_name: string
+  emergency_contact_phone: string
+  emergency_contact_relationship: string
+}
+
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+
 export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: CustomerDrawerProps) {
   const { toast } = useToast()
-  const [formData, setFormData] = useState<Partial<Customer>>({})
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
   const session = useSession()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    setValue
+  } = useForm<CustomerFormData>({
+    defaultValues: {
+      name: '',
+      email: '',
+      phone: '',
+      address: '',
+      city: '',
+      state: '',
+      country: '',
+      postal_code: '',
+      emergency_contact_name: '',
+      emergency_contact_phone: '',
+      emergency_contact_relationship: ''
+    }
+  })
 
   useEffect(() => {
-    if (open) {
-      setFormData(customer || {
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
-      })
+    if (open && customer) {
+      reset(customer)
+    } else if (open) {
+      reset()
     }
-  }, [customer, open])
+  }, [customer, open, reset])
 
-  const handleSave = async () => {
-    if (!formData.name) {
-      toast({
-        title: "Error",
-        description: "Name is required.",
-        variant: "destructive",
-      })
-      return
-    }
-
+  const onSubmit = async (formData: CustomerFormData) => {
     if (!session?.user?.id) {
       toast({
         title: "Error",
@@ -52,17 +76,12 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
       return
     }
 
-    setIsSaving(true)
     try {
       if (customer) {
-        // Update existing customer
         const { error } = await supabase
           .from('customers')
           .update({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
+            ...formData,
             updated_at: new Date().toISOString(),
           })
           .eq('id', customer.id)
@@ -70,14 +89,10 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
 
         if (error) throw error
       } else {
-        // Create new customer
         const { error } = await supabase
           .from('customers')
           .insert([{
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
+            ...formData,
             user_id: session.user.id
           }])
 
@@ -97,96 +112,158 @@ export function CustomerDrawer({ customer, open, onClose, onCustomerUpdated }: C
         description: `Failed to ${customer ? 'update' : 'add'} customer.`,
         variant: "destructive",
       })
-    } finally {
-      setIsSaving(false)
-    }
-  }
-
-  const handleDelete = async () => {
-    if (!customer || !session?.user?.id) return
-    setIsDeleting(true)
-    try {
-      const { error } = await supabase
-        .from('customers')
-        .delete()
-        .eq('id', customer.id)
-        .eq('user_id', session.user.id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Customer deleted successfully.",
-      })
-      onCustomerUpdated()
-      onClose()
-    } catch (error) {
-      console.error('Error deleting customer:', error)
-      toast({
-        title: "Error",
-        description: "Failed to delete customer.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsDeleting(false)
     }
   }
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="text-[#133134]">{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
+          <SheetTitle>{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
         </SheetHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name" className="text-[#133134]">Name *</Label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Name *</Label>
             <Input
               id="name"
-              value={formData.name || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              {...register("name", { required: "Name is required" })}
+              className={errors.name ? "border-red-500" : ""}
             />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="email" className="text-[#133134]">Email</Label>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
               type="email"
-              value={formData.email || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: EMAIL_REGEX,
+                  message: "Please enter a valid email"
+                }
+              })}
+              className={errors.email ? "border-red-500" : ""}
             />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="phone" className="text-[#133134]">Phone</Label>
-            <Input
-              id="phone"
-              value={formData.phone || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-            />
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone</Label>
+            <InputMask
+              mask="+1 (999) 999-9999"
+              {...register("phone")}
+            >
+              {(inputProps: any) => (
+                <Input
+                  id="phone"
+                  {...inputProps}
+                  className={errors.phone ? "border-red-500" : ""}
+                />
+              )}
+            </InputMask>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="address" className="text-[#133134]">Address</Label>
+
+          <div className="space-y-2">
+            <Label htmlFor="address">Address</Label>
             <Input
               id="address"
-              value={formData.address || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
+              {...register("address")}
             />
           </div>
-        </div>
-        <div className="flex flex-col gap-2 mt-6">
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : `${customer ? 'Save Changes' : 'Add Customer'}`}
-          </Button>
-          {customer && (
-            <Button
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={isDeleting}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="city">City</Label>
+              <Input
+                id="city"
+                {...register("city")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="state">State/Province</Label>
+              <Input
+                id="state"
+                {...register("state")}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+              <Input
+                id="country"
+                {...register("country")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="postal_code">Postal/Zip Code</Label>
+              <InputMask
+                mask="99999-9999"
+                {...register("postal_code")}
+              >
+                {(inputProps: any) => (
+                  <Input
+                    id="postal_code"
+                    {...inputProps}
+                  />
+                )}
+              </InputMask>
+            </div>
+          </div>
+
+          <div className="border-t pt-4 mt-6">
+            <h3 className="font-medium mb-4">Emergency Contact</h3>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="emergency_contact_name">Contact Name</Label>
+                <Input
+                  id="emergency_contact_name"
+                  {...register("emergency_contact_name")}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="emergency_contact_phone">Contact Phone</Label>
+                <InputMask
+                  mask="+1 (999) 999-9999"
+                  {...register("emergency_contact_phone")}
+                >
+                  {(inputProps: any) => (
+                    <Input
+                      id="emergency_contact_phone"
+                      {...inputProps}
+                    />
+                  )}
+                </InputMask>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="emergency_contact_relationship">Relationship</Label>
+                <Input
+                  id="emergency_contact_relationship"
+                  {...register("emergency_contact_relationship")}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2 mt-6">
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="bg-[#0D1D1F] text-white hover:bg-[#0D1D1F]/90"
             >
-              {isDeleting ? "Deleting..." : "Delete Customer"}
+              {isSubmitting ? "Saving..." : `${customer ? 'Save Changes' : 'Add Customer'}`}
             </Button>
-          )}
-        </div>
+          </div>
+        </form>
       </SheetContent>
     </Sheet>
   )
