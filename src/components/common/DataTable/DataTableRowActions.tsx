@@ -5,7 +5,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, ExternalLink, Copy, Trash, Edit } from "lucide-react";
+import { MoreHorizontal, Edit, Eye, Copy, Trash } from "lucide-react";
 
 interface DataTableRowActionsProps<T> {
   row: T;
@@ -35,7 +35,7 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="bg-white border border-[#E8EBEB] shadow-lg rounded-md"
+        className="w-[160px] z-50 bg-white"
       >
         {onEdit && (
           <DropdownMenuItem 
@@ -51,7 +51,7 @@ export function DataTableRowActions<T>({
             onClick={() => onViewDetails(row)}
             className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
           >
-            <ExternalLink className="h-4 w-4" />
+            <Eye className="h-4 w-4" />
             <span>View Details</span>
           </DropdownMenuItem>
         )}
