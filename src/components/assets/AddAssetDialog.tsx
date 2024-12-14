@@ -15,6 +15,21 @@ interface AddAssetDialogProps {
   onAssetAdded: () => void;
 }
 
+const ASSET_TYPES = [
+  { value: 'speed_boat', label: 'Speed Boat' },
+  { value: 'sailboat', label: 'Sailboat' },
+  { value: 'fishing_boat', label: 'Fishing Boat' },
+  { value: 'pontoon_boat', label: 'Pontoon Boat' },
+  { value: 'yacht', label: 'Yacht' },
+  { value: 'catamaran', label: 'Catamaran' },
+  { value: 'kayak', label: 'Kayak' },
+  { value: 'rowboat', label: 'Rowboat' },
+  { value: 'houseboat', label: 'Houseboat' },
+  { value: 'cruise_boat', label: 'Cruise Boat' },
+  { value: 'jet_ski', label: 'Jet Ski' },
+  { value: 'other', label: 'Other' }
+] as const;
+
 export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialogProps) {
   const { toast } = useToast();
   const session = useSession();
@@ -24,7 +39,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_size: '',
     customer_id: null,
     slip_id: null,
-    asset_type: 'boat',
+    asset_type: 'speed_boat',
   });
 
   useEffect(() => {
@@ -87,7 +102,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         asset_size: '',
         customer_id: null,
         slip_id: null,
-        asset_type: 'boat',
+        asset_type: 'speed_boat',
       });
       
       toast({
@@ -141,10 +156,11 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
                 <SelectValue placeholder="Select asset type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="boat">Boat</SelectItem>
-                <SelectItem value="jet_ski">Jet Ski</SelectItem>
-                <SelectItem value="yacht">Yacht</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                {ASSET_TYPES.map(({ value, label }) => (
+                  <SelectItem key={value} value={value}>
+                    {label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
