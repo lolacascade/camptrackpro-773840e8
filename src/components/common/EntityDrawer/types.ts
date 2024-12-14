@@ -3,8 +3,8 @@ import { Database } from "@/integrations/supabase/types"
 
 // Get table names from Database type
 type DatabaseTables = Database['public']['Tables']
-type DatabaseViews = Database['public']['Views']
-export type TableNames = keyof (DatabaseTables & DatabaseViews)
+// We only want tables, not views, since we need to perform CRUD operations
+export type TableNames = keyof DatabaseTables
 
 export interface Field {
   name: string
