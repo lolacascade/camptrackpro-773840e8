@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
 
-// Map of asset types to their display names - now matching database values
+// Map of asset types to their display names - matching database values
 const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
   'Speed Boat': 'Speed Boat',
   'Sailboat': 'Sailboat',
@@ -26,7 +26,6 @@ const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
   'Houseboat': 'Houseboat',
   'Cruise Boat': 'Cruise Boat',
   'Jet Ski': 'Jet Ski',
-  'Boat': 'Boat',
   'Other': 'Other'
 };
 
@@ -73,11 +72,6 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
     return true;
   });
 
-  const getAssetTypeDisplayName = (type: string | null): string => {
-    if (!type) return 'Unspecified';
-    return ASSET_TYPE_DISPLAY_NAMES[type] || type;
-  };
-
   return (
     <div className="space-y-4">
       <DataTableFiltersBar filters={filters} />
@@ -106,7 +100,7 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
                 <TableCell>{asset.asset_size || 'N/A'}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">
-                    {getAssetTypeDisplayName(asset.asset_type)}
+                    {asset.asset_type || 'Unspecified'}
                   </Badge>
                 </TableCell>
                 <TableCell>{asset.customers?.name || 'Unassigned'}</TableCell>

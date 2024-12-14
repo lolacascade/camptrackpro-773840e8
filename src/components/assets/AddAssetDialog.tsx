@@ -102,7 +102,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
         asset_size: '',
         customer_id: null,
         slip_id: null,
-        asset_type: 'speed_boat',
+        asset_type: 'Speed Boat',
       });
       
       toast({
