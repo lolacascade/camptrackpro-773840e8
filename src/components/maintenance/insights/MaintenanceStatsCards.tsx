@@ -1,5 +1,5 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { ClipboardList, Clock, AlertTriangle, Tool } from "lucide-react";
+import { ClipboardList, Clock, AlertTriangle, Wrench } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
@@ -136,7 +136,7 @@ export function MaintenanceStatsCards() {
       <EnhancedStatCard
         title="Equipment Status"
         value={`${stats?.equipmentStatus.operational || 0}%`}
-        icon={Tool}
+        icon={Wrench}
         trend={{
           value: "5%",
           isPositive: true,
