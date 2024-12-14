@@ -6,11 +6,11 @@ import { useAssets } from "@/hooks/assets/use-assets";
 import { useSession } from "@supabase/auth-helpers-react";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { PageStatsGrid } from "@/components/common/PageStatsGrid";
 import { Badge } from "@/components/ui/badge";
 import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { AddAssetDialog } from "@/components/assets/AddAssetDialog";
 import { useToast } from "@/components/ui/use-toast";
+import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 
 export default function Assets() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,16 +54,6 @@ export default function Assets() {
     },
   ];
 
-  // Mock stats for demonstration
-  const stats = {
-    occupancyRate: 85,
-    occupiedSlips: 42,
-    totalSlips: 50,
-    activeBoats: 38,
-    monthlyRevenue: 45231,
-    pendingMaintenance: 8
-  };
-
   if (error) {
     toast({
       title: "Error loading assets",
@@ -88,7 +78,7 @@ export default function Assets() {
       <PageContainer>
         <div className="space-y-6">
           <AssetsHeader onAddAsset={() => setIsAddAssetOpen(true)} />
-          <PageStatsGrid title="Assets" stats={stats} />
+          <AssetStatsCards />
           <DataTable
             data={assets || []}
             columns={columns}
@@ -96,6 +86,18 @@ export default function Assets() {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             tableName="assets"
+            onEdit={(asset) => {
+              // Handle edit action
+              console.log('Edit asset:', asset);
+            }}
+            onViewDetails={(asset) => {
+              // Handle view details action
+              console.log('View asset details:', asset);
+            }}
+            onDelete={(asset) => {
+              // Handle delete action
+              console.log('Delete asset:', asset);
+            }}
           />
           <AddAssetDialog 
             isOpen={isAddAssetOpen}
