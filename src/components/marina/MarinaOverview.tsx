@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MarinaChart } from "@/components/marina/chart/MarinaChart";
+import { MarinaChart } from "./chart/MarinaChart";
 import { format, subMonths, addMonths } from "date-fns";
 import { useState } from "react";
 import { DateRangeControls } from "./DateRangeControls";
 import { MarinaStats } from "./MarinaStats";
-import { DockStats } from "./types";
+import { DockStats } from "./chart/types";
 
 export function MarinaOverview() {
   const [dateRange, setDateRange] = useState(12);
@@ -44,6 +44,16 @@ export function MarinaOverview() {
   const currentMonthStats = chartData.find(data => 
     format(data.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
   );
+
+  const handleDateRangeChange = (newRange: number) => {
+    setDateRange(newRange);
+  };
+
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => 
+      direction === 'prev' ? subMonths(prev, 1) : addMonths(prev, 1)
+    );
+  };
 
   return (
     <Card className="col-span-2 border border-[#E8EBEB] rounded-xl bg-transparent mb-8">
