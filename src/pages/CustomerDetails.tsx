@@ -4,11 +4,16 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DataTable } from "@/components/common/DataTable/DataTable";
+import { getBookingsColumns } from "@/components/dashboard/bookings/BookingsColumns";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CustomerInsights } from "@/components/customers/CustomerInsights";
 
 export default function CustomerDetails() {
   const { id } = useParams();
 
-  const { data: customer, isLoading } = useQuery({
+  const { data: customer, isLoading: isLoadingCustomer } = useQuery({
     queryKey: ['customer', id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -22,7 +27,65 @@ export default function CustomerDetails() {
     },
   });
 
-  if (isLoading) {
+  const { data: bookings, isLoading: isLoadingBookings } = useQuery({
+    queryKey: ['customer-bookings', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          slot:slots(name)
+        `)
+        .eq('customer_id', id)
+        .order('check_in_date', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: maintenanceRequests, isLoading: isLoadingMaintenance } = useQuery({
+    queryKey: ['customer-maintenance', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('maintenance_requests')
+        .select('*')
+        .eq('customer_id', id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: assets, isLoading: isLoadingAssets } = useQuery({
+    queryKey: ['customer-assets', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('assets')
+        .select('*')
+        .eq('customer_id', id);
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: notes, isLoading: isLoadingNotes } = useQuery({
+    queryKey: ['customer-notes', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('customer_notes')
+        .select('*')
+        .eq('customer_id', id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  if (isLoadingCustomer || isLoadingBookings || isLoadingMaintenance || isLoadingAssets || isLoadingNotes) {
     return (
       <PageWithChat>
         <PageContainer>
@@ -53,17 +116,104 @@ export default function CustomerDetails() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <h1 className="text-3xl font-semibold text-[#133134]">{customer.name}</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h2 className="text-xl font-medium text-[#133134]">Contact Information</h2>
-              <div className="space-y-2">
-                <p><span className="font-medium">Email:</span> {customer.email}</p>
-                <p><span className="font-medium">Phone:</span> {customer.phone}</p>
-                <p><span className="font-medium">Address:</span> {customer.address}</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-semibold text-[#133134]">{customer.name}</h1>
+              <div className="mt-2 text-gray-600">
+                <p>{customer.email}</p>
+                <p>{customer.phone}</p>
+                <p>{customer.address}</p>
               </div>
             </div>
           </div>
+
+          <CustomerInsights />
+
+          <Tabs defaultValue="bookings" className="w-full">
+            <TabsList>
+              <TabsTrigger value="bookings">Bookings ({bookings?.length || 0})</TabsTrigger>
+              <TabsTrigger value="maintenance">Maintenance ({maintenanceRequests?.length || 0})</TabsTrigger>
+              <TabsTrigger value="assets">Assets ({assets?.length || 0})</TabsTrigger>
+              <TabsTrigger value="notes">Notes ({notes?.length || 0})</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="bookings">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Booking History</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    data={bookings || []}
+                    columns={getBookingsColumns()}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="maintenance">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Maintenance Requests</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    data={maintenanceRequests || []}
+                    columns={[
+                      { header: "Description", accessorKey: "description" },
+                      { header: "Status", accessorKey: "status" },
+                      { header: "Priority", accessorKey: "priority" },
+                      {
+                        header: "Created",
+                        accessorKey: "created_at",
+                        cell: (item) => new Date(item.created_at).toLocaleDateString()
+                      }
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="assets">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Assets</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    data={assets || []}
+                    columns={[
+                      { header: "Name", accessorKey: "asset_name" },
+                      { header: "Type", accessorKey: "asset_type" },
+                      { header: "Size", accessorKey: "asset_size" }
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="notes">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Customer Notes</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    data={notes || []}
+                    columns={[
+                      { header: "Note", accessorKey: "note" },
+                      { header: "Tag", accessorKey: "tag" },
+                      {
+                        header: "Created",
+                        accessorKey: "created_at",
+                        cell: (item) => new Date(item.created_at).toLocaleDateString()
+                      }
+                    ]}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </PageContainer>
     </PageWithChat>
