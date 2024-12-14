@@ -9,10 +9,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
 import { useSession } from '@supabase/auth-helpers-react';
+import { useToast } from "@/hooks/use-toast";
 import type { Expense } from "@/types/expense";
 import type { ChartDataItem, ExpenseData } from "./types";
 
-const GROWTH_RATE = 1.05; // 5% projected growth
+const GROWTH_RATE = 1.05;
 const MONTHS_BACK = 6;
 const MONTHS_FORWARD = 5;
 const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies', 'Other'] as const;
@@ -21,6 +22,7 @@ export function FinancialsOverview() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const session = useSession();
+  const { toast } = useToast();
 
   const { data: expenses = [], isLoading, refetch } = useQuery({
     queryKey: ['expenses', session?.user.id],
@@ -33,6 +35,11 @@ export function FinancialsOverview() {
 
       if (error) {
         console.error('Error fetching expenses:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch expenses. Please try again.",
+          variant: "destructive",
+        });
         return [];
       }
 
@@ -44,11 +51,21 @@ export function FinancialsOverview() {
   const { data: chartData = [] } = useQuery({
     queryKey: ["expenses-chart", session?.user.id],
     queryFn: async () => {
-      const { data: expenses } = await supabase
+      const { data: expenses, error } = await supabase
         .from("expenses")
         .select("amount, category, date")
         .eq('user_id', session?.user.id)
         .order("date", { ascending: true });
+
+      if (error) {
+        console.error('Error fetching chart data:', error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch chart data. Please try again.",
+          variant: "destructive",
+        });
+        return [];
+      }
 
       if (!expenses) return [];
 
@@ -117,12 +134,28 @@ export function FinancialsOverview() {
     enabled: !!session?.user.id,
   });
 
-  const handleEdit = (expense: Expense) => {
+  const handleEdit = async (expense: Expense) => {
+    if (!session?.user.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to edit expenses.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSelectedExpense(expense);
     setIsDrawerOpen(true);
   };
 
   const handleAdd = () => {
+    if (!session?.user.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to add expenses.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSelectedExpense(null);
     setIsDrawerOpen(true);
   };
