@@ -26,6 +26,14 @@ export function useMaintenanceStats() {
 
       if (requestsError) throw requestsError;
 
+      // Get total slots count
+      const { count: totalSlots, error: slotsError } = await supabase
+        .from('slots')
+        .select('id', { count: 'exact', head: true })
+        .eq('user_id', session.user.id);
+
+      if (slotsError) throw slotsError;
+
       // Calculate total requests by status
       const open = requests?.filter(r => r.status === 'pending').length || 0;
       const inProgress = requests?.filter(r => r.status === 'in_progress').length || 0;
@@ -48,13 +56,6 @@ export function useMaintenanceStats() {
 
       // Calculate equipment status
       const underMaintenance = requests?.filter(r => r.status === 'in_progress').length || 0;
-      const total = await supabase
-        .from('slots')
-        .select('id', { count: 'exact' })
-        .eq('user_id', session.user.id)
-        .single();
-
-      const totalSlots = total?.count || 0;
       const operationalPercentage = totalSlots > 0 ? Math.round(((totalSlots - underMaintenance) / totalSlots) * 100) : 0;
 
       return {
