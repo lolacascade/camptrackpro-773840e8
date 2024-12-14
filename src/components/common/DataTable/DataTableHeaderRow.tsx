@@ -19,9 +19,8 @@ export function DataTableHeaderRow<T>({
         {columns.map((column, index) => (
           <TableHead
             key={index}
-            className="text-[#133134]"
+            className={`text-[#133134] ${column.sortable ? 'cursor-pointer select-none' : ''}`}
             onClick={() => column.sortable && onSort?.(column.accessorKey as string)}
-            style={{ cursor: column.sortable ? 'pointer' : 'default' }}
           >
             <div className="flex items-center gap-2">
               {column.header}

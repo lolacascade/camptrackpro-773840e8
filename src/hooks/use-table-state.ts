@@ -59,6 +59,18 @@ export function useTableState<T>(initialData: T[]) {
     return String(a).localeCompare(String(b));
   };
 
+  const handleSort = (key: string) => {
+    setSortConfig(current => {
+      if (current?.key === key) {
+        if (current.direction === 'asc') {
+          return { key, direction: 'desc' };
+        }
+        return null;
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
   const filteredAndSortedData = useMemo(() => {
     let result = [...localData];
 
@@ -93,6 +105,7 @@ export function useTableState<T>(initialData: T[]) {
     setCurrentPage,
     sortConfig,
     setSortConfig,
+    handleSort,
     localData,
     setLocalData,
     filteredAndSortedData
