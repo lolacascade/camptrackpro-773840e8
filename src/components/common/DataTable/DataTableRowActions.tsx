@@ -30,21 +30,30 @@ export function DataTableRowActions<T>({
           <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-[160px] bg-white">
         {onViewDetails && (
-          <DropdownMenuItem onClick={() => onViewDetails(row)}>
+          <DropdownMenuItem 
+            onClick={() => onViewDetails(row)}
+            className="cursor-pointer hover:bg-slate-50"
+          >
             <FileText className="mr-2 h-4 w-4" />
             View Details
           </DropdownMenuItem>
         )}
         {onEdit && (
-          <DropdownMenuItem onClick={() => onEdit(row)}>
+          <DropdownMenuItem 
+            onClick={() => onEdit(row)}
+            className="cursor-pointer hover:bg-slate-50"
+          >
             <Pencil className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>
         )}
         {onDuplicate && (
-          <DropdownMenuItem onClick={() => onDuplicate(row)}>
+          <DropdownMenuItem 
+            onClick={() => onDuplicate(row)}
+            className="cursor-pointer hover:bg-slate-50"
+          >
             <Copy className="mr-2 h-4 w-4" />
             Duplicate
           </DropdownMenuItem>
@@ -52,7 +61,7 @@ export function DataTableRowActions<T>({
         {onDelete && (
           <DropdownMenuItem
             onClick={() => onDelete(row)}
-            className="text-red-600"
+            className="cursor-pointer text-red-600 hover:bg-slate-50"
           >
             <Trash className="mr-2 h-4 w-4" />
             Delete
