@@ -7,7 +7,6 @@ import {
   ResponsiveContainer,
   Tooltip,
   Legend,
-  ReferenceLine,
 } from "recharts";
 import { ChartSummary } from "./ChartSummary";
 import { ChartTooltip } from "./ChartTooltip";
