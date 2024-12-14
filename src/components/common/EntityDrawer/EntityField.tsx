@@ -36,8 +36,10 @@ export function EntityField({ field }: { field: FormField }) {
         return (
           <Input
             type="date"
-            value={field.value || ''}
+            value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
             onChange={(e) => field.onChange(e.target.value)}
+            min="2000-01-01"
+            max="2100-12-31"
           />
         )
       default:
