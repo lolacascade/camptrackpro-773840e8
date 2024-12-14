@@ -25,3 +25,21 @@ export interface MonthlyBudget {
   month: string;
   amount: number;
 }
+
+export type ExpenseType = 
+  | "Maintenance"
+  | "Utilities"
+  | "Supplies"
+  | "Administrative Costs"
+  | "Taxes"
+  | "Capital Expenditures"
+  | "Other";
+
+export type ExpenseStatus = "completed" | "pending" | "cancelled";
+
+export interface ExpenseFilter {
+  type?: ExpenseType;
+  status?: ExpenseStatus;
+  startDate?: Date;
+  endDate?: Date;
+}

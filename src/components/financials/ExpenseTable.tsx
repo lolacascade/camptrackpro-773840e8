@@ -14,7 +14,7 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
       accessorKey: "description",
     },
     {
-      header: "Category",
+      header: "Type",
       accessorKey: "category",
     },
     {
@@ -30,7 +30,31 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
     {
       header: "Status",
       accessorKey: "status",
+      cell: (row: any) => (
+        <span className={`capitalize ${
+          row.getValue() === 'completed' ? 'text-green-600' : 
+          row.getValue() === 'pending' ? 'text-yellow-600' : 'text-gray-600'
+        }`}>
+          {row.getValue()}
+        </span>
+      ),
     },
+  ];
+
+  const typeOptions = [
+    { label: "All Types", value: "" },
+    { label: "Maintenance", value: "Maintenance" },
+    { label: "Utilities", value: "Utilities" },
+    { label: "Supplies", value: "Supplies" },
+    { label: "Administrative Costs", value: "Administrative Costs" },
+    { label: "Taxes", value: "Taxes" },
+    { label: "Capital Expenditures", value: "Capital Expenditures" },
+  ];
+
+  const statusOptions = [
+    { label: "All Statuses", value: "" },
+    { label: "Completed", value: "completed" },
+    { label: "Pending", value: "pending" },
   ];
 
   return (
@@ -39,6 +63,20 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
       columns={columns}
       onEdit={onEdit}
       title="Expenses"
+      filters={[
+        {
+          name: "type",
+          options: typeOptions,
+          value: "",
+          onChange: () => {},
+        },
+        {
+          name: "status",
+          options: statusOptions,
+          value: "",
+          onChange: () => {},
+        },
+      ]}
     />
   );
 }
