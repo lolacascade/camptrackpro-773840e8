@@ -19,9 +19,10 @@ const navigation = [
   { name: "Dashboard", href: "/app" },
   { name: "Bookings", href: "/app/bookings" },
   { name: "Customers", href: "/app/customers" },
-  { name: "Marina Map", href: "/app/map" },
   { name: "Assets", href: "/app/assets" },
   { name: "Maintenance", href: "/app/maintenance" },
+  { name: "Financials", href: "/app/financials" },
+  { name: "Marina Map", href: "/app/map" },
 ];
 
 export function Header() {
