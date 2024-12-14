@@ -12,21 +12,7 @@ import { Edit2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
-
-const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
-  'Speed Boat': 'Speed Boat',
-  'Sailboat': 'Sailboat',
-  'Fishing Boat': 'Fishing Boat',
-  'Pontoon Boat': 'Pontoon Boat',
-  'Yacht': 'Yacht',
-  'Catamaran': 'Catamaran',
-  'Kayak': 'Kayak',
-  'Rowboat': 'Rowboat',
-  'Houseboat': 'Houseboat',
-  'Cruise Boat': 'Cruise Boat',
-  'Jet Ski': 'Jet Ski',
-  'Other': 'Other'
-};
+import { ASSET_TYPES } from "./form/AssetFormFields";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -43,10 +29,7 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
       name: "type",
       options: [
         { label: "All Types", value: "all" },
-        ...Object.entries(ASSET_TYPE_DISPLAY_NAMES).map(([value, label]) => ({
-          label,
-          value
-        }))
+        ...ASSET_TYPES
       ],
       value: typeFilter,
       onChange: setTypeFilter
