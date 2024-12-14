@@ -6,7 +6,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { getBookingsColumns } from "@/components/dashboard/bookings/BookingsColumns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CustomerInsights } from "@/components/customers/CustomerInsights";
 
@@ -34,7 +33,8 @@ export default function CustomerDetails() {
         .from('bookings')
         .select(`
           *,
-          slot:slots(name)
+          slot:slots(name),
+          customer:customers(name, email)
         `)
         .eq('customer_id', id)
         .order('check_in_date', { ascending: false });
@@ -49,7 +49,10 @@ export default function CustomerDetails() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('maintenance_requests')
-        .select('*')
+        .select(`
+          *,
+          slot:slots(name)
+        `)
         .eq('customer_id', id)
         .order('created_at', { ascending: false });
 
@@ -145,7 +148,30 @@ export default function CustomerDetails() {
                 <CardContent>
                   <DataTable
                     data={bookings || []}
-                    columns={getBookingsColumns()}
+                    columns={[
+                      { 
+                        header: "Slot",
+                        accessorKey: "slot.name"
+                      },
+                      {
+                        header: "Check In",
+                        accessorKey: "check_in_date",
+                        cell: (item) => new Date(item.check_in_date).toLocaleDateString()
+                      },
+                      {
+                        header: "Check Out",
+                        accessorKey: "check_out_date",
+                        cell: (item) => new Date(item.check_out_date).toLocaleDateString()
+                      },
+                      {
+                        header: "Status",
+                        accessorKey: "status"
+                      },
+                      {
+                        header: "Reservation",
+                        accessorKey: "reservation_code"
+                      }
+                    ]}
                   />
                 </CardContent>
               </Card>
