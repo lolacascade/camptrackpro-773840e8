@@ -107,6 +107,12 @@ export function DataTable<T extends { id?: number | string }>({
     col => visibleColumns.includes(col.accessorKey as string)
   );
 
+  // Calculate pagination
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = filteredAndSortedData.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+
   return (
     <div className="space-y-4">
       <DataTableHeader
@@ -128,7 +134,7 @@ export function DataTable<T extends { id?: number | string }>({
             onSort={handleSort}
           />
           <DataTableBody
-            data={filteredAndSortedData}
+            data={paginatedData}
             columns={visibleColumnsData}
             onViewDetails={onViewDetails}
             onEdit={onEdit}
@@ -140,7 +146,7 @@ export function DataTable<T extends { id?: number | string }>({
 
       <DataTablePagination
         currentPage={currentPage}
-        totalPages={Math.ceil(filteredAndSortedData.length / itemsPerPage)}
+        totalPages={totalPages}
         onPageChange={setCurrentPage}
       />
     </div>
