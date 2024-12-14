@@ -13,21 +13,21 @@ import { Badge } from "@/components/ui/badge";
 import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
 
-// Map of asset types to their display names
+// Map of asset types to their display names - now matching database values
 const ASSET_TYPE_DISPLAY_NAMES: Record<string, string> = {
-  'speed_boat': 'Speed Boat',
-  'sailboat': 'Sailboat',
-  'fishing_boat': 'Fishing Boat',
-  'pontoon_boat': 'Pontoon Boat',
-  'yacht': 'Yacht',
-  'catamaran': 'Catamaran',
-  'kayak': 'Kayak',
-  'rowboat': 'Rowboat',
-  'houseboat': 'Houseboat',
-  'cruise_boat': 'Cruise Boat',
-  'jet_ski': 'Jet Ski',
-  'boat': 'Boat',
-  'other': 'Other'
+  'Speed Boat': 'Speed Boat',
+  'Sailboat': 'Sailboat',
+  'Fishing Boat': 'Fishing Boat',
+  'Pontoon Boat': 'Pontoon Boat',
+  'Yacht': 'Yacht',
+  'Catamaran': 'Catamaran',
+  'Kayak': 'Kayak',
+  'Rowboat': 'Rowboat',
+  'Houseboat': 'Houseboat',
+  'Cruise Boat': 'Cruise Boat',
+  'Jet Ski': 'Jet Ski',
+  'Boat': 'Boat',
+  'Other': 'Other'
 };
 
 interface AssetTableProps {

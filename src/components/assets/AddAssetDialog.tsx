@@ -16,18 +16,18 @@ interface AddAssetDialogProps {
 }
 
 const ASSET_TYPES = [
-  { value: 'speed_boat', label: 'Speed Boat' },
-  { value: 'sailboat', label: 'Sailboat' },
-  { value: 'fishing_boat', label: 'Fishing Boat' },
-  { value: 'pontoon_boat', label: 'Pontoon Boat' },
-  { value: 'yacht', label: 'Yacht' },
-  { value: 'catamaran', label: 'Catamaran' },
-  { value: 'kayak', label: 'Kayak' },
-  { value: 'rowboat', label: 'Rowboat' },
-  { value: 'houseboat', label: 'Houseboat' },
-  { value: 'cruise_boat', label: 'Cruise Boat' },
-  { value: 'jet_ski', label: 'Jet Ski' },
-  { value: 'other', label: 'Other' }
+  { value: 'Speed Boat', label: 'Speed Boat' },
+  { value: 'Sailboat', label: 'Sailboat' },
+  { value: 'Fishing Boat', label: 'Fishing Boat' },
+  { value: 'Pontoon Boat', label: 'Pontoon Boat' },
+  { value: 'Yacht', label: 'Yacht' },
+  { value: 'Catamaran', label: 'Catamaran' },
+  { value: 'Kayak', label: 'Kayak' },
+  { value: 'Rowboat', label: 'Rowboat' },
+  { value: 'Houseboat', label: 'Houseboat' },
+  { value: 'Cruise Boat', label: 'Cruise Boat' },
+  { value: 'Jet Ski', label: 'Jet Ski' },
+  { value: 'Other', label: 'Other' }
 ] as const;
 
 export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialogProps) {
@@ -39,7 +39,7 @@ export function AddAssetDialog({ isOpen, onClose, onAssetAdded }: AddAssetDialog
     asset_size: '',
     customer_id: null,
     slip_id: null,
-    asset_type: 'speed_boat',
+    asset_type: 'Speed Boat',
   });
 
   useEffect(() => {
