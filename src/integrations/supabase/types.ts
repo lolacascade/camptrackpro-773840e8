@@ -321,6 +321,78 @@ export type Database = {
         }
         Relationships: []
       }
+      expense_categories: {
+        Row: {
+          budget_allocation: number | null
+          created_at: string | null
+          description: string | null
+          id: number
+          name: string
+          user_id: string | null
+        }
+        Insert: {
+          budget_allocation?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          name: string
+          user_id?: string | null
+        }
+        Update: {
+          budget_allocation?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string | null
+          date: string
+          description: string
+          id: number
+          notes: string | null
+          payment_method: string | null
+          receipt_url: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string | null
+          date: string
+          description: string
+          id?: number
+          notes?: string | null
+          payment_method?: string | null
+          receipt_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string | null
+          date?: string
+          description?: string
+          id?: number
+          notes?: string | null
+          payment_method?: string | null
+          receipt_url?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
@@ -554,6 +626,33 @@ export type Database = {
           user_id?: string | null
           videos?: string[] | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      monthly_budgets: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: number
+          month: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: number
+          month: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: number
+          month?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

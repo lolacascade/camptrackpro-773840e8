@@ -12,6 +12,7 @@ import CustomerDetails from "@/pages/CustomerDetails";
 import Assets from "@/pages/Assets";
 import Maintenance from "@/pages/Maintenance";
 import Settings from "@/pages/Settings";
+import Financials from "@/pages/Financials";
 
 const AppLayout = () => (
   <ProtectedRoute>
@@ -23,6 +24,7 @@ const AppLayout = () => (
         <Route path="customers/:id" element={<CustomerDetails />} />
         <Route path="assets" element={<Assets />} />
         <Route path="maintenance" element={<Maintenance />} />
+        <Route path="financials" element={<Financials />} />
         <Route path="settings" element={<Settings />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
