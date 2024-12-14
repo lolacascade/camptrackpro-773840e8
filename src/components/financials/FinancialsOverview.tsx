@@ -1,27 +1,15 @@
 import { useState } from 'react';
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { AddExpenseDrawer } from "./AddExpenseDrawer";
 import { ExpenseTable } from "./ExpenseTable";
 import { FinancialsStatsCards } from "./FinancialsStatsCards";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { FinancialsChart } from "./chart/FinancialsChart";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, subMonths, addMonths } from "date-fns";
 import type { Expense } from "@/types/expense";
-
-interface ExpenseData {
-  Maintenance: number;
-  Utilities: number;
-  Supplies: number;
-  Other: number;
-}
-
-interface ChartDataItem extends ExpenseData {
-  month: string;
-  isProjected: boolean;
-}
+import type { ChartDataItem, ExpenseData } from "./types";
 
 const GROWTH_RATE = 1.05; // 5% projected growth
 const MONTHS_BACK = 6;
@@ -146,65 +134,7 @@ export function FinancialsOverview() {
       </div>
 
       <FinancialsStatsCards />
-
-      <Card className="p-6">
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData}>
-              <defs>
-                <linearGradient id="maintenance" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="utilities" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="supplies" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#ffc658" stopOpacity={0}/>
-                </linearGradient>
-                <linearGradient id="other" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ff7300" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#ff7300" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="Maintenance"
-                stroke="#82ca9d"
-                fillOpacity={1}
-                fill="url(#maintenance)"
-              />
-              <Area
-                type="monotone"
-                dataKey="Utilities"
-                stroke="#8884d8"
-                fillOpacity={1}
-                fill="url(#utilities)"
-              />
-              <Area
-                type="monotone"
-                dataKey="Supplies"
-                stroke="#ffc658"
-                fillOpacity={1}
-                fill="url(#supplies)"
-              />
-              <Area
-                type="monotone"
-                dataKey="Other"
-                stroke="#ff7300"
-                fillOpacity={1}
-                fill="url(#other)"
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
+      <FinancialsChart chartData={chartData} />
 
       {isLoading ? (
         <div className="flex justify-center py-8">
