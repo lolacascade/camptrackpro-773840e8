@@ -1,5 +1,5 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { Boat, Activity, Wrench, Calendar } from "lucide-react";
+import { Ship, Activity, Wrench, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
@@ -82,7 +82,7 @@ export function AssetStatsCards() {
       <EnhancedStatCard
         title="Total Assets"
         value={`${(stats?.totalAssets.boats || 0) + (stats?.totalAssets.jetSkis || 0)}`}
-        icon={Boat}
+        icon={Ship}
         breakdown={[
           { label: "Boats", value: stats?.totalAssets.boats.toString() || "0", percentage: 70 },
           { label: "Jet Skis", value: stats?.totalAssets.jetSkis.toString() || "0", percentage: 30 }
