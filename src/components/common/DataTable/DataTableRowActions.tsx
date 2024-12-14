@@ -1,76 +1,61 @@
+import { MoreHorizontal, FileText, Pencil, Copy, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Edit, Eye, Copy, Trash } from "lucide-react";
 
 interface DataTableRowActionsProps<T> {
   row: T;
-  onEdit?: (item: T) => void;
-  onViewDetails?: (item: T) => void;
-  onDuplicate?: (item: T) => void;
-  onDelete?: (item: T) => void;
+  onViewDetails?: (row: T) => void;
+  onEdit?: (row: T) => void;
+  onDuplicate?: (row: T) => void;
+  onDelete?: (row: T) => void;
 }
 
 export function DataTableRowActions<T>({
   row,
-  onEdit,
   onViewDetails,
+  onEdit,
   onDuplicate,
   onDelete,
 }: DataTableRowActionsProps<T>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          className="h-8 w-8 p-0 hover:bg-transparent"
-        >
+        <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <MoreHorizontal className="h-4 w-4 text-[#133134]" />
+          <MoreHorizontal className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-[160px] z-50 bg-white"
-      >
-        {onEdit && (
-          <DropdownMenuItem 
-            onClick={() => onEdit(row)}
-            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
-          >
-            <Edit className="h-4 w-4" />
-            <span>Edit</span>
+      <DropdownMenuContent align="end" className="w-[160px]">
+        {onViewDetails && (
+          <DropdownMenuItem onClick={() => onViewDetails(row)}>
+            <FileText className="mr-2 h-4 w-4" />
+            View Details
           </DropdownMenuItem>
         )}
-        {onViewDetails && (
-          <DropdownMenuItem 
-            onClick={() => onViewDetails(row)}
-            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
-          >
-            <Eye className="h-4 w-4" />
-            <span>View Details</span>
+        {onEdit && (
+          <DropdownMenuItem onClick={() => onEdit(row)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Edit
           </DropdownMenuItem>
         )}
         {onDuplicate && (
-          <DropdownMenuItem 
-            onClick={() => onDuplicate(row)}
-            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-[#133134] hover:bg-[#F8F9F9]"
-          >
-            <Copy className="h-4 w-4" />
-            <span>Duplicate</span>
+          <DropdownMenuItem onClick={() => onDuplicate(row)}>
+            <Copy className="mr-2 h-4 w-4" />
+            Duplicate
           </DropdownMenuItem>
         )}
         {onDelete && (
           <DropdownMenuItem
             onClick={() => onDelete(row)}
-            className="cursor-pointer flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-[#F8F9F9]"
+            className="text-red-600"
           >
-            <Trash className="h-4 w-4" />
-            <span>Delete</span>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
