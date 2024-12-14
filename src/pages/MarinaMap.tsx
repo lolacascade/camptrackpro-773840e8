@@ -6,10 +6,43 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { MarinaChart } from "@/components/marina/chart/MarinaChart";
 import { format, subMonths, addMonths } from "date-fns";
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { Anchor, Ship, ArrowRightLeft, Activity } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function MarinaMap() {
   const [selectedDock, setSelectedDock] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: marinaStats } = useQuery({
+    queryKey: ['marina-stats'],
+    queryFn: async () => {
+      const today = new Date().toISOString();
+      const [slotsData, bookingsData] = await Promise.all([
+        supabase.from('slots').select('status'),
+        supabase.from('bookings')
+          .select('*')
+          .gte('check_in_date', today)
+          .lte('check_in_date', new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString())
+      ]);
+
+      const totalSlots = slotsData.data?.length || 0;
+      const availableSlots = slotsData.data?.filter(slot => slot.status === 'available').length || 0;
+      const maintenanceSlots = slotsData.data?.filter(slot => slot.status === 'maintenance').length || 0;
+      const occupiedSlots = totalSlots - availableSlots - maintenanceSlots;
+      const upcomingArrivals = bookingsData.data?.length || 0;
+
+      return {
+        totalSlots,
+        availableSlots,
+        maintenanceSlots,
+        occupiedSlots,
+        occupancyRate: Math.round((occupiedSlots / totalSlots) * 100),
+        upcomingArrivals
+      };
+    }
+  });
 
   // Generate sample data for the chart
   const generateMonthlyData = () => {
@@ -56,6 +89,73 @@ export default function MarinaMap() {
             </Button>
           </div>
 
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <EnhancedStatCard
+              title="Total Docks"
+              value={`${marinaStats?.totalSlots || 0}`}
+              icon={Anchor}
+              trend={{
+                value: "2 new",
+                isPositive: true,
+                comparedTo: "last month"
+              }}
+              breakdown={[
+                { 
+                  label: "Available", 
+                  value: String(marinaStats?.availableSlots || 0), 
+                  percentage: Math.round(((marinaStats?.availableSlots || 0) / (marinaStats?.totalSlots || 1)) * 100) 
+                },
+                { 
+                  label: "Maintenance", 
+                  value: String(marinaStats?.maintenanceSlots || 0),
+                  percentage: Math.round(((marinaStats?.maintenanceSlots || 0) / (marinaStats?.totalSlots || 1)) * 100)
+                }
+              ]}
+            />
+            <EnhancedStatCard
+              title="Current Occupancy"
+              value={`${marinaStats?.occupancyRate || 0}%`}
+              icon={Ship}
+              trend={{
+                value: "2%",
+                isPositive: true,
+                comparedTo: "last week"
+              }}
+              breakdown={[
+                { label: "Occupied Slips", value: String(marinaStats?.occupiedSlots || 0), percentage: marinaStats?.occupancyRate || 0 },
+                { label: "Available Slips", value: String(marinaStats?.availableSlots || 0), percentage: 100 - (marinaStats?.occupancyRate || 0) }
+              ]}
+            />
+            <EnhancedStatCard
+              title="Upcoming Activity"
+              value={String(marinaStats?.upcomingArrivals || 0)}
+              icon={ArrowRightLeft}
+              trend={{
+                value: "3 more",
+                isPositive: true,
+                comparedTo: "last week"
+              }}
+              breakdown={[
+                { label: "Arrivals", value: String(marinaStats?.upcomingArrivals || 0), percentage: 60 },
+                { label: "Departures", value: "8", percentage: 40 }
+              ]}
+            />
+            <EnhancedStatCard
+              title="Dock Utilization"
+              value="65%"
+              icon={Activity}
+              trend={{
+                value: "5%",
+                isPositive: true,
+                comparedTo: "last month"
+              }}
+              breakdown={[
+                { label: "Long-term", value: "70%", percentage: 70 },
+                { label: "Short-term", value: "50%", percentage: 50 }
+              ]}
+            />
+          </div>
+
           <Card className="border border-[#E8EBEB] bg-transparent">
             <CardContent className="p-6">
               <MarinaChart chartData={generateMonthlyData()} />
@@ -69,33 +169,6 @@ export default function MarinaMap() {
               </div>
             </CardContent>
           </Card>
-
-          <div className="grid grid-cols-4 gap-4">
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-sm font-medium">Total Slips</div>
-                <div className="text-2xl font-bold mt-2">150</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-sm font-medium">Available</div>
-                <div className="text-2xl font-bold mt-2">45</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-sm font-medium">Occupied</div>
-                <div className="text-2xl font-bold mt-2">98</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4">
-                <div className="text-sm font-medium">Maintenance</div>
-                <div className="text-2xl font-bold mt-2">7</div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </PageContainer>
     </PageWithChat>
