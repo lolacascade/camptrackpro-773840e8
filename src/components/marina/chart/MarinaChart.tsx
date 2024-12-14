@@ -15,9 +15,9 @@ import { calculateTrends } from "@/components/dashboard/utils/chartUtils";
 import { MarinaChartProps } from "./types";
 
 const COLORS = {
-  occupied: "#0EA5E9",  // Ocean Blue for occupied
-  available: "#33C3F0", // Sky Blue for available
-  maintenance: "#ea384c", // Red for maintenance
+  occupied: "#0EA5E9",    // Bright blue for Occupied Spots
+  available: "#F97316",   // Orange for Available Spots
+  maintenance: "#8B5CF6", // Purple for Maintenance
 };
 
 export function MarinaChart({ chartData }: MarinaChartProps) {
@@ -42,7 +42,6 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
           <BarChart
             data={transformedData}
             margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            className="drop-shadow-lg"
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
             <XAxis 
@@ -50,14 +49,14 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
               tick={{ fontSize: 12, fill: '#133134' }}
               tickFormatter={(value, index) => {
                 const item = chartData[index];
-                return `${item.month}\n${item.year}${item.isProjected ? '*' : ''}`;
+                return `${item.month} ${item.year}${item.isProjected ? '*' : ''}`;
               }}
             />
             <YAxis 
               tick={{ fontSize: 12, fill: '#133134' }}
-              tickFormatter={(value) => `${value} slips`}
+              tickFormatter={(value) => `$${value}`}
               label={{ 
-                value: 'Number of Slips', 
+                value: 'Monthly Revenue ($)', 
                 angle: -90, 
                 position: 'insideLeft',
                 style: { textAnchor: 'middle' }
@@ -67,8 +66,8 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
             <Legend 
               formatter={(value) => {
                 const labels = {
-                  occupied: 'Occupied',
-                  available: 'Available',
+                  occupied: 'Occupied Spots',
+                  available: 'Available Spots',
                   maintenance: 'In Maintenance'
                 };
                 return labels[value as keyof typeof labels];
@@ -76,21 +75,18 @@ export function MarinaChart({ chartData }: MarinaChartProps) {
             />
             <Bar 
               dataKey="occupied" 
-              stackId="a"
               fill={COLORS.occupied}
               fillOpacity="occupiedOpacity"
               radius={[4, 4, 0, 0]}
             />
             <Bar 
               dataKey="available" 
-              stackId="a"
               fill={COLORS.available}
               fillOpacity="availableOpacity"
               radius={[4, 4, 0, 0]}
             />
             <Bar 
               dataKey="maintenance" 
-              stackId="a"
               fill={COLORS.maintenance}
               fillOpacity="maintenanceOpacity"
               radius={[4, 4, 0, 0]}
