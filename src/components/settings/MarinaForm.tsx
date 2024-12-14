@@ -91,24 +91,11 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
     }
   }, [initialData]);
 
-  const handleInputChange = (section: string, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: section === 'coordinates' || section === 'approach_info' || section === 'social_media'
-        ? { ...prev[section], [field]: value }
-        : section === 'services_amenities' || section === 'other_features'
-          ? { ...prev[section], [field]: value }
-          : section === 'total_slips'
-            ? value === '' ? null : parseInt(value, 10)
-            : value
-    }));
-  };
-
   const handleSubmit = async () => {
     if (!session?.user?.id) {
       toast({
         title: "Error",
-        description: "You must be logged in to save marina details.",
+        description: "You must be signed in to save marina details.",
         variant: "destructive",
       });
       return;
@@ -130,6 +117,11 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         .select();
 
       if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Marina details saved successfully.",
+      });
 
       onSuccess?.();
     } catch (error) {

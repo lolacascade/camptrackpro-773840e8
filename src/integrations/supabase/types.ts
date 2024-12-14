@@ -78,6 +78,7 @@ export type Database = {
           slot_id: number
           special_requirements: string | null
           status: string
+          user_id: string | null
         }
         Insert: {
           check_in_date: string
@@ -89,6 +90,7 @@ export type Database = {
           slot_id: number
           special_requirements?: string | null
           status?: string
+          user_id?: string | null
         }
         Update: {
           check_in_date?: string
@@ -100,6 +102,7 @@ export type Database = {
           slot_id?: number
           special_requirements?: string | null
           status?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -131,18 +134,21 @@ export type Database = {
           booking_id: number | null
           created_at: string | null
           id: number
+          user_id: string | null
         }
         Insert: {
           asset_id?: number | null
           booking_id?: number | null
           created_at?: string | null
           id?: number
+          user_id?: string | null
         }
         Update: {
           asset_id?: number | null
           booking_id?: number | null
           created_at?: string | null
           id?: number
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -195,6 +201,7 @@ export type Database = {
           id: number
           note: string | null
           tag: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string | null
@@ -202,6 +209,7 @@ export type Database = {
           id?: number
           note?: string | null
           tag?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string | null
@@ -209,6 +217,7 @@ export type Database = {
           id?: number
           note?: string | null
           tag?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -234,6 +243,7 @@ export type Database = {
           last_updated: string | null
           preferred_slot_id: number | null
           preferred_zone: string | null
+          user_id: string | null
         }
         Insert: {
           customer_id?: number | null
@@ -241,6 +251,7 @@ export type Database = {
           last_updated?: string | null
           preferred_slot_id?: number | null
           preferred_zone?: string | null
+          user_id?: string | null
         }
         Update: {
           customer_id?: number | null
@@ -248,6 +259,7 @@ export type Database = {
           last_updated?: string | null
           preferred_slot_id?: number | null
           preferred_zone?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -387,6 +399,7 @@ export type Database = {
           last_updated: string | null
           quantity: number
           restock_threshold: number
+          user_id: string | null
         }
         Insert: {
           id?: number
@@ -394,6 +407,7 @@ export type Database = {
           last_updated?: string | null
           quantity: number
           restock_threshold: number
+          user_id?: string | null
         }
         Update: {
           id?: number
@@ -401,6 +415,7 @@ export type Database = {
           last_updated?: string | null
           quantity?: number
           restock_threshold?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -578,6 +593,7 @@ export type Database = {
           new_status: string | null
           previous_status: string | null
           slot_id: number | null
+          user_id: string | null
         }
         Insert: {
           action: string
@@ -587,6 +603,7 @@ export type Database = {
           new_status?: string | null
           previous_status?: string | null
           slot_id?: number | null
+          user_id?: string | null
         }
         Update: {
           action?: string
@@ -596,6 +613,7 @@ export type Database = {
           new_status?: string | null
           previous_status?: string | null
           slot_id?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {

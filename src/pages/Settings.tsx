@@ -6,11 +6,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Edit } from "lucide-react";
+import { AlertCircle, Edit, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MarinaOverviewCard } from "@/components/settings/overview/MarinaOverviewCard";
 import { ProfileCompletion } from "@/components/settings/profile/ProfileCompletion";
 import { SettingsLoading } from "@/components/settings/loading/SettingsLoading";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
@@ -19,6 +20,7 @@ export default function Settings() {
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const session = useSession();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!session?.user?.id) {
@@ -35,16 +37,16 @@ export default function Settings() {
         const { data, error: fetchError } = await supabase
           .from('marina_details')
           .select('*')
-          .eq('user_id', session.user.id);
+          .eq('user_id', session.user.id)
+          .single();
 
-        if (fetchError) throw fetchError;
+        if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
 
-        const marinaData = data && data.length > 0 ? data[0] : null;
-        setMarinaDetails(marinaData);
+        setMarinaDetails(data);
         
-        if (marinaData) {
-          const totalFields = Object.keys(marinaData).length;
-          const filledFields = Object.values(marinaData).filter(value => 
+        if (data) {
+          const totalFields = Object.keys(data).length;
+          const filledFields = Object.values(data).filter(value => 
             value !== null && value !== '' && value !== undefined
           ).length;
           setCompletionPercentage((filledFields / totalFields) * 100);
@@ -64,6 +66,26 @@ export default function Settings() {
 
     fetchMarinaDetails();
   }, [session, toast]);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "You have been logged out successfully.",
+      });
+      navigate('/login');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleNavigateToSection = (section: string) => {
     const element = document.querySelector(`[data-section="${section}"]`);
@@ -96,6 +118,15 @@ export default function Settings() {
                   : "Get started by adding your marina's information."}
               </p>
             </div>
+            <Button
+              onClick={handleLogout}
+              variant="destructive"
+              size="sm"
+              className="ml-4"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Log Out
+            </Button>
           </div>
 
           {isLoading ? (
