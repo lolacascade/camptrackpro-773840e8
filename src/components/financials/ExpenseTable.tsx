@@ -12,17 +12,17 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
     {
       header: "Description",
       accessorKey: "description",
-      cell: (info: any) => info.row.original.description,
+      cell: (item: Expense) => item.description,
     },
     {
       header: "Type",
       accessorKey: "category",
-      cell: (info: any) => info.row.original.category,
+      cell: (item: Expense) => item.category,
     },
     {
       header: "Amount",
       accessorKey: "amount",
-      cell: (info: any) => `$${Number(info.row.original.amount).toLocaleString(undefined, {
+      cell: (item: Expense) => `$${Number(item.amount).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}`,
@@ -30,17 +30,17 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
     {
       header: "Date",
       accessorKey: "date",
-      cell: (info: any) => format(new Date(info.row.original.date), 'MMM dd, yyyy'),
+      cell: (item: Expense) => format(new Date(item.date), 'MMM dd, yyyy'),
     },
     {
       header: "Status",
       accessorKey: "status",
-      cell: (info: any) => (
+      cell: (item: Expense) => (
         <span className={`capitalize ${
-          info.row.original.status === 'completed' ? 'text-green-600' : 
-          info.row.original.status === 'pending' ? 'text-yellow-600' : 'text-gray-600'
+          item.status === 'completed' ? 'text-green-600' : 
+          item.status === 'pending' ? 'text-yellow-600' : 'text-gray-600'
         }`}>
-          {info.row.original.status}
+          {item.status}
         </span>
       ),
     },
