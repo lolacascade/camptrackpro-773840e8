@@ -34,14 +34,14 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="month" 
-              tickFormatter={(value) => format(new Date(value), 'MMM yyyy')}
+              tickFormatter={(value) => format(new Date(`${value}-01`), 'MMM yyyy')}
             />
             <YAxis 
               tickFormatter={(value) => `$${value.toLocaleString()}`}
             />
             <Tooltip 
               formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
-              labelFormatter={(label) => format(new Date(label), 'MMMM yyyy')}
+              labelFormatter={(label) => format(new Date(`${label}-01`), 'MMMM yyyy')}
             />
             <Area
               type="monotone"
@@ -49,7 +49,6 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
               stroke="#82ca9d"
               fillOpacity={1}
               fill="url(#maintenance)"
-              stackId="1"
             />
             <Area
               type="monotone"
@@ -57,7 +56,6 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
               stroke="#8884d8"
               fillOpacity={1}
               fill="url(#utilities)"
-              stackId="1"
             />
             <Area
               type="monotone"
@@ -65,7 +63,6 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
               stroke="#ffc658"
               fillOpacity={1}
               fill="url(#supplies)"
-              stackId="1"
             />
             <Area
               type="monotone"
@@ -73,7 +70,6 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
               stroke="#ff7300"
               fillOpacity={1}
               fill="url(#other)"
-              stackId="1"
             />
           </AreaChart>
         </ResponsiveContainer>

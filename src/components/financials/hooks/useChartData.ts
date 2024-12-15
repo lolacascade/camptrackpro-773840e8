@@ -39,7 +39,7 @@ export function useChartData() {
       
       // Group expenses by month and category
       const monthlyData = expenses.reduce<Record<string, ExpenseData>>((acc, expense) => {
-        const monthKey = format(new Date(expense.date), 'MMM yyyy');
+        const monthKey = format(new Date(expense.date), 'yyyy-MM');
         if (!acc[monthKey]) {
           acc[monthKey] = {
             Maintenance: 0,
@@ -65,7 +65,7 @@ export function useChartData() {
       // Past and current months
       for (let i = -MONTHS_BACK; i <= 0; i++) {
         const date = subMonths(currentDate, Math.abs(i));
-        const monthKey = format(date, 'MMM yyyy');
+        const monthKey = format(date, 'yyyy-MM');
         
         timelineData.push({
           month: monthKey,
@@ -84,7 +84,7 @@ export function useChartData() {
       for (let i = 1; i <= MONTHS_FORWARD; i++) {
         const date = addMonths(currentDate, i);
         const projectedData: ChartDataItem = {
-          month: format(date, 'MMM yyyy'),
+          month: format(date, 'yyyy-MM'),
           Maintenance: lastMonth.Maintenance * GROWTH_RATE,
           Utilities: lastMonth.Utilities * GROWTH_RATE,
           Supplies: lastMonth.Supplies * GROWTH_RATE,
