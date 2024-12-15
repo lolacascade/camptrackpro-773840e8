@@ -53,16 +53,23 @@ export function EntityField({ field }: { field: FormField }) {
                   "w-full justify-start text-left font-normal bg-white",
                   !field.value && "text-muted-foreground"
                 )}
+                onClick={(e) => e.stopPropagation()}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-white" align="start">
+            <PopoverContent 
+              className="w-auto p-0 bg-white" 
+              align="start"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Calendar
                 mode="single"
                 selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => field.onChange(date?.toISOString())}
+                onSelect={(date) => {
+                  field.onChange(date?.toISOString())
+                }}
                 initialFocus
                 defaultMonth={new Date()}
               />
