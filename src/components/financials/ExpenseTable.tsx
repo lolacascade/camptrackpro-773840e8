@@ -12,37 +12,42 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
     {
       header: "Description",
       accessorKey: "description",
+      cell: (info: any) => info.row.original.description,
     },
     {
       header: "Type",
       accessorKey: "category",
+      cell: (info: any) => info.row.original.category,
     },
     {
       header: "Amount",
       accessorKey: "amount",
-      cell: (row: any) => `$${row.getValue().toLocaleString()}`,
+      cell: (info: any) => `$${Number(info.row.original.amount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`,
     },
     {
       header: "Date",
       accessorKey: "date",
-      cell: (row: any) => format(new Date(row.getValue()), 'MMM dd, yyyy'),
+      cell: (info: any) => format(new Date(info.row.original.date), 'MMM dd, yyyy'),
     },
     {
       header: "Status",
       accessorKey: "status",
-      cell: (row: any) => (
+      cell: (info: any) => (
         <span className={`capitalize ${
-          row.getValue() === 'completed' ? 'text-green-600' : 
-          row.getValue() === 'pending' ? 'text-yellow-600' : 'text-gray-600'
+          info.row.original.status === 'completed' ? 'text-green-600' : 
+          info.row.original.status === 'pending' ? 'text-yellow-600' : 'text-gray-600'
         }`}>
-          {row.getValue()}
+          {info.row.original.status}
         </span>
       ),
     },
   ];
 
   const typeOptions = [
-    { label: "All Types", value: "all" }, // Changed from empty string to "all"
+    { label: "All Types", value: "all" },
     { label: "Maintenance", value: "Maintenance" },
     { label: "Utilities", value: "Utilities" },
     { label: "Supplies", value: "Supplies" },
@@ -52,7 +57,7 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
   ];
 
   const statusOptions = [
-    { label: "All Statuses", value: "all" }, // Changed from empty string to "all"
+    { label: "All Statuses", value: "all" },
     { label: "Completed", value: "completed" },
     { label: "Pending", value: "pending" },
   ];
@@ -67,13 +72,13 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
         {
           name: "type",
           options: typeOptions,
-          value: "all", // Changed from empty string to "all"
+          value: "all",
           onChange: () => {},
         },
         {
           name: "status",
           options: statusOptions,
-          value: "all", // Changed from empty string to "all"
+          value: "all",
           onChange: () => {},
         },
       ]}
