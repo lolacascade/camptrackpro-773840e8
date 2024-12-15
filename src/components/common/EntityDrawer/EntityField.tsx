@@ -50,7 +50,7 @@ export function EntityField({ field }: { field: FormField }) {
               <Button
                 variant="outline"
                 className={cn(
-                  "w-full justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal bg-white",
                   !field.value && "text-muted-foreground"
                 )}
               >
@@ -58,12 +58,13 @@ export function EntityField({ field }: { field: FormField }) {
                 {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-white" align="start">
               <Calendar
                 mode="single"
                 selected={field.value ? new Date(field.value) : undefined}
                 onSelect={(date) => field.onChange(date?.toISOString())}
                 initialFocus
+                defaultMonth={new Date()}
               />
             </PopoverContent>
           </Popover>

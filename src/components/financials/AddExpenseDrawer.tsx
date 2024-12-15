@@ -43,6 +43,16 @@ const EXPENSE_FIELDS = [
     required: true
   },
   {
+    name: "status",
+    label: "Status",
+    type: "select" as const,
+    required: true,
+    options: [
+      { value: "completed", label: "Completed" },
+      { value: "pending", label: "Pending" }
+    ]
+  },
+  {
     name: "payment_method",
     label: "Payment Method",
     type: "select" as const,

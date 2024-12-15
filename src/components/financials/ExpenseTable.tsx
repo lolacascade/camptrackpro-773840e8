@@ -5,9 +5,11 @@ import type { Expense } from "@/types/expense";
 interface ExpenseTableProps {
   expenses: Expense[];
   onEdit: (expense: Expense) => void;
+  onDelete?: (expense: Expense) => void;
+  onViewDetails?: (expense: Expense) => void;
 }
 
-export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
+export function ExpenseTable({ expenses, onEdit, onDelete, onViewDetails }: ExpenseTableProps) {
   const columns = [
     {
       header: "Description",
@@ -67,6 +69,8 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
       data={expenses}
       columns={columns}
       onEdit={onEdit}
+      onDelete={onDelete}
+      onViewDetails={onViewDetails}
       title="Expenses"
       filters={[
         {
@@ -82,6 +86,7 @@ export function ExpenseTable({ expenses, onEdit }: ExpenseTableProps) {
           onChange: () => {},
         },
       ]}
+      tableName="expenses"
     />
   );
 }
