@@ -8,7 +8,7 @@ import type { ChartDataItem, ExpenseData } from "../types";
 const GROWTH_RATE = 1.05;
 const MONTHS_BACK = 6;
 const MONTHS_FORWARD = 5;
-const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies'] as const;
+const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies', 'Other'] as const;
 
 const generateRandomAmount = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -48,6 +48,7 @@ export function useChartData() {
           Maintenance: generateRandomAmount(5, 15),
           Utilities: generateRandomAmount(10, 25),
           Supplies: generateRandomAmount(20, 45),
+          Other: generateRandomAmount(5, 10), // Added Other category
           isProjected: false,
         });
       }
@@ -61,6 +62,7 @@ export function useChartData() {
           Maintenance: Math.round(lastMonth.Maintenance * GROWTH_RATE),
           Utilities: Math.round(lastMonth.Utilities * GROWTH_RATE),
           Supplies: Math.round(lastMonth.Supplies * GROWTH_RATE),
+          Other: Math.round(lastMonth.Other * GROWTH_RATE), // Added Other category
           isProjected: true,
         };
         timelineData.push(projectedData);
