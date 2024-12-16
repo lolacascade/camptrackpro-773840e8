@@ -1,34 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, subMonths, endOfMonth, addMonths } from "date-fns";
 import { CustomerStatsCards } from "./insights/CustomerStatsCards";
-import { CustomerLeaseProgress } from "./insights/CustomerLeaseProgress";
-import { useParams } from "react-router-dom";
-import { Customer } from "@/types/customer";
+import { CustomerAcquisitionChart } from "./insights/CustomerAcquisitionChart";
 
 export function CustomerInsights() {
-  const { id } = useParams();
-
-  const { data: customer, isLoading } = useQuery({
-    queryKey: ['customer', id],
+  const { data: customerStats, isLoading } = useQuery({
+    queryKey: ['customer-stats'],
     queryFn: async () => {
-      if (!id) return null;
       const { data, error } = await supabase
         .from('customers')
-        .select(`
-          *,
-          bookings (
-            check_in_date,
-            check_out_date
-          )
-        `)
-        .eq('id', id)
-        .single();
+        .select('created_at, lifetime_value');
 
       if (error) throw error;
-      return data as Customer;
-    },
-    enabled: !!id
+      return data;
+    }
   });
 
   if (isLoading) {
@@ -40,27 +25,33 @@ export function CustomerInsights() {
     );
   }
 
-  if (!customer) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-gray-500">No customer data available</p>
-      </div>
-    );
-  }
-
-  // For demonstration, using the most recent booking dates if available
-  // or fallback to dummy dates
-  const startDate = customer.bookings?.[0]?.check_in_date 
-    ? new Date(customer.bookings[0].check_in_date)
-    : new Date();
-  const endDate = customer.bookings?.[0]?.check_out_date
-    ? new Date(customer.bookings[0].check_out_date)
-    : addMonths(startDate, 6);
+  // Process customer stats for the chart
+  const chartData = customerStats?.reduce((acc, customer) => {
+    const date = new Date(customer.created_at);
+    const monthYear = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+    
+    const monthData = acc.find(d => d.month === monthYear);
+    if (monthData) {
+      monthData.newCustomers += 1;
+    } else {
+      acc.push({
+        month: monthYear,
+        year: date.getFullYear(),
+        newCustomers: 1,
+        existingCustomers: acc[acc.length - 1]?.existingCustomers || 0,
+        isProjected: false
+      });
+    }
+    return acc;
+  }, []) || [];
 
   return (
     <div className="space-y-6">
-      <CustomerStatsCards customer={customer} />
-      <CustomerLeaseProgress startDate={startDate} endDate={endDate} />
+      <CustomerStatsCards />
+      <CustomerAcquisitionChart 
+        chartData={chartData}
+        currentMonthData={chartData[chartData.length - 1]}
+      />
     </div>
   );
 }
