@@ -8,7 +8,11 @@ import type { ChartDataItem, ExpenseData } from "../types";
 const GROWTH_RATE = 1.05;
 const MONTHS_BACK = 6;
 const MONTHS_FORWARD = 5;
-const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies', 'Other'] as const;
+const EXPENSE_CATEGORIES = ['Maintenance', 'Utilities', 'Supplies'] as const;
+
+const generateRandomAmount = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
 export function useChartData() {
   const session = useSession();
@@ -33,48 +37,17 @@ export function useChartData() {
         return [];
       }
 
-      if (!expenses) return [];
-
       const currentDate = new Date();
-      
-      // Group expenses by month and category
-      const monthlyData = expenses.reduce<Record<string, ExpenseData>>((acc, expense) => {
-        const monthKey = format(new Date(expense.date), 'yyyy-MM');
-        if (!acc[monthKey]) {
-          acc[monthKey] = {
-            Maintenance: 0,
-            Utilities: 0,
-            Supplies: 0,
-            Other: 0,
-          };
-        }
-        
-        const category = expense.category as keyof ExpenseData;
-        if (EXPENSE_CATEGORIES.includes(category as any)) {
-          acc[monthKey][category] += expense.amount;
-        } else {
-          acc[monthKey].Other += expense.amount;
-        }
-        
-        return acc;
-      }, {});
-
-      // Generate timeline data
       const timelineData: ChartDataItem[] = [];
       
       // Past and current months
       for (let i = -MONTHS_BACK; i <= 0; i++) {
         const date = subMonths(currentDate, Math.abs(i));
-        const monthKey = format(date, 'yyyy-MM');
-        
         timelineData.push({
-          month: monthKey,
-          ...monthlyData[monthKey] || {
-            Maintenance: 0,
-            Utilities: 0,
-            Supplies: 0,
-            Other: 0,
-          },
+          month: format(date, 'yyyy-MM'),
+          Maintenance: generateRandomAmount(5, 15),
+          Utilities: generateRandomAmount(10, 25),
+          Supplies: generateRandomAmount(20, 45),
           isProjected: false,
         });
       }
@@ -85,10 +58,9 @@ export function useChartData() {
         const date = addMonths(currentDate, i);
         const projectedData: ChartDataItem = {
           month: format(date, 'yyyy-MM'),
-          Maintenance: lastMonth.Maintenance * GROWTH_RATE,
-          Utilities: lastMonth.Utilities * GROWTH_RATE,
-          Supplies: lastMonth.Supplies * GROWTH_RATE,
-          Other: lastMonth.Other * GROWTH_RATE,
+          Maintenance: Math.round(lastMonth.Maintenance * GROWTH_RATE),
+          Utilities: Math.round(lastMonth.Utilities * GROWTH_RATE),
+          Supplies: Math.round(lastMonth.Supplies * GROWTH_RATE),
           isProjected: true,
         };
         timelineData.push(projectedData);

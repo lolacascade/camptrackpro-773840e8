@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { BarChart, Bar, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Legend } from "recharts";
 import { ChartDataItem } from "../types";
 import { format } from "date-fns";
 
@@ -12,66 +12,59 @@ export function FinancialsChart({ chartData }: FinancialsChartProps) {
     <Card className="p-6">
       <div className="h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData}>
-            <defs>
-              <linearGradient id="maintenance" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#82ca9d" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="utilities" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="supplies" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ffc658" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#ffc658" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="other" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#ff7300" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#ff7300" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" />
+          <BarChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
             <XAxis 
               dataKey="month" 
               tickFormatter={(value) => format(new Date(`${value}-01`), 'MMM yyyy')}
+              tick={{ fontSize: 12, fill: '#133134' }}
             />
             <YAxis 
               tickFormatter={(value) => `$${value.toLocaleString()}`}
+              tick={{ fontSize: 12, fill: '#133134' }}
+              label={{ 
+                value: 'Monthly Revenue ($)', 
+                angle: -90, 
+                position: 'insideLeft',
+                style: { textAnchor: 'middle' }
+              }}
             />
             <Tooltip 
               formatter={(value: number) => [`$${value.toLocaleString()}`, '']}
               labelFormatter={(label) => format(new Date(`${label}-01`), 'MMMM yyyy')}
             />
-            <Area
-              type="monotone"
-              dataKey="Maintenance"
-              stroke="#82ca9d"
-              fillOpacity={1}
-              fill="url(#maintenance)"
+            <Legend 
+              formatter={(value) => {
+                const labels = {
+                  Maintenance: 'In Maintenance',
+                  Utilities: 'Available Spots',
+                  Supplies: 'Occupied Spots'
+                };
+                return labels[value as keyof typeof labels];
+              }}
             />
-            <Area
-              type="monotone"
-              dataKey="Utilities"
-              stroke="#8884d8"
-              fillOpacity={1}
-              fill="url(#utilities)"
-            />
-            <Area
-              type="monotone"
+            <Bar
               dataKey="Supplies"
-              stroke="#ffc658"
-              fillOpacity={1}
-              fill="url(#supplies)"
+              name="Occupied Spots"
+              fill="#0EA5E9"
+              stackId="1"
+              radius={[4, 4, 0, 0]}
             />
-            <Area
-              type="monotone"
-              dataKey="Other"
-              stroke="#ff7300"
-              fillOpacity={1}
-              fill="url(#other)"
+            <Bar
+              dataKey="Utilities"
+              name="Available Spots"
+              fill="#F97316"
+              stackId="1"
+              radius={[4, 4, 0, 0]}
             />
-          </AreaChart>
+            <Bar
+              dataKey="Maintenance"
+              name="In Maintenance"
+              fill="#8B5CF6"
+              stackId="1"
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </Card>
