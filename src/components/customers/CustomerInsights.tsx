@@ -34,7 +34,7 @@ export function CustomerInsights() {
   // Process customer stats for the chart
   const today = new Date();
   const startDate = subMonths(startOfMonth(today), 5); // Past 5 months
-  const endDate = addMonths(startOfMonth(today), 6);   // Next 6 months (projections)
+  const endDate = addMonths(startOfMonth(today), 7);   // Next 6 months of projections (adding 7 to include current month)
 
   const monthlyData = new Map();
 
@@ -66,6 +66,7 @@ export function CustomerInsights() {
 
   // Calculate cumulative customers and add projections
   let lastActualMonth = null;
+  let lastActualCustomers = 0;
   const chartData = Array.from(monthlyData.values()).map((data, index, array) => {
     // Calculate existing customers (cumulative from previous months)
     if (index > 0) {
@@ -76,24 +77,18 @@ export function CustomerInsights() {
     // Keep track of the last actual month for projections
     if (!data.isProjected) {
       lastActualMonth = data;
-    }
-
-    // If this is a projected month, estimate new customers
-    if (data.isProjected && lastActualMonth) {
-      // Calculate average growth from last 3 actual months
-      const lastThreeMonths = array
-        .slice(Math.max(0, index - 3), index)
-        .filter(m => !m.isProjected);
+      lastActualCustomers = data.newCustomers;
+    } else if (lastActualMonth) {
+      // For projected months, apply 10% growth compounded monthly
+      const monthsSinceLastActual = array
+        .slice(0, index)
+        .filter(m => m.isProjected)
+        .length;
       
-      if (lastThreeMonths.length > 0) {
-        const avgGrowth = lastThreeMonths.reduce((sum, m) => sum + m.newCustomers, 0) / lastThreeMonths.length;
-        // Add 10% growth month over month for projections
-        const monthsIntoFuture = array.slice(0, index).filter(m => m.isProjected).length + 1;
-        data.newCustomers = Math.round(avgGrowth * Math.pow(1.1, monthsIntoFuture));
-      } else {
-        // Fallback if we don't have enough historical data
-        data.newCustomers = Math.round(lastActualMonth.newCustomers * Math.pow(1.1, 1));
-      }
+      // Calculate projected new customers with compound growth
+      data.newCustomers = Math.round(
+        lastActualCustomers * Math.pow(1.1, monthsSinceLastActual)
+      );
     }
 
     return data;
