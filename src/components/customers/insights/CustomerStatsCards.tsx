@@ -2,11 +2,32 @@ import { Users, TrendingUp, Activity, Star } from "lucide-react";
 import { StatsCard } from "@/components/common/StatsCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { Customer } from "@/types/customer";
 
-export function CustomerStatsCards() {
+interface CustomerStatsCardsProps {
+  customer?: Customer;  // Make it optional since it's used in both contexts
+}
+
+export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
   const { data: customerStats } = useQuery({
-    queryKey: ['customer-stats'],
+    queryKey: ['customer-stats', customer?.id],
     queryFn: async () => {
+      // If we have a specific customer, just use their data
+      if (customer) {
+        const bookingsCount = customer.bookings?.length || 0;
+        return {
+          totalCustomers: 1,
+          newCustomers: 0,
+          engagementRate: bookingsCount > 0 ? 100 : 0,
+          rating: {
+            overall: 4.8,
+            service: 4.9,
+            communication: 4.7
+          }
+        };
+      }
+
+      // Otherwise fetch all customers data
       const { data: customers, error } = await supabase
         .from('customers')
         .select(`
