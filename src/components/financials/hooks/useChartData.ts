@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { useSession } from '@supabase/auth-helpers-react';
+import { useToast } from "@/hooks/use-toast";
 import { format, subMonths, addMonths } from "date-fns";
 import type { ChartDataItem, ExpenseData } from "../types";
 
@@ -21,22 +20,6 @@ export function useChartData() {
   return useQuery({
     queryKey: ["expenses-chart", session?.user.id],
     queryFn: async () => {
-      const { data: expenses, error } = await supabase
-        .from("expenses")
-        .select("amount, category, date")
-        .eq('user_id', session?.user.id)
-        .order("date", { ascending: true });
-
-      if (error) {
-        console.error('Error fetching chart data:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch chart data. Please try again.",
-          variant: "destructive",
-        });
-        return [];
-      }
-
       const currentDate = new Date();
       const timelineData: ChartDataItem[] = [];
       
@@ -48,7 +31,7 @@ export function useChartData() {
           Maintenance: generateRandomAmount(5, 15),
           Utilities: generateRandomAmount(10, 25),
           Supplies: generateRandomAmount(20, 45),
-          Other: generateRandomAmount(5, 10), // Added Other category
+          Other: generateRandomAmount(5, 10),
           isProjected: false,
         });
       }
@@ -62,7 +45,7 @@ export function useChartData() {
           Maintenance: Math.round(lastMonth.Maintenance * GROWTH_RATE),
           Utilities: Math.round(lastMonth.Utilities * GROWTH_RATE),
           Supplies: Math.round(lastMonth.Supplies * GROWTH_RATE),
-          Other: Math.round(lastMonth.Other * GROWTH_RATE), // Added Other category
+          Other: Math.round(lastMonth.Other * GROWTH_RATE),
           isProjected: true,
         };
         timelineData.push(projectedData);
