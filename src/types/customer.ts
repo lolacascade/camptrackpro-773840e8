@@ -14,6 +14,10 @@ export interface Customer {
   emergency_contact_name: string | null;
   emergency_contact_phone: string | null;
   emergency_contact_relationship: string | null;
+  bookings?: Array<{
+    check_in_date: string;
+    check_out_date: string;
+  }>;
   assets?: Array<{
     asset_name: string;
   }>;
