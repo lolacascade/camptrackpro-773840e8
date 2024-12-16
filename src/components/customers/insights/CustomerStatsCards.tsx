@@ -1,97 +1,119 @@
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { Calendar, DollarSign, Anchor, Bell } from "lucide-react";
-import { format, addMonths } from "date-fns";
-import { Customer } from "@/types/customer";
+import { Users, TrendingUp, Activity, Star } from "lucide-react";
+import { StatsCard } from "@/components/common/StatsCard";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-interface CustomerStatsCardsProps {
-  customer?: Customer;
-}
+export function CustomerStatsCards() {
+  const { data: customerStats } = useQuery({
+    queryKey: ['customer-stats'],
+    queryFn: async () => {
+      const { data: customers, error } = await supabase
+        .from('customers')
+        .select(`
+          id,
+          created_at,
+          bookings (
+            id,
+            created_at
+          )
+        `);
 
-export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
-  // Calculate dates for demonstration
-  const startDate = new Date();
-  const endDate = addMonths(startDate, 6);
-  const renewalDate = addMonths(endDate, -1);
+      if (error) throw error;
+
+      const now = new Date();
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+      const totalCustomers = customers?.length || 0;
+      const newCustomers = customers?.filter(c => 
+        new Date(c.created_at!) >= lastMonth
+      ).length || 0;
+
+      // Calculate engagement (customers with bookings / total customers)
+      const customersWithBookings = customers?.filter(c => 
+        c.bookings && c.bookings.length > 0
+      ).length || 0;
+      const engagementRate = totalCustomers > 0 
+        ? Math.round((customersWithBookings / totalCustomers) * 100) 
+        : 0;
+
+      // For this example, we'll use static rating data
+      // In a real app, this would come from a ratings table
+      const rating = {
+        overall: 4.8,
+        service: 4.9,
+        communication: 4.7
+      };
+
+      return {
+        totalCustomers,
+        newCustomers,
+        engagementRate,
+        rating
+      };
+    }
+  });
+
+  if (!customerStats) return null;
 
   return (
-    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <EnhancedStatCard
-        title="Lease Details"
-        value="6 Months"
-        icon={Calendar}
-        breakdown={[
-          { 
-            label: "Start Date", 
-            value: format(startDate, "MM/dd/yyyy")
-          },
-          { 
-            label: "End Date", 
-            value: format(endDate, "MM/dd/yyyy")
-          },
-          { 
-            label: "Renewal Date", 
-            value: format(renewalDate, "MM/dd/yyyy")
-          }
-        ]}
-      />
-      <EnhancedStatCard
-        title="Total Revenue"
-        value={`$${customer?.lifetime_value?.toLocaleString() || '0'}`}
-        icon={DollarSign}
-        breakdown={[
-          { 
-            label: "Next Payment", 
-            value: "$2,500",
-            percentage: 20
-          },
-          { 
-            label: "Due Date", 
-            value: format(addMonths(startDate, 1), "MM/dd/yyyy")
-          },
-          { 
-            label: "Status", 
-            value: "Paid"
-          }
-        ]}
-      />
-      <EnhancedStatCard
-        title="Asset Utilization"
-        value="Sea Breeze II"
-        icon={Anchor}
-        breakdown={[
-          { 
-            label: "Lease Type", 
-            value: "Long-Term"
-          },
-          { 
-            label: "Usage", 
-            value: "45 Days",
-            percentage: 75
-          },
-          { 
-            label: "Asset ID", 
-            value: "BOAT-2024-001"
-          }
-        ]}
-      />
-      <EnhancedStatCard
-        title="Key Alerts"
-        value="2 Alerts"
-        icon={Bell}
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <StatsCard
+        title="Total Customers"
+        value={customerStats.totalCustomers.toString()}
+        icon={Users}
         trend={{
-          value: "45 days",
+          value: "0%",
           isPositive: true,
-          comparedTo: "until expiry"
+          comparedTo: "compared to last month"
         }}
         breakdown={[
-          { 
-            label: "Maintenance", 
-            value: "Good"
-          },
-          { 
-            label: "Notes", 
-            value: "Renewal Discussion Needed"
-          }
+          { label: "Active", value: `${customerStats.totalCustomers} (100%)`, percentage: 100 },
+          { label: "Inactive", value: "00", percentage: 0 }
+        ]}
+      />
+
+      <StatsCard
+        title="New Customers"
+        value={customerStats.newCustomers.toString()}
+        icon={TrendingUp}
+        trend={{
+          value: `${customerStats.newCustomers} customers`,
+          isPositive: true,
+          comparedTo: "compared to last month"
+        }}
+        breakdown={[
+          { label: "Website", value: "5", percentage: 63 },
+          { label: "Referrals", value: "3", percentage: 37 }
+        ]}
+      />
+
+      <StatsCard
+        title="Active Engagement"
+        value={`${customerStats.engagementRate}%`}
+        icon={Activity}
+        trend={{
+          value: "3%",
+          isPositive: true,
+          comparedTo: "compared to last month"
+        }}
+        breakdown={[
+          { label: "Bookings", value: "60%", percentage: 60 },
+          { label: "Reviews", value: "18%", percentage: 18 }
+        ]}
+      />
+
+      <StatsCard
+        title="Customer Rating"
+        value={`${customerStats.rating.overall}/5`}
+        icon={Star}
+        trend={{
+          value: "0.2",
+          isPositive: true,
+          comparedTo: "compared to last rating"
+        }}
+        breakdown={[
+          { label: "Service", value: `${customerStats.rating.service}/5`, percentage: 95 },
+          { label: "Communication", value: `${customerStats.rating.communication}/5`, percentage: 90 }
         ]}
       />
     </div>
