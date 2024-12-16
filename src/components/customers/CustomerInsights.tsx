@@ -34,7 +34,7 @@ export function CustomerInsights() {
   // Process customer stats for the chart
   const today = new Date();
   const startDate = subMonths(startOfMonth(today), 5); // Past 5 months
-  const endDate = addMonths(startOfMonth(today), 6);   // Next 6 months
+  const endDate = addMonths(startOfMonth(today), 6);   // Next 6 months (projections)
 
   const monthlyData = new Map();
 
