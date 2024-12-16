@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { startOfMonth, subMonths, endOfMonth } from "date-fns";
+import { startOfMonth, subMonths, endOfMonth, addMonths } from "date-fns";
 import { CustomerStatsCards } from "./insights/CustomerStatsCards";
-import { CustomerAcquisitionChart } from "./insights/CustomerAcquisitionChart";
-import { fetchMonthlyCustomerData } from "./insights/utils";
+import { CustomerLeaseProgress } from "./insights/CustomerLeaseProgress";
 import { useParams } from "react-router-dom";
 import { Customer } from "@/types/customer";
 
@@ -26,31 +25,14 @@ export function CustomerInsights() {
     enabled: !!id
   });
 
-  // Get current month's customers with proper ISO string formatting
-  const currentMonthStart = startOfMonth(new Date());
-  const currentMonthEnd = endOfMonth(new Date());
-  const lastMonthStart = startOfMonth(subMonths(new Date(), 1));
-  const lastMonthEnd = endOfMonth(subMonths(new Date(), 1));
-  const threeMonthsAgo = subMonths(new Date(), 3);
-
-  const { data: chartData, isLoading: isLoadingChartData } = useQuery({
-    queryKey: ['customer-growth-data'],
-    queryFn: fetchMonthlyCustomerData
-  });
-
-  const currentMonthData = chartData?.find(data => 
-    data.month === new Date().toLocaleString('default', { month: 'short' })
-  );
+  // For demonstration, using dummy dates
+  const startDate = new Date();
+  const endDate = addMonths(startDate, 6);
 
   return (
     <div className="space-y-6">
       <CustomerStatsCards customer={customer} />
-      {!isLoadingChartData && chartData && (
-        <CustomerAcquisitionChart 
-          chartData={chartData} 
-          currentMonthData={currentMonthData} 
-        />
-      )}
+      <CustomerLeaseProgress startDate={startDate} endDate={endDate} />
     </div>
   );
 }
