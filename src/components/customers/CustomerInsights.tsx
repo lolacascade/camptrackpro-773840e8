@@ -34,11 +34,11 @@ export function CustomerInsights() {
   // Process customer stats for the chart
   const today = new Date();
   const startDate = subMonths(startOfMonth(today), 5); // Past 5 months
-  const endDate = addMonths(today, 6);    // Next 6 months
+  const endDate = addMonths(startOfMonth(today), 6);   // Next 6 months
 
   const monthlyData = new Map();
 
-  // Initialize all months in our range
+  // Initialize all months in our range with zero values
   let currentDate = startDate;
   while (currentDate <= endDate) {
     const monthKey = currentDate.toLocaleString('default', { month: 'short', year: 'numeric' });
@@ -53,7 +53,6 @@ export function CustomerInsights() {
   }
 
   // Process actual customer data
-  let cumulativeCustomers = 0;
   customerStats?.forEach(customer => {
     const date = new Date(customer.created_at);
     if (date >= startDate && date <= today) {
@@ -66,14 +65,21 @@ export function CustomerInsights() {
   });
 
   // Calculate cumulative customers and add projections
+  let lastActualMonth = null;
   const chartData = Array.from(monthlyData.values()).map((data, index, array) => {
+    // Calculate existing customers (cumulative from previous months)
     if (index > 0) {
       const prevMonth = array[index - 1];
       data.existingCustomers = prevMonth.existingCustomers + prevMonth.newCustomers;
     }
 
+    // Keep track of the last actual month for projections
+    if (!data.isProjected) {
+      lastActualMonth = data;
+    }
+
     // If this is a projected month, estimate new customers
-    if (data.isProjected) {
+    if (data.isProjected && lastActualMonth) {
       // Calculate average growth from last 3 actual months
       const lastThreeMonths = array
         .slice(Math.max(0, index - 3), index)
@@ -83,10 +89,10 @@ export function CustomerInsights() {
         const avgGrowth = lastThreeMonths.reduce((sum, m) => sum + m.newCustomers, 0) / lastThreeMonths.length;
         // Add 10% growth month over month for projections
         const monthsIntoFuture = array.slice(0, index).filter(m => m.isProjected).length + 1;
-        data.newCustomers = Math.round(avgGrowth * (1 + (monthsIntoFuture * 0.1)));
+        data.newCustomers = Math.round(avgGrowth * Math.pow(1.1, monthsIntoFuture));
       } else {
         // Fallback if we don't have enough historical data
-        data.newCustomers = 10;
+        data.newCustomers = Math.round(lastActualMonth.newCustomers * Math.pow(1.1, 1));
       }
     }
 
