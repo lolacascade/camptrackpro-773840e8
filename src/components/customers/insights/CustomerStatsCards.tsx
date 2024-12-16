@@ -1,18 +1,17 @@
 import { Users, TrendingUp, Activity, Star } from "lucide-react";
-import { StatsCard } from "@/components/common/StatsCard";
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
 
 interface CustomerStatsCardsProps {
-  customer?: Customer;  // Make it optional since it's used in both contexts
+  customer?: Customer;
 }
 
 export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
   const { data: customerStats } = useQuery({
     queryKey: ['customer-stats', customer?.id],
     queryFn: async () => {
-      // If we have a specific customer, just use their data
       if (customer) {
         const bookingsCount = customer.bookings?.length || 0;
         return {
@@ -27,7 +26,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         };
       }
 
-      // Otherwise fetch all customers data
       const { data: customers, error } = await supabase
         .from('customers')
         .select(`
@@ -49,7 +47,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         new Date(c.created_at!) >= lastMonth
       ).length || 0;
 
-      // Calculate engagement (customers with bookings / total customers)
       const customersWithBookings = customers?.filter(c => 
         c.bookings && c.bookings.length > 0
       ).length || 0;
@@ -57,8 +54,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         ? Math.round((customersWithBookings / totalCustomers) * 100) 
         : 0;
 
-      // For this example, we'll use static rating data
-      // In a real app, this would come from a ratings table
       const rating = {
         overall: 4.8,
         service: 4.9,
@@ -78,29 +73,29 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <StatsCard
+      <EnhancedStatCard
         title="Total Customers"
         value={customerStats.totalCustomers.toString()}
         icon={Users}
         trend={{
-          value: "0%",
+          value: "8%",
           isPositive: true,
-          comparedTo: "compared to last month"
+          comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Active", value: `${customerStats.totalCustomers} (100%)`, percentage: 100 },
-          { label: "Inactive", value: "00", percentage: 0 }
+          { label: "Active", value: `${customerStats.totalCustomers}`, percentage: 100 },
+          { label: "Inactive", value: "0", percentage: 0 }
         ]}
       />
 
-      <StatsCard
+      <EnhancedStatCard
         title="New Customers"
         value={customerStats.newCustomers.toString()}
         icon={TrendingUp}
         trend={{
           value: `${customerStats.newCustomers} customers`,
           isPositive: true,
-          comparedTo: "compared to last month"
+          comparedTo: "last month"
         }}
         breakdown={[
           { label: "Website", value: "5", percentage: 63 },
@@ -108,14 +103,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         ]}
       />
 
-      <StatsCard
+      <EnhancedStatCard
         title="Active Engagement"
         value={`${customerStats.engagementRate}%`}
         icon={Activity}
         trend={{
           value: "3%",
           isPositive: true,
-          comparedTo: "compared to last month"
+          comparedTo: "last month"
         }}
         breakdown={[
           { label: "Bookings", value: "60%", percentage: 60 },
@@ -123,14 +118,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         ]}
       />
 
-      <StatsCard
+      <EnhancedStatCard
         title="Customer Rating"
         value={`${customerStats.rating.overall}/5`}
         icon={Star}
         trend={{
           value: "0.2",
           isPositive: true,
-          comparedTo: "compared to last rating"
+          comparedTo: "last rating"
         }}
         breakdown={[
           { label: "Service", value: `${customerStats.rating.service}/5`, percentage: 95 },
