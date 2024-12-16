@@ -1,21 +1,14 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Calendar, DollarSign, Anchor, Bell } from "lucide-react";
 import { format, addMonths } from "date-fns";
-
-interface CustomerStats {
-  currentTotal: number;
-  lastTotal: number;
-  activeTotal: number;
-  inactiveTotal: number;
-  percentageChange: number;
-}
+import { Customer } from "@/types/customer";
 
 interface CustomerStatsCardsProps {
-  customerStats?: CustomerStats;
+  customer?: Customer;
 }
 
-export function CustomerStatsCards({ customerStats }: CustomerStatsCardsProps) {
-  // Mock dates for demonstration
+export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
+  // Calculate dates for demonstration
   const startDate = new Date();
   const endDate = addMonths(startDate, 6);
   const renewalDate = addMonths(endDate, -1);
@@ -43,7 +36,7 @@ export function CustomerStatsCards({ customerStats }: CustomerStatsCardsProps) {
       />
       <EnhancedStatCard
         title="Total Revenue"
-        value="$12,500"
+        value={`$${customer?.lifetime_value?.toLocaleString() || '0'}`}
         icon={DollarSign}
         breakdown={[
           { 
