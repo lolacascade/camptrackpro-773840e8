@@ -1,5 +1,6 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { Users, UserPlus, Activity, Star } from "lucide-react";
+import { Calendar, DollarSign, Anchor, Bell } from "lucide-react";
+import { format, addMonths } from "date-fns";
 
 interface CustomerStats {
   currentTotal: number;
@@ -14,70 +15,90 @@ interface CustomerStatsCardsProps {
 }
 
 export function CustomerStatsCards({ customerStats }: CustomerStatsCardsProps) {
+  // Mock dates for demonstration
+  const startDate = new Date();
+  const endDate = addMonths(startDate, 6);
+  const renewalDate = addMonths(endDate, -1);
+
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
-        title="Total Customers"
-        value={customerStats?.currentTotal.toString() || "0"}
-        icon={Users}
-        trend={{
-          value: `${Math.abs(customerStats?.percentageChange || 0)}%`,
-          isPositive: (customerStats?.percentageChange || 0) >= 0,
-          comparedTo: "last month"
-        }}
+        title="Lease Details"
+        value="6 Months"
+        icon={Calendar}
         breakdown={[
           { 
-            label: "Active", 
-            value: customerStats?.activeTotal.toString() || "0", 
-            percentage: customerStats?.currentTotal ? Math.round((customerStats.activeTotal / customerStats.currentTotal) * 100) : 0 
+            label: "Start Date", 
+            value: format(startDate, "MM/dd/yyyy")
           },
           { 
-            label: "Inactive", 
-            value: customerStats?.inactiveTotal.toString() || "0", 
-            percentage: customerStats?.currentTotal ? Math.round((customerStats.inactiveTotal / customerStats.currentTotal) * 100) : 0 
+            label: "End Date", 
+            value: format(endDate, "MM/dd/yyyy")
+          },
+          { 
+            label: "Renewal Date", 
+            value: format(renewalDate, "MM/dd/yyyy")
           }
         ]}
       />
       <EnhancedStatCard
-        title="New Customers"
-        value="8"
-        icon={UserPlus}
-        trend={{
-          value: "2 customers",
-          isPositive: true,
-          comparedTo: "last month"
-        }}
+        title="Total Revenue"
+        value="$12,500"
+        icon={DollarSign}
         breakdown={[
-          { label: "Website", value: "5", percentage: 63 },
-          { label: "Referrals", value: "3", percentage: 37 }
+          { 
+            label: "Next Payment", 
+            value: "$2,500",
+            percentage: 20
+          },
+          { 
+            label: "Due Date", 
+            value: format(addMonths(startDate, 1), "MM/dd/yyyy")
+          },
+          { 
+            label: "Status", 
+            value: "Paid"
+          }
         ]}
       />
       <EnhancedStatCard
-        title="Active Engagement"
-        value="78%"
-        icon={Activity}
-        trend={{
-          value: "3%",
-          isPositive: true,
-          comparedTo: "last month"
-        }}
+        title="Asset Utilization"
+        value="Sea Breeze II"
+        icon={Anchor}
         breakdown={[
-          { label: "Bookings", value: "60%", percentage: 60 },
-          { label: "Reviews", value: "18%", percentage: 18 }
+          { 
+            label: "Lease Type", 
+            value: "Long-Term"
+          },
+          { 
+            label: "Usage", 
+            value: "45 Days",
+            percentage: 75
+          },
+          { 
+            label: "Asset ID", 
+            value: "BOAT-2024-001"
+          }
         ]}
       />
       <EnhancedStatCard
-        title="Customer Rating"
-        value="4.8/5"
-        icon={Star}
+        title="Key Alerts"
+        value="2 Alerts"
+        icon={Bell}
         trend={{
-          value: "0.2",
+          value: "45 days",
           isPositive: true,
-          comparedTo: "last rating"
+          comparedTo: "until expiry"
         }}
         breakdown={[
-          { label: "Service", value: "4.9/5", percentage: 95 },
-          { label: "Communication", value: "4.7/5", percentage: 90 }
+          { 
+            label: "Maintenance", 
+            value: "Good"
+          },
+          { 
+            label: "Notes", 
+            value: "Renewal Discussion Needed"
+          }
         ]}
       />
     </div>
