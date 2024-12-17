@@ -14,41 +14,37 @@ export default function Login() {
   const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
-    // Persistent session handling
+    // Single auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
-      if (event === 'SIGNED_IN') {
-        // Store session in localStorage for persistence
-        localStorage.setItem('supabase-session', JSON.stringify(currentSession));
-        
+      console.log('Auth state changed:', event);
+      
+      if (event === 'SIGNED_IN' && currentSession) {
         const from = location.state?.from?.pathname || '/app';
         navigate(from, { replace: true });
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in.",
+        });
       }
 
       if (event === 'SIGNED_OUT') {
         localStorage.removeItem('supabase-session');
+        toast({
+          title: "Signed out",
+          description: "You have been signed out successfully.",
+        });
       }
 
-      if (event === 'PASSWORD_RECOVERY') {
-        toast({
-          title: "Password Reset Successful",
-          description: "Your password has been successfully reset.",
-        });
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Session token refreshed');
       }
     });
 
-    // Check for existing session on mount
-    const savedSession = localStorage.getItem('supabase-session');
-    if (savedSession && !session) {
-      const parsedSession = JSON.parse(savedSession);
-      if (parsedSession?.access_token) {
-        supabase.auth.setSession(parsedSession);
-      }
-    }
-
+    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
-  }, [session, navigate, location.state?.from?.pathname, toast]);
+  }, [navigate, location.state?.from?.pathname, toast]);
 
   // If already authenticated, redirect to app
   useEffect(() => {
@@ -76,7 +72,8 @@ export default function Login() {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-2">
             <span className="text-white">Camp</span>
-            <span className="text-primary">TrackPro</span>
+            <span className="text-white">Track</span>
+            <span className="text-[#C0CCAB]">Pro</span>
           </h1>
           <p className="text-gray-400">Manage your RV park with ease</p>
         </div>
