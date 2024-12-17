@@ -14,7 +14,7 @@ import { useSessionCheck } from "@/hooks/use-session-check";
 import { toast } from "sonner";
 
 const suggestionQueries = [
-  "Which slips are available this weekend?",
+  "Which sites are available this weekend?",
   "Show pending maintenance tasks",
   "What's the current occupancy rate?",
   "Show revenue for this month",
@@ -24,7 +24,7 @@ export function ChatAssistant() {
   const [messages, setMessages] = useState<ChatMessageType[]>([
     {
       role: "assistant",
-      content: "Hello! I'm your marina assistant. How can I help you today?",
+      content: "Hello! I'm your RV park assistant. How can I help you today?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -107,7 +107,7 @@ export function ChatAssistant() {
       "bg-[#0D1D1F] flex flex-col h-full",
       isMobile ? "w-full" : "w-full sticky top-0"
     )}>
-      <h2 className="text-xl font-semibold p-4 text-white">Marina Assistant</h2>
+      <h2 className="text-xl font-semibold p-4 text-white">RV Park Assistant</h2>
       
       <ScrollArea className="flex-1 px-4">
         <div className="space-y-4 mb-4">

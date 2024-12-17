@@ -6,7 +6,7 @@ interface MarinaHeaderProps {
   title?: string;
 }
 
-export function MarinaHeader({ onAddDock, title = "Marina Map" }: MarinaHeaderProps) {
+export function MarinaHeader({ onAddDock, title = "Camp Map" }: MarinaHeaderProps) {
   return (
     <div className="flex justify-between items-center">
       <h1 className="text-3xl font-semibold text-[#133134]">{title}</h1>

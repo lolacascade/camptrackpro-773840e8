@@ -43,8 +43,8 @@ export default function MarinaMap() {
   };
 
   const handleAddDock = () => {
-    // TODO: Implement add dock functionality
-    console.log('Add dock clicked');
+    // TODO: Implement add site functionality
+    console.log('Add site clicked');
   };
 
   return (
@@ -64,7 +64,7 @@ export default function MarinaMap() {
           <Card>
             <CardContent className="p-6">
               <div className="aspect-[16/9] bg-[#F8F9FA] rounded-lg flex items-center justify-center">
-                <p className="text-muted-foreground">Interactive marina map will be displayed here</p>
+                <p className="text-muted-foreground">Interactive campsite map will be displayed here</p>
               </div>
             </CardContent>
           </Card>

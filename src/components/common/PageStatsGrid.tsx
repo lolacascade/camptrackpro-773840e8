@@ -7,7 +7,7 @@ interface PageStatsGridProps {
     occupancyRate: number;
     occupiedSlips: number;
     totalSlips: number;
-    activeBoats: number;
+    activeRVs: number;
     monthlyRevenue: number;
     pendingMaintenance: number;
   };
@@ -28,8 +28,8 @@ export function PageStatsGrid({ title, stats }: PageStatsGridProps) {
             comparedTo: "last week"
           }}
           breakdown={[
-            { label: "Occupied Slips", value: stats.occupiedSlips.toString(), percentage: Math.round((stats.occupiedSlips/stats.totalSlips) * 100) },
-            { label: "Total Slips", value: stats.totalSlips.toString() }
+            { label: "Occupied Sites", value: stats.occupiedSlips.toString(), percentage: Math.round((stats.occupiedSlips/stats.totalSlips) * 100) },
+            { label: "Total Sites", value: stats.totalSlips.toString() }
           ]}
         />
         <EnhancedStatCard
@@ -42,17 +42,17 @@ export function PageStatsGrid({ title, stats }: PageStatsGridProps) {
             comparedTo: "last month"
           }}
           breakdown={[
-            { label: "Slip Renewals", value: "$20,000", percentage: 44 },
+            { label: "Site Renewals", value: "$20,000", percentage: 44 },
             { label: "New Rentals", value: "$15,000", percentage: 33 },
             { label: "Maintenance", value: "$10,231", percentage: 23 }
           ]}
         />
         <EnhancedStatCard
-          title="Active Boats"
-          value={stats.activeBoats.toString()}
+          title="Active RVs"
+          value={stats.activeRVs.toString()}
           icon={Ship}
           trend={{
-            value: "3 boats",
+            value: "3 RVs",
             isPositive: true,
             comparedTo: "last week"
           }}
