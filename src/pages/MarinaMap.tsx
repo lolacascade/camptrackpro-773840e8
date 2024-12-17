@@ -42,16 +42,11 @@ export default function MarinaMap() {
     return data;
   };
 
-  const handleAddDock = () => {
-    // TODO: Implement add site functionality
-    console.log('Add site clicked');
-  };
-
   return (
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <MarinaHeader onAddDock={handleAddDock} title="Camp Map" />
+          <MarinaHeader title="Camp Map" />
           
           {marinaStats && <MarinaStatsCards stats={marinaStats} />}
 
