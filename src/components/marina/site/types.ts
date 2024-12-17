@@ -1,12 +1,19 @@
-export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | '';
-export type HookupType = 'full' | 'partial' | 'dry' | '';
-export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | '';
-export type PowerOption = '20A' | '30A' | '50A' | '';
+export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | 'none';
+export type HookupType = 'full' | 'partial' | 'dry' | 'none';
+export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | 'none';
+export type PowerOption = '20A' | '30A' | '50A' | 'none';
+
+export interface DistanceToFacilities {
+  restrooms?: number;
+  showers?: number;
+  dumpStation?: number;
+  picnicArea?: number;
+}
 
 export interface MaxCapacity {
   people: number;
   vehicles: number;
-  weight?: number; // in lbs
+  weight?: number;
 }
 
 export interface Pricing {
@@ -16,13 +23,6 @@ export interface Pricing {
   trimester?: number;
   semester?: number;
   annual?: number;
-}
-
-export interface DistanceToFacilities {
-  restrooms?: number;
-  showers?: number;
-  dumpStation?: number;
-  picnicArea?: number;
 }
 
 export interface SpecialFeatures {

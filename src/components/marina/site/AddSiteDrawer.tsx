@@ -21,12 +21,12 @@ interface AddSiteDrawerProps {
 
 const defaultFormData: SiteFormData = {
   name: '',
-  site_type: 'back-in',
+  site_type: 'none',
   length_ft: 0,
   width_ft: 0,
-  hookup_type: 'full',
-  electricity_voltage: '30A',
-  surface_type: 'gravel',
+  hookup_type: 'none',
+  electricity_voltage: 'none',
+  surface_type: 'none',
   distance_to_facilities: {},
   max_capacity: { people: 4, vehicles: 2 },
   status: 'available',
@@ -74,13 +74,19 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
 
     setIsSubmitting(true)
     try {
+      const dataToInsert = {
+        ...formData,
+        user_id: session.user.id,
+        status: 'available',
+        distance_to_facilities: JSON.stringify(formData.distance_to_facilities),
+        max_capacity: JSON.stringify(formData.max_capacity),
+        special_features: JSON.stringify(formData.special_features),
+        pricing: JSON.stringify(formData.pricing)
+      }
+
       const { error } = await supabase
         .from('slots')
-        .insert([{
-          ...formData,
-          user_id: session.user.id,
-          status: 'available'
-        }])
+        .insert([dataToInsert])
 
       if (error) throw error
 
