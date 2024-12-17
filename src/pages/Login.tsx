@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
@@ -70,11 +70,13 @@ export default function Login() {
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-bold mb-2">
-            <span className="text-white">Camp</span>
-            <span className="text-white">Track</span>
-            <span className="text-[#C0CCAB]">Pro</span>
-          </h1>
+          <Link to="/" className="inline-block">
+            <h1 className="text-4xl font-bold mb-2">
+              <span className="text-white">Camp</span>
+              <span className="text-white">Track</span>
+              <span className="text-[#C0CCAB]">Pro</span>
+            </h1>
+          </Link>
           <p className="text-gray-400">Manage your RV park with ease</p>
         </div>
         
