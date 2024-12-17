@@ -7,19 +7,19 @@ export function PainPointsSection() {
     <div className="py-24 bg-background border-y">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
-          <h2 className="text-4xl font-bold mb-6">Managing a Marina Was Never Meant to Feel This Overwhelming</h2>
+          <h2 className="text-4xl font-bold mb-6">Managing an RV Park Was Never Meant to Feel This Overwhelming</h2>
           <div className="space-y-6 text-lg text-muted-foreground">
             <p>
               You didn't choose this career to drown in administrative chaos. Yet, every day feels like a storm you can't escape. 
-              One minute you're juggling slip availability for frustrated boaters, the next you're tracking overdue maintenance 
+              One minute you're juggling site availability for frustrated campers, the next you're tracking overdue maintenance 
               tasks before they cause an uproar. And don't even get started on reconciling revenue spreadsheets that never add up.
             </p>
             <p>
-              It's a never-ending cycle of firefighting, leaving you drained and disconnected from the parts of marina management 
-              you truly love—building relationships with boaters, planning for growth, and seeing your marina thrive.
+              It's a never-ending cycle of firefighting, leaving you drained and disconnected from the parts of RV park management 
+              you truly love—building relationships with campers, planning for growth, and seeing your park thrive.
             </p>
             <p className="text-xl font-medium text-foreground">
-              But here's the good news: DockEase is here to give you the calm after the storm.
+              But here's the good news: CampTrackPro is here to give you the calm after the storm.
             </p>
           </div>
         </div>
@@ -28,8 +28,8 @@ export function PainPointsSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <FeatureCard
               icon={BarChart3}
-              title="Maximize Every Slip"
-              description="Understand your marina at a glance with real-time tracking of slip status and occupancy trends."
+              title="Maximize Every Site"
+              description="Understand your RV park at a glance with real-time tracking of site status and occupancy trends."
             />
             <FeatureCard
               icon={DollarSign}
@@ -44,20 +44,20 @@ export function PainPointsSection() {
             <FeatureCard
               icon={MessageSquare}
               title="Customer Success"
-              description="Keep boaters informed and satisfied with streamlined communication tools."
+              description="Keep campers informed and satisfied with streamlined communication tools."
             />
           </div>
           
           <div className="space-y-8 bg-accent rounded-2xl p-8">
-            <h2 className="text-3xl font-bold mb-6">Transform Your Marina Operations</h2>
+            <h2 className="text-3xl font-bold mb-6">Transform Your RV Park Operations</h2>
             <div className="space-y-6">
               <div>
                 <h3 className="text-xl font-semibold flex items-center gap-2">
                   <ChevronRight className="text-primary" />
-                  Maximize Every Slip's Potential
+                  Maximize Every Site's Potential
                 </h3>
                 <p className="mt-2 text-muted-foreground">
-                  Understand your marina at a glance. Instantly track which slips are available, occupied, or under maintenance, 
+                  Understand your RV park at a glance. Instantly track which sites are available, occupied, or under maintenance, 
                   so nothing falls through the cracks.
                 </p>
               </div>
@@ -77,7 +77,7 @@ export function PainPointsSection() {
                   Fix Maintenance Before It Costs You
                 </h3>
                 <p className="mt-2 text-muted-foreground">
-                  Be proactive. Plan repairs and track them in real time to minimize downtime and keep your marina running smoothly.
+                  Be proactive. Plan repairs and track them in real time to minimize downtime and keep your RV park running smoothly.
                 </p>
               </div>
               <div>
@@ -86,7 +86,7 @@ export function PainPointsSection() {
                   Make Customers Your Biggest Advocates
                 </h3>
                 <p className="mt-2 text-muted-foreground">
-                  Happy boaters mean steady income. Keep them informed and impressed with streamlined communication and top-notch service.
+                  Happy campers mean steady income. Keep them informed and impressed with streamlined communication and top-notch service.
                 </p>
               </div>
             </div>
@@ -98,7 +98,7 @@ export function PainPointsSection() {
             size="lg" 
             className="bg-primary hover:bg-primary/90 text-white transition-all duration-300 text-lg px-8 py-6 h-auto"
           >
-            Get Started Today – See How DockEase Can Transform Your Marina
+            Get Started Today – See How CampTrackPro Can Transform Your RV Park
             <ArrowRight className="ml-2" />
           </Button>
         </div>
