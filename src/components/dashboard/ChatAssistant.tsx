@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
+import { useSession } from "@supabase/auth-helpers-react";
 import { ChatInput } from "@/components/dashboard/chat/ChatInput";
+import { ChatMessage } from "@/components/dashboard/chat/ChatMessage";
+import { ChatSuggestions } from "@/components/dashboard/chat/ChatSuggestions";
+import { chatService } from "@/services/chat-service";
+import { v4 as uuidv4 } from 'uuid';
+import { toast } from "sonner";
 
 const INITIAL_SUGGESTIONS = [
   "What's the current occupancy rate?",
@@ -9,27 +15,68 @@ const INITIAL_SUGGESTIONS = [
 ];
 
 export function ChatAssistant() {
-  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([]);
-  const [suggestions, setSuggestions] = useState<string[]>(INITIAL_SUGGESTIONS);
+  const session = useSession();
+  const [messages, setMessages] = useState<{ role: 'assistant' | 'user'; content: string }[]>([]);
+  const [suggestions] = useState<string[]>(INITIAL_SUGGESTIONS);
   const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [conversationId] = useState(() => uuidv4());
 
-  const handleSend = () => {
-    if (inputValue.trim()) {
-      setMessages((prev) => [...prev, { text: inputValue, isUser: true }]);
-      setInputValue("");
-      // Simulate a response from the assistant
-      setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          { text: "This is a simulated response.", isUser: false },
-        ]);
-      }, 1000);
+  useEffect(() => {
+    if (session?.user?.id) {
+      loadChatHistory();
+    }
+  }, [session?.user?.id]);
+
+  const loadChatHistory = async () => {
+    if (!session?.user?.id) return;
+    
+    try {
+      const history = await chatService.loadMessages(session.user.id, conversationId);
+      setMessages(history);
+    } catch (error) {
+      console.error('Error loading chat history:', error);
+      toast.error("Failed to load chat history");
     }
   };
 
-  useEffect(() => {
-    // Load initial suggestions or any other setup
-  }, []);
+  const handleSend = async () => {
+    if (!inputValue.trim() || !session?.access_token) return;
+
+    const userMessage = { role: 'user' as const, content: inputValue };
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue("");
+    setIsLoading(true);
+
+    try {
+      const response = await chatService.sendMessage(
+        userMessage,
+        conversationId,
+        session.access_token
+      );
+
+      if (response.choices && response.choices[0]?.message) {
+        const assistantMessage = {
+          role: 'assistant' as const,
+          content: response.choices[0].message.content
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+      }
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      if (error.message === "API quota exceeded") {
+        toast.error("API quota exceeded. Please try again later.");
+      } else {
+        toast.error("Failed to send message. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSuggestionSelect = (suggestion: string) => {
+    setInputValue(suggestion);
+  };
 
   return (
     <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
@@ -40,22 +87,34 @@ export function ChatAssistant() {
         </p>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((msg, index) => (
-          <div key={index} className={`mb-2 ${msg.isUser ? "text-right" : "text-left"}`}>
-            <span className={`inline-block p-2 rounded-lg ${msg.isUser ? "bg-blue-500" : "bg-gray-700"}`}>
-              {msg.text}
-            </span>
-          </div>
+          <ChatMessage
+            key={index}
+            role={msg.role}
+            content={msg.content}
+          />
         ))}
       </div>
 
-      <ChatInput
-        value={inputValue}
-        onChange={setInputValue}
-        onSend={handleSend}
-        isLoading={false}
-      />
+      <div className="p-4 space-y-4">
+        {messages.length === 0 && (
+          <div className="mb-4">
+            <p className="text-sm text-[#C0CCAB] mb-2">Try asking about:</p>
+            <ChatSuggestions
+              suggestions={suggestions}
+              onSelect={handleSuggestionSelect}
+            />
+          </div>
+        )}
+        
+        <ChatInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSend={handleSend}
+          isLoading={isLoading}
+        />
+      </div>
     </div>
   );
 }

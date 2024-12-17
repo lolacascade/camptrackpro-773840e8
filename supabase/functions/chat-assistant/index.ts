@@ -52,7 +52,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful marina management assistant. You help users manage their marina operations, bookings, and maintenance tasks.',
+            content: 'You are a helpful RV park management assistant. You help users manage their RV park operations, bookings, and maintenance tasks. Keep your responses focused on RV park management topics.',
           },
           ...messages,
         ],
