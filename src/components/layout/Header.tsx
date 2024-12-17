@@ -22,7 +22,7 @@ const navigation = [
   { name: "Assets", href: "/app/assets" },
   { name: "Maintenance", href: "/app/maintenance" },
   { name: "Financials", href: "/app/financials" },
-  { name: "Marina Map", href: "/app/map" },
+  { name: "RV Park Map", href: "/app/map" },
 ];
 
 export function Header() {
@@ -92,9 +92,10 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] bg-secondary p-6">
               <div className="flex flex-col gap-8">
-                <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity text-white">
-                  <span className="text-primary">Camp</span>
-                  <span>TrackPro</span>
+                <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
+                  <span className="text-white">Camp</span>
+                  <span className="text-[#C0CCAB]">Track</span>
+                  <span className="text-[#C0CCAB]">Pro</span>
                 </Link>
                 <NavigationLinks />
               </div>
@@ -103,8 +104,9 @@ export function Header() {
         )}
         
         <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-          <span className="text-primary">Camp</span>
-          <span className="text-white">TrackPro</span>
+          <span className="text-white">Camp</span>
+          <span className="text-white">Track</span>
+          <span className="text-[#C0CCAB]">Pro</span>
         </Link>
       </div>
       
