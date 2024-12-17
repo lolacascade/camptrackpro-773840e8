@@ -1,21 +1,21 @@
-import { addMonths, startOfMonth, subMonths } from "date-fns";
-import { Customer } from "@/types/customer";
+import { addMonths, startOfMonth, subMonths, format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 import { ChartData } from "../types";
 
-export const processCustomerData = (customerStats: any[] | null) => {
+export const processCustomerData = async () => {
+  const data: ChartData[] = [];
   const today = new Date();
   const startDate = subMonths(startOfMonth(today), 5); // Past 5 months
-  const endDate = addMonths(startOfMonth(today), 7);   // Next 6 months of projections (adding 7 to include current month)
-
-  const monthlyData = new Map();
+  const endDate = addMonths(startOfMonth(today), 2);   // Next 2 months of projections
 
   // Initialize all months in our range with zero values
   let currentDate = startDate;
   while (currentDate <= endDate) {
-    const monthKey = currentDate.toLocaleString('default', { month: 'short', year: 'numeric' });
-    monthlyData.set(monthKey, {
-      month: monthKey,
-      year: currentDate.getFullYear().toString(),
+    const monthKey = format(currentDate, 'MMM yyyy');
+    data.push({
+      date: currentDate,
+      month: format(currentDate, 'MMM'),
+      year: format(currentDate, 'yyyy'),
       newCustomers: 0,
       existingCustomers: 0,
       isProjected: currentDate > today
@@ -23,46 +23,61 @@ export const processCustomerData = (customerStats: any[] | null) => {
     currentDate = addMonths(currentDate, 1);
   }
 
-  // Process actual customer data
-  customerStats?.forEach(customer => {
-    const date = new Date(customer.created_at);
-    if (date >= startDate && date <= today) {
-      const monthKey = date.toLocaleString('default', { month: 'short', year: 'numeric' });
-      const monthData = monthlyData.get(monthKey);
-      if (monthData) {
-        monthData.newCustomers += 1;
+  // Process actual data for past and current months
+  for (let i = 0; i < data.length; i++) {
+    const entry = data[i];
+    if (!entry.isProjected) {
+      const monthStart = startOfMonth(entry.date);
+      const monthEnd = addMonths(monthStart, 1);
+
+      // Get new customers for this month
+      const { data: newCustomers, error: newError } = await supabase
+        .from('customers')
+        .select('id')
+        .gte('created_at', monthStart.toISOString())
+        .lt('created_at', monthEnd.toISOString());
+
+      if (newError) {
+        console.error('Error fetching new customers:', newError);
+        continue;
       }
-    }
-  });
 
-  // Calculate cumulative customers and add projections
-  let lastActualMonth = null;
-  let lastActualCustomers = 0;
-  
-  return Array.from(monthlyData.values()).map((data: any, index, array) => {
-    // Calculate existing customers (cumulative from previous months)
-    if (index > 0) {
-      const prevMonth = array[index - 1];
-      data.existingCustomers = prevMonth.existingCustomers + prevMonth.newCustomers;
-    }
+      // Get customers with active leases during this month
+      const { data: activeLeases, error: activeError } = await supabase
+        .from('bookings')
+        .select('customer_id')
+        .or(`and(check_in_date.lte.${monthEnd.toISOString()},check_out_date.gte.${monthStart.toISOString()})`)
+        .neq('status', 'cancelled');
 
-    // Keep track of the last actual month for projections
-    if (!data.isProjected) {
-      lastActualMonth = data;
-      lastActualCustomers = data.newCustomers;
-    } else if (lastActualMonth) {
-      // For projected months, apply 10% growth compounded monthly
-      const monthsSinceLastActual = array
-        .slice(0, index)
-        .filter(m => m.isProjected)
-        .length;
-      
-      // Calculate projected new customers with compound growth
-      data.newCustomers = Math.round(
-        lastActualCustomers * Math.pow(1.1, monthsSinceLastActual)
+      if (activeError) {
+        console.error('Error fetching active leases:', activeError);
+        continue;
+      }
+
+      // Filter out new customers from active leases to get existing customers
+      const newCustomerIds = new Set(newCustomers?.map(c => c.id) || []);
+      const existingCustomerIds = new Set(
+        activeLeases
+          ?.map(lease => lease.customer_id)
+          .filter(id => !newCustomerIds.has(id)) || []
       );
-    }
 
-    return data;
-  });
+      entry.newCustomers = newCustomerIds.size;
+      entry.existingCustomers = existingCustomerIds.size;
+    } else {
+      // For projected months, estimate based on average growth
+      const lastThreeMonths = data.slice(Math.max(0, i - 3), i);
+      const avgNewCustomers = Math.round(
+        lastThreeMonths.reduce((acc, curr) => acc + curr.newCustomers, 0) / lastThreeMonths.length
+      );
+      const avgExistingCustomers = Math.round(
+        lastThreeMonths.reduce((acc, curr) => acc + curr.existingCustomers, 0) / lastThreeMonths.length
+      );
+      
+      entry.newCustomers = Math.round(avgNewCustomers * 1.1); // Assume 10% growth
+      entry.existingCustomers = Math.round(avgExistingCustomers * 1.05); // Assume 5% growth
+    }
+  }
+  
+  return data;
 };
