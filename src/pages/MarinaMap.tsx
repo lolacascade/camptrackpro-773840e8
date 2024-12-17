@@ -51,7 +51,7 @@ export default function MarinaMap() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <MarinaHeader onAddDock={handleAddDock} />
+          <MarinaHeader onAddDock={handleAddDock} title="Camp Map" />
           
           {marinaStats && <MarinaStatsCards stats={marinaStats} />}
 
