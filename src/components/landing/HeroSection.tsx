@@ -13,11 +13,15 @@ export function HeroSection() {
   return (
     <div className="relative min-h-[90vh] flex flex-col items-center justify-start bg-[#0D1D1F] px-4 py-16 md:py-32">
       <div className="max-w-4xl mx-auto text-center mb-8 md:mb-16">
-        <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 leading-tight">
+        <div className="mb-8">
+          <h1 className="text-white text-4xl md:text-5xl font-bold mb-4">CampTrackPro</h1>
+          <div className="w-16 h-1 bg-primary mx-auto"></div>
+        </div>
+        <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 leading-tight">
           Simplify RV Park Management.
           <br className="hidden sm:block" />
           Maximize Efficiency.
-        </h1>
+        </h2>
         <p className="text-gray-400 text-lg sm:text-xl md:text-2xl mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
           CampTrackPro empowers RV park operators to streamline operations,
           boost revenue, and enhance camper satisfaction.
