@@ -747,11 +747,14 @@ export type Database = {
       }
       slots: {
         Row: {
+          amenities: Json | null
           created_at: string | null
           customer_id: number | null
+          distance_to_facilities: Json | null
           dock: string | null
           electricity_voltage: string | null
           has_water: boolean | null
+          hookup_type: string | null
           id: number
           is_covered: boolean | null
           last_activity_at: string | null
@@ -759,8 +762,15 @@ export type Database = {
           location_coordinates: Json | null
           location_identifier: string
           maintenance_id: number | null
+          max_capacity: Json | null
           name: string
+          notes: string | null
+          photos: string[] | null
+          pricing: Json | null
+          site_type: string | null
+          special_features: Json | null
           status: string
+          surface_type: string | null
           updated_at: string | null
           user_id: string | null
           utility_connection_type: string | null
@@ -768,11 +778,14 @@ export type Database = {
           zone: string | null
         }
         Insert: {
+          amenities?: Json | null
           created_at?: string | null
           customer_id?: number | null
+          distance_to_facilities?: Json | null
           dock?: string | null
           electricity_voltage?: string | null
           has_water?: boolean | null
+          hookup_type?: string | null
           id?: number
           is_covered?: boolean | null
           last_activity_at?: string | null
@@ -780,8 +793,15 @@ export type Database = {
           location_coordinates?: Json | null
           location_identifier?: string
           maintenance_id?: number | null
+          max_capacity?: Json | null
           name: string
+          notes?: string | null
+          photos?: string[] | null
+          pricing?: Json | null
+          site_type?: string | null
+          special_features?: Json | null
           status: string
+          surface_type?: string | null
           updated_at?: string | null
           user_id?: string | null
           utility_connection_type?: string | null
@@ -789,11 +809,14 @@ export type Database = {
           zone?: string | null
         }
         Update: {
+          amenities?: Json | null
           created_at?: string | null
           customer_id?: number | null
+          distance_to_facilities?: Json | null
           dock?: string | null
           electricity_voltage?: string | null
           has_water?: boolean | null
+          hookup_type?: string | null
           id?: number
           is_covered?: boolean | null
           last_activity_at?: string | null
@@ -801,8 +824,15 @@ export type Database = {
           location_coordinates?: Json | null
           location_identifier?: string
           maintenance_id?: number | null
+          max_capacity?: Json | null
           name?: string
+          notes?: string | null
+          photos?: string[] | null
+          pricing?: Json | null
+          site_type?: string | null
+          special_features?: Json | null
           status?: string
+          surface_type?: string | null
           updated_at?: string | null
           user_id?: string | null
           utility_connection_type?: string | null

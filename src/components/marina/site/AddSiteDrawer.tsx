@@ -1,13 +1,17 @@
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { useSession } from '@supabase/auth-helpers-react'
 import { useState } from "react"
+import { BasicInfoFields } from "./form/BasicInfoFields"
+import { UtilitiesFields } from "./form/UtilitiesFields"
+import { CapacityFields } from "./form/CapacityFields"
+import { PricingFields } from "./form/PricingFields"
+import { FeaturesFields } from "./form/FeaturesFields"
+import { SiteFormData } from "./types"
 
 interface AddSiteDrawerProps {
   open: boolean
@@ -15,21 +19,39 @@ interface AddSiteDrawerProps {
   onSiteAdded: () => void
 }
 
+const defaultFormData: SiteFormData = {
+  name: '',
+  site_type: 'back-in',
+  length_ft: 0,
+  width_ft: 0,
+  hookup_type: 'full',
+  electricity_voltage: '30A',
+  surface_type: 'gravel',
+  distance_to_facilities: {},
+  max_capacity: { people: 4, vehicles: 2 },
+  status: 'available',
+  special_features: {
+    petFriendly: false,
+    shade: false,
+    firePit: false,
+    picnicTable: false,
+    wifi: false
+  },
+  pricing: {
+    nightly: 0,
+    weekly: 0,
+    monthly: 0
+  },
+  photos: [],
+  notes: '',
+  location_identifier: ''
+}
+
 export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps) {
   const { toast } = useToast()
   const session = useSession()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    dock: '',
-    length_ft: '',
-    width_ft: '',
-    is_covered: false,
-    electricity_voltage: '',
-    has_water: false,
-    zone: '',
-    location_identifier: ''
-  })
+  const [formData, setFormData] = useState<SiteFormData>(defaultFormData)
 
   const handleSubmit = async () => {
     if (!session?.user?.id) {
@@ -57,9 +79,7 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
         .insert([{
           ...formData,
           user_id: session.user.id,
-          status: 'available',
-          length_ft: parseInt(formData.length_ft) || null,
-          width_ft: parseInt(formData.width_ft) || null
+          status: 'available'
         }])
 
       if (error) throw error
@@ -84,93 +104,49 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Add New Site</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Site Name *</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              placeholder="e.g., A1, B2..."
-            />
-          </div>
+          <BasicInfoFields
+            name={formData.name}
+            siteType={formData.site_type}
+            onNameChange={(name) => setFormData(prev => ({ ...prev, name }))}
+            onSiteTypeChange={(site_type) => setFormData(prev => ({ ...prev, site_type }))}
+          />
+
+          <UtilitiesFields
+            hookupType={formData.hookup_type}
+            powerOption={formData.electricity_voltage}
+            surfaceType={formData.surface_type}
+            onHookupTypeChange={(hookup_type) => setFormData(prev => ({ ...prev, hookup_type }))}
+            onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
+            onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
+          />
+
+          <CapacityFields
+            capacity={formData.max_capacity}
+            onCapacityChange={(max_capacity) => setFormData(prev => ({ ...prev, max_capacity }))}
+          />
+
+          <PricingFields
+            pricing={formData.pricing}
+            onPricingChange={(pricing) => setFormData(prev => ({ ...prev, pricing }))}
+          />
+
+          <FeaturesFields
+            features={formData.special_features}
+            onFeaturesChange={(special_features) => setFormData(prev => ({ ...prev, special_features }))}
+          />
 
           <div className="space-y-2">
-            <Label htmlFor="zone">Zone</Label>
-            <Input
-              id="zone"
-              value={formData.zone}
-              onChange={(e) => setFormData(prev => ({ ...prev, zone: e.target.value }))}
-              placeholder="e.g., North, South..."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="length">Length (ft)</Label>
-              <Input
-                id="length"
-                type="number"
-                value={formData.length_ft}
-                onChange={(e) => setFormData(prev => ({ ...prev, length_ft: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="width">Width (ft)</Label>
-              <Input
-                id="width"
-                type="number"
-                value={formData.width_ft}
-                onChange={(e) => setFormData(prev => ({ ...prev, width_ft: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="electricity">Electricity</Label>
-            <Select
-              value={formData.electricity_voltage}
-              onValueChange={(value) => setFormData(prev => ({ ...prev, electricity_voltage: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select voltage" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="30A">30A</SelectItem>
-                <SelectItem value="50A">50A</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="covered">Covered Site</Label>
-            <Switch
-              id="covered"
-              checked={formData.is_covered}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_covered: checked }))}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="water">Water Access</Label>
-            <Switch
-              id="water"
-              checked={formData.has_water}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, has_water: checked }))}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="location">Location Identifier *</Label>
-            <Input
-              id="location"
-              value={formData.location_identifier}
-              onChange={(e) => setFormData(prev => ({ ...prev, location_identifier: e.target.value }))}
-              placeholder="e.g., Section 1, Row A..."
+            <Label htmlFor="notes">Notes</Label>
+            <Textarea
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Special restrictions or recommendations (e.g., Best for RVs under 35ft)"
             />
           </div>
 
