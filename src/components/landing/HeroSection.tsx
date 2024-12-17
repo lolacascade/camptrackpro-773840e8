@@ -27,8 +27,7 @@ export function HeroSection() {
           Maximize Efficiency.
         </h2>
         <p className="text-gray-400 text-lg sm:text-xl md:text-2xl mb-8 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-          CampTrackPro empowers RV park operators to streamline operations,
-          boost revenue, and enhance camper satisfaction.
+          CampTrackPro empowers RV park operators to streamline operations and boost revenue.
         </p>
         <Button 
           size="lg" 

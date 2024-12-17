@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, Clock, DollarSign, MessageSquare } from "lucide-react";
+import { ArrowRight, BarChart3, Clock, DollarSign } from "lucide-react";
 import { FeatureCard } from "./FeatureCard";
 
 export function PainPointsSection() {
@@ -15,7 +15,7 @@ export function PainPointsSection() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           <FeatureCard
             icon={BarChart3}
             title="Site Management"
@@ -31,17 +31,12 @@ export function PainPointsSection() {
             title="Efficient Operations"
             description="Streamline check-ins, maintenance, and daily tasks with automated workflows."
           />
-          <FeatureCard
-            icon={MessageSquare}
-            title="Guest Communication"
-            description="Keep your campers informed and satisfied with integrated messaging."
-          />
         </div>
         
         <div className="text-center mt-12 md:mt-16">
           <Button 
             size="lg" 
-            className="bg-primary hover:bg-primary/90 text-white transition-all duration-300 text-base md:text-lg px-6 md:px-8 py-4 md:py-6 h-auto"
+            className="bg-primary hover:bg-primary/90 text-[#0D1D1F] transition-all duration-300 text-base md:text-lg px-6 md:px-8 py-4 md:py-6 h-auto"
           >
             Start Optimizing Your RV Park Today
             <ArrowRight className="ml-2 h-5 w-5" />
