@@ -1,13 +1,13 @@
 import { Anchor, DollarSign, Ship, Wrench } from "lucide-react";
-import { StatsCard } from "./StatsCard";
+import { StatsCard } from "@/components/common/StatsCard";
 
 interface StatsGridProps {
   occupancyRate: number;
   occupiedSlips: number;
   totalSlips: number;
   activeRVs: number;
-  monthlyRevenue: number;
-  pendingMaintenance: number;
+  monthlyRevenue?: number;
+  pendingMaintenance?: number;
 }
 
 export function StatsGrid({
@@ -15,8 +15,8 @@ export function StatsGrid({
   occupiedSlips,
   totalSlips,
   activeRVs,
-  monthlyRevenue,
-  pendingMaintenance
+  monthlyRevenue = 0,
+  pendingMaintenance = 0
 }: StatsGridProps) {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">

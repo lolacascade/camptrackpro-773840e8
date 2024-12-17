@@ -13,14 +13,16 @@ import { DashboardCallouts } from "./priority/DashboardCallouts";
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-semibold text-[#133134]">Marina Dashboard</h1>
+      <h1 className="text-3xl font-semibold text-[#133134]">RV Park Dashboard</h1>
 
       <ErrorBoundary>
         <StatsGrid 
           occupancyRate={marinaSummary?.occupancyRate ?? 0}
           occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
           totalSlips={marinaSummary?.totalSlips ?? 0}
-          activeBoats={marinaSummary?.activeBoats ?? 0}
+          activeRVs={marinaSummary?.activeRVs ?? 0}
+          monthlyRevenue={marinaSummary?.monthlyRevenue}
+          pendingMaintenance={marinaSummary?.pendingMaintenance}
         />
       </ErrorBoundary>
       
