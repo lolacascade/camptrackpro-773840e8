@@ -14,7 +14,11 @@ export function HeroSection() {
     <div className="relative min-h-[90vh] flex flex-col items-center justify-start bg-[#0D1D1F] px-4 py-16 md:py-32">
       <div className="max-w-4xl mx-auto text-center mb-8 md:mb-16">
         <div className="mb-8">
-          <h1 className="text-white text-4xl md:text-5xl font-bold mb-4">CampTrackPro</h1>
+          <h1 className="text-2xl md:text-3xl font-bold mb-4">
+            <span className="text-white">Camp</span>
+            <span className="text-white">Track</span>
+            <span className="text-[#C0CCAB]">Pro</span>
+          </h1>
           <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
         <h2 className="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-6 md:mb-8 leading-tight">
