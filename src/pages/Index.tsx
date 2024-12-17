@@ -22,9 +22,11 @@ export default function Index() {
 
   // If not authenticated, show landing page
   return (
-    <div className="min-h-screen">
-      <HeroSection />
-      <PainPointsSection />
+    <div className="min-h-screen flex flex-col">
+      <main className="flex-grow">
+        <HeroSection />
+        <PainPointsSection />
+      </main>
       <Footer />
     </div>
   );
