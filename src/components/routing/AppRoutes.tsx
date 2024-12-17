@@ -35,7 +35,7 @@ const AppLayout = () => (
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Public routes */}
+      {/* Public routes - accessible to all users */}
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
       <Route path="/terms" element={<TermsOfService />} />
@@ -44,7 +44,7 @@ export function AppRoutes() {
       {/* Protected app routes */}
       <Route path="/app/*" element={<AppLayout />} />
       
-      {/* Catch all redirect for unknown routes */}
+      {/* Catch all redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
