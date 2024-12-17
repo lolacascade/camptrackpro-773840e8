@@ -75,10 +75,10 @@ export default function Login() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-2">
-            <span className="text-white">Dock</span>
-            <span className="text-primary">Ease</span>
+            <span className="text-white">Camp</span>
+            <span className="text-primary">TrackPro</span>
           </h1>
-          <p className="text-gray-400">Manage your marina with ease</p>
+          <p className="text-gray-400">Manage your RV park with ease</p>
         </div>
         
         <div className="bg-white rounded-lg shadow-xl p-8">

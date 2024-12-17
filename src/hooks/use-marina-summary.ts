@@ -2,39 +2,30 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { MarinaSummary } from "@/types/dashboard";
 
-export const useMarinaSummary = () => {
+export function useMarinaSummary() {
   return useQuery({
-    queryKey: ['marinaSummary'],
+    queryKey: ["marina-summary"],
     queryFn: async (): Promise<MarinaSummary> => {
-      console.log('Fetching marina summary...');
-      const { data: slotsData, error: slotsError } = await supabase
-        .from('slots')
-        .select('status');
+      // Fetch data from Supabase
+      const { data: slots, error } = await supabase
+        .from("slots")
+        .select("status")
+        .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
 
-      if (slotsError) throw slotsError;
+      if (error) throw error;
 
-      const { data: assetsData, error: assetsError } = await supabase
-        .from('assets')
-        .select('id');
-
-      if (assetsError) throw assetsError;
-
-      console.log('Slots data:', slotsData);
-      console.log('Assets data:', assetsData);
-
-      const totalSlips = slotsData.length;
-      const occupiedSlips = slotsData.filter(slot => slot.status === 'occupied').length;
-      const activeBoats = assetsData.length;
-      const occupancyRate = totalSlips > 0 
-        ? Math.round((occupiedSlips / totalSlips) * 100)
-        : 0;
+      const totalSlips = slots?.length ?? 0;
+      const occupiedSlips = slots?.filter(slot => slot.status === "occupied").length ?? 0;
+      const occupancyRate = totalSlips > 0 ? Math.round((occupiedSlips / totalSlips) * 100) : 0;
 
       return {
         totalSlips,
         occupiedSlips,
-        activeBoats,
-        occupancyRate
+        activeRVs: occupiedSlips, // Assuming one RV per occupied slot
+        occupancyRate,
+        monthlyRevenue: 45000, // Example data
+        pendingMaintenance: 8, // Example data
       };
-    }
+    },
   });
-};
+}

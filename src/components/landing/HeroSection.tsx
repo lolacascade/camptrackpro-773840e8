@@ -14,13 +14,13 @@ export function HeroSection() {
     <div className="relative min-h-screen flex flex-col items-center justify-start bg-[#0D1D1F] pt-32 px-4">
       <div className="max-w-4xl mx-auto text-center mb-16">
         <h1 className="text-white text-4xl sm:text-5xl md:text-6xl font-bold mb-8">
-          Simplify Marina Management.
+          Simplify RV Park Management.
           <br />
           Maximize Efficiency.
         </h1>
         <p className="text-gray-400 text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
-          DockEase empowers marina operators to streamline operations,
-          boost revenue, and enhance customer satisfaction.
+          CampTrackPro empowers RV park operators to streamline operations,
+          boost revenue, and enhance camper satisfaction.
         </p>
         <Button 
           size="lg" 

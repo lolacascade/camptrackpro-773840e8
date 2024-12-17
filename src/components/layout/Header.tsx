@@ -93,8 +93,8 @@ export function Header() {
             <SheetContent side="left" className="w-[300px] bg-secondary p-6">
               <div className="flex flex-col gap-8">
                 <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity text-white">
-                  <span className="text-primary">Dock</span>
-                  <span>Ease</span>
+                  <span className="text-primary">Camp</span>
+                  <span>TrackPro</span>
                 </Link>
                 <NavigationLinks />
               </div>
@@ -103,8 +103,8 @@ export function Header() {
         )}
         
         <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-          <span className="text-primary">Dock</span>
-          <span className="text-white">Ease</span>
+          <span className="text-primary">Camp</span>
+          <span className="text-white">TrackPro</span>
         </Link>
       </div>
       
