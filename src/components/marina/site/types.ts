@@ -1,7 +1,7 @@
-export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | 'none';
-export type HookupType = 'full' | 'partial' | 'dry' | 'none';
-export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | 'none';
-export type PowerOption = '20A' | '30A' | '50A' | 'none';
+export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | 'No Selection';
+export type HookupType = 'full' | 'partial' | 'dry' | 'No Selection';
+export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | 'No Selection';
+export type PowerOption = '20A' | '30A' | '50A' | 'No Selection';
 
 export interface DistanceToFacilities {
   restrooms?: number;
@@ -48,6 +48,5 @@ export interface SiteFormData {
   pricing: Pricing;
   photos: string[];
   notes: string;
-  zone?: string;
   location_identifier: string;
 }

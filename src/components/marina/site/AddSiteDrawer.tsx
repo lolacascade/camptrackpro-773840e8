@@ -21,12 +21,12 @@ interface AddSiteDrawerProps {
 
 const defaultFormData: SiteFormData = {
   name: '',
-  site_type: 'none',
+  site_type: 'No Selection',
   length_ft: 0,
   width_ft: 0,
-  hookup_type: 'none',
-  electricity_voltage: 'none',
-  surface_type: 'none',
+  hookup_type: 'No Selection',
+  electricity_voltage: 'No Selection',
+  surface_type: 'No Selection',
   distance_to_facilities: {},
   max_capacity: { people: 4, vehicles: 2 },
   status: 'available',

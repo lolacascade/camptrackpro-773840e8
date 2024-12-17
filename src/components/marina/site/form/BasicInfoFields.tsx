@@ -37,7 +37,7 @@ export function BasicInfoFields({
             <SelectValue placeholder="Select site type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="none">No Selection</SelectItem>
+            <SelectItem value="No Selection">No Selection</SelectItem>
             <SelectItem value="pull-through">Pull-through</SelectItem>
             <SelectItem value="back-in">Back-in</SelectItem>
             <SelectItem value="tent-only">Tent-only</SelectItem>
