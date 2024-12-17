@@ -42,11 +42,12 @@ export const processCustomerData = async () => {
         continue;
       }
 
-      // Get customers with active leases during this month
+      // Get all active leases during this month
       const { data: activeLeases, error: activeError } = await supabase
         .from('bookings')
-        .select('customer_id')
-        .or(`and(check_in_date.lte.${monthEnd.toISOString()},check_out_date.gte.${monthStart.toISOString()})`)
+        .select('customer_id, check_in_date, check_out_date')
+        .lte('check_in_date', monthEnd.toISOString())  // Lease starts before or during this month
+        .gte('check_out_date', monthStart.toISOString()) // Lease ends after or during this month
         .neq('status', 'cancelled');
 
       if (activeError) {
@@ -65,17 +66,20 @@ export const processCustomerData = async () => {
       entry.newCustomers = newCustomerIds.size;
       entry.existingCustomers = existingCustomerIds.size;
     } else {
-      // For projected months, estimate based on average growth
+      // For projected months, estimate based on average growth and retention
       const lastThreeMonths = data.slice(Math.max(0, i - 3), i);
-      const avgNewCustomers = Math.round(
-        lastThreeMonths.reduce((acc, curr) => acc + curr.newCustomers, 0) / lastThreeMonths.length
-      );
-      const avgExistingCustomers = Math.round(
-        lastThreeMonths.reduce((acc, curr) => acc + curr.existingCustomers, 0) / lastThreeMonths.length
-      );
-      
-      entry.newCustomers = Math.round(avgNewCustomers * 1.1); // Assume 10% growth
-      entry.existingCustomers = Math.round(avgExistingCustomers * 1.05); // Assume 5% growth
+      if (lastThreeMonths.length > 0) {
+        const avgNewCustomers = Math.round(
+          lastThreeMonths.reduce((acc, curr) => acc + curr.newCustomers, 0) / lastThreeMonths.length
+        );
+        const avgExistingCustomers = Math.round(
+          lastThreeMonths.reduce((acc, curr) => acc + curr.existingCustomers, 0) / lastThreeMonths.length
+        );
+        
+        // Assume modest growth for projections
+        entry.newCustomers = Math.round(avgNewCustomers * 1.05); // 5% growth
+        entry.existingCustomers = Math.round(avgExistingCustomers * 1.02); // 2% growth in retention
+      }
     }
   }
   
