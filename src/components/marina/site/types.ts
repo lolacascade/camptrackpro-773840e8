@@ -1,7 +1,7 @@
-export type SiteType = 'pull-through' | 'back-in' | 'tent-only';
-export type HookupType = 'full' | 'partial' | 'dry';
-export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt';
-export type PowerOption = '20A' | '30A' | '50A';
+export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | '';
+export type HookupType = 'full' | 'partial' | 'dry' | '';
+export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | '';
+export type PowerOption = '20A' | '30A' | '50A' | '';
 
 export interface MaxCapacity {
   people: number;

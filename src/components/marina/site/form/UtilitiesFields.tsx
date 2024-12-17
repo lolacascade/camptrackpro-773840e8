@@ -31,6 +31,7 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="">No Selection</SelectItem>
             <SelectItem value="full">Full Hookup (Water, Electric, Sewer)</SelectItem>
             <SelectItem value="partial">Partial Hookup (Water, Electric)</SelectItem>
             <SelectItem value="dry">Dry Site (No utilities)</SelectItem>
@@ -48,6 +49,7 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="">No Selection</SelectItem>
             <SelectItem value="20A">20 AMP</SelectItem>
             <SelectItem value="30A">30 AMP</SelectItem>
             <SelectItem value="50A">50 AMP</SelectItem>
@@ -65,6 +67,7 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="">No Selection</SelectItem>
             <SelectItem value="gravel">Gravel</SelectItem>
             <SelectItem value="concrete">Concrete</SelectItem>
             <SelectItem value="asphalt">Asphalt</SelectItem>
