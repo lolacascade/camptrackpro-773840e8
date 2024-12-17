@@ -26,27 +26,29 @@ export const fetchMonthlyCustomerData = async () => {
         continue;
       }
 
-      // Get total customers up to this month
-      const { data: totalCustomers, error: totalError } = await supabase
-        .from('customers')
-        .select('id')
-        .lte('created_at', endOfMonth.toISOString());
+      // Get customers who have renewed bookings this month
+      const { data: renewedCustomers, error: renewedError } = await supabase
+        .from('bookings')
+        .select('customer_id')
+        .gte('check_in_date', startOfMonth.toISOString())
+        .lte('check_in_date', endOfMonth.toISOString())
+        .not('customer_id', 'in', `(${(newCustomers?.map(c => c.id) || []).join(',') || '0'})`)
+        .not('status', 'eq', 'cancelled');
 
-      if (totalError) {
-        console.error('Error fetching total customers:', totalError);
+      if (renewedError) {
+        console.error('Error fetching renewed customers:', renewedError);
         continue;
       }
 
-      const newCount = newCustomers?.length || 0;
-      const totalCount = totalCustomers?.length || 0;
-      const existingCount = totalCount - newCount;
+      // Count unique renewed customers
+      const uniqueRenewedCustomers = [...new Set(renewedCustomers?.map(b => b.customer_id) || [])];
 
       data.push({
         date,
         month: format(date, 'MMM'),
         year: format(date, 'yyyy'),
-        newCustomers: newCount,
-        existingCustomers: existingCount,
+        newCustomers: newCustomers?.length || 0,
+        existingCustomers: uniqueRenewedCustomers.length,
         isProjected: false
       });
     } else {
@@ -55,14 +57,16 @@ export const fetchMonthlyCustomerData = async () => {
       const avgNewCustomers = Math.round(
         lastThreeMonths.reduce((acc, curr) => acc + curr.newCustomers, 0) / 3
       );
-      const lastMonth = data[data.length - 1];
+      const avgRenewedCustomers = Math.round(
+        lastThreeMonths.reduce((acc, curr) => acc + curr.existingCustomers, 0) / 3
+      );
       
       data.push({
         date,
         month: format(date, 'MMM'),
         year: format(date, 'yyyy'),
         newCustomers: Math.round(avgNewCustomers * 1.1), // Assume 10% growth
-        existingCustomers: lastMonth.existingCustomers + lastMonth.newCustomers,
+        existingCustomers: Math.round(avgRenewedCustomers * 1.05), // Assume 5% growth in renewals
         isProjected: true
       });
     }
