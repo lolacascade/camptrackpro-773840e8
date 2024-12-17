@@ -1,13 +1,13 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { Ship, Activity, Wrench, Calendar } from "lucide-react";
+import { Caravan, Activity, Wrench, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 
 interface AssetStats {
   totalAssets: {
-    boats: number;
-    jetSkis: number;
+    motorhomes: number;
+    trailers: number;
     underMaintenance: number;
   };
   utilization: {
@@ -50,18 +50,24 @@ export function AssetStatsCards() {
         .select('status, id')
         .eq('status', 'active');
 
-      const boats = assets?.filter(a => a.asset_type === 'boat').length || 0;
-      const jetSkis = assets?.filter(a => a.asset_type === 'jet-ski').length || 0;
+      const motorhomes = assets?.filter(a => 
+        ['Class A', 'Class B', 'Class C'].includes(a.asset_type || '')
+      ).length || 0;
+      
+      const trailers = assets?.filter(a => 
+        ['Travel Trailer', 'Fifth Wheel', 'Pop-up Camper'].includes(a.asset_type || '')
+      ).length || 0;
+      
       const underMaintenance = maintenance?.length || 0;
 
       return {
         totalAssets: {
-          boats,
-          jetSkis,
+          motorhomes,
+          trailers,
           underMaintenance
         },
         utilization: {
-          utilized: 75, // Example value - calculate based on your business logic
+          utilized: 75,
           available: 25
         },
         maintenance: {
@@ -80,12 +86,12 @@ export function AssetStatsCards() {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
-        title="Total Assets"
-        value={`${(stats?.totalAssets.boats || 0) + (stats?.totalAssets.jetSkis || 0)}`}
-        icon={Ship}
+        title="Total RVs"
+        value={`${(stats?.totalAssets.motorhomes || 0) + (stats?.totalAssets.trailers || 0)}`}
+        icon={Caravan}
         breakdown={[
-          { label: "Boats", value: stats?.totalAssets.boats.toString() || "0", percentage: 70 },
-          { label: "Jet Skis", value: stats?.totalAssets.jetSkis.toString() || "0", percentage: 30 }
+          { label: "Motorhomes", value: stats?.totalAssets.motorhomes.toString() || "0", percentage: 70 },
+          { label: "Trailers", value: stats?.totalAssets.trailers.toString() || "0", percentage: 30 }
         ]}
       />
       <EnhancedStatCard

@@ -10,17 +10,16 @@ interface AssetFormFieldsProps {
 }
 
 export const ASSET_TYPES = [
-  { value: 'Speed Boat', label: 'Speed Boat' },
-  { value: 'Sailboat', label: 'Sailboat' },
-  { value: 'Fishing Boat', label: 'Fishing Boat' },
-  { value: 'Pontoon Boat', label: 'Pontoon Boat' },
-  { value: 'Yacht', label: 'Yacht' },
-  { value: 'Catamaran', label: 'Catamaran' },
-  { value: 'Kayak', label: 'Kayak' },
-  { value: 'Rowboat', label: 'Rowboat' },
-  { value: 'Houseboat', label: 'Houseboat' },
-  { value: 'Cruise Boat', label: 'Cruise Boat' },
-  { value: 'Jet Ski', label: 'Jet Ski' },
+  { value: 'Class A', label: 'Class A Motorhome' },
+  { value: 'Class B', label: 'Class B Motorhome' },
+  { value: 'Class C', label: 'Class C Motorhome' },
+  { value: 'Travel Trailer', label: 'Travel Trailer' },
+  { value: 'Fifth Wheel', label: 'Fifth Wheel' },
+  { value: 'Pop-up Camper', label: 'Pop-up Camper' },
+  { value: 'Truck Camper', label: 'Truck Camper' },
+  { value: 'Toy Hauler', label: 'Toy Hauler' },
+  { value: 'Teardrop', label: 'Teardrop Trailer' },
+  { value: 'Van', label: 'Van Conversion' },
   { value: 'Other', label: 'Other' }
 ] as const;
 
@@ -28,12 +27,12 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor="asset_name">Asset Name *</Label>
+        <Label htmlFor="asset_name">RV Name/Identifier *</Label>
         <Input
           id="asset_name"
           value={newAsset.asset_name || ''}
           onChange={(e) => setNewAsset({ ...newAsset, asset_name: e.target.value })}
-          placeholder="Enter asset name"
+          placeholder="Enter RV name or identifier"
         />
       </div>
       <div className="grid gap-2">
@@ -46,13 +45,13 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_type">Asset Type *</Label>
+        <Label htmlFor="asset_type">RV Type *</Label>
         <Select
           value={newAsset.asset_type || ''}
           onValueChange={(value) => setNewAsset({ ...newAsset, asset_type: value })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select asset type" />
+            <SelectValue placeholder="Select RV type" />
           </SelectTrigger>
           <SelectContent>
             {ASSET_TYPES.map(({ value, label }) => (
@@ -64,13 +63,13 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         </Select>
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="slip_id">Slot *</Label>
+        <Label htmlFor="slip_id">Site *</Label>
         <Select
           value={newAsset.slip_id?.toString() || ''}
           onValueChange={(value) => setNewAsset({ ...newAsset, slip_id: parseInt(value) })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select a slot" />
+            <SelectValue placeholder="Select a site" />
           </SelectTrigger>
           <SelectContent>
             {availableSlots.map((slot) => (

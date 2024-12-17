@@ -19,7 +19,7 @@ export function AssetDrawer({ open, onClose, onAssetAdded }: AssetDrawerProps) {
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add New Asset</SheetTitle>
+          <SheetTitle>Add New RV</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-4">
           <AssetFormFields
@@ -31,7 +31,7 @@ export function AssetDrawer({ open, onClose, onAssetAdded }: AssetDrawerProps) {
             onClick={handleSubmit}
             className="w-full bg-[#133134] text-white hover:bg-[#133134]/90"
           >
-            Add Asset
+            Add RV
           </Button>
         </div>
       </SheetContent>
