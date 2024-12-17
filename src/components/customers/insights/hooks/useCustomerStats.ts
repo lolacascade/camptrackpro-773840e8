@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { processCustomerData } from "../utils/processCustomerData";
+import { format } from "date-fns";
 
 export const useCustomerStats = () => {
   const { data: chartData, isLoading } = useQuery({
@@ -8,12 +9,11 @@ export const useCustomerStats = () => {
   });
 
   const today = new Date();
+  const currentMonth = format(today, 'MMM yyyy');
+  
   const currentMonthData = chartData?.find(data => {
-    const [month, year] = data.month.split(' ');
-    return (
-      parseInt(year) === today.getFullYear() &&
-      month === today.toLocaleString('default', { month: 'short' })
-    );
+    if (!data?.month || !data?.year) return false;
+    return `${data.month} ${data.year}` === currentMonth;
   });
 
   return {
