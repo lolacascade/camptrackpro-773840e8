@@ -4,18 +4,18 @@ import { FeatureCard } from "./FeatureCard";
 
 export function PainPointsSection() {
   return (
-    <div className="py-16 md:py-24 bg-[#0D1D1F]">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center mb-12 md:mb-16">
-          <h2 className="text-white text-3xl md:text-4xl font-bold mb-6">
+    <div className="py-12 sm:py-16 md:py-20 lg:py-24 bg-[#0D1D1F]">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center mb-8 sm:mb-12 md:mb-16">
+          <h2 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
             Transform Your RV Park Operations
           </h2>
-          <p className="text-gray-400 text-lg md:text-xl">
+          <p className="text-gray-400 text-base sm:text-lg md:text-xl">
             Streamline your operations and deliver exceptional experiences to your campers
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <FeatureCard
             icon={BarChart3}
             title="Site Management"
@@ -33,13 +33,13 @@ export function PainPointsSection() {
           />
         </div>
         
-        <div className="text-center mt-12 md:mt-16">
+        <div className="text-center mt-8 sm:mt-12 md:mt-16">
           <Button 
             size="lg" 
-            className="bg-primary hover:bg-primary/90 text-[#0D1D1F] transition-all duration-300 text-base md:text-lg px-6 md:px-8 py-4 md:py-6 h-auto"
+            className="bg-primary hover:bg-primary/90 text-[#0D1D1F] transition-all duration-300 text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 h-auto"
           >
             Start Optimizing Your RV Park Today
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
       </div>

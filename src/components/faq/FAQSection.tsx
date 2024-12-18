@@ -51,28 +51,28 @@ const faqData = [
 
 export function FAQSection() {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h2 className="text-2xl font-semibold text-[#133134]">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-2 sm:space-y-3">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#133134]">
           Frequently Asked Questions
         </h2>
-        <p className="text-muted-foreground">
+        <p className="text-sm sm:text-base text-muted-foreground">
           Find answers to common questions about our RV park management platform.
         </p>
       </div>
       
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {faqData.map((faq, index) => (
           <Card key={index} className="overflow-hidden">
             <Accordion type="single" collapsible>
               <AccordionItem value={`item-${index}`} className="border-none">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-gray-50/80">
-                  <span className="text-left font-medium text-[#133134]">
+                <AccordionTrigger className="px-3 sm:px-4 py-2 sm:py-3 hover:no-underline hover:bg-gray-50/80">
+                  <span className="text-left text-sm sm:text-base font-medium text-[#133134]">
                     {faq.question}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 pt-1">
-                  <p className="text-muted-foreground">
+                <AccordionContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
+                  <p className="text-sm sm:text-base text-muted-foreground">
                     {faq.answer}
                   </p>
                 </AccordionContent>
