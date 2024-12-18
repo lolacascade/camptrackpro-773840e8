@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { 
   Sparkles, 
   WrenchIcon, 
@@ -6,7 +7,6 @@ import {
   Users,
   ChartBar
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
 export function KeyFeatures() {
   const features = [
@@ -55,7 +55,7 @@ export function KeyFeatures() {
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
             All Your Operations, Simplified
           </h2>
-          <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto">
             From site management to guest insights, our tool provides everything you need to run your RV park smoothly and efficiently.
           </p>
         </div>
@@ -77,10 +77,10 @@ export function KeyFeatures() {
                 <div className="flex items-start justify-between mb-4">
                   <Icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F] group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-semibold mb-2 text-[#0D1D1F] group-hover:text-primary transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 text-base">
                   {feature.description}
                 </p>
                 <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
