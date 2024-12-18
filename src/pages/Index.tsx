@@ -9,9 +9,11 @@ export default function Index() {
       <main className="flex-grow">
         <HeroSection />
         <PainPointsSection />
-        <div className="bg-white py-16 md:py-24">
+        <div className="bg-[#0D1D1F] py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <FAQSection />
+            <div className="bg-white rounded-xl p-6 md:p-8">
+              <FAQSection />
+            </div>
           </div>
         </div>
       </main>
