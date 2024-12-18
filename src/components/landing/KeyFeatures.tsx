@@ -60,30 +60,36 @@ export function KeyFeatures() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 auto-rows-[200px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
+            const isLarge = feature.size === 'large';
+            const isMedium = feature.size === 'medium';
+            
             return (
               <Card 
                 key={index} 
                 className={`
-                  p-6 bg-white hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1
-                  ${feature.size === 'large' ? 'md:col-span-4 md:row-span-2' : 
-                    feature.size === 'medium' ? 'md:col-span-2 md:row-span-2' : 
-                    'md:col-span-2 md:row-span-1'}
-                  flex flex-col relative overflow-hidden group
+                  relative overflow-hidden group transition-all duration-300 hover:shadow-xl
+                  ${isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 
+                    isMedium ? 'lg:col-span-2' : 'lg:col-span-1'}
+                  bg-white p-6 flex flex-col
                 `}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <Icon className="w-8 h-8 text-primary" />
+                <div className="flex items-start space-x-4 mb-4">
+                  <div className="p-2 rounded-lg bg-[#0D1D1F]/5">
+                    <Icon className="w-8 h-8 text-[#0D1D1F]" />
+                  </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-2 text-[#0D1D1F] group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-semibold mb-3 text-[#0D1D1F]">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 text-base">
+                <p className="text-base text-gray-700">
                   {feature.description}
                 </p>
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary/20 to-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                <div className="mt-auto pt-4">
+                  <div className="h-1 w-full bg-gradient-to-r from-[#0D1D1F] to-[#0D1D1F]/80 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                </div>
               </Card>
             );
           })}
