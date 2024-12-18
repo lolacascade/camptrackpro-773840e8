@@ -19,11 +19,18 @@ export const chatService = {
       });
 
       if (response.error) {
-        const errorData = JSON.parse(response.error.message);
-        if (errorData.type === 'quota_exceeded') {
+        // Parse the error message from the Edge Function
+        let errorMessage: any;
+        try {
+          errorMessage = JSON.parse(response.error.message);
+        } catch {
+          errorMessage = { error: response.error.message };
+        }
+
+        if (errorMessage.type === 'quota_exceeded') {
           throw new Error('API quota exceeded');
         }
-        throw new Error(response.error.message);
+        throw new Error(errorMessage.error || 'Unknown error occurred');
       }
 
       return response.data;

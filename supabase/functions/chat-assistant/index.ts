@@ -68,7 +68,7 @@ serve(async (req) => {
       if (response.status === 429) {
         return new Response(
           JSON.stringify({
-            error: 'AI service temporarily unavailable. Please try again later.',
+            error: 'Rate limit exceeded. Please try again in a few minutes.',
             type: 'quota_exceeded'
           }),
           {
@@ -101,9 +101,12 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        type: error.type || 'unknown_error'
+      }),
       {
-        status: 500,
+        status: error.status || 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
