@@ -25,9 +25,8 @@ export function HeroSection() {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
-        password: "", // This will trigger magic link flow
         options: {
           emailRedirectTo: `${window.location.origin}/app`,
         },
@@ -37,13 +36,13 @@ export function HeroSection() {
 
       toast({
         title: "Check your email",
-        description: "We've sent you a magic link to complete your registration.",
+        description: "We've sent you a magic link to sign in.",
       });
       
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Error",
-        description: "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
     } finally {
