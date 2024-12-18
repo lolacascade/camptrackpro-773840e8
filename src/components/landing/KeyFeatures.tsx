@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { 
-  Sparkles, 
-  WrenchIcon, 
-  MapPin, 
-  FileText, 
-  Users,
-  ChartBar
+  Clock, 
+  DollarSign, 
+  Heart, 
+  ListChecks, 
+  Database,
+  Sparkles
 } from "lucide-react";
 
 export function KeyFeatures() {
@@ -17,33 +17,36 @@ export function KeyFeatures() {
       size: "large"
     },
     {
-      icon: WrenchIcon,
+      icon: ListChecks,
       title: "Maintenance Tracking",
       description: "Track and manage maintenance effortlessly with tools to log, assign, and monitor progress in real-time.",
       size: "medium"
     },
     {
-      icon: MapPin,
+      icon: Database,
       title: "Site Management",
       description: "Organize site details, surface types, and availability for clear and easy oversight.",
       size: "medium"
     },
     {
-      icon: FileText,
-      title: "Custom Reports",
-      description: "Generate reports that offer clarity on performance, expenses, and site utilization.",
+      icon: Clock,
+      title: "Save Time",
+      description: "Automate repetitive tasks and focus on growing your business.",
+      stat: "Save 15+ hours weekly",
       size: "small"
     },
     {
-      icon: Users,
-      title: "Guest Insights",
-      description: "Learn visitor trends and preferences to enhance their experience and boost satisfaction.",
+      icon: DollarSign,
+      title: "Cut Costs",
+      description: "Optimize utilities and resources with smart AI insights.",
+      stat: "Reduce expenses by 20%",
       size: "small"
     },
     {
-      icon: ChartBar,
-      title: "Performance Analytics",
-      description: "Keep track of key park metrics and performance to make data-driven decisions.",
+      icon: Heart,
+      title: "Guest Experience",
+      description: "Deliver better stays with actionable park insights.",
+      stat: "98% guest satisfaction",
       size: "medium"
     }
   ];
@@ -60,7 +63,7 @@ export function KeyFeatures() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isLarge = feature.size === 'large';
@@ -70,25 +73,36 @@ export function KeyFeatures() {
               <Card 
                 key={index} 
                 className={`
-                  relative overflow-hidden group transition-all duration-300 hover:shadow-xl
-                  ${isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 
-                    isMedium ? 'lg:col-span-2' : 'lg:col-span-1'}
-                  bg-white p-6 flex flex-col
+                  relative overflow-hidden group transition-all duration-300
+                  ${isLarge ? 'md:col-span-2 lg:col-span-2' : 
+                    isMedium ? 'lg:col-span-2' : ''}
+                  bg-white p-8 flex flex-col h-full
                 `}
               >
-                <div className="flex items-start space-x-4 mb-4">
-                  <div className="p-2 rounded-lg bg-[#0D1D1F]/5">
-                    <Icon className="w-8 h-8 text-[#0D1D1F]" />
+                <div className="mb-6">
+                  <div className="w-14 h-14 rounded-2xl bg-[#0D1D1F] flex items-center justify-center">
+                    <Icon className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-3 text-[#0D1D1F]">
-                  {feature.title}
-                </h3>
-                <p className="text-base text-gray-700">
-                  {feature.description}
-                </p>
-                <div className="mt-auto pt-4">
-                  <div className="h-1 w-full bg-gradient-to-r from-[#0D1D1F] to-[#0D1D1F]/80 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                
+                <div className="space-y-4">
+                  <h3 className="text-2xl font-semibold text-[#0D1D1F]">
+                    {feature.title}
+                  </h3>
+                  
+                  {feature.stat && (
+                    <p className="text-xl font-medium text-[#0D1D1F]">
+                      {feature.stat}
+                    </p>
+                  )}
+                  
+                  <p className="text-base text-gray-600">
+                    {feature.description}
+                  </p>
+                </div>
+
+                <div className="mt-auto pt-6">
+                  <div className="h-1 w-full bg-[#0D1D1F] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                 </div>
               </Card>
             );
