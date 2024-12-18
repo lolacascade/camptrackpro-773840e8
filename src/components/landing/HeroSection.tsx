@@ -5,13 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 export function HeroSection() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGetStarted = () => {
+  const handleSignUp = async () => {
     if (!email.trim() || !email.includes('@')) {
       toast({
         title: "Invalid email",
@@ -21,9 +23,32 @@ export function HeroSection() {
       return;
     }
     
-    // Store email in localStorage to pre-fill the signup form
-    localStorage.setItem('registration_email', email);
-    navigate('/login');
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password: "", // This will trigger magic link flow
+        options: {
+          emailRedirectTo: `${window.location.origin}/app`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Check your email",
+        description: "We've sent you a magic link to complete your registration.",
+      });
+      
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -50,11 +75,18 @@ export function HeroSection() {
             className="flex-1 border-0 focus-visible:ring-0 text-base placeholder:text-gray-400"
           />
           <Button 
-            onClick={handleGetStarted}
+            onClick={handleSignUp}
+            disabled={isLoading}
             className="bg-[#C0CCAB] hover:bg-[#b3c196] text-[#0D1D1F] font-medium whitespace-nowrap px-6"
           >
-            Sign up for free
-            <ArrowRight className="ml-2 h-4 w-4" />
+            {isLoading ? (
+              "Sending..."
+            ) : (
+              <>
+                Sign up for free
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </div>
       </div>
