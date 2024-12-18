@@ -19,6 +19,10 @@ export const chatService = {
       });
 
       if (response.error) {
+        const errorData = JSON.parse(response.error.message);
+        if (errorData.type === 'quota_exceeded') {
+          throw new Error('API quota exceeded');
+        }
         throw new Error(response.error.message);
       }
 
