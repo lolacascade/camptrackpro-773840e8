@@ -70,8 +70,10 @@ export function BenefitsOfAI() {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex -left-12 border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:bg-[#133134]/20" />
-            <CarouselNext className="hidden md:flex -right-12 border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:bg-[#133134]/20" />
+            <div className="flex justify-center gap-4 mt-8">
+              <CarouselPrevious className="relative inset-0 translate-y-0 border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:bg-[#133134]/20" />
+              <CarouselNext className="relative inset-0 translate-y-0 border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:bg-[#133134]/20" />
+            </div>
           </Carousel>
         </div>
       </div>
