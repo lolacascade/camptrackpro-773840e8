@@ -53,10 +53,10 @@ export function KeyFeatures() {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} className="p-6 bg-[#133134] border-none text-white hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 bg-white hover:shadow-lg transition-shadow">
                 <Icon className="w-10 h-10 mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2 text-white">{feature.title}</h3>
-                <p className="text-gray-300">{feature.description}</p>
+                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F]">{feature.title}</h3>
+                <p className="text-gray-600">{feature.description}</p>
               </Card>
             );
           })}

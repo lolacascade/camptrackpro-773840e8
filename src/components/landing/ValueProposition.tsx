@@ -1,5 +1,5 @@
-import { CheckCircle, Settings, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Settings, Sparkles, CheckCircle } from "lucide-react";
 
 export function ValueProposition() {
   const benefits = [
@@ -31,10 +31,10 @@ export function ValueProposition() {
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
-              <Card key={index} className="p-6 bg-[#133134] border-none text-white hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 bg-white text-center hover:shadow-lg transition-shadow">
                 <Icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2 text-white">{benefit.title}</h3>
-                <p className="text-gray-300">{benefit.description}</p>
+                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F]">{benefit.title}</h3>
+                <p className="text-gray-600">{benefit.description}</p>
               </Card>
             );
           })}

@@ -34,11 +34,11 @@ export function BenefitsOfAI() {
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
-              <Card key={index} className="p-6 text-center bg-[#133134] border-none text-white hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 text-center bg-white hover:shadow-lg transition-shadow">
                 <Icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2 text-white">{benefit.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F]">{benefit.title}</h3>
                 <p className="text-sm font-semibold text-primary mb-2">{benefit.stat}</p>
-                <p className="text-gray-300">{benefit.description}</p>
+                <p className="text-gray-600">{benefit.description}</p>
               </Card>
             );
           })}
