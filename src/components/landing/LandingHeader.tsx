@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function LandingHeader() {
   const navigate = useNavigate();
@@ -16,12 +17,20 @@ export function LandingHeader() {
             </a>
           </div>
           
-          <Button 
-            onClick={() => navigate('/login')}
-            className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
-          >
-            Try For Free
-          </Button>
+          <div className="flex items-center gap-6">
+            <Link 
+              to="/login"
+              className="text-white hover:text-[#C0CCAB] transition-colors"
+            >
+              Sign in
+            </Link>
+            <Button 
+              onClick={() => navigate('/login')}
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90 px-6"
+            >
+              Sign up
+            </Button>
+          </div>
         </div>
       </div>
     </header>
