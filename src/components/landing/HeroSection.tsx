@@ -61,7 +61,7 @@ export function HeroSection() {
           <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
         
-        <p className="text-subheading text-gray-400 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-white text-subheading mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
           Run your RV park smarter, not harder. Streamline daily operations, stay on top of maintenance, and uncover insights with an intuitive AI-powered management tool. Simplify workflows, reduce manual effort, and focus on what matters—delivering a great experience for your guests.
         </p>
 
