@@ -10,34 +10,19 @@ export type Message = {
 export const chatService = {
   async sendMessage(message: Message, conversationId: string, accessToken: string) {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-assistant`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            messages: [message],
-            conversationId,
-          }),
+      const response = await supabase.functions.invoke('chat-assistant', {
+        body: {
+          messages: [message],
+          conversationId,
+          userId: (await supabase.auth.getUser()).data.user?.id,
         }
-      );
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Error response:', response.status, errorData);
-        
-        if (response.status === 429) {
-          throw new Error("API quota exceeded");
-        }
-        
-        throw new Error(`Failed to send message: ${errorData.error || 'Unknown error'}`);
+      if (response.error) {
+        throw new Error(response.error.message);
       }
 
-      const data = await response.json();
-      return data;
+      return response.data;
     } catch (error: any) {
       console.error('Error in sendMessage:', error);
       throw error;
