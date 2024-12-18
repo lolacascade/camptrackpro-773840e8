@@ -77,39 +77,39 @@ export function KeyFeatures() {
                   ${isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 
                     isMedium ? 'lg:col-span-2' : ''}
                   bg-white border-none
-                  transform transition-all duration-300
+                  transform transition-all duration-500
                   hover:scale-[1.02] hover:shadow-xl
-                  p-8 md:p-10 flex flex-col
+                  p-8 md:p-10 flex flex-col justify-between
                   ${isLarge ? 'min-h-[400px]' : 'min-h-[300px]'}
                 `}
               >
-                <div className="mb-8">
-                  <div className="w-16 h-16 rounded-2xl bg-[#0D1D1F] flex items-center justify-center shadow-lg">
-                    <Icon className="w-8 h-8 text-white" />
+                <div>
+                  <div className="mb-8 inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#0D1D1F] shadow-lg">
+                    <Icon className="w-8 h-8 text-white stroke-[1.5]" />
                   </div>
-                </div>
                 
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-semibold text-[#0D1D1F]">
-                    {feature.title}
-                  </h3>
-                  
-                  {feature.stat && (
-                    <p className="text-xl font-medium text-[#0D1D1F]">
-                      {feature.stat}
+                  <div className="space-y-4">
+                    <h3 className="text-2xl font-semibold text-[#0D1D1F]">
+                      {feature.title}
+                    </h3>
+                    
+                    {feature.stat && (
+                      <p className="text-xl font-medium text-[#0D1D1F]">
+                        {feature.stat}
+                      </p>
+                    )}
+                    
+                    <p className="text-base text-[#4A4A4A] leading-relaxed">
+                      {feature.description}
                     </p>
-                  )}
-                  
-                  <p className="text-base text-[#4A4A4A] leading-relaxed">
-                    {feature.description}
-                  </p>
+                  </div>
                 </div>
 
                 <div 
-                  className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r 
+                  className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r 
                   from-[#0D1D1F] via-[#0D1D1F] to-transparent 
                   transform origin-left scale-x-0 
-                  group-hover:scale-x-100 transition-transform duration-500"
+                  group-hover:scale-x-100 transition-transform duration-700 ease-out"
                 />
               </Card>
             );
