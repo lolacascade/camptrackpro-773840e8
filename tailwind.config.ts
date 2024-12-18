@@ -20,8 +20,8 @@ export default {
     extend: {
       fontSize: {
         'body-large': ['1.125rem', '1.75rem'],   // 18px
-        'heading-large': ['3.5rem', '1.2'],      // 56px
-        'heading-medium': ['2.5rem', '1.2'],     // 40px
+        'heading-large': ['3.5rem', '1.4'],      // 56px with increased line height
+        'heading-medium': ['2.5rem', '1.4'],     // 40px with increased line height
         'subheading': ['1.25rem', '1.6'],        // 20px
       },
       colors: {

@@ -39,8 +39,8 @@ export function ValueProposition() {
           {/* Left Column - Content */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
-                Manage Your Park with Confidence
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.4]">
+                Unlock the Future of RV Park Management
               </h2>
               <p className="text-lg text-gray-300 max-w-xl">
                 Take control of your RV park with a smart, AI-powered management tool designed to save time, reduce hassle, and improve operations.

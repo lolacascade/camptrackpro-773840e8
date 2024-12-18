@@ -38,7 +38,7 @@ export function KeyFeatures() {
     <section className="py-16 md:py-24 bg-[#0D1D1F]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-[1.4]">
             All Your Operations, Simplified
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
@@ -50,7 +50,7 @@ export function KeyFeatures() {
           {features.map((feature, index) => (
             <div key={index} className={`bg-[#0D1D1F] p-8 md:p-10 ${index >= 2 ? 'border-t border-[rgba(255,255,255,0.1)]' : ''}`}>
               <div className="space-y-4">
-                <h3 className="text-2xl font-semibold text-white">
+                <h3 className="text-2xl font-semibold text-white leading-[1.4]">
                   {feature.title}
                 </h3>
                 <p className="text-[18px] leading-relaxed text-gray-300">
