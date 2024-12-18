@@ -54,14 +54,14 @@ export function HeroSection() {
     <div className="relative min-h-[90vh] flex flex-col items-center justify-start bg-[#0D1D1F] px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 lg:py-32">
       <div className="max-w-4xl mx-auto text-center mb-8 md:mb-16 w-full">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+          <h1 className="text-heading-large font-bold mb-4">
             <span className="text-white">Your RV Park, </span>
             <span className="text-[#C0CCAB]">Simplified with AI</span>
           </h1>
           <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
         
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-subheading text-gray-400 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
           Automate tasks, track maintenance, and gain insights with our AI-powered management tool.
         </p>
 
@@ -71,19 +71,19 @@ export function HeroSection() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 border-0 focus-visible:ring-0 text-base placeholder:text-gray-400"
+            className="flex-1 border-0 focus-visible:ring-0 text-body-large placeholder:text-gray-400"
           />
           <Button 
             onClick={handleSignUp}
             disabled={isLoading}
-            className="bg-[#C0CCAB] hover:bg-[#b3c196] text-[#0D1D1F] font-medium whitespace-nowrap px-6"
+            className="bg-[#C0CCAB] hover:bg-[#b3c196] text-[#0D1D1F] font-medium whitespace-nowrap px-6 text-body-large"
           >
             {isLoading ? (
               "Sending..."
             ) : (
               <>
                 Sign up for free
-                <ArrowRight className="ml-2 h-4 w-4" />
+                <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
           </Button>

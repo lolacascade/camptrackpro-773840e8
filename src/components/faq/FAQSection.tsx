@@ -53,10 +53,10 @@ export function FAQSection() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="space-y-2 sm:space-y-3">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-[#133134]">
+        <h2 className="text-heading-medium font-semibold text-[#133134]">
           Frequently Asked Questions
         </h2>
-        <p className="text-sm sm:text-base text-muted-foreground">
+        <p className="text-subheading text-muted-foreground">
           Find answers to common questions about our RV park management platform.
         </p>
       </div>
@@ -67,12 +67,12 @@ export function FAQSection() {
             <Accordion type="single" collapsible>
               <AccordionItem value={`item-${index}`} className="border-none">
                 <AccordionTrigger className="px-3 sm:px-4 py-2 sm:py-3 hover:no-underline hover:bg-gray-50/80">
-                  <span className="text-left text-sm sm:text-base font-medium text-[#133134]">
+                  <span className="text-left text-body-large font-medium text-[#133134]">
                     {faq.question}
                   </span>
                 </AccordionTrigger>
                 <AccordionContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
-                  <p className="text-sm sm:text-base text-muted-foreground">
+                  <p className="text-body-large text-muted-foreground">
                     {faq.answer}
                   </p>
                 </AccordionContent>

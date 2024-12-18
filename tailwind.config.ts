@@ -18,6 +18,12 @@ export default {
       },
     },
     extend: {
+      fontSize: {
+        'body-large': ['1.125rem', '1.75rem'],   // 18px
+        'heading-large': ['3.5rem', '1.2'],      // 56px
+        'heading-medium': ['2.5rem', '1.2'],     // 40px
+        'subheading': ['1.25rem', '1.6'],        // 20px
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
