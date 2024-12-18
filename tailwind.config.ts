@@ -46,6 +46,20 @@ export default {
           DEFAULT: "#FFFFFF",
           foreground: "#0D1D1F",
         },
+        popover: {
+          DEFAULT: "rgb(255 255 255 / 0.95)",
+          foreground: "#0D1D1F",
+        },
+        dialog: {
+          overlay: "rgb(0 0 0 / 0.8)",
+          content: "rgb(255 255 255 / 0.95)",
+        },
+      },
+      zIndex: {
+        'modal': '1000',
+        'popover': '1100',
+        'tooltip': '1200',
+        'overlay': '900',
       },
       borderRadius: {
         lg: "var(--radius)",
