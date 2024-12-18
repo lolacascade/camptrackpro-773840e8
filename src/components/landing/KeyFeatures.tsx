@@ -46,14 +46,14 @@ export function KeyFeatures() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-[rgba(255,255,255,0.1)]">
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y divide-[rgba(255,255,255,0.1)] md:divide-y-0 md:divide-x">
           {features.map((feature, index) => (
-            <div key={index} className="bg-[#0D1D1F] p-8 md:p-10">
+            <div key={index} className={`bg-[#0D1D1F] p-8 md:p-10 ${index >= 2 ? 'border-t border-[rgba(255,255,255,0.1)]' : ''}`}>
               <div className="space-y-4">
                 <h3 className="text-2xl font-semibold text-white">
                   {feature.title}
                 </h3>
-                <p className="text-base text-gray-300 leading-relaxed">
+                <p className="text-[18px] leading-relaxed text-gray-300">
                   {feature.description}
                 </p>
                 <div className="mt-6">
