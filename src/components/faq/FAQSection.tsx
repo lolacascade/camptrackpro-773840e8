@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 
 const faqData = [
   {
-    question: "What is [Your RV Management App] and who is it for?",
+    question: "What is CampTrackPro and who is it for?",
     answer: "Our platform is designed for RV park owners and managers to efficiently manage reservations, sites, maintenance, and customer details, all in one place."
   },
   {
