@@ -8,7 +8,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-lg mb-4">About Us</h3>
             <p className="text-gray-400">
-              Streamlining marina operations with powerful management tools.
+              Streamlining RV park operations with powerful management tools.
             </p>
           </div>
           
@@ -62,7 +62,7 @@ export function Footer() {
         </div>
         
         <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Marina Management. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} CampTrackPro. All rights reserved.</p>
         </div>
       </div>
     </footer>
