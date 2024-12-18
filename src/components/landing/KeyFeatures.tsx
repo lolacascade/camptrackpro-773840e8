@@ -54,16 +54,16 @@ export function KeyFeatures() {
   return (
     <section className="py-16 md:py-24 bg-[#0D1D1F]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
             All Your Operations, Simplified
           </h2>
-          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             From site management to guest insights, our tool provides everything you need to run your RV park smoothly and efficiently.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isLarge = feature.size === 'large';
@@ -73,16 +73,18 @@ export function KeyFeatures() {
               <Card 
                 key={index} 
                 className={`
-                  relative overflow-hidden group bg-white
+                  relative overflow-hidden group
                   ${isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 
                     isMedium ? 'lg:col-span-2' : ''}
+                  bg-white border-none
                   transform transition-all duration-300
-                  hover:scale-[1.02] hover:shadow-2xl
-                  p-8 flex flex-col h-full
+                  hover:scale-[1.02] hover:shadow-xl
+                  p-8 md:p-10 flex flex-col
+                  ${isLarge ? 'min-h-[400px]' : 'min-h-[300px]'}
                 `}
               >
-                <div className="mb-6">
-                  <div className="w-16 h-16 rounded-[1.25rem] bg-[#0D1D1F] flex items-center justify-center">
+                <div className="mb-8">
+                  <div className="w-16 h-16 rounded-2xl bg-[#0D1D1F] flex items-center justify-center shadow-lg">
                     <Icon className="w-8 h-8 text-white" />
                   </div>
                 </div>
@@ -98,12 +100,17 @@ export function KeyFeatures() {
                     </p>
                   )}
                   
-                  <p className="text-base text-[#4A4A4A]">
+                  <p className="text-base text-[#4A4A4A] leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0D1D1F] via-[#0D1D1F] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div 
+                  className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r 
+                  from-[#0D1D1F] via-[#0D1D1F] to-transparent 
+                  transform origin-left scale-x-0 
+                  group-hover:scale-x-100 transition-transform duration-500"
+                />
               </Card>
             );
           })}
