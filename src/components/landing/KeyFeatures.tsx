@@ -43,9 +43,9 @@ export function KeyFeatures() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
+    <section className="py-16 md:py-24 bg-[#0D1D1F]">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12 text-[#0D1D1F]">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12 text-white">
           Everything You Need in One Tool
         </h2>
         
@@ -53,10 +53,10 @@ export function KeyFeatures() {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} className="p-6 hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 bg-[#133134] border-none text-white hover:shadow-lg transition-shadow">
                 <Icon className="w-10 h-10 mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F]">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
+                <h3 className="text-lg font-semibold mb-2 text-white">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
               </Card>
             );
           })}

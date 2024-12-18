@@ -24,9 +24,9 @@ export function BenefitsOfAI() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-16 md:py-24 bg-[#0D1D1F]">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12 text-[#0D1D1F]">
+        <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-12 text-white">
           Why Use an AI-Powered Management Tool?
         </h2>
         
@@ -34,11 +34,11 @@ export function BenefitsOfAI() {
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
-              <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
+              <Card key={index} className="p-6 text-center bg-[#133134] border-none text-white hover:shadow-lg transition-shadow">
                 <Icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-lg font-semibold mb-2 text-[#0D1D1F]">{benefit.title}</h3>
+                <h3 className="text-lg font-semibold mb-2 text-white">{benefit.title}</h3>
                 <p className="text-sm font-semibold text-primary mb-2">{benefit.stat}</p>
-                <p className="text-gray-600">{benefit.description}</p>
+                <p className="text-gray-300">{benefit.description}</p>
               </Card>
             );
           })}
