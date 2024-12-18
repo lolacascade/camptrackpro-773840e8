@@ -9,6 +9,7 @@ import { DashboardProps } from "@/types/dashboard";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrioritySection } from "./priority/PrioritySection";
 import { DashboardCallouts } from "./priority/DashboardCallouts";
+import { FAQSection } from "@/components/faq/FAQSection";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
   return (
@@ -53,6 +54,10 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       
       <ErrorBoundary>
         <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+      </ErrorBoundary>
+
+      <ErrorBoundary>
+        <FAQSection />
       </ErrorBoundary>
     </div>
   );
