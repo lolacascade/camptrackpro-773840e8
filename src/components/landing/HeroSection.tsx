@@ -1,12 +1,28 @@
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export function HeroSection() {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
 
   const handleGetStarted = () => {
+    if (!email.trim() || !email.includes('@')) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Store email in localStorage to pre-fill the signup form
+    localStorage.setItem('registration_email', email);
     navigate('/login');
   };
 
@@ -20,17 +36,27 @@ export function HeroSection() {
           </h1>
           <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
+        
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-400 mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
           Automate tasks, track maintenance, and gain insights with our AI-powered management tool.
         </p>
-        <Button 
-          size="lg" 
-          onClick={handleGetStarted}
-          className="text-[#0D1D1F] bg-white hover:bg-white/90 text-sm sm:text-base md:text-lg px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 h-auto transition-all duration-300"
-        >
-          Get Started Today
-          <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-        </Button>
+
+        <div className="max-w-md mx-auto bg-white rounded-lg p-1 flex gap-2">
+          <Input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="flex-1 border-0 focus-visible:ring-0 text-base placeholder:text-gray-400"
+          />
+          <Button 
+            onClick={handleGetStarted}
+            className="bg-[#C0CCAB] hover:bg-[#b3c196] text-[#0D1D1F] font-medium whitespace-nowrap px-6"
+          >
+            Sign up for free
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-3 sm:p-4 md:p-6 lg:p-8">
