@@ -48,7 +48,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-3.5-turbo',
         messages: [
           {
             role: 'system',
@@ -68,7 +68,7 @@ serve(async (req) => {
       if (response.status === 429) {
         return new Response(
           JSON.stringify({
-            error: 'Rate limit exceeded. Please try again in a few minutes.',
+            error: 'OpenAI rate limit exceeded. Please try again in a few minutes.',
             type: 'quota_exceeded'
           }),
           {
@@ -82,6 +82,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log('OpenAI response:', data);
 
     // Store the AI's response in chat_history
     if (userId && data.choices?.[0]?.message) {

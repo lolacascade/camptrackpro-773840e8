@@ -28,6 +28,7 @@ export const chatService = {
         }
 
         if (errorMessage.type === 'quota_exceeded') {
+          toast.error("Rate limit exceeded. Please wait a few minutes before trying again.");
           throw new Error('API quota exceeded');
         }
         throw new Error(errorMessage.error || 'Unknown error occurred');
