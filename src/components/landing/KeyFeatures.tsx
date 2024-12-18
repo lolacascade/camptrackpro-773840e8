@@ -1,11 +1,11 @@
 import { Card } from "@/components/ui/card";
 import { 
-  Clock, 
-  DollarSign, 
-  Heart, 
+  Sparkles, 
   ListChecks, 
   Database,
-  Sparkles
+  Clock, 
+  DollarSign, 
+  Heart
 } from "lucide-react";
 
 export function KeyFeatures() {
@@ -63,7 +63,7 @@ export function KeyFeatures() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             const isLarge = feature.size === 'large';
@@ -73,15 +73,17 @@ export function KeyFeatures() {
               <Card 
                 key={index} 
                 className={`
-                  relative overflow-hidden group transition-all duration-300
-                  ${isLarge ? 'md:col-span-2 lg:col-span-2' : 
+                  relative overflow-hidden group bg-white
+                  ${isLarge ? 'md:col-span-2 lg:col-span-2 lg:row-span-2' : 
                     isMedium ? 'lg:col-span-2' : ''}
-                  bg-white p-8 flex flex-col h-full
+                  transform transition-all duration-300
+                  hover:scale-[1.02] hover:shadow-2xl
+                  p-8 flex flex-col h-full
                 `}
               >
                 <div className="mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-[#0D1D1F] flex items-center justify-center">
-                    <Icon className="w-7 h-7 text-white" />
+                  <div className="w-16 h-16 rounded-[1.25rem] bg-[#0D1D1F] flex items-center justify-center">
+                    <Icon className="w-8 h-8 text-white" />
                   </div>
                 </div>
                 
@@ -96,14 +98,12 @@ export function KeyFeatures() {
                     </p>
                   )}
                   
-                  <p className="text-base text-gray-600">
+                  <p className="text-base text-[#4A4A4A]">
                     {feature.description}
                   </p>
                 </div>
 
-                <div className="mt-auto pt-6">
-                  <div className="h-1 w-full bg-[#0D1D1F] transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-                </div>
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#0D1D1F] via-[#0D1D1F] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </Card>
             );
           })}
