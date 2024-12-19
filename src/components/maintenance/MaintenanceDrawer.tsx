@@ -1,9 +1,9 @@
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { type Maintenance } from "@/types/maintenance";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { BaseDrawer } from "@/components/common/BaseDrawer";
 
 interface MaintenanceDrawerProps {
   maintenance: Maintenance | null;
@@ -55,44 +55,43 @@ export function MaintenanceDrawer({
   if (!maintenance) return null;
 
   return (
-    <Drawer open={open} onOpenChange={onClose}>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle>Maintenance Request Details</DrawerTitle>
-        </DrawerHeader>
-        <div className="p-4 space-y-4">
-          <div>
-            <h4 className="font-medium mb-2">Description</h4>
-            <p className="text-sm text-muted-foreground">{maintenance.description}</p>
-          </div>
-          <div>
-            <h4 className="font-medium mb-2">Status</h4>
-            <div className="flex gap-2">
-              <Button
-                variant={maintenance.status === 'pending' ? 'default' : 'outline'}
-                onClick={() => handleStatusChange('pending')}
-                disabled={isLoading}
-              >
-                Pending
-              </Button>
-              <Button
-                variant={maintenance.status === 'in_progress' ? 'default' : 'outline'}
-                onClick={() => handleStatusChange('in_progress')}
-                disabled={isLoading}
-              >
-                In Progress
-              </Button>
-              <Button
-                variant={maintenance.status === 'completed' ? 'default' : 'outline'}
-                onClick={() => handleStatusChange('completed')}
-                disabled={isLoading}
-              >
-                Completed
-              </Button>
-            </div>
+    <BaseDrawer 
+      open={open} 
+      onClose={onClose}
+      title="Maintenance Request Details"
+    >
+      <div className="space-y-4">
+        <div>
+          <h4 className="font-medium mb-2">Description</h4>
+          <p className="text-sm text-muted-foreground">{maintenance.description}</p>
+        </div>
+        <div>
+          <h4 className="font-medium mb-2">Status</h4>
+          <div className="flex gap-2">
+            <Button
+              variant={maintenance.status === 'pending' ? 'default' : 'outline'}
+              onClick={() => handleStatusChange('pending')}
+              disabled={isLoading}
+            >
+              Pending
+            </Button>
+            <Button
+              variant={maintenance.status === 'in_progress' ? 'default' : 'outline'}
+              onClick={() => handleStatusChange('in_progress')}
+              disabled={isLoading}
+            >
+              In Progress
+            </Button>
+            <Button
+              variant={maintenance.status === 'completed' ? 'default' : 'outline'}
+              onClick={() => handleStatusChange('completed')}
+              disabled={isLoading}
+            >
+              Completed
+            </Button>
           </div>
         </div>
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </BaseDrawer>
   );
 }
