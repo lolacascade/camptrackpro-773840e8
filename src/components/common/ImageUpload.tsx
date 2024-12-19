@@ -6,9 +6,10 @@ import { useToast } from '@/hooks/use-toast';
 interface ImageUploadProps {
   onUploadComplete?: (url: string) => void;
   bucket?: string;
+  children?: React.ReactNode;
 }
 
-export function ImageUpload({ onUploadComplete, bucket = 'marina-media' }: ImageUploadProps) {
+export function ImageUpload({ onUploadComplete, bucket = 'marina-media', children }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
@@ -53,12 +54,15 @@ export function ImageUpload({ onUploadComplete, bucket = 'marina-media' }: Image
   };
 
   return (
-    <Button
-      variant="outline"
-      disabled={isUploading}
-      onClick={() => document.getElementById('fileInput')?.click()}
-    >
-      {isUploading ? 'Uploading...' : 'Upload Image'}
+    <div onClick={() => document.getElementById('fileInput')?.click()}>
+      {children || (
+        <Button
+          variant="outline"
+          disabled={isUploading}
+        >
+          {isUploading ? 'Uploading...' : 'Upload Image'}
+        </Button>
+      )}
       <input
         id="fileInput"
         type="file"
@@ -66,6 +70,6 @@ export function ImageUpload({ onUploadComplete, bucket = 'marina-media' }: Image
         onChange={handleUpload}
         className="hidden"
       />
-    </Button>
+    </div>
   );
 }

@@ -121,15 +121,15 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0D1D1F] text-white p-4">
-      <div className="border-b border-[#C0CCAB]/20 pb-4 mb-4">
+    <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
+      <div className="border-b border-[#C0CCAB]/20 p-4">
         <h2 className="text-xl font-semibold mb-2">RV Park Assistant</h2>
         <p className="text-sm text-[#C0CCAB]">
           Hello! I'm your RV park assistant. How can I help you today?
         </p>
       </div>
       
-      <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+      <div className="flex-1 overflow-y-auto space-y-6 p-4">
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}
@@ -140,9 +140,9 @@ export function ChatAssistant() {
         ))}
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div className="p-4 space-y-4 bg-[#0D1D1F]/80 backdrop-blur-sm">
         {messages.length === 0 && (
-          <div className="mb-4">
+          <div>
             <p className="text-sm text-[#C0CCAB] mb-2">Try asking about:</p>
             <div className="overflow-x-auto no-scrollbar">
               <ChatSuggestions
