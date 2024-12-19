@@ -2,7 +2,7 @@ import { Send, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/common/ImageUpload";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface ChatInputProps {
   value: string;
@@ -22,12 +22,23 @@ export const ChatInput = ({
   attachments 
 }: ChatInputProps) => {
   const [textareaHeight, setTextareaHeight] = useState("auto");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
-    setTextareaHeight("auto");
-    setTextareaHeight(`${e.target.scrollHeight}px`);
+    adjustTextareaHeight();
   };
+
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [value]);
 
   return (
     <div className="space-y-2">
@@ -43,8 +54,9 @@ export const ChatInput = ({
           ))}
         </div>
       )}
-      <div className="relative">
+      <div className="relative bg-white rounded-lg">
         <Textarea
+          ref={textareaRef}
           value={value}
           onChange={handleTextareaInput}
           placeholder="Write a message..."
@@ -54,7 +66,7 @@ export const ChatInput = ({
               onSend();
             }
           }}
-          className="min-h-[44px] pr-24 bg-white text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none overflow-hidden"
+          className="min-h-[44px] pr-24 bg-transparent text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none overflow-hidden py-3 px-4"
           style={{ height: textareaHeight }}
         />
         <div className="absolute bottom-2 right-2 flex gap-2">

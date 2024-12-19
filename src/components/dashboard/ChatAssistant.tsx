@@ -35,7 +35,6 @@ export function ChatAssistant() {
 
   const fetchParkInsights = async () => {
     try {
-      // Fetch comprehensive RV park data
       const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
         supabase.from('slots').select('*'),
         supabase.from('bookings').select('*'),
@@ -120,6 +119,43 @@ export function ChatAssistant() {
     toast.success("File uploaded successfully");
   };
 
+  const handlePaste = async (event: ClipboardEvent) => {
+    const items = event.clipboardData?.items;
+    
+    if (!items) return;
+
+    for (const item of items) {
+      if (item.type.indexOf('image') === 0) {
+        const file = item.getAsFile();
+        if (!file) continue;
+
+        const fileExt = file.name.split('.').pop() || 'png';
+        const filePath = `${Math.random()}.${fileExt}`;
+
+        try {
+          const { error: uploadError } = await supabase.storage
+            .from('marina-media')
+            .upload(filePath, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data: { publicUrl } } = supabase.storage
+            .from('marina-media')
+            .getPublicUrl(filePath);
+
+          handleFileUpload(publicUrl);
+        } catch (error: any) {
+          toast.error("Failed to upload pasted image");
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('paste', handlePaste);
+    return () => document.removeEventListener('paste', handlePaste);
+  }, []);
+
   return (
     <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
       <div className="border-b border-[#C0CCAB]/20 p-4">
@@ -129,7 +165,7 @@ export function ChatAssistant() {
         </p>
       </div>
       
-      <div className="flex-1 overflow-y-auto space-y-6 p-4">
+      <div className="flex-1 overflow-y-auto space-y-6 p-4 min-h-0">
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}
@@ -142,14 +178,12 @@ export function ChatAssistant() {
 
       <div className="p-4 space-y-4 bg-[#0D1D1F]/80 backdrop-blur-sm">
         {messages.length === 0 && (
-          <div>
+          <div className="overflow-x-auto no-scrollbar">
             <p className="text-sm text-[#C0CCAB] mb-2">Try asking about:</p>
-            <div className="overflow-x-auto no-scrollbar">
-              <ChatSuggestions
-                suggestions={suggestions}
-                onSelect={handleSuggestionSelect}
-              />
-            </div>
+            <ChatSuggestions
+              suggestions={suggestions}
+              onSelect={handleSuggestionSelect}
+            />
           </div>
         )}
         
