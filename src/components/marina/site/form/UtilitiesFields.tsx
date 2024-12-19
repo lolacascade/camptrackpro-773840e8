@@ -50,7 +50,7 @@ export function UtilitiesFields({
           value={hookupType}
           onValueChange={(value) => onHookupTypeChange(value as HookupType)}
         >
-          <SelectTrigger>
+          <SelectTrigger id="hookup_type" className="bg-white">
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
           <SelectContent>
@@ -69,7 +69,7 @@ export function UtilitiesFields({
           value={powerOption}
           onValueChange={(value) => onPowerOptionChange(value as PowerOption)}
         >
-          <SelectTrigger>
+          <SelectTrigger id="power" className="bg-white">
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
           <SelectContent>
@@ -88,7 +88,7 @@ export function UtilitiesFields({
           value={surfaceType}
           onValueChange={(value) => onSurfaceTypeChange(value as SurfaceType)}
         >
-          <SelectTrigger>
+          <SelectTrigger id="surface" className="bg-white">
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
           <SelectContent>

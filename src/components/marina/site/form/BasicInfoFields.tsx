@@ -25,6 +25,7 @@ export function BasicInfoFields({
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
           placeholder="e.g., Site 12, A-23"
+          className="bg-white"
         />
       </div>
       <div className="grid gap-2">
@@ -33,7 +34,7 @@ export function BasicInfoFields({
           value={siteType}
           onValueChange={(value) => onSiteTypeChange(value as SiteType)}
         >
-          <SelectTrigger>
+          <SelectTrigger id="site_type" className="bg-white">
             <SelectValue placeholder="Select site type" />
           </SelectTrigger>
           <SelectContent>
