@@ -7,6 +7,7 @@ import { chatService } from "@/services/chat-service";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ImageUpload } from "@/components/common/ImageUpload";
 
 const INITIAL_SUGGESTIONS = [
   "What's the current occupancy rate?",
@@ -17,12 +18,13 @@ const INITIAL_SUGGESTIONS = [
 
 export function ChatAssistant() {
   const session = useSession();
-  const [messages, setMessages] = useState<{ role: 'assistant' | 'user'; content: string }[]>([]);
+  const [messages, setMessages] = useState<{ role: 'assistant' | 'user'; content: string; attachments?: string[] }[]>([]);
   const [suggestions] = useState<string[]>(INITIAL_SUGGESTIONS);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId] = useState(() => uuidv4());
   const [marinaInsights, setMarinaInsights] = useState<any>(null);
+  const [attachments, setAttachments] = useState<string[]>([]);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -59,11 +61,17 @@ export function ChatAssistant() {
   };
 
   const handleSend = async () => {
-    if (!inputValue.trim() || !session?.access_token) return;
+    if ((!inputValue.trim() && attachments.length === 0) || !session?.access_token) return;
 
-    const userMessage = { role: 'user' as const, content: inputValue };
+    const userMessage = { 
+      role: 'user' as const, 
+      content: inputValue,
+      attachments: attachments.length > 0 ? attachments : undefined
+    };
+    
     setMessages(prev => [...prev, userMessage]);
     setInputValue("");
+    setAttachments([]);
     setIsLoading(true);
 
     try {
@@ -97,6 +105,11 @@ export function ChatAssistant() {
     setInputValue(suggestion);
   };
 
+  const handleFileUpload = (url: string) => {
+    setAttachments(prev => [...prev, url]);
+    toast.success("File uploaded successfully");
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
       <div className="p-4 border-b border-[#C0CCAB]/20">
@@ -112,6 +125,7 @@ export function ChatAssistant() {
             key={index}
             role={msg.role}
             content={msg.content}
+            attachments={msg.attachments}
           />
         ))}
       </div>
@@ -120,10 +134,12 @@ export function ChatAssistant() {
         {messages.length === 0 && (
           <div className="mb-4">
             <p className="text-sm text-[#C0CCAB] mb-2">Try asking about:</p>
-            <ChatSuggestions
-              suggestions={suggestions}
-              onSelect={handleSuggestionSelect}
-            />
+            <div className="no-scrollbar overflow-x-auto">
+              <ChatSuggestions
+                suggestions={suggestions}
+                onSelect={handleSuggestionSelect}
+              />
+            </div>
           </div>
         )}
         
@@ -132,6 +148,8 @@ export function ChatAssistant() {
           onChange={setInputValue}
           onSend={handleSend}
           isLoading={isLoading}
+          onFileUpload={handleFileUpload}
+          attachments={attachments}
         />
       </div>
     </div>
