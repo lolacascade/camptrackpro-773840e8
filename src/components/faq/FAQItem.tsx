@@ -13,15 +13,15 @@ export const FAQItem = memo(function FAQItem({ question, answer, index }: FAQIte
   return (
     <Card className="border border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
       <AccordionItem value={`item-${index}`} className="border-none">
-        <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#133134]/20 [&[data-state=open]>div>svg]:rotate-180">
-          <div className="flex items-center justify-between w-full">
+        <AccordionTrigger className="px-6 py-3 hover:no-underline hover:bg-[#133134]/20 [&[data-state=open]>div>svg]:rotate-180">
+          <div className="flex items-center justify-between w-full gap-4">
             <span className="text-left text-xl font-medium text-white">
               {question}
             </span>
             <ChevronDown className="h-6 w-6 shrink-0 text-white transition-transform duration-200" />
           </div>
         </AccordionTrigger>
-        <AccordionContent className="px-4 pb-4 pt-1">
+        <AccordionContent className="px-6 pb-4 pt-1">
           <p className="text-lg text-gray-300">
             {answer}
           </p>
