@@ -50,10 +50,14 @@ export function UtilitiesFields({
           value={hookupType}
           onValueChange={(value) => onHookupTypeChange(value as HookupType)}
         >
-          <SelectTrigger id="hookup_type" className="bg-white">
+          <SelectTrigger id="hookup_type" className="w-full bg-white border-input">
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
-          <SelectContent className="bg-white z-50">
+          <SelectContent 
+            className="bg-white border shadow-md" 
+            position="popper"
+            sideOffset={5}
+          >
             {HOOKUP_OPTIONS.map(option => (
               <SelectItem 
                 key={option.value} 
@@ -73,10 +77,14 @@ export function UtilitiesFields({
           value={powerOption}
           onValueChange={(value) => onPowerOptionChange(value as PowerOption)}
         >
-          <SelectTrigger id="power" className="bg-white">
+          <SelectTrigger id="power" className="w-full bg-white border-input">
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
-          <SelectContent className="bg-white z-50">
+          <SelectContent 
+            className="bg-white border shadow-md" 
+            position="popper"
+            sideOffset={5}
+          >
             {POWER_OPTIONS.map(option => (
               <SelectItem 
                 key={option.value} 
@@ -96,10 +104,14 @@ export function UtilitiesFields({
           value={surfaceType}
           onValueChange={(value) => onSurfaceTypeChange(value as SurfaceType)}
         >
-          <SelectTrigger id="surface" className="bg-white">
+          <SelectTrigger id="surface" className="w-full bg-white border-input">
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
-          <SelectContent className="bg-white z-50">
+          <SelectContent 
+            className="bg-white border shadow-md" 
+            position="popper"
+            sideOffset={5}
+          >
             {SURFACE_OPTIONS.map(option => (
               <SelectItem 
                 key={option.value} 

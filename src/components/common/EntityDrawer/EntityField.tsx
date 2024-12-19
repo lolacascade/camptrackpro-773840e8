@@ -19,10 +19,14 @@ export function EntityField({ field }: { field: FormField }) {
             value={field.value || ''}
             onValueChange={field.onChange}
           >
-            <SelectTrigger className="bg-white">
+            <SelectTrigger className="w-full bg-white border-input">
               <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
             </SelectTrigger>
-            <SelectContent className="bg-white z-50">
+            <SelectContent 
+              className="bg-white border shadow-md" 
+              position="popper"
+              sideOffset={5}
+            >
               {field.options?.map(option => (
                 <SelectItem 
                   key={option.value} 
