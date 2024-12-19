@@ -20,9 +20,10 @@ const HOOKUP_OPTIONS = [
 
 const POWER_OPTIONS = [
   { value: 'No Selection', label: 'No Selection' },
-  { value: '20A', label: '20 AMP' },
-  { value: '30A', label: '30 AMP' },
-  { value: '50A', label: '50 AMP' }
+  { value: '20A', label: '20 AMP Service' },
+  { value: '30A', label: '30 AMP Service' },
+  { value: '50A', label: '50 AMP Service' },
+  { value: 'dual30_50', label: 'Dual 30/50 AMP Service' }
 ];
 
 const SURFACE_OPTIONS = [
@@ -32,6 +33,14 @@ const SURFACE_OPTIONS = [
   { value: 'asphalt', label: 'Asphalt' },
   { value: 'grass', label: 'Grass' },
   { value: 'dirt', label: 'Dirt' }
+];
+
+const SITE_TYPE_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'pull-through', label: 'Pull-Through Site' },
+  { value: 'back-in', label: 'Back-In Site' },
+  { value: 'tent-only', label: 'Tent Only Site' },
+  { value: 'waterfront', label: 'Waterfront Site' }
 ];
 
 export function UtilitiesFields({
@@ -45,16 +54,43 @@ export function UtilitiesFields({
   return (
     <div className="space-y-4">
       <div className="grid gap-2">
+        <Label htmlFor="site_type">Site Type *</Label>
+        <Select
+          value={hookupType}
+          onValueChange={(value) => onHookupTypeChange(value as HookupType)}
+        >
+          <SelectTrigger id="site_type" className="w-full bg-white">
+            <SelectValue placeholder="Select site type" />
+          </SelectTrigger>
+          <SelectContent 
+            className="bg-white border border-gray-200 shadow-lg"
+            position="popper"
+            sideOffset={5}
+          >
+            {SITE_TYPE_OPTIONS.map(option => (
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                className="hover:bg-gray-100 cursor-pointer"
+              >
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid gap-2">
         <Label htmlFor="hookup_type">Hookup Type *</Label>
         <Select
           value={hookupType}
           onValueChange={(value) => onHookupTypeChange(value as HookupType)}
         >
-          <SelectTrigger id="hookup_type" className="w-full bg-white border-input">
+          <SelectTrigger id="hookup_type" className="w-full bg-white">
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
           <SelectContent 
-            className="bg-white border shadow-md" 
+            className="bg-white border border-gray-200 shadow-lg"
             position="popper"
             sideOffset={5}
           >
@@ -62,7 +98,7 @@ export function UtilitiesFields({
               <SelectItem 
                 key={option.value} 
                 value={option.value}
-                className="cursor-pointer hover:bg-gray-100"
+                className="hover:bg-gray-100 cursor-pointer"
               >
                 {option.label}
               </SelectItem>
@@ -77,11 +113,11 @@ export function UtilitiesFields({
           value={powerOption}
           onValueChange={(value) => onPowerOptionChange(value as PowerOption)}
         >
-          <SelectTrigger id="power" className="w-full bg-white border-input">
+          <SelectTrigger id="power" className="w-full bg-white">
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
           <SelectContent 
-            className="bg-white border shadow-md" 
+            className="bg-white border border-gray-200 shadow-lg"
             position="popper"
             sideOffset={5}
           >
@@ -89,7 +125,7 @@ export function UtilitiesFields({
               <SelectItem 
                 key={option.value} 
                 value={option.value}
-                className="cursor-pointer hover:bg-gray-100"
+                className="hover:bg-gray-100 cursor-pointer"
               >
                 {option.label}
               </SelectItem>
@@ -104,11 +140,11 @@ export function UtilitiesFields({
           value={surfaceType}
           onValueChange={(value) => onSurfaceTypeChange(value as SurfaceType)}
         >
-          <SelectTrigger id="surface" className="w-full bg-white border-input">
+          <SelectTrigger id="surface" className="w-full bg-white">
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
           <SelectContent 
-            className="bg-white border shadow-md" 
+            className="bg-white border border-gray-200 shadow-lg"
             position="popper"
             sideOffset={5}
           >
@@ -116,7 +152,7 @@ export function UtilitiesFields({
               <SelectItem 
                 key={option.value} 
                 value={option.value}
-                className="cursor-pointer hover:bg-gray-100"
+                className="hover:bg-gray-100 cursor-pointer"
               >
                 {option.label}
               </SelectItem>
