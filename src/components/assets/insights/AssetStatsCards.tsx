@@ -52,10 +52,19 @@ export function AssetStatsCards() {
     queryFn: async (): Promise<AssetStats> => {
       if (!session?.user?.id) throw new Error("No authenticated user");
 
-      // Fetch total assets and their types
+      // Fetch assets with their booking status
       const { data: assets } = await supabase
         .from('assets')
-        .select('asset_type, id')
+        .select(`
+          id,
+          asset_type,
+          bookings_assets (
+            booking_id,
+            bookings (
+              status
+            )
+          )
+        `)
         .eq('user_id', session.user.id);
 
       // Fetch maintenance requests
@@ -64,11 +73,17 @@ export function AssetStatsCards() {
         .select('status, id')
         .eq('user_id', session.user.id);
 
-      // Fetch bookings
-      const { data: bookings } = await supabase
-        .from('bookings')
-        .select('status, id')
-        .eq('status', 'active');
+      // Calculate utilization
+      const totalAssets = assets?.length || 0;
+      const activeBookings = assets?.filter(asset => 
+        asset.bookings_assets?.some(ba => 
+          ba.bookings?.status === 'active'
+        )
+      ).length || 0;
+
+      const utilizationPercentage = totalAssets > 0 
+        ? Math.round((activeBookings / totalAssets) * 100)
+        : 0;
 
       const motorhomes = assets?.filter(a => 
         ['Class A', 'Class B', 'Class C'].includes(a.asset_type || '')
@@ -80,6 +95,12 @@ export function AssetStatsCards() {
       
       const underMaintenance = maintenance?.length || 0;
 
+      // Fetch active and upcoming bookings
+      const { data: bookings } = await supabase
+        .from('bookings')
+        .select('status')
+        .eq('user_id', session.user.id);
+
       return {
         totalAssets: {
           motorhomes,
@@ -87,8 +108,8 @@ export function AssetStatsCards() {
           underMaintenance
         },
         utilization: {
-          utilized: 75,
-          available: 25
+          utilized: utilizationPercentage,
+          available: 100 - utilizationPercentage
         },
         maintenance: {
           scheduled: maintenance?.filter(m => m.status === 'scheduled').length || 0,
