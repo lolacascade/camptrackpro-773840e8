@@ -5,9 +5,9 @@ export function CallToAction() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-16 md:py-24 bg-white">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-heading-medium font-bold mb-8 text-[#0D1D1F]">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-heading-medium font-bold mb-6 sm:mb-8 text-[#0D1D1F] leading-tight">
           Start Managing Your Park the Smart Way
         </h2>
         
@@ -15,7 +15,7 @@ export function CallToAction() {
           <Button 
             size="lg"
             onClick={() => navigate('/login')}
-            className="bg-primary hover:bg-primary/90 text-[#0D1D1F] text-body-large"
+            className="bg-primary hover:bg-primary/90 text-[#0D1D1F] text-base sm:text-lg md:text-body-large px-6 sm:px-8 py-2.5 sm:py-3 h-auto"
           >
             Get Started
           </Button>
