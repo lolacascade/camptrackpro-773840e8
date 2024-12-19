@@ -51,28 +51,31 @@ const faqData = [
 
 export function FAQSection() {
   return (
-    <div className="space-y-4 sm:space-y-6">
-      <div className="space-y-2 sm:space-y-3">
-        <h2 className="text-heading-medium font-semibold text-[#133134]">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+      <div className="space-y-4">
+        <h2 className="text-heading-medium font-semibold text-white leading-[1.4]">
           Frequently Asked Questions
         </h2>
-        <p className="text-subheading text-muted-foreground">
+        <p className="text-xl text-gray-300 max-w-xl">
           Find answers to common questions about our RV park management platform.
         </p>
       </div>
       
       <div className="grid gap-3 sm:gap-4">
         {faqData.map((faq, index) => (
-          <Card key={index} className="overflow-hidden">
+          <Card 
+            key={index} 
+            className="border border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
+          >
             <Accordion type="single" collapsible>
               <AccordionItem value={`item-${index}`} className="border-none">
-                <AccordionTrigger className="px-3 sm:px-4 py-2 sm:py-3 hover:no-underline hover:bg-gray-50/80">
-                  <span className="text-left text-body-large font-medium text-[#133134]">
+                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#133134]/20">
+                  <span className="text-left text-xl font-medium text-white">
                     {faq.question}
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="px-3 sm:px-4 pb-3 sm:pb-4 pt-1">
-                  <p className="text-body-large text-muted-foreground">
+                <AccordionContent className="px-4 pb-4 pt-1">
+                  <p className="text-lg text-gray-300">
                     {faq.answer}
                   </p>
                 </AccordionContent>
