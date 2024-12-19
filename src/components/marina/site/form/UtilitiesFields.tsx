@@ -26,8 +26,16 @@ export function UtilitiesFields({
   const getValue = (value: string | null) => value || 'none';
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4">
+        <FormSelect
+          id="site_type"
+          label="Site Type *"
+          value={getValue(hookupType)}
+          onValueChange={handleValueChange(onHookupTypeChange)}
+          options={HOOKUP_TYPE_OPTIONS}
+          tabIndex={2}
+        />
         <FormSelect
           id="hookup_type"
           label="Hookup Type"
@@ -36,6 +44,8 @@ export function UtilitiesFields({
           options={HOOKUP_TYPE_OPTIONS}
           tabIndex={2}
         />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
         <FormSelect
           id="power_option"
           label="Power Option"
@@ -44,8 +54,6 @@ export function UtilitiesFields({
           options={POWER_OPTIONS}
           tabIndex={3}
         />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormSelect
           id="surface_type"
           label="Surface Type"
