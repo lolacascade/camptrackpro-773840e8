@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import { ChevronDown } from "lucide-react";
 
 const faqData = [
   {
@@ -51,8 +52,8 @@ const faqData = [
 
 export function FAQSection() {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-      <div className="space-y-4">
+    <div className="grid grid-cols-12 gap-8 lg:gap-12">
+      <div className="col-span-12 lg:col-span-4 space-y-4">
         <h2 className="text-heading-medium font-semibold text-white leading-[1.4]">
           Frequently Asked Questions
         </h2>
@@ -61,7 +62,7 @@ export function FAQSection() {
         </p>
       </div>
       
-      <div className="grid gap-3 sm:gap-4">
+      <div className="col-span-12 lg:col-span-8 grid gap-3 sm:gap-4">
         {faqData.map((faq, index) => (
           <Card 
             key={index} 
@@ -69,10 +70,13 @@ export function FAQSection() {
           >
             <Accordion type="single" collapsible>
               <AccordionItem value={`item-${index}`} className="border-none">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#133134]/20">
-                  <span className="text-left text-xl font-medium text-white">
-                    {faq.question}
-                  </span>
+                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#133134]/20 [&[data-state=open]>svg]:rotate-180">
+                  <div className="flex items-center justify-between w-full">
+                    <span className="text-left text-xl font-medium text-white">
+                      {faq.question}
+                    </span>
+                    <ChevronDown className="h-6 w-6 shrink-0 text-white transition-transform duration-200" />
+                  </div>
                 </AccordionTrigger>
                 <AccordionContent className="px-4 pb-4 pt-1">
                   <p className="text-lg text-gray-300">
