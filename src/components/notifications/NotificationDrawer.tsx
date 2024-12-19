@@ -22,10 +22,14 @@ export function NotificationDrawer({
   notifications,
   onMarkAsRead,
 }: NotificationDrawerProps) {
+  const handleClose = () => {
+    onOpenChange(false);
+  };
+
   return (
     <BaseDrawer
       open={open}
-      onClose={onOpenChange}
+      onClose={handleClose}
       title="Notifications"
     >
       <ScrollArea className="h-[calc(100vh-8rem)]">
