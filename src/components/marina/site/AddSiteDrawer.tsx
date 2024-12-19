@@ -108,7 +108,7 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
     }
   }
 
-  const handleSiteTypeChange = (value: string | null) => {
+  const handleSiteTypeChange = (value: string) => {
     const siteType: SiteType = value === 'none' ? null : value as SiteType;
     setFormData(prev => ({ ...prev, site_type: siteType }));
   };
@@ -122,9 +122,7 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
       <div className="space-y-6 py-4">
         <BasicInfoFields
           name={formData.name}
-          siteType={formData.site_type}
           onNameChange={(name) => setFormData(prev => ({ ...prev, name }))}
-          onSiteTypeChange={handleSiteTypeChange}
         />
 
         <UtilitiesFields
