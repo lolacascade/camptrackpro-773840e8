@@ -11,6 +11,14 @@ interface UtilitiesFieldsProps {
   onSurfaceTypeChange: (value: SurfaceType) => void
 }
 
+const SITE_TYPE_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'pull-through', label: 'Pull-Through Site' },
+  { value: 'back-in', label: 'Back-In Site' },
+  { value: 'tent-only', label: 'Tent Only Site' },
+  { value: 'waterfront', label: 'Waterfront Site' }
+]
+
 const HOOKUP_OPTIONS = [
   { value: 'No Selection', label: 'No Selection' },
   { value: 'full', label: 'Full Hookup (Water, Electric, Sewer)' },
@@ -35,14 +43,6 @@ const SURFACE_OPTIONS = [
   { value: 'dirt', label: 'Dirt' }
 ]
 
-const SITE_TYPE_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
-  { value: 'pull-through', label: 'Pull-Through Site' },
-  { value: 'back-in', label: 'Back-In Site' },
-  { value: 'tent-only', label: 'Tent Only Site' },
-  { value: 'waterfront', label: 'Waterfront Site' }
-]
-
 export function UtilitiesFields({
   hookupType,
   powerOption,
@@ -52,19 +52,8 @@ export function UtilitiesFields({
   onSurfaceTypeChange
 }: UtilitiesFieldsProps) {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-2">
-        <Label htmlFor="site_type">Site Type *</Label>
-        <FormSelect
-          id="site_type"
-          value={hookupType}
-          onValueChange={(value) => onHookupTypeChange(value as HookupType)}
-          options={SITE_TYPE_OPTIONS}
-          placeholder="Select site type"
-        />
-      </div>
-
-      <div className="grid gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-2">
         <Label htmlFor="hookup_type">Hookup Type *</Label>
         <FormSelect
           id="hookup_type"
@@ -75,7 +64,7 @@ export function UtilitiesFields({
         />
       </div>
 
-      <div className="grid gap-2">
+      <div className="space-y-2">
         <Label htmlFor="power">Power Options *</Label>
         <FormSelect
           id="power"
@@ -86,7 +75,7 @@ export function UtilitiesFields({
         />
       </div>
 
-      <div className="grid gap-2">
+      <div className="space-y-2">
         <Label htmlFor="surface">Surface Type *</Label>
         <FormSelect
           id="surface"
