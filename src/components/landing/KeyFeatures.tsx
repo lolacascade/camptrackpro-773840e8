@@ -53,7 +53,7 @@ export function KeyFeatures() {
               className={`
                 bg-[#0D1D1F] p-8 md:p-10 
                 ${index >= 2 ? 'border-t border-[rgba(255,255,255,0.1)]' : ''}
-                ${index % 2 === 1 && index !== 3 && index !== 5 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
+                ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
             >
               <div className="space-y-4">
