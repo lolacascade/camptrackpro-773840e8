@@ -5,9 +5,9 @@ export function CallToAction() {
   const navigate = useNavigate();
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white">
+    <section className="py-12 sm:py-16 md:py-20 lg:py-24 bg-[#0D1D1F]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-heading-medium font-bold mb-6 sm:mb-8 text-[#0D1D1F] leading-tight">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-heading-medium font-bold mb-6 sm:mb-8 text-white leading-tight">
           Start Managing Your Park the Smart Way
         </h2>
         
