@@ -36,7 +36,8 @@ export function ChatAssistant() {
       const { data, error } = await supabase
         .from('chat_marina_insights')
         .select('*')
-        .single();
+        .limit(1)
+        .maybeSingle();
 
       if (error) throw error;
       setMarinaInsights(data);
