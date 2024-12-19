@@ -20,8 +20,10 @@ export function UtilitiesFields({
   onSurfaceTypeChange
 }: UtilitiesFieldsProps) {
   const handleValueChange = (setter: (value: any) => void) => (value: string) => {
-    setter(value === '' ? null : value);
+    setter(value === 'none' ? null : value);
   };
+
+  const getValue = (value: string | null) => value || 'none';
 
   return (
     <div className="space-y-4">
@@ -29,7 +31,7 @@ export function UtilitiesFields({
         <FormSelect
           id="hookup_type"
           label="Hookup Type"
-          value={hookupType ?? ''}
+          value={getValue(hookupType)}
           onValueChange={handleValueChange(onHookupTypeChange)}
           options={HOOKUP_TYPE_OPTIONS}
           tabIndex={2}
@@ -37,7 +39,7 @@ export function UtilitiesFields({
         <FormSelect
           id="power_option"
           label="Power Option"
-          value={powerOption ?? ''}
+          value={getValue(powerOption)}
           onValueChange={handleValueChange(onPowerOptionChange)}
           options={POWER_OPTIONS}
           tabIndex={3}
@@ -47,7 +49,7 @@ export function UtilitiesFields({
         <FormSelect
           id="surface_type"
           label="Surface Type"
-          value={surfaceType ?? ''}
+          value={getValue(surfaceType)}
           onValueChange={handleValueChange(onSurfaceTypeChange)}
           options={SURFACE_TYPE_OPTIONS}
           tabIndex={4}
