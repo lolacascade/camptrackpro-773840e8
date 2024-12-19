@@ -61,6 +61,7 @@ export function UtilitiesFields({
           onValueChange={(value) => onHookupTypeChange(value as HookupType)}
           options={SITE_TYPE_OPTIONS}
           placeholder="Select site type"
+          tabIndex={1}
         />
       </div>
 
@@ -72,6 +73,7 @@ export function UtilitiesFields({
           onValueChange={(value) => onHookupTypeChange(value as HookupType)}
           options={HOOKUP_OPTIONS}
           placeholder="Select hookup type"
+          tabIndex={2}
         />
       </div>
 
@@ -83,6 +85,7 @@ export function UtilitiesFields({
           onValueChange={(value) => onPowerOptionChange(value as PowerOption)}
           options={POWER_OPTIONS}
           placeholder="Select power option"
+          tabIndex={3}
         />
       </div>
 
@@ -94,6 +97,7 @@ export function UtilitiesFields({
           onValueChange={(value) => onSurfaceTypeChange(value as SurfaceType)}
           options={SURFACE_OPTIONS}
           placeholder="Select surface type"
+          tabIndex={4}
         />
       </div>
     </div>

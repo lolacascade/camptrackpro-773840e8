@@ -17,6 +17,7 @@ interface FormSelectProps {
   onValueChange: (value: string) => void
   options: Option[]
   placeholder: string
+  tabIndex?: number
 }
 
 export function FormSelect({
@@ -24,11 +25,12 @@ export function FormSelect({
   value,
   onValueChange,
   options,
-  placeholder
+  placeholder,
+  tabIndex
 }: FormSelectProps) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger id={id} className="w-full bg-white">
+      <SelectTrigger id={id} className="w-full bg-white" tabIndex={tabIndex}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent
