@@ -18,7 +18,7 @@ export function BaseDrawer({
 }: BaseDrawerProps) {
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className={cn("overflow-y-auto", className)}>
+      <SheetContent className={cn("w-full sm:max-w-[540px] overflow-y-auto", className)}>
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
