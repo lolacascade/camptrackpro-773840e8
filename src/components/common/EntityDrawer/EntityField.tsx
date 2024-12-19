@@ -22,9 +22,13 @@ export function EntityField({ field }: { field: FormField }) {
             <SelectTrigger className="bg-white">
               <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white z-50">
               {field.options?.map(option => (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem 
+                  key={option.value} 
+                  value={option.value}
+                  className="cursor-pointer hover:bg-gray-100"
+                >
                   {option.label}
                 </SelectItem>
               ))}
@@ -59,7 +63,7 @@ export function EntityField({ field }: { field: FormField }) {
                 {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-white" align="start">
               <Calendar
                 mode="single"
                 selected={field.value ? new Date(field.value) : undefined}

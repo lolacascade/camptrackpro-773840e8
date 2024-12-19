@@ -53,9 +53,13 @@ export function UtilitiesFields({
           <SelectTrigger id="hookup_type" className="bg-white">
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             {HOOKUP_OPTIONS.map(option => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                className="cursor-pointer hover:bg-gray-100"
+              >
                 {option.label}
               </SelectItem>
             ))}
@@ -72,9 +76,13 @@ export function UtilitiesFields({
           <SelectTrigger id="power" className="bg-white">
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             {POWER_OPTIONS.map(option => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                className="cursor-pointer hover:bg-gray-100"
+              >
                 {option.label}
               </SelectItem>
             ))}
@@ -91,9 +99,13 @@ export function UtilitiesFields({
           <SelectTrigger id="surface" className="bg-white">
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white z-50">
             {SURFACE_OPTIONS.map(option => (
-              <SelectItem key={option.value} value={option.value}>
+              <SelectItem 
+                key={option.value} 
+                value={option.value}
+                className="cursor-pointer hover:bg-gray-100"
+              >
                 {option.label}
               </SelectItem>
             ))}
