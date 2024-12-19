@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
@@ -12,6 +11,7 @@ import { CapacityFields } from "./form/CapacityFields"
 import { PricingFields } from "./form/PricingFields"
 import { FeaturesFields } from "./form/FeaturesFields"
 import { SiteFormData } from "./types"
+import { BaseDrawer } from "@/components/common/BaseDrawer"
 
 interface AddSiteDrawerProps {
   open: boolean
@@ -109,62 +109,61 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
   }
 
   return (
-    <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className="overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>Add New Site</SheetTitle>
-        </SheetHeader>
-        <div className="space-y-6 py-4">
-          <BasicInfoFields
-            name={formData.name}
-            siteType={formData.site_type}
-            onNameChange={(name) => setFormData(prev => ({ ...prev, name }))}
-            onSiteTypeChange={(site_type) => setFormData(prev => ({ ...prev, site_type }))}
+    <BaseDrawer
+      open={open}
+      onClose={onClose}
+      title="Add New Site"
+    >
+      <div className="space-y-6 py-4">
+        <BasicInfoFields
+          name={formData.name}
+          siteType={formData.site_type}
+          onNameChange={(name) => setFormData(prev => ({ ...prev, name }))}
+          onSiteTypeChange={(site_type) => setFormData(prev => ({ ...prev, site_type }))}
+        />
+
+        <UtilitiesFields
+          hookupType={formData.hookup_type}
+          powerOption={formData.electricity_voltage}
+          surfaceType={formData.surface_type}
+          onHookupTypeChange={(hookup_type) => setFormData(prev => ({ ...prev, hookup_type }))}
+          onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
+          onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
+        />
+
+        <CapacityFields
+          capacity={formData.max_capacity}
+          onCapacityChange={(max_capacity) => setFormData(prev => ({ ...prev, max_capacity }))}
+        />
+
+        <PricingFields
+          pricing={formData.pricing}
+          onPricingChange={(pricing) => setFormData(prev => ({ ...prev, pricing }))}
+        />
+
+        <FeaturesFields
+          features={formData.special_features}
+          onFeaturesChange={(special_features) => setFormData(prev => ({ ...prev, special_features }))}
+        />
+
+        <div className="space-y-2">
+          <Label htmlFor="notes">Notes</Label>
+          <Textarea
+            id="notes"
+            value={formData.notes}
+            onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+            placeholder="Special restrictions or recommendations (e.g., Best for RVs under 35ft)"
           />
-
-          <UtilitiesFields
-            hookupType={formData.hookup_type}
-            powerOption={formData.electricity_voltage}
-            surfaceType={formData.surface_type}
-            onHookupTypeChange={(hookup_type) => setFormData(prev => ({ ...prev, hookup_type }))}
-            onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
-            onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
-          />
-
-          <CapacityFields
-            capacity={formData.max_capacity}
-            onCapacityChange={(max_capacity) => setFormData(prev => ({ ...prev, max_capacity }))}
-          />
-
-          <PricingFields
-            pricing={formData.pricing}
-            onPricingChange={(pricing) => setFormData(prev => ({ ...prev, pricing }))}
-          />
-
-          <FeaturesFields
-            features={formData.special_features}
-            onFeaturesChange={(special_features) => setFormData(prev => ({ ...prev, special_features }))}
-          />
-
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notes</Label>
-            <Textarea
-              id="notes"
-              value={formData.notes}
-              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-              placeholder="Special restrictions or recommendations (e.g., Best for RVs under 35ft)"
-            />
-          </div>
-
-          <Button 
-            onClick={handleSubmit} 
-            disabled={isSubmitting}
-            className="w-full bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
-          >
-            {isSubmitting ? "Adding..." : "Add Site"}
-          </Button>
         </div>
-      </SheetContent>
-    </Sheet>
+
+        <Button 
+          onClick={handleSubmit} 
+          disabled={isSubmitting}
+          className="w-full bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+        >
+          {isSubmitting ? "Adding..." : "Add Site"}
+        </Button>
+      </div>
+    </BaseDrawer>
   )
 }

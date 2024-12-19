@@ -1,47 +1,13 @@
-import { Label } from "@/components/ui/label"
 import { FormSelect } from "@/components/common/FormSelect"
-import { HookupType, PowerOption, SurfaceType } from "../types"
 
 interface UtilitiesFieldsProps {
-  hookupType: HookupType
-  powerOption: PowerOption
-  surfaceType: SurfaceType
-  onHookupTypeChange: (value: HookupType) => void
-  onPowerOptionChange: (value: PowerOption) => void
-  onSurfaceTypeChange: (value: SurfaceType) => void
+  hookupType: string
+  powerOption: string
+  surfaceType: string
+  onHookupTypeChange: (value: string) => void
+  onPowerOptionChange: (value: string) => void
+  onSurfaceTypeChange: (value: string) => void
 }
-
-const SITE_TYPE_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
-  { value: 'pull-through', label: 'Pull-Through Site' },
-  { value: 'back-in', label: 'Back-In Site' },
-  { value: 'tent-only', label: 'Tent Only Site' },
-  { value: 'waterfront', label: 'Waterfront Site' }
-]
-
-const HOOKUP_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
-  { value: 'full', label: 'Full Hookup (Water, Electric, Sewer)' },
-  { value: 'partial', label: 'Partial Hookup (Water, Electric)' },
-  { value: 'dry', label: 'Dry Site (No utilities)' }
-]
-
-const POWER_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
-  { value: '20A', label: '20 AMP Service' },
-  { value: '30A', label: '30 AMP Service' },
-  { value: '50A', label: '50 AMP Service' },
-  { value: 'dual30_50', label: 'Dual 30/50 AMP Service' }
-]
-
-const SURFACE_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
-  { value: 'gravel', label: 'Gravel' },
-  { value: 'concrete', label: 'Concrete' },
-  { value: 'asphalt', label: 'Asphalt' },
-  { value: 'grass', label: 'Grass' },
-  { value: 'dirt', label: 'Dirt' }
-]
 
 export function UtilitiesFields({
   hookupType,
@@ -52,52 +18,58 @@ export function UtilitiesFields({
   onSurfaceTypeChange
 }: UtilitiesFieldsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <div className="space-y-2">
-        <Label htmlFor="site_type">Site Type *</Label>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormSelect
-          id="site_type"
+          label="Site Type"
           value={hookupType}
-          onValueChange={(value) => onHookupTypeChange(value as HookupType)}
-          options={SITE_TYPE_OPTIONS}
-          placeholder="Select site type"
-          tabIndex={1}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="hookup_type">Hookup Type *</Label>
-        <FormSelect
-          id="hookup_type"
-          value={hookupType}
-          onValueChange={(value) => onHookupTypeChange(value as HookupType)}
-          options={HOOKUP_OPTIONS}
-          placeholder="Select hookup type"
+          onChange={onHookupTypeChange}
+          options={[
+            { value: "No Selection", label: "Select Site Type" },
+            { value: "Full Hookup", label: "Full Hookup" },
+            { value: "Partial Hookup", label: "Partial Hookup" },
+            { value: "No Hookup", label: "No Hookup" }
+          ]}
           tabIndex={2}
         />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="power">Power Options *</Label>
         <FormSelect
-          id="power"
+          label="Hookup Type"
           value={powerOption}
-          onValueChange={(value) => onPowerOptionChange(value as PowerOption)}
-          options={POWER_OPTIONS}
-          placeholder="Select power option"
+          onChange={onPowerOptionChange}
+          options={[
+            { value: "No Selection", label: "Select Hookup Type" },
+            { value: "30 AMP", label: "30 AMP" },
+            { value: "50 AMP", label: "50 AMP" },
+            { value: "Both", label: "Both" }
+          ]}
           tabIndex={3}
         />
       </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="surface">Surface Type *</Label>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormSelect
-          id="surface"
-          value={surfaceType}
-          onValueChange={(value) => onSurfaceTypeChange(value as SurfaceType)}
-          options={SURFACE_OPTIONS}
-          placeholder="Select surface type"
+          label="Power Options"
+          value={powerOption}
+          onChange={onPowerOptionChange}
+          options={[
+            { value: "No Selection", label: "Select Power Option" },
+            { value: "30 AMP", label: "30 AMP" },
+            { value: "50 AMP", label: "50 AMP" },
+            { value: "Both", label: "Both" }
+          ]}
           tabIndex={4}
+        />
+        <FormSelect
+          label="Surface Type"
+          value={surfaceType}
+          onChange={onSurfaceTypeChange}
+          options={[
+            { value: "No Selection", label: "Select Surface Type" },
+            { value: "Concrete", label: "Concrete" },
+            { value: "Gravel", label: "Gravel" },
+            { value: "Grass", label: "Grass" },
+            { value: "Dirt", label: "Dirt" }
+          ]}
+          tabIndex={5}
         />
       </div>
     </div>
