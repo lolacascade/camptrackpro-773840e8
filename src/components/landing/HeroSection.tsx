@@ -54,14 +54,14 @@ export function HeroSection() {
     <div className="relative min-h-[90vh] flex flex-col items-center justify-start bg-secondary px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-24 lg:py-32">
       <div className="max-w-4xl mx-auto text-center mb-8 md:mb-16 w-full">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-heading-large font-bold mb-4">
+          <h1 className="text-heading-large lg:text-lg:heading-large font-bold mb-4">
             <span className="text-foreground-light">Your RV Park, </span>
             <span className="text-primary">Simplified with AI</span>
           </h1>
           <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
         
-        <p className="text-foreground-light text-subheading mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-subheading lg:text-lg:subheading text-foreground-light mb-6 sm:mb-8 md:mb-10 lg:mb-12 max-w-3xl mx-auto leading-relaxed">
           Streamline daily operations, stay on top of maintenance, and uncover insights with an intuitive AI-powered management tool. Simplify workflows, reduce manual effort, and focus on what matters—delivering a great experience for your guests.
         </p>
 
@@ -71,12 +71,12 @@ export function HeroSection() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="flex-1 border-0 focus-visible:ring-0 text-body-large placeholder:text-gray-400"
+            className="flex-1 border-0 focus-visible:ring-0 text-body-large lg:text-lg:body-large placeholder:text-gray-400"
           />
           <Button 
             onClick={handleSignUp}
             disabled={isLoading}
-            className="bg-primary hover:bg-primary-light text-secondary font-medium whitespace-nowrap px-6 text-body-large"
+            className="bg-primary hover:bg-primary-light text-secondary font-medium whitespace-nowrap px-6 text-body-large lg:text-lg:body-large"
           >
             {isLoading ? (
               "Sending..."
