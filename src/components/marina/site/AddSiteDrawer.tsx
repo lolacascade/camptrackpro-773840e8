@@ -126,9 +126,11 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
           hookupType={formData.hookup_type}
           powerOption={formData.electricity_voltage}
           surfaceType={formData.surface_type}
+          siteType={formData.site_type}
           onHookupTypeChange={(hookup_type) => setFormData(prev => ({ ...prev, hookup_type }))}
           onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
           onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
+          onSiteTypeChange={(site_type) => setFormData(prev => ({ ...prev, site_type }))}
         />
 
         <CapacityFields
