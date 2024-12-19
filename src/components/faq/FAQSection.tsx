@@ -1,93 +1,32 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Card } from "@/components/ui/card";
-import { ChevronDown } from "lucide-react";
+import { Accordion } from "@/components/ui/accordion";
+import { FAQItem } from "./FAQItem";
+import { faqData } from "./faq-data";
+import { memo } from "react";
 
-const faqData = [
-  {
-    question: "What is CampTrackPro and who is it for?",
-    answer: "Our platform is designed for RV park owners and managers to efficiently manage reservations, sites, maintenance, and customer details, all in one place."
-  },
-  {
-    question: "How does this help me save time managing my RV park?",
-    answer: "By automating bookings, tracking site availability, and handling maintenance requests seamlessly, you'll reduce manual work and focus on providing a great experience to your guests."
-  },
-  {
-    question: "Can I manage different types of RV sites and hookups?",
-    answer: "Yes, you can customize site types, power options, surface types, and hookup details to meet your RV park's unique needs."
-  },
-  {
-    question: "Is there a way to track maintenance tasks and requests?",
-    answer: "Absolutely! Our platform includes a dedicated maintenance management tool to schedule, monitor, and resolve maintenance tasks efficiently."
-  },
-  {
-    question: "Can I visualize my park layout and track site availability?",
-    answer: "Yes, our interactive RV Map lets you view all your sites, occupancy status, and site-specific details in a user-friendly layout."
-  },
-  {
-    question: "How does the platform handle payments and expenses?",
-    answer: "You can manage expenses, track financials, and integrate with popular payment systems for seamless transactions and reporting."
-  },
-  {
-    question: "Is this platform secure and does it protect my customers' data?",
-    answer: "Security is our top priority. All data is encrypted and protected with role-based access control to ensure only authorized users can view specific data."
-  },
-  {
-    question: "Can I add and manage customer details, including bookings?",
-    answer: "Yes, you can easily add, edit, and manage customer details, reservations, and site assignments within a few clicks."
-  },
-  {
-    question: "What insights or reports will I get about my RV park?",
-    answer: "Our dashboard provides key insights, including site occupancy rates, active bookings, customer engagement, and maintenance trends to help you make data-driven decisions."
-  },
-  {
-    question: "Is the platform easy to use for someone with no technical skills?",
-    answer: "Yes! Our platform is intuitive, easy to navigate, and designed with simplicity in mind, so you can get started quickly without extensive training."
-  }
-];
-
-export function FAQSection() {
+export const FAQSection = memo(function FAQSection() {
   return (
-    <div className="grid grid-cols-12 gap-8 lg:gap-12">
+    <section className="grid grid-cols-12 gap-8 lg:gap-12">
       <div className="col-span-12 lg:col-span-4 space-y-4">
         <h2 className="text-heading-medium font-semibold text-white leading-[1.4]">
           Frequently Asked Questions
         </h2>
-        <p className="text-xl text-gray-300 max-w-xl">
+        <p className="text-xl text-gray-300">
           Find answers to common questions about our RV park management platform.
         </p>
       </div>
       
       <div className="col-span-12 lg:col-span-8 grid gap-3 sm:gap-4">
-        {faqData.map((faq, index) => (
-          <Card 
-            key={index} 
-            className="border border-[#1a2b2d] bg-[#133134]/10 backdrop-blur-sm hover:shadow-lg transition-all duration-300"
-          >
-            <Accordion type="single" collapsible>
-              <AccordionItem value={`item-${index}`} className="border-none">
-                <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-[#133134]/20 [&[data-state=open]>svg]:rotate-180">
-                  <div className="flex items-center justify-between w-full">
-                    <span className="text-left text-xl font-medium text-white">
-                      {faq.question}
-                    </span>
-                    <ChevronDown className="h-6 w-6 shrink-0 text-white transition-transform duration-200" />
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 pt-1">
-                  <p className="text-lg text-gray-300">
-                    {faq.answer}
-                  </p>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </Card>
-        ))}
+        <Accordion type="single" collapsible className="space-y-3 sm:space-y-4">
+          {faqData.map((faq, index) => (
+            <FAQItem
+              key={index}
+              question={faq.question}
+              answer={faq.answer}
+              index={index}
+            />
+          ))}
+        </Accordion>
       </div>
-    </div>
+    </section>
   );
-}
+});
