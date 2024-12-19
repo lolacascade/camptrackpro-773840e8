@@ -35,8 +35,15 @@ export default function Login() {
         });
       }
 
-      if (event === 'TOKEN_REFRESHED') {
-        console.log('Session token refreshed');
+      if (event === 'USER_UPDATED') {
+        console.log('User profile updated');
+      }
+
+      if (event === 'PASSWORD_RECOVERY') {
+        toast({
+          title: "Password recovery",
+          description: "Check your email for password reset instructions.",
+        });
       }
     });
 
@@ -131,6 +138,7 @@ export default function Login() {
             providers={[]}
             redirectTo={`${window.location.origin}/app`}
             magicLink={true}
+            view="magic_link"
             localization={{
               variables: {
                 sign_in: {
