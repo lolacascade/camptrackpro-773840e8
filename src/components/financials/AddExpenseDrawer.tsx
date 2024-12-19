@@ -1,5 +1,5 @@
 import { EntityDrawer } from "@/components/common/EntityDrawer"
-import type { Expense } from "@/types/expense"
+import type { Expense, ExpenseType, ExpenseStatus } from "@/types/expense"
 
 interface AddExpenseDrawerProps {
   expense: Expense | null
@@ -33,6 +33,9 @@ const EXPENSE_FIELDS = [
       { value: "Insurance", label: "Insurance" },
       { value: "Staff", label: "Staff" },
       { value: "Marketing", label: "Marketing" },
+      { value: "Administrative Costs", label: "Administrative Costs" },
+      { value: "Taxes", label: "Taxes" },
+      { value: "Capital Expenditures", label: "Capital Expenditures" },
       { value: "Other", label: "Other" }
     ]
   },
@@ -49,7 +52,8 @@ const EXPENSE_FIELDS = [
     required: true,
     options: [
       { value: "completed", label: "Completed" },
-      { value: "pending", label: "Pending" }
+      { value: "pending", label: "Pending" },
+      { value: "cancelled", label: "Cancelled" }
     ]
   },
   {
@@ -59,7 +63,9 @@ const EXPENSE_FIELDS = [
     options: [
       { value: "cash", label: "Cash" },
       { value: "credit_card", label: "Credit Card" },
-      { value: "bank_transfer", label: "Bank Transfer" }
+      { value: "bank_transfer", label: "Bank Transfer" },
+      { value: "check", label: "Check" },
+      { value: "other", label: "Other" }
     ]
   },
   {

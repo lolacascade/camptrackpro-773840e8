@@ -19,7 +19,7 @@ export function EntityField({ field }: { field: FormField }) {
             value={field.value || ''}
             onValueChange={field.onChange}
           >
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
@@ -41,6 +41,7 @@ export function EntityField({ field }: { field: FormField }) {
             prefix="$"
             value={field.value || ''}
             onValueChange={(values) => field.onChange(values.floatValue)}
+            className="bg-white"
           />
         )
       case 'date':
@@ -53,25 +54,17 @@ export function EntityField({ field }: { field: FormField }) {
                   "w-full justify-start text-left font-normal bg-white",
                   !field.value && "text-muted-foreground"
                 )}
-                onClick={(e) => e.stopPropagation()}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
               </Button>
             </PopoverTrigger>
-            <PopoverContent 
-              className="w-auto p-0 bg-white" 
-              align="start"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  field.onChange(date?.toISOString())
-                }}
+                onSelect={(date) => field.onChange(date?.toISOString())}
                 initialFocus
-                defaultMonth={new Date()}
               />
             </PopoverContent>
           </Popover>
@@ -81,6 +74,7 @@ export function EntityField({ field }: { field: FormField }) {
           <Input
             value={field.value || ''}
             onChange={(e) => field.onChange(e.target.value)}
+            className="bg-white"
           />
         )
     }
