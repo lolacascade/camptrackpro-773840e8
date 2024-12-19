@@ -108,6 +108,11 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
     }
   }
 
+  const handleSiteTypeChange = (value: string | null) => {
+    const siteType: SiteType = value === 'none' ? null : value as SiteType;
+    setFormData(prev => ({ ...prev, site_type: siteType }));
+  };
+
   return (
     <BaseDrawer
       open={open}
@@ -119,7 +124,7 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
           name={formData.name}
           siteType={formData.site_type}
           onNameChange={(name) => setFormData(prev => ({ ...prev, name }))}
-          onSiteTypeChange={(site_type: SiteType) => setFormData(prev => ({ ...prev, site_type }))}
+          onSiteTypeChange={handleSiteTypeChange}
         />
 
         <UtilitiesFields
@@ -130,7 +135,7 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
           onHookupTypeChange={(hookup_type) => setFormData(prev => ({ ...prev, hookup_type }))}
           onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
           onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
-          onSiteTypeChange={(site_type: SiteType) => setFormData(prev => ({ ...prev, site_type }))}
+          onSiteTypeChange={handleSiteTypeChange}
         />
 
         <CapacityFields
