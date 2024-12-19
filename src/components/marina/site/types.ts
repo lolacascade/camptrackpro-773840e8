@@ -1,7 +1,7 @@
-export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | 'No Selection';
-export type HookupType = 'full' | 'partial' | 'dry' | 'No Selection';
-export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | 'No Selection';
-export type PowerOption = '20A' | '30A' | '50A' | 'No Selection';
+export type SiteType = 'pull-through' | 'back-in' | 'tent-only' | null;
+export type HookupType = 'full' | 'partial' | 'dry' | null;
+export type SurfaceType = 'gravel' | 'concrete' | 'asphalt' | 'grass' | 'dirt' | null;
+export type PowerOption = '20A' | '30A' | '50A' | null;
 
 export interface DistanceToFacilities {
   restrooms?: number;
@@ -52,28 +52,28 @@ export interface SiteFormData {
 }
 
 export const SITE_TYPE_OPTIONS = [
-  { value: 'No Selection', label: 'No Selection' },
+  { value: '', label: 'No Selection' },
   { value: 'pull-through', label: 'Pull-through' },
   { value: 'back-in', label: 'Back-in' },
   { value: 'tent-only', label: 'Tent-only' }
 ];
 
 export const HOOKUP_TYPE_OPTIONS = [
-  { value: 'No Selection', label: 'Select Hookup Type' },
+  { value: '', label: 'No Selection' },
   { value: 'full', label: 'Full Hookup' },
   { value: 'partial', label: 'Partial Hookup' },
   { value: 'dry', label: 'No Hookup' }
 ];
 
 export const POWER_OPTIONS = [
-  { value: 'No Selection', label: 'Select Power Option' },
+  { value: '', label: 'No Selection' },
   { value: '30A', label: '30 AMP' },
   { value: '50A', label: '50 AMP' },
   { value: '20A', label: '20 AMP' }
 ];
 
 export const SURFACE_TYPE_OPTIONS = [
-  { value: 'No Selection', label: 'Select Surface Type' },
+  { value: '', label: 'No Selection' },
   { value: 'concrete', label: 'Concrete' },
   { value: 'gravel', label: 'Gravel' },
   { value: 'grass', label: 'Grass' },
