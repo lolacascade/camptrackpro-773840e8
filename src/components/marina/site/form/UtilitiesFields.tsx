@@ -1,23 +1,27 @@
 import { FormSelect } from "@/components/common/FormSelect"
 import type { HookupType, PowerOption, SurfaceType } from "../types"
-import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS } from "../types"
+import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS, SITE_TYPE_OPTIONS } from "../types"
 
 interface UtilitiesFieldsProps {
   hookupType: HookupType;
   powerOption: PowerOption;
   surfaceType: SurfaceType;
+  siteType: string | null;
   onHookupTypeChange: (value: HookupType) => void;
   onPowerOptionChange: (value: PowerOption) => void;
   onSurfaceTypeChange: (value: SurfaceType) => void;
+  onSiteTypeChange: (value: string) => void;
 }
 
 export function UtilitiesFields({
   hookupType,
   powerOption,
   surfaceType,
+  siteType,
   onHookupTypeChange,
   onPowerOptionChange,
-  onSurfaceTypeChange
+  onSurfaceTypeChange,
+  onSiteTypeChange
 }: UtilitiesFieldsProps) {
   const handleValueChange = (setter: (value: any) => void) => (value: string) => {
     setter(value === 'none' ? null : value);
@@ -31,10 +35,10 @@ export function UtilitiesFields({
         <FormSelect
           id="site_type"
           label="Site Type *"
-          value={getValue(hookupType)}
-          onValueChange={handleValueChange(onHookupTypeChange)}
-          options={HOOKUP_TYPE_OPTIONS}
-          tabIndex={2}
+          value={getValue(siteType)}
+          onValueChange={handleValueChange(onSiteTypeChange)}
+          options={SITE_TYPE_OPTIONS}
+          tabIndex={1}
         />
         <FormSelect
           id="hookup_type"
