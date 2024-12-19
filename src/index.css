@@ -98,6 +98,6 @@
 /* Sheet styles */
 @layer components {
   [data-radix-sheet-content] {
-    @apply !w-full sm:!max-w-[540px] !right-0;
+    @apply !w-full sm:!max-w-[540px] !right-0 !z-[100];
   }
 }
