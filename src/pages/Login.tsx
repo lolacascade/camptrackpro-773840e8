@@ -138,7 +138,6 @@ export default function Login() {
             providers={[]}
             redirectTo={`${window.location.origin}/app`}
             magicLink={true}
-            view="magic_link"
             localization={{
               variables: {
                 sign_in: {
