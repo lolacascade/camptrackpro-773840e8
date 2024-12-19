@@ -7,8 +7,6 @@ import { useSession } from '@supabase/auth-helpers-react'
 import { useState } from "react"
 import { BasicInfoFields } from "./form/BasicInfoFields"
 import { UtilitiesFields } from "./form/UtilitiesFields"
-import { CapacityFields } from "./form/CapacityFields"
-import { PricingFields } from "./form/PricingFields"
 import { FeaturesFields } from "./form/FeaturesFields"
 import { SiteFormData, SiteType } from "./types"
 import { BaseDrawer } from "@/components/common/BaseDrawer"
@@ -28,7 +26,6 @@ const defaultFormData: SiteFormData = {
   electricity_voltage: null,
   surface_type: null,
   distance_to_facilities: {},
-  max_capacity: { people: 4, vehicles: 2 },
   status: 'available',
   special_features: {
     petFriendly: false,
@@ -36,11 +33,6 @@ const defaultFormData: SiteFormData = {
     firePit: false,
     picnicTable: false,
     wifi: false
-  },
-  pricing: {
-    nightly: 0,
-    weekly: 0,
-    monthly: 0
   },
   photos: [],
   notes: '',
@@ -74,19 +66,17 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
 
     setIsSubmitting(true)
     try {
-      const dataToInsert = {
+      const dataToSave = {
         ...formData,
         user_id: session.user.id,
         status: 'available',
         distance_to_facilities: JSON.stringify(formData.distance_to_facilities),
-        max_capacity: JSON.stringify(formData.max_capacity),
-        special_features: JSON.stringify(formData.special_features),
-        pricing: JSON.stringify(formData.pricing)
+        special_features: JSON.stringify(formData.special_features)
       }
 
       const { error } = await supabase
         .from('slots')
-        .insert([dataToInsert])
+        .insert([dataToSave])
 
       if (error) throw error
 
@@ -134,16 +124,6 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
           onPowerOptionChange={(electricity_voltage) => setFormData(prev => ({ ...prev, electricity_voltage }))}
           onSurfaceTypeChange={(surface_type) => setFormData(prev => ({ ...prev, surface_type }))}
           onSiteTypeChange={handleSiteTypeChange}
-        />
-
-        <CapacityFields
-          capacity={formData.max_capacity}
-          onCapacityChange={(max_capacity) => setFormData(prev => ({ ...prev, max_capacity }))}
-        />
-
-        <PricingFields
-          pricing={formData.pricing}
-          onPricingChange={(pricing) => setFormData(prev => ({ ...prev, pricing }))}
         />
 
         <FeaturesFields

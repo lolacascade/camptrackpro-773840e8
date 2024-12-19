@@ -10,21 +10,6 @@ export interface DistanceToFacilities {
   picnicArea?: number;
 }
 
-export interface MaxCapacity {
-  people: number;
-  vehicles: number;
-  weight?: number;
-}
-
-export interface Pricing {
-  nightly: number;
-  weekly: number;
-  monthly: number;
-  trimester?: number;
-  semester?: number;
-  annual?: number;
-}
-
 export interface SpecialFeatures {
   petFriendly: boolean;
   shade: boolean;
@@ -42,10 +27,8 @@ export interface SiteFormData {
   electricity_voltage: PowerOption;
   surface_type: SurfaceType;
   distance_to_facilities: DistanceToFacilities;
-  max_capacity: MaxCapacity;
   status: string;
   special_features: SpecialFeatures;
-  pricing: Pricing;
   photos: string[];
   notes: string;
   location_identifier: string;
