@@ -52,7 +52,18 @@ export function UtilitiesFields({
   onSurfaceTypeChange
 }: UtilitiesFieldsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="site_type">Site Type *</Label>
+        <FormSelect
+          id="site_type"
+          value={hookupType}
+          onValueChange={(value) => onHookupTypeChange(value as HookupType)}
+          options={SITE_TYPE_OPTIONS}
+          placeholder="Select site type"
+        />
+      </div>
+
       <div className="space-y-2">
         <Label htmlFor="hookup_type">Hookup Type *</Label>
         <FormSelect
