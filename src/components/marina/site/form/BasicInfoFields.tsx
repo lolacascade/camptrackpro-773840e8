@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SiteType, SITE_TYPE_OPTIONS } from "../types"
+import { SiteType } from "../types"
 
 interface BasicInfoFieldsProps {
   name: string;
@@ -9,6 +9,13 @@ interface BasicInfoFieldsProps {
   onNameChange: (value: string) => void;
   onSiteTypeChange: (value: SiteType) => void;
 }
+
+const SITE_TYPE_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'pull-through', label: 'Pull-through' },
+  { value: 'back-in', label: 'Back-in' },
+  { value: 'tent-only', label: 'Tent-only' }
+];
 
 export function BasicInfoFields({ 
   name, 
