@@ -10,7 +10,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, userId, marinaInsights } = await req.json();
+    const { messages, conversationId, userId, parkInsights } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -40,7 +40,7 @@ serve(async (req) => {
         });
     }
 
-    // Make request to OpenAI
+    // Make request to OpenAI using gpt-4o-mini
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -48,16 +48,17 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
             content: `You are a helpful RV park management assistant. You help users manage their RV park operations, bookings, and maintenance tasks. 
-            Here are the current marina insights:
-            ${JSON.stringify(marinaInsights, null, 2)}
+            Here are the current park insights:
+            ${JSON.stringify(parkInsights, null, 2)}
             
-            Use this data to provide accurate, data-driven responses about the marina's current state.
-            Keep your responses focused on RV park management topics and use the provided insights when relevant.`,
+            Use this data to provide accurate, data-driven responses about the RV park's current state.
+            Keep your responses focused on RV park management topics and use the provided insights when relevant.
+            Remember this is an RV park, not a marina - use appropriate terminology.`,
           },
           ...messages,
         ],

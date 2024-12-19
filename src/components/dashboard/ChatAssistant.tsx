@@ -7,13 +7,13 @@ import { chatService } from "@/services/chat-service";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { ImageUpload } from "@/components/common/ImageUpload";
 
 const INITIAL_SUGGESTIONS = [
-  "What's the current occupancy rate?",
-  "Show me active bookings",
-  "How many maintenance requests are pending?",
-  "What's the average stay duration?"
+  "How many RV spots are currently available?",
+  "Show me upcoming check-ins for today",
+  "List all pending maintenance requests",
+  "What's our current occupancy rate?",
+  "Show me utility usage statistics"
 ];
 
 export function ChatAssistant() {
@@ -23,28 +23,38 @@ export function ChatAssistant() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId] = useState(() => uuidv4());
-  const [marinaInsights, setMarinaInsights] = useState<any>(null);
+  const [parkInsights, setParkInsights] = useState<any>(null);
   const [attachments, setAttachments] = useState<string[]>([]);
 
   useEffect(() => {
     if (session?.user?.id) {
       loadChatHistory();
-      fetchMarinaInsights();
+      fetchParkInsights();
     }
   }, [session?.user?.id]);
 
-  const fetchMarinaInsights = async () => {
+  const fetchParkInsights = async () => {
     try {
-      const { data, error } = await supabase
-        .from('chat_marina_insights')
-        .select('*')
-        .limit(1)
-        .maybeSingle();
+      // Fetch comprehensive RV park data
+      const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
+        supabase.from('slots').select('*'),
+        supabase.from('bookings').select('*'),
+        supabase.from('maintenance_requests').select('*'),
+        supabase.from('customers').select('*')
+      ]);
 
-      if (error) throw error;
-      setMarinaInsights(data);
+      const insights = {
+        total_spots: slotsData.data?.length || 0,
+        occupied_spots: slotsData.data?.filter(slot => slot.status === 'occupied').length || 0,
+        active_bookings: bookingsData.data?.filter(booking => booking.status === 'active').length || 0,
+        pending_maintenance: maintenanceData.data?.filter(req => req.status === 'pending').length || 0,
+        total_customers: customersData.data?.length || 0,
+      };
+
+      setParkInsights(insights);
     } catch (error) {
-      console.error('Error fetching marina insights:', error);
+      console.error('Error fetching park insights:', error);
+      toast.error("Failed to load park data");
     }
   };
 
@@ -79,7 +89,7 @@ export function ChatAssistant() {
         userMessage,
         conversationId,
         session.access_token,
-        marinaInsights
+        parkInsights
       );
 
       if (response.choices && response.choices[0]?.message) {
@@ -111,15 +121,15 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
-      <div className="p-4 border-b border-[#C0CCAB]/20">
+    <div className="flex flex-col h-full bg-[#0D1D1F] text-white p-4">
+      <div className="border-b border-[#C0CCAB]/20 pb-4 mb-4">
         <h2 className="text-xl font-semibold mb-2">RV Park Assistant</h2>
         <p className="text-sm text-[#C0CCAB]">
           Hello! I'm your RV park assistant. How can I help you today?
         </p>
       </div>
       
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto space-y-6 pr-2">
         {messages.map((msg, index) => (
           <ChatMessage
             key={index}
@@ -130,11 +140,11 @@ export function ChatAssistant() {
         ))}
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="mt-4 space-y-4">
         {messages.length === 0 && (
           <div className="mb-4">
             <p className="text-sm text-[#C0CCAB] mb-2">Try asking about:</p>
-            <div className="no-scrollbar overflow-x-auto">
+            <div className="overflow-x-auto no-scrollbar">
               <ChatSuggestions
                 suggestions={suggestions}
                 onSelect={handleSuggestionSelect}

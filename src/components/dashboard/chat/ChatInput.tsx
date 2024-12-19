@@ -40,23 +40,26 @@ export const ChatInput = ({
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="Write a question"
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && onSend()}
-            className="min-h-[44px] bg-white text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none overflow-hidden"
-            rows={1}
-            style={{ height: 'auto' }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
+            className="min-h-[44px] bg-white text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none"
+            style={{
+              height: 'auto',
+              overflow: 'hidden'
+            }}
+            onInput={(e) => {
+              const target = e.target as HTMLTextAreaElement;
+              target.style.height = 'auto';
+              target.style.height = target.scrollHeight + 'px';
+            }}
           />
         </div>
         <div className="flex gap-2">
-          <ImageUpload onUploadComplete={onFileUpload}>
-            <Button 
-              size="icon"
-              variant="ghost"
-              className="bg-white hover:bg-white/90 text-[#0D1D1F]"
-              disabled={isLoading}
-            >
-              <Image className="h-4 w-4" />
-            </Button>
-          </ImageUpload>
+          <ImageUpload onUploadComplete={onFileUpload} />
           <Button 
             onClick={onSend} 
             size="icon"
