@@ -55,10 +55,11 @@ export function AddSiteDrawer({ open, onClose, onSiteAdded }: AddSiteDrawerProps
       return
     }
 
-    if (!formData.name || !formData.location_identifier) {
+    // Only validate the name field as it's the only required field
+    if (!formData.name) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields.",
+        description: "Please provide a site name.",
         variant: "destructive",
       })
       return
