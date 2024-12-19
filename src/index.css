@@ -121,3 +121,14 @@ textarea {
 textarea:focus {
   height: auto;
 }
+
+/* Drawer styles */
+@media (min-width: 640px) {
+  .drawer-content {
+    width: 540px !important;
+  }
+}
+
+[data-sonner-toaster][data-position="bottom-right"] {
+  bottom: 60px;
+}

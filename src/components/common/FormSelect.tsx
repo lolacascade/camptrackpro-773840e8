@@ -1,3 +1,4 @@
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -12,42 +13,47 @@ interface Option {
 }
 
 interface FormSelectProps {
-  id: string
+  id?: string
+  label?: string
   value: string
   onValueChange: (value: string) => void
   options: Option[]
-  placeholder: string
+  placeholder?: string
   tabIndex?: number
 }
 
 export function FormSelect({
   id,
+  label,
   value,
   onValueChange,
   options,
-  placeholder,
+  placeholder = "Select option",
   tabIndex
 }: FormSelectProps) {
   return (
-    <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger id={id} className="w-full bg-white" tabIndex={tabIndex}>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent
-        className="bg-white border border-gray-200 shadow-lg z-[100]"
-        position="popper"
-        sideOffset={5}
-      >
-        {options.map(option => (
-          <SelectItem
-            key={option.value}
-            value={option.value}
-            className="hover:bg-gray-100 cursor-pointer"
-          >
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div className="grid gap-2">
+      {label && <Label htmlFor={id}>{label}</Label>}
+      <Select value={value} onValueChange={onValueChange}>
+        <SelectTrigger id={id} className="w-full bg-white" tabIndex={tabIndex}>
+          <SelectValue placeholder={placeholder} />
+        </SelectTrigger>
+        <SelectContent
+          className="bg-white border border-gray-200 shadow-lg z-[100]"
+          position="popper"
+          sideOffset={5}
+        >
+          {options.map(option => (
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="hover:bg-gray-100 cursor-pointer"
+            >
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   )
 }
