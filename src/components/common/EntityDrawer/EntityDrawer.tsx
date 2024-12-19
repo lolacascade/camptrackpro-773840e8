@@ -27,6 +27,7 @@ export function EntityDrawer({
       open={open} 
       onClose={onClose} 
       title={entity ? `Edit ${title}` : `Add ${title}`}
+      className="w-full sm:max-w-[540px]"
     >
       <div className="grid gap-4 py-4">
         {fields.map((field) => (
