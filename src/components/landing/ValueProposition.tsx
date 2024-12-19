@@ -35,9 +35,9 @@ export function ValueProposition() {
   return (
     <section className="py-16 md:py-24 bg-[#0D1D1F] relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column - Content */}
-          <div className="space-y-8">
+          <div className="lg:col-span-4 space-y-8">
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.4]">
                 Unlock the Future of RV Park Management
@@ -75,7 +75,7 @@ export function ValueProposition() {
           </div>
 
           {/* Right Column - Feature Preview */}
-          <div className="relative">
+          <div className="lg:col-span-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-3xl" />
             <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-6 md:p-8">
               <div className="aspect-video rounded-lg bg-[#0D1D1F]/80 border border-gray-700 overflow-hidden">
