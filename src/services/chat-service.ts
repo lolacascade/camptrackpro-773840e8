@@ -8,18 +8,18 @@ export type Message = {
 };
 
 export const chatService = {
-  async sendMessage(message: Message, conversationId: string, accessToken: string) {
+  async sendMessage(message: Message, conversationId: string, accessToken: string, marinaInsights?: any) {
     try {
       const response = await supabase.functions.invoke('chat-assistant', {
         body: {
           messages: [message],
           conversationId,
           userId: (await supabase.auth.getUser()).data.user?.id,
+          marinaInsights
         }
       });
 
       if (response.error) {
-        // Parse the error message from the Edge Function
         let errorMessage: any;
         try {
           errorMessage = JSON.parse(response.error.message);

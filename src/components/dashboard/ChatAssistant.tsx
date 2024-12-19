@@ -6,12 +6,13 @@ import { ChatSuggestions } from "@/components/dashboard/chat/ChatSuggestions";
 import { chatService } from "@/services/chat-service";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const INITIAL_SUGGESTIONS = [
   "What's the current occupancy rate?",
-  "Which sites are available this weekend?",
-  "Show me maintenance requests for Zone A",
-  "What's the revenue forecast for next month?"
+  "Show me active bookings",
+  "How many maintenance requests are pending?",
+  "What's the average stay duration?"
 ];
 
 export function ChatAssistant() {
@@ -21,12 +22,28 @@ export function ChatAssistant() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId] = useState(() => uuidv4());
+  const [marinaInsights, setMarinaInsights] = useState<any>(null);
 
   useEffect(() => {
     if (session?.user?.id) {
       loadChatHistory();
+      fetchMarinaInsights();
     }
   }, [session?.user?.id]);
+
+  const fetchMarinaInsights = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('chat_marina_insights')
+        .select('*')
+        .single();
+
+      if (error) throw error;
+      setMarinaInsights(data);
+    } catch (error) {
+      console.error('Error fetching marina insights:', error);
+    }
+  };
 
   const loadChatHistory = async () => {
     if (!session?.user?.id) return;
@@ -52,7 +69,8 @@ export function ChatAssistant() {
       const response = await chatService.sendMessage(
         userMessage,
         conversationId,
-        session.access_token
+        session.access_token,
+        marinaInsights
       );
 
       if (response.choices && response.choices[0]?.message) {

@@ -889,6 +889,18 @@ export type Database = {
       }
     }
     Views: {
+      chat_marina_insights: {
+        Row: {
+          active_bookings: number | null
+          avg_stay_duration: number | null
+          maintenance_requests: number | null
+          marina_name: string | null
+          occupied_slots: number | null
+          total_customers: number | null
+          total_slips: number | null
+        }
+        Relationships: []
+      }
       customer_insights: {
         Row: {
           customer_id: number | null

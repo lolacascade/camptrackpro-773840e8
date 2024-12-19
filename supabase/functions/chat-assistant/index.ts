@@ -10,7 +10,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, userId } = await req.json();
+    const { messages, conversationId, userId, marinaInsights } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -52,7 +52,12 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a helpful RV park management assistant. You help users manage their RV park operations, bookings, and maintenance tasks. Keep your responses focused on RV park management topics.',
+            content: `You are a helpful RV park management assistant. You help users manage their RV park operations, bookings, and maintenance tasks. 
+            Here are the current marina insights:
+            ${JSON.stringify(marinaInsights, null, 2)}
+            
+            Use this data to provide accurate, data-driven responses about the marina's current state.
+            Keep your responses focused on RV park management topics and use the provided insights when relevant.`,
           },
           ...messages,
         ],
