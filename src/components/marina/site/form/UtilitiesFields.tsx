@@ -1,5 +1,5 @@
 import { FormSelect } from "@/components/common/FormSelect"
-import type { HookupType, PowerOption, SurfaceType } from "../types"
+import type { HookupType, PowerOption, SurfaceType, SiteType } from "../types"
 import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS, SITE_TYPE_OPTIONS } from "../types"
 
 interface UtilitiesFieldsProps {
@@ -34,7 +34,7 @@ export function UtilitiesFields({
       <div className="grid grid-cols-2 gap-4">
         <FormSelect
           id="site_type"
-          label="Site Type *"
+          label="Site Type"
           value={getValue(siteType)}
           onValueChange={handleValueChange(onSiteTypeChange)}
           options={SITE_TYPE_OPTIONS}
