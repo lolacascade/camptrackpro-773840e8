@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { SiteType } from "../types"
+import { SiteType, SITE_TYPE_OPTIONS } from "../types"
 
 interface BasicInfoFieldsProps {
   name: string;
@@ -37,10 +37,11 @@ export function BasicInfoFields({
             <SelectValue placeholder="Select site type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="No Selection">No Selection</SelectItem>
-            <SelectItem value="pull-through">Pull-through</SelectItem>
-            <SelectItem value="back-in">Back-in</SelectItem>
-            <SelectItem value="tent-only">Tent-only</SelectItem>
+            {SITE_TYPE_OPTIONS.map(option => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

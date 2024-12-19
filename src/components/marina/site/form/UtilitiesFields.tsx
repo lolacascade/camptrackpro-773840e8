@@ -11,6 +11,29 @@ interface UtilitiesFieldsProps {
   onSurfaceTypeChange: (value: SurfaceType) => void;
 }
 
+const HOOKUP_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'full', label: 'Full Hookup (Water, Electric, Sewer)' },
+  { value: 'partial', label: 'Partial Hookup (Water, Electric)' },
+  { value: 'dry', label: 'Dry Site (No utilities)' }
+];
+
+const POWER_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: '20A', label: '20 AMP' },
+  { value: '30A', label: '30 AMP' },
+  { value: '50A', label: '50 AMP' }
+];
+
+const SURFACE_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'gravel', label: 'Gravel' },
+  { value: 'concrete', label: 'Concrete' },
+  { value: 'asphalt', label: 'Asphalt' },
+  { value: 'grass', label: 'Grass' },
+  { value: 'dirt', label: 'Dirt' }
+];
+
 export function UtilitiesFields({
   hookupType,
   powerOption,
@@ -31,10 +54,11 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select hookup type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="No Selection">No Selection</SelectItem>
-            <SelectItem value="full">Full Hookup (Water, Electric, Sewer)</SelectItem>
-            <SelectItem value="partial">Partial Hookup (Water, Electric)</SelectItem>
-            <SelectItem value="dry">Dry Site (No utilities)</SelectItem>
+            {HOOKUP_OPTIONS.map(option => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -49,10 +73,11 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select power option" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="No Selection">No Selection</SelectItem>
-            <SelectItem value="20A">20 AMP</SelectItem>
-            <SelectItem value="30A">30 AMP</SelectItem>
-            <SelectItem value="50A">50 AMP</SelectItem>
+            {POWER_OPTIONS.map(option => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -67,12 +92,11 @@ export function UtilitiesFields({
             <SelectValue placeholder="Select surface type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="No Selection">No Selection</SelectItem>
-            <SelectItem value="gravel">Gravel</SelectItem>
-            <SelectItem value="concrete">Concrete</SelectItem>
-            <SelectItem value="asphalt">Asphalt</SelectItem>
-            <SelectItem value="grass">Grass</SelectItem>
-            <SelectItem value="dirt">Dirt</SelectItem>
+            {SURFACE_OPTIONS.map(option => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

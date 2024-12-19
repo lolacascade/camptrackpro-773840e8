@@ -50,3 +50,10 @@ export interface SiteFormData {
   notes: string;
   location_identifier: string;
 }
+
+export const SITE_TYPE_OPTIONS = [
+  { value: 'No Selection', label: 'No Selection' },
+  { value: 'pull-through', label: 'Pull-through' },
+  { value: 'back-in', label: 'Back-in' },
+  { value: 'tent-only', label: 'Tent-only' }
+];
