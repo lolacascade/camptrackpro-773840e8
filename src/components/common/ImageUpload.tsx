@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useSession } from '@supabase/auth-helpers-react';
 
 interface ImageUploadProps {
   onUploadComplete?: (url: string) => void;
@@ -20,9 +21,19 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
+  const session = useSession();
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "You must be logged in to upload images.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const file = event.target.files?.[0];
       if (!file) return;
 
@@ -47,7 +58,9 @@ export function ImageUpload({
 
       const { error: uploadError, data } = await supabase.storage
         .from(bucket)
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          upsert: true // Enable upsert
+        });
 
       if (uploadError) {
         throw uploadError;
@@ -65,6 +78,7 @@ export function ImageUpload({
       });
 
     } catch (error: any) {
+      console.error('Upload error:', error);
       toast({
         title: "Upload failed",
         description: error.message || "There was an error uploading your image.",
