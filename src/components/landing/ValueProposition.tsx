@@ -1,5 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartBar, ListChecks, Database, ChevronDown } from "lucide-react";
+import { ChartBar, ListChecks, Database } from "lucide-react";
 import { useState } from "react";
 import {
   Accordion,
@@ -75,15 +74,12 @@ export function ValueProposition() {
           </div>
 
           {/* Right Column - Feature Preview */}
-          <div className="lg:col-span-8 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-3xl" />
-            <div className="relative">
-              <img 
-                src="/lovable-uploads/a3cebd5c-7dbc-452e-940e-2d87b41a7af6.png"
-                alt="RV Park Management Dashboard"
-                className="w-full h-full object-cover rounded-lg"
-              />
-            </div>
+          <div className="lg:col-span-8">
+            <img 
+              src="/lovable-uploads/c2922016-7bed-4c18-a245-09af3747cd80.png"
+              alt="RV Park Management Dashboard"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </div>
