@@ -7,9 +7,17 @@ interface ImageUploadProps {
   onUploadComplete?: (url: string) => void;
   bucket?: string;
   children?: React.ReactNode;
+  currentImage?: string;
+  section?: string;
 }
 
-export function ImageUpload({ onUploadComplete, bucket = 'marina-media', children }: ImageUploadProps) {
+export function ImageUpload({ 
+  onUploadComplete, 
+  bucket = 'marina-media', 
+  children,
+  currentImage,
+  section = 'default'
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
 
@@ -20,8 +28,22 @@ export function ImageUpload({ onUploadComplete, bucket = 'marina-media', childre
 
       setIsUploading(true);
       
+      // Include section in the file path to organize uploads
       const fileExt = file.name.split('.').pop();
-      const filePath = `${Math.random()}.${fileExt}`;
+      const filePath = `${section}/${Math.random()}.${fileExt}`;
+
+      // If there's a current image, try to delete it first
+      if (currentImage) {
+        const oldPath = currentImage.split('/').slice(-2).join('/'); // Get section/filename
+        try {
+          await supabase.storage
+            .from(bucket)
+            .remove([oldPath]);
+        } catch (error) {
+          console.error('Failed to delete old image:', error);
+          // Continue with upload even if delete fails
+        }
+      }
 
       const { error: uploadError, data } = await supabase.storage
         .from(bucket)
@@ -60,7 +82,7 @@ export function ImageUpload({ onUploadComplete, bucket = 'marina-media', childre
           variant="outline"
           disabled={isUploading}
         >
-          {isUploading ? 'Uploading...' : 'Upload Image'}
+          {isUploading ? 'Uploading...' : currentImage ? 'Change Image' : 'Upload Image'}
         </Button>
       )}
       <input

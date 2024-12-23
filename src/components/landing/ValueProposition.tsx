@@ -7,9 +7,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ImageUpload } from "@/components/common/ImageUpload";
 
 export function ValueProposition() {
   const [activeFeature, setActiveFeature] = useState('insights');
+  const [previewImage, setPreviewImage] = useState(''); // Store the current preview image URL
   
   const features = [
     {
@@ -79,10 +81,24 @@ export function ValueProposition() {
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-3xl" />
             <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-6 md:p-8">
               <div className="aspect-video rounded-lg bg-[#0D1D1F]/80 border border-gray-700 overflow-hidden">
-                {/* This is where you would display feature previews based on activeFeature */}
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  Feature Preview
-                </div>
+                {previewImage ? (
+                  <img 
+                    src={previewImage} 
+                    alt="Feature Preview" 
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    Feature Preview
+                  </div>
+                )}
+              </div>
+              <div className="mt-4 flex justify-end">
+                <ImageUpload 
+                  onUploadComplete={setPreviewImage}
+                  currentImage={previewImage}
+                  section="value-proposition"
+                />
               </div>
             </Card>
           </div>
