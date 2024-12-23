@@ -97,6 +97,8 @@ export function KeyFeatures() {
                     <ImageUpload 
                       onUploadComplete={handleImageUpload(feature.id)}
                       bucket="marina-media"
+                      section={feature.id}
+                      currentImage={feature.image}
                     >
                       <button className="px-4 py-2 bg-white text-black rounded hover:bg-gray-100 transition-colors">
                         Change Image
