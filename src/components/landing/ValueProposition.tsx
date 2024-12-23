@@ -13,22 +13,22 @@ export function ValueProposition() {
   
   const features = [
     {
-      id: 'insights',
-      icon: ChartBar,
-      title: "AI-Powered Insights",
-      description: "Make smarter decisions with real-time insights and performance analytics tailored for your park's needs."
-    },
-    {
       id: 'tasks',
       icon: ListChecks,
-      title: "Task Management",
-      description: "Easily manage tasks, schedules, and site operations with tools that help you stay organized and efficient."
+      title: "Overwhelming Task Management",
+      description: "Struggling to keep up with day-to-day operations? CampTrackPro organizes schedules and tasks, giving you back precious time."
+    },
+    {
+      id: 'insights',
+      icon: ChartBar,
+      title: "Lack of Real-Time Insights",
+      description: "Guessing at park performance? Get clear, actionable data with AI-powered analytics tailored for your needs."
     },
     {
       id: 'data',
       icon: Database,
-      title: "Centralized Management",
-      description: "Bring everything together – from site details to utilities and maintenance – in one place, accessible anytime."
+      title: "Scattered Information",
+      description: "Jumping between tools? CampTrackPro brings everything into one intuitive platform accessible anytime."
     }
   ];
 
@@ -40,10 +40,10 @@ export function ValueProposition() {
           <div className="lg:col-span-4 space-y-8">
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-[1.4]">
-                Unlock the Future of RV Park Management
+                Managing an RV park shouldn't be overwhelming
               </h2>
               <p className="text-lg text-gray-300 max-w-xl">
-                Take control of your RV park with a smart, AI-powered management tool designed to save time, reduce hassle, and improve operations.
+                From juggling maintenance tasks to keeping track of guest insights, it's easy to feel stretched thin. CampTrackPro is here to make management simpler, smarter, and stress-free.
               </p>
             </div>
 
@@ -77,12 +77,13 @@ export function ValueProposition() {
           {/* Right Column - Feature Preview */}
           <div className="lg:col-span-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-3xl" />
-            <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-6 md:p-8">
-              <div className="aspect-video rounded-lg bg-[#0D1D1F]/80 border border-gray-700 overflow-hidden">
-                {/* This is where you would display feature previews based on activeFeature */}
-                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  Feature Preview
-                </div>
+            <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-0">
+              <div className="aspect-video rounded-lg overflow-hidden">
+                <img 
+                  src="/lovable-uploads/56b9f7fd-fbf1-47f7-b15b-1c58ee5a1f8f.png"
+                  alt="RV Park Management Dashboard"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </Card>
           </div>
