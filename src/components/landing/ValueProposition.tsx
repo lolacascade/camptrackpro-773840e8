@@ -1,4 +1,4 @@
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartBar, ListChecks, Database, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import {
@@ -77,10 +77,10 @@ export function ValueProposition() {
           {/* Right Column - Feature Preview */}
           <div className="lg:col-span-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent blur-3xl" />
-            <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-0">
+            <Card className="relative bg-[#1a2b2d]/80 border-gray-700 backdrop-blur-sm p-0 shadow-none">
               <div className="aspect-video rounded-lg overflow-hidden">
                 <img 
-                  src="/lovable-uploads/56b9f7fd-fbf1-47f7-b15b-1c58ee5a1f8f.png"
+                  src="/lovable-uploads/c2922016-7bed-4c18-a245-09af3747cd80.png"
                   alt="RV Park Management Dashboard"
                   className="w-full h-full object-cover"
                 />
