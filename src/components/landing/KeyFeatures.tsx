@@ -16,37 +16,37 @@ export function KeyFeatures() {
     {
       id: 'recommendations',
       title: "AI-Powered Recommendations",
-      description: "Get actionable suggestions to optimize site usage, reduce costs, and improve operations.",
+      description: "Leverage advanced AI to gain actionable insights for optimizing site performance, resource allocation, and cost efficiency, helping you make smarter, data-driven decisions.",
       image: featureImages.recommendations
     },
     {
       id: 'maintenance',
       title: "Maintenance Tracking",
-      description: "Track and manage maintenance effortlessly with tools to log, assign, and monitor progress in real-time.",
+      description: "Stay on top of tasks with real-time tracking and updates. Assign, log, and monitor maintenance activities seamlessly to ensure your park runs without interruptions.",
       image: featureImages.maintenance
     },
     {
       id: 'siteManagement',
       title: "Site Management",
-      description: "Organize site details, surface types, and availability for clear and easy oversight.",
+      description: "Easily organize and oversee site details, surface types, and availability with a centralized tool designed for clear and hassle-free management.",
       image: featureImages.siteManagement
     },
     {
       id: 'saveTime',
       title: "Save Time",
-      description: "Automate repetitive tasks and focus on growing your business.",
+      description: "Reduce repetitive work by streamlining operations and focusing your efforts on growth. Save hours weekly with intelligent tools and automation.",
       image: featureImages.saveTime
     },
     {
       id: 'cutCosts',
       title: "Cut Costs",
-      description: "Optimize utilities and resources with smart AI insights.",
+      description: "Efficiently allocate utilities and resources with AI-powered insights that help you reduce expenses while maximizing your park's potential.",
       image: featureImages.cutCosts
     },
     {
       id: 'guestExperience',
       title: "Guest Experience",
-      description: "Deliver better stays with actionable park insights.",
+      description: "Enhance visitor satisfaction with personalized insights and optimized site operations, ensuring guests enjoy a seamless and memorable stay.",
       image: featureImages.guestExperience
     }
   ];
