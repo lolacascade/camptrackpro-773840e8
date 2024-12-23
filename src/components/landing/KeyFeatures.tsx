@@ -10,7 +10,7 @@ export function KeyFeatures() {
     {
       title: "Maintenance Tracking",
       description: "Track and manage maintenance effortlessly with tools to log, assign, and monitor progress in real-time.",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      image: "/lovable-uploads/afae9eeb-b280-4058-ad7c-06c5bee1556e.png"
     },
     {
       title: "Site Management",
