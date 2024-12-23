@@ -7,9 +7,15 @@ import { chatService } from "@/services/chat-service";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
+interface Message {
+  role: 'assistant' | 'user';
+  content: string;
+  attachments?: string[];
+}
+
 interface ChatContainerProps {
-  messages: any[];
-  setMessages: (messages: any[]) => void;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   parkInsights: any;
   conversationId: string;
 }
@@ -23,13 +29,13 @@ export function ChatContainer({ messages, setMessages, parkInsights, conversatio
   const handleSend = async () => {
     if ((!inputValue.trim() && attachments.length === 0) || !session?.access_token) return;
 
-    const userMessage = { 
-      role: 'user' as const, 
+    const userMessage: Message = { 
+      role: 'user',
       content: inputValue,
       attachments: attachments.length > 0 ? attachments : undefined
     };
     
-    setMessages(prev => [...prev, userMessage]);
+    setMessages([...messages, userMessage]);
     setInputValue("");
     setAttachments([]);
     setIsLoading(true);
@@ -43,11 +49,11 @@ export function ChatContainer({ messages, setMessages, parkInsights, conversatio
       );
 
       if (response.choices && response.choices[0]?.message) {
-        const assistantMessage = {
-          role: 'assistant' as const,
+        const assistantMessage: Message = {
+          role: 'assistant',
           content: response.choices[0].message.content
         };
-        setMessages(prev => [...prev, assistantMessage]);
+        setMessages([...messages, assistantMessage]);
       }
     } catch (error: any) {
       console.error('Error sending message:', error);
