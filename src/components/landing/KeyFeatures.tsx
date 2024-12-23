@@ -5,32 +5,32 @@ export function KeyFeatures() {
     {
       title: "AI-Powered Recommendations",
       description: "Get actionable suggestions to optimize site usage, reduce costs, and improve operations.",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     },
     {
       title: "Maintenance Tracking",
       description: "Track and manage maintenance effortlessly with tools to log, assign, and monitor progress in real-time.",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     },
     {
       title: "Site Management",
       description: "Organize site details, surface types, and availability for clear and easy oversight.",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     },
     {
       title: "Save Time",
       description: "Automate repetitive tasks and focus on growing your business.",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     },
     {
       title: "Cut Costs",
       description: "Optimize utilities and resources with smart AI insights.",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     },
     {
       title: "Guest Experience",
       description: "Deliver better stays with actionable park insights.",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      image: "/lovable-uploads/6631ecd9-bde4-49ab-9f7f-0f16d8de6566.png"
     }
   ];
 
