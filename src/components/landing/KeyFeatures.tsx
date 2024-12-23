@@ -88,23 +88,25 @@ export function KeyFeatures() {
                   {feature.description}
                 </p>
                 <div className="mt-6 relative group">
-                  <img 
-                    src={feature.image} 
-                    alt={feature.title}
-                    className="w-full h-48 object-cover rounded-lg opacity-80"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-lg">
-                    <ImageUpload 
-                      onUploadComplete={handleImageUpload(feature.id)}
-                      bucket="marina-media"
-                      section={feature.id}
-                      currentImage={feature.image}
-                    >
-                      <button className="px-4 py-2 bg-white text-black rounded hover:bg-gray-100 transition-colors">
-                        Change Image
-                      </button>
-                    </ImageUpload>
-                  </div>
+                  <ImageUpload 
+                    onUploadComplete={handleImageUpload(feature.id)}
+                    bucket="marina-media"
+                    section={`features/${feature.id}`}
+                    currentImage={feature.image}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={feature.image} 
+                        alt={feature.title}
+                        className="w-full h-48 object-cover rounded-lg opacity-80"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 rounded-lg">
+                        <button className="px-4 py-2 bg-white text-black rounded hover:bg-gray-100 transition-colors">
+                          Change Image
+                        </button>
+                      </div>
+                    </div>
+                  </ImageUpload>
                 </div>
               </div>
             </div>
