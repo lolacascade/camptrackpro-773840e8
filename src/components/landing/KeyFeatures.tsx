@@ -15,7 +15,7 @@ export function KeyFeatures() {
     {
       title: "Site Management",
       description: "Organize site details, surface types, and availability for clear and easy oversight.",
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158"
+      image: "/lovable-uploads/9f95e521-f350-4f2e-a382-453cfcdc0f99.png"
     },
     {
       title: "Save Time",
