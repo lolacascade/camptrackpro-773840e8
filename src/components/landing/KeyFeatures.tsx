@@ -4,32 +4,32 @@ export function KeyFeatures() {
   const features = [
     {
       title: "AI-Powered Recommendations",
-      description: "Get actionable suggestions to optimize site usage, reduce costs, and improve operations.",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
+      description: "Leverage advanced AI to gain actionable insights for optimizing site performance, resource allocation, and cost efficiency, helping you make smarter, data-driven decisions.",
+      image: "/lovable-uploads/79460893-b90c-4e6b-a025-5a0300cc4505.png"
     },
     {
       title: "Maintenance Tracking",
-      description: "Track and manage maintenance effortlessly with tools to log, assign, and monitor progress in real-time.",
+      description: "Stay on top of tasks with real-time tracking and updates. Assign, log, and monitor maintenance activities seamlessly to ensure your park runs without interruptions.",
       image: "/lovable-uploads/2daae83b-e848-42d3-8997-fe75f243365b.png"
     },
     {
       title: "Site Management",
-      description: "Organize site details, surface types, and availability for clear and easy oversight.",
+      description: "Easily organize and oversee site details, surface types, and availability with a centralized tool designed for clear and hassle-free management.",
       image: "/lovable-uploads/9f95e521-f350-4f2e-a382-453cfcdc0f99.png"
     },
     {
       title: "Save Time",
-      description: "Automate repetitive tasks and focus on growing your business.",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
+      description: "Reduce repetitive work by streamlining operations and focusing your efforts on growth. Save hours weekly with intelligent tools and automation.",
+      image: "/lovable-uploads/28a3aa71-b9f7-48f0-a8d5-148a36ce9cd9.png"
     },
     {
       title: "Cut Costs",
-      description: "Optimize utilities and resources with smart AI insights.",
-      image: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7"
+      description: "Efficiently allocate utilities and resources with AI-powered insights that help you reduce expenses while maximizing your park's potential.",
+      image: "/lovable-uploads/39e3ede1-f67a-4d95-bf1b-c9d66f21a9d7.png"
     },
     {
       title: "Guest Experience",
-      description: "Deliver better stays with actionable park insights.",
+      description: "Enhance visitor satisfaction with personalized insights and optimized site operations, ensuring guests enjoy a seamless and memorable stay.",
       image: "/lovable-uploads/a7a2253c-1354-4672-ae64-20b1afb55c16.png"
     }
   ];
@@ -67,7 +67,7 @@ export function KeyFeatures() {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-48 object-cover rounded-lg opacity-80"
+                    className="w-full h-60 object-cover rounded-lg opacity-80" // Increased height from h-48 to h-60 (25% increase)
                   />
                 </div>
               </div>
