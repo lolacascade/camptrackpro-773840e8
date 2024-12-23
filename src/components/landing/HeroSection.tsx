@@ -6,14 +6,12 @@ import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { ImageUpload } from "@/components/common/ImageUpload";
 
 export function HeroSection() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [heroImage, setHeroImage] = useState("");
 
   const handleSignUp = async () => {
     if (!email.trim() || !email.includes('@')) {
@@ -90,25 +88,6 @@ export function HeroSection() {
             )}
           </Button>
         </div>
-
-        {heroImage && (
-          <div className="mb-8">
-            <img 
-              src={heroImage} 
-              alt="Hero" 
-              className="rounded-lg shadow-lg max-h-[300px] mx-auto object-cover"
-            />
-          </div>
-        )}
-
-        <ImageUpload 
-          onUploadComplete={(url) => setHeroImage(url)}
-          bucket="marina-media"
-        >
-          <Button variant="outline" className="mb-8">
-            {heroImage ? "Change Hero Image" : "Upload Hero Image"}
-          </Button>
-        </ImageUpload>
       </div>
 
       <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto bg-foreground-light rounded-xl shadow-lg p-3 sm:p-4 md:p-6 lg:p-8">
