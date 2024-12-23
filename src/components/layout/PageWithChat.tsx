@@ -33,7 +33,7 @@ export function PageWithChat({ children }: PageWithChatProps) {
           </div>
         ) : (
           <Button
-            className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg z-50"
+            className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg z-50 bg-primary hover:bg-primary-dark"
             onClick={() => setIsChatOpen(true)}
           >
             <MessageSquare className="h-6 w-6" />
@@ -45,10 +45,10 @@ export function PageWithChat({ children }: PageWithChatProps) {
 
   return (
     <div className="grid grid-cols-12 min-h-[calc(100vh-4rem)] gap-0">
-      <div className="col-span-3 sticky top-16 h-[calc(100vh-4rem)] overflow-hidden">
+      <div className="col-span-3 lg:col-span-3 xl:col-span-2 sticky top-16 h-[calc(100vh-4rem)] overflow-hidden">
         <ChatAssistant />
       </div>
-      <div className="col-span-9 overflow-y-auto">
+      <div className="col-span-9 lg:col-span-9 xl:col-span-10 overflow-y-auto">
         {children}
       </div>
     </div>

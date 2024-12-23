@@ -28,7 +28,6 @@ const navigation = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,32 +44,22 @@ export function Header() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const handleMarkAsRead = (id: string) => {
-    setNotifications(prev => 
-      prev.map(notification => 
-        notification.id === id 
-          ? { ...notification, read: true }
-          : notification
-      )
-    );
-  };
-
   const NavigationLinks = () => (
     <nav className={cn(
       "flex items-center gap-2",
-      isMobile ? "flex-col items-start" : "flex-row"
+      isMobile ? "flex-col items-start w-full" : "flex-row"
     )}>
       {navigation.map((item) => (
         <Link
           key={item.name}
           to={item.href}
           className={cn(
-            "text-sm font-medium transition-colors relative px-3 py-2",
+            "text-sm font-medium transition-colors relative px-3 py-2 w-full sm:w-auto",
             "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
             location.pathname === item.href
               ? "text-primary after:scale-x-100 after:bg-primary"
               : "text-white hover:text-primary after:bg-primary",
-            isMobile && "w-full hover:bg-white/10 rounded-lg"
+            isMobile && "hover:bg-white/10 rounded-lg"
           )}
           onClick={() => setMobileMenuOpen(false)}
         >
@@ -81,7 +70,7 @@ export function Header() {
   );
 
   return (
-    <div className="flex h-16 items-center justify-between px-4 bg-secondary">
+    <div className="flex h-16 items-center justify-between px-3 sm:px-4 bg-secondary">
       <div className="flex items-center gap-4">
         {isMobile && (
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -192,8 +181,8 @@ export function Header() {
       <NotificationDrawer
         open={notificationOpen}
         onOpenChange={setNotificationOpen}
-        notifications={notifications}
-        onMarkAsRead={handleMarkAsRead}
+        notifications={[]}
+        onMarkAsRead={() => {}}
       />
     </div>
   );
