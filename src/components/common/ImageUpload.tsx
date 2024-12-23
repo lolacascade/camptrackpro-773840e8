@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useSession } from '@supabase/auth-helpers-react';
 
 interface ImageUploadProps {
   onUploadComplete?: (url: string) => void;
@@ -11,12 +10,6 @@ interface ImageUploadProps {
   currentImage?: string;
   section?: string;
 }
-
-// List of authorized emails that can upload images
-const AUTHORIZED_EMAILS = [
-  // Add your authorized emails here
-  'example@example.com'
-];
 
 export function ImageUpload({ 
   onUploadComplete, 
@@ -27,31 +20,9 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const { toast } = useToast();
-  const session = useSession();
-
-  const isAuthorizedEmail = session?.user?.email && 
-    AUTHORIZED_EMAILS.includes(session.user.email);
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      if (!session) {
-        toast({
-          title: "Authentication required",
-          description: "You must be logged in to upload images.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!isAuthorizedEmail) {
-        toast({
-          title: "Unauthorized",
-          description: "You don't have permission to upload images.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const file = event.target.files?.[0];
       if (!file) return;
 
@@ -77,7 +48,7 @@ export function ImageUpload({
       const { error: uploadError, data } = await supabase.storage
         .from(bucket)
         .upload(filePath, file, {
-          upsert: true // Enable upsert
+          upsert: true
         });
 
       if (uploadError) {
@@ -107,43 +78,34 @@ export function ImageUpload({
     }
   };
 
-  // If there's a current image and user is not authorized, just show the image
-  if (currentImage && !isAuthorizedEmail) {
-    return <img src={currentImage} alt="Uploaded content" className="max-w-full h-auto" />;
-  }
-
   return (
-    <div onClick={() => isAuthorizedEmail && document.getElementById('fileInput')?.click()}>
+    <div onClick={() => document.getElementById('fileInput')?.click()}>
       {currentImage ? (
         <div className="relative">
           <img src={currentImage} alt="Uploaded content" className="max-w-full h-auto" />
-          {isAuthorizedEmail && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
-              <Button variant="outline" className="bg-white">
-                Change Image
-              </Button>
-            </div>
-          )}
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 hover:opacity-100 transition-opacity">
+            <Button variant="outline" className="bg-white">
+              Change Image
+            </Button>
+          </div>
         </div>
       ) : (
-        isAuthorizedEmail && (children || (
+        children || (
           <Button
             variant="outline"
             disabled={isUploading}
           >
             {isUploading ? 'Uploading...' : 'Upload Image'}
           </Button>
-        ))
+        )
       )}
-      {isAuthorizedEmail && (
-        <input
-          id="fileInput"
-          type="file"
-          accept="image/*"
-          onChange={handleUpload}
-          className="hidden"
-        />
-      )}
+      <input
+        id="fileInput"
+        type="file"
+        accept="image/*"
+        onChange={handleUpload}
+        className="hidden"
+      />
     </div>
   );
 }
