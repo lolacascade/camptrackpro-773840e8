@@ -76,7 +76,7 @@ export function ValueProposition() {
           {/* Right Column - Feature Preview */}
           <div className="lg:col-span-8">
             <img 
-              src="/lovable-uploads/c2922016-7bed-4c18-a245-09af3747cd80.png"
+              src="/lovable-uploads/91e94776-30d0-468a-ac33-281b5d07efbe.png"
               alt="RV Park Management Dashboard"
               className="w-full h-full object-cover"
             />
