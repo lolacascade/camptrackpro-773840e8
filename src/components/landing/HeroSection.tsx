@@ -65,7 +65,7 @@ export function HeroSection() {
           Streamline daily operations, stay on top of maintenance, and uncover insights with an intuitive AI-powered management tool. Simplify workflows, reduce manual effort, and focus on what matters—delivering a great experience for your guests.
         </p>
 
-        <div className="max-w-md mx-auto bg-foreground-light rounded-lg p-1 flex gap-2 mb-8">
+        <div className="max-w-md mx-auto bg-foreground-light rounded-lg p-1 flex gap-2">
           <Input
             type="email"
             placeholder="Enter your email"
