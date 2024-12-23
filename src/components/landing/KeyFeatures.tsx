@@ -30,7 +30,7 @@ export function KeyFeatures() {
     {
       title: "Guest Experience",
       description: "Deliver better stays with actionable park insights.",
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d"
+      image: "/lovable-uploads/a7a2253c-1354-4672-ae64-20b1afb55c16.png"
     }
   ];
 
