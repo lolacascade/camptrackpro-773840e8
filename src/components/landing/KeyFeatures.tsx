@@ -25,7 +25,7 @@ export function KeyFeatures() {
     {
       title: "Cut Costs",
       description: "Efficiently allocate utilities and resources with AI-powered insights that help you reduce expenses while maximizing your park's potential.",
-      image: "/lovable-uploads/39e3ede1-f67a-4d95-bf1b-c9d66f21a9d7.png"
+      image: "/lovable-uploads/b001c850-2a5a-4aa6-ac5a-193d612e31da.png"
     },
     {
       title: "Guest Experience",
@@ -35,7 +35,7 @@ export function KeyFeatures() {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-[#0D1D1F]">
+    <section className="py-16 md:py-24 bg-[#0D1D1F] relative overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-[1.4]">
@@ -67,7 +67,7 @@ export function KeyFeatures() {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-60 object-cover rounded-lg opacity-80" // Increased height from h-48 to h-60 (25% increase)
+                    className="w-full h-60 object-cover rounded-lg opacity-80" 
                   />
                 </div>
               </div>
