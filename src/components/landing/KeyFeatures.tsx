@@ -20,7 +20,7 @@ export function KeyFeatures() {
     {
       title: "Save Time",
       description: "Reduce repetitive work by streamlining operations and focusing your efforts on growth. Save hours weekly with intelligent tools and automation.",
-      image: "/lovable-uploads/28a3aa71-b9f7-48f0-a8d5-148a36ce9cd9.png"
+      image: "/lovable-uploads/c0136f25-83ae-4e41-b12f-ed74e5d16f26.png"
     },
     {
       title: "Cut Costs",
