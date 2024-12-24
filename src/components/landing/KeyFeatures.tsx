@@ -24,20 +24,18 @@ export function KeyFeatures() {
                 ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
             >
-              <div className="space-y-4 p-8">
-                <h3 className="text-2xl font-semibold text-white leading-[1.4]">
+              <div className="p-8">
+                <h3 className="text-2xl font-semibold text-white leading-[1.4] mb-4">
                   {feature.title}
                 </h3>
-                <p className="text-[18px] leading-relaxed text-gray-300">
+                <p className="text-[18px] leading-relaxed text-gray-300 mb-4">
                   {feature.description}
                 </p>
-                <div className="inline-block">
-                  <img 
-                    src={feature.image} 
-                    alt={feature.title}
-                    className="w-full h-80 object-contain rounded-2xl" 
-                  />
-                </div>
+                <img 
+                  src={feature.image} 
+                  alt={feature.title}
+                  className="w-full h-80 object-contain rounded-2xl" 
+                />
               </div>
             </div>
           ))}
