@@ -5,7 +5,7 @@ export function KeyFeatures() {
     {
       title: "AI-Powered Recommendations",
       description: "Leverage advanced AI to gain actionable insights for optimizing site performance, resource allocation, and cost efficiency, helping you make smarter, data-driven decisions.",
-      image: "/lovable-uploads/79460893-b90c-4e6b-a025-5a0300cc4505.png"
+      image: "/lovable-uploads/633ac698-3a88-49b7-825a-0c920a7e5d3e.png"
     },
     {
       title: "Maintenance Tracking",
@@ -67,7 +67,7 @@ export function KeyFeatures() {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-60 object-cover rounded-lg opacity-80" 
+                    className="w-full h-60 object-cover" 
                   />
                 </div>
               </div>
