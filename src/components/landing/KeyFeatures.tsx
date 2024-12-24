@@ -18,8 +18,8 @@ export function KeyFeatures() {
       image: "/lovable-uploads/9f53a558-e6a7-494e-9601-519c085299f7.png"
     },
     {
-      title: "Save Time",
-      description: "Reduce repetitive work by streamlining operations and focusing your efforts on growth. Save hours weekly with intelligent tools and automation.",
+      title: "Operational Efficiency",
+      description: "Enhance your park's workflow by simplifying day-to-day operations. From organizing site details to monitoring essential tasks, streamline management to reduce hassle and focus on growth.",
       image: "/lovable-uploads/c0136f25-83ae-4e41-b12f-ed74e5d16f26.png"
     },
     {
@@ -67,7 +67,7 @@ export function KeyFeatures() {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-60 object-cover" 
+                    className="w-full h-80 object-cover rounded-2xl" 
                   />
                 </div>
               </div>
