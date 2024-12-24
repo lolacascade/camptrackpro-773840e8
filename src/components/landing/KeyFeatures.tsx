@@ -30,7 +30,7 @@ export function KeyFeatures() {
     {
       title: "Guest Experience",
       description: "Enhance visitor satisfaction with personalized insights and optimized site operations, ensuring guests enjoy a seamless and memorable stay.",
-      image: "/lovable-uploads/a7a2253c-1354-4672-ae64-20b1afb55c16.png"
+      image: "/lovable-uploads/4040ba24-4001-4333-9e4d-85b953790b4b.png"
     }
   ];
 
