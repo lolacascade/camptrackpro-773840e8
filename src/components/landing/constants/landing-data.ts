@@ -13,7 +13,7 @@ export const keyFeatures: KeyFeature[] = [
   },
   {
     title: "Site Management",
-    description: "Easily organize and oversee site details, surface types, and availability with a centralized tool designed for clear and hassle-free management.",
+    description: "Easily organize and oversee site details, surface types, and availability with a centralized tool designed for clarity and hassle-free management. Keep track of your RV park's spaces, ensuring efficiency and accurate reporting.",
     image: "/lovable-uploads/9f53a558-e6a7-494e-9601-519c085299f7.png"
   },
   {
@@ -23,7 +23,7 @@ export const keyFeatures: KeyFeature[] = [
   },
   {
     title: "Cut Costs",
-    description: "Efficiently allocate utilities and resources with AI-powered insights that help you reduce expenses while maximizing your park's potential.",
+    description: "Efficiently allocate utilities and resources with actionable AI-powered insights that simplify expense tracking and reduce operational waste. Help your business make smarter financial decisions while maintaining top-notch service.",
     image: "/lovable-uploads/7347191d-7c40-4d5f-a69c-33b3d48d0b42.png"
   },
   {
