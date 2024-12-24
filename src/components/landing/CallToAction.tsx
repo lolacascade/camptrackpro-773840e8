@@ -49,9 +49,6 @@ export function CallToAction() {
 
   return (
     <section className="relative py-20 sm:py-24 md:py-28 lg:py-32 bg-[#0D1D1F] overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[url('/lovable-uploads/52524eca-7cc6-4984-9c5e-733e28b89d79.png')] bg-cover bg-center opacity-10" />
-      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-heading-medium lg:text-lg:heading-medium font-bold mb-6 sm:mb-8 text-foreground-light">
