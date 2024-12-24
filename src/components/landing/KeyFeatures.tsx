@@ -25,7 +25,7 @@ export function KeyFeatures() {
     {
       title: "Cut Costs",
       description: "Efficiently allocate utilities and resources with AI-powered insights that help you reduce expenses while maximizing your park's potential.",
-      image: "/lovable-uploads/b001c850-2a5a-4aa6-ac5a-193d612e31da.png"
+      image: "/lovable-uploads/7347191d-7c40-4d5f-a69c-33b3d48d0b42.png"
     },
     {
       title: "Guest Experience",
@@ -67,7 +67,7 @@ export function KeyFeatures() {
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-80 object-cover rounded-2xl" 
+                    className="w-full h-80 object-contain rounded-2xl" 
                   />
                 </div>
               </div>
