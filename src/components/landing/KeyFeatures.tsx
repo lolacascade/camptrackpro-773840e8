@@ -24,17 +24,17 @@ export function KeyFeatures() {
                 ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
             >
-              <div className="p-8">
-                <h3 className="text-2xl font-semibold text-white leading-[1.4] mb-4">
+              <div className="p-8 md:p-12">
+                <h3 className="text-2xl font-semibold text-white leading-[1.4] mb-6">
                   {feature.title}
                 </h3>
-                <p className="text-[18px] leading-relaxed text-gray-300 mb-4">
+                <p className="text-[18px] leading-relaxed text-gray-300 mb-8">
                   {feature.description}
                 </p>
                 <img 
                   src={feature.image} 
                   alt={feature.title}
-                  className="w-full h-80 object-contain rounded-2xl" 
+                  className="w-full h-80 object-contain rounded-2xl shadow-lg" 
                 />
               </div>
             </div>
