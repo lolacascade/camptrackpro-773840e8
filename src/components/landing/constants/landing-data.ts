@@ -13,7 +13,7 @@ export const keyFeatures: KeyFeature[] = [
   },
   {
     title: "Site Management",
-    description: "Effortlessly organize and monitor site details, surface types, and availability using a centralized tool designed to enhance operational clarity and efficiency.",
+    description: "Take control of your RV park with our comprehensive site management system. Track availability, maintenance schedules, and site-specific details all in one place for maximum efficiency.",
     image: "/lovable-uploads/9f53a558-e6a7-494e-9601-519c085299f7.png"
   },
   {
@@ -23,7 +23,7 @@ export const keyFeatures: KeyFeature[] = [
   },
   {
     title: "Cut Costs",
-    description: "Optimize your park's expenses by tracking utilities and maintenance costs with actionable insights, ensuring smarter resource allocation and reduced overhead.",
+    description: "Reduce operational expenses through smart tracking and analysis. Monitor utility usage, maintenance costs, and resource allocation to identify savings opportunities and optimize your budget.",
     image: "/lovable-uploads/7347191d-7c40-4d5f-a69c-33b3d48d0b42.png"
   },
   {
