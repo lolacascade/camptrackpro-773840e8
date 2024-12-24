@@ -27,8 +27,8 @@ export const keyFeatures: KeyFeature[] = [
     image: "/lovable-uploads/7347191d-7c40-4d5f-a69c-33b3d48d0b42.png"
   },
   {
-    title: "Guest Experience",
-    description: "Enhance visitor satisfaction with personalized insights and optimized site operations, ensuring guests enjoy a seamless and memorable stay.",
+    title: "RV Care Optimization",
+    description: "Ensure every RV is stored and managed with precision. With tailored insights and efficient site operations, provide peace of mind to owners while maximizing the care and availability of their vehicles.",
     image: "/lovable-uploads/4040ba24-4001-4333-9e4d-85b953790b4b.png"
   }
 ];
