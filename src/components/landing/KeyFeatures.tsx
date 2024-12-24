@@ -4,7 +4,7 @@ import { keyFeatures } from "./constants/landing-data";
 export function KeyFeatures() {
   return (
     <section className="py-16 md:py-24 bg-[#0D1D1F] relative overflow-hidden">
-      <div className="px-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-[1.4]">
             All Your Operations, Simplified
@@ -34,7 +34,7 @@ export function KeyFeatures() {
                 <img 
                   src={feature.image} 
                   alt={feature.title}
-                  className="w-full h-80 object-contain rounded-2xl" 
+                  className="w-full object-contain rounded-2xl" 
                 />
               </div>
             </div>
