@@ -34,7 +34,7 @@ export function KeyFeatures() {
                 <img 
                   src={feature.image} 
                   alt={feature.title}
-                  className="w-full h-80 object-contain rounded-2xl shadow-lg" 
+                  className="w-full h-80 object-contain rounded-2xl" 
                 />
               </div>
             </div>
