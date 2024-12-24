@@ -10,7 +10,7 @@ export function KeyFeatures() {
     {
       title: "Maintenance Tracking",
       description: "Stay on top of tasks with real-time tracking and updates. Assign, log, and monitor maintenance activities seamlessly to ensure your park runs without interruptions.",
-      image: "/lovable-uploads/2daae83b-e848-42d3-8997-fe75f243365b.png"
+      image: "/lovable-uploads/df2a2c62-775c-4273-9b45-af2728bea17e.png"
     },
     {
       title: "Site Management",
