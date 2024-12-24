@@ -31,11 +31,11 @@ export function KeyFeatures() {
                 <p className="text-[18px] leading-relaxed text-gray-300">
                   {feature.description}
                 </p>
-                <div className="mt-6">
+                <div className="mt-6 overflow-hidden rounded-2xl border border-[rgba(255,255,255,0.1)] shadow-lg transition-all duration-300 hover:shadow-xl">
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-80 object-contain rounded-2xl" 
+                    className="w-full h-80 object-contain bg-[#133134]/20 backdrop-blur-sm" 
                   />
                 </div>
               </div>
