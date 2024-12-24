@@ -19,12 +19,12 @@ export function KeyFeatures() {
             <div 
               key={index} 
               className={`
-                bg-[#0D1D1F] p-8
+                bg-[#0D1D1F]
                 ${index >= 2 ? 'border-t border-[rgba(255,255,255,0.1)]' : ''}
                 ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
             >
-              <div className="space-y-4">
+              <div className="space-y-4 p-8">
                 <h3 className="text-2xl font-semibold text-white leading-[1.4]">
                   {feature.title}
                 </h3>
