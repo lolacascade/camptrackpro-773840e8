@@ -15,7 +15,7 @@ export function KeyFeatures() {
     {
       title: "Site Management",
       description: "Easily organize and oversee site details, surface types, and availability with a centralized tool designed for clear and hassle-free management.",
-      image: "/lovable-uploads/9f95e521-f350-4f2e-a382-453cfcdc0f99.png"
+      image: "/lovable-uploads/9f53a558-e6a7-494e-9601-519c085299f7.png"
     },
     {
       title: "Save Time",
