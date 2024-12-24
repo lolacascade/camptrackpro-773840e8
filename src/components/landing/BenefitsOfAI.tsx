@@ -6,37 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-const insights = [
-  {
-    title: "Total Occupancy",
-    description: "Understand your RV site usage with real-time occupancy insights to maximize availability."
-  },
-  {
-    title: "Monthly Revenue",
-    description: "Track your revenue sources and identify growth opportunities with detailed income insights."
-  },
-  {
-    title: "Active RVs",
-    description: "Monitor RV activity, including long-term and short-term stays, to optimize site usage."
-  },
-  {
-    title: "Pending Maintenance",
-    description: "Stay ahead of repairs by prioritizing urgent maintenance and scheduled tasks."
-  },
-  {
-    title: "Current Utilization",
-    description: "Get a clear overview of resource usage to balance availability and site performance."
-  },
-  {
-    title: "Expense Overview",
-    description: "Keep an eye on your expenses across categories to maintain a healthy budget."
-  },
-  {
-    title: "Customer Rating",
-    description: "Measure guest satisfaction with ratings for service, timeliness, and overall experience."
-  }
-];
+import { insights } from "./constants/landing-data";
 
 export function BenefitsOfAI() {
   return (
