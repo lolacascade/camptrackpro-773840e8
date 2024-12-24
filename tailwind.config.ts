@@ -19,10 +19,10 @@ export default {
     },
     extend: {
       fontSize: {
-        // Mobile-first font sizes
+        // Mobile-first font sizes (smaller)
         'body-large': ['1rem', '1.5rem'],        // 16px for mobile
-        'heading-large': ['2.5rem', '1.2'],      // 40px for mobile
-        'heading-medium': ['2rem', '1.2'],       // 32px for mobile
+        'heading-large': ['2rem', '1.2'],        // 32px for mobile (reduced from 40px)
+        'heading-medium': ['1.75rem', '1.2'],    // 28px for mobile (reduced from 32px)
         'subheading': ['1.125rem', '1.5'],      // 18px for mobile
         
         // Desktop font sizes (lg breakpoint - 1024px)

@@ -53,12 +53,11 @@ export function HeroSection() {
   return (
     <div className="relative min-h-[90vh] flex flex-col items-center justify-start bg-secondary px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 lg:py-32">
       <div className="max-w-4xl mx-auto text-center mb-8 md:mb-16 w-full">
-        <div className="mb-8 sm:mb-10">
+        <div className="mb-8 sm:mb-10 mt-8 sm:mt-12 md:mt-16">
           <h1 className="text-heading-large lg:text-lg:heading-large font-bold mb-6">
             <span className="text-foreground-light">Your RV Park, </span>
             <span className="text-primary">Simplified with AI</span>
           </h1>
-          <div className="w-16 h-1 bg-primary mx-auto"></div>
         </div>
         
         <p className="text-subheading lg:text-lg:subheading text-foreground-light mb-8 sm:mb-10 md:mb-12 lg:mb-14 max-w-3xl mx-auto leading-relaxed">
