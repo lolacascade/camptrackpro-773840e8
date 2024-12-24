@@ -4,7 +4,7 @@ import { keyFeatures } from "./constants/landing-data";
 export function KeyFeatures() {
   return (
     <section className="py-16 md:py-24 bg-[#0D1D1F] relative overflow-hidden">
-      <div className="container mx-auto px-4">
+      <div className="px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-[1.4]">
             All Your Operations, Simplified
@@ -19,7 +19,7 @@ export function KeyFeatures() {
             <div 
               key={index} 
               className={`
-                bg-[#0D1D1F] p-8 md:p-10 
+                bg-[#0D1D1F] p-8
                 ${index >= 2 ? 'border-t border-[rgba(255,255,255,0.1)]' : ''}
                 ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
@@ -31,7 +31,7 @@ export function KeyFeatures() {
                 <p className="text-[18px] leading-relaxed text-gray-300">
                   {feature.description}
                 </p>
-                <div className="mt-6">
+                <div className="inline-block">
                   <img 
                     src={feature.image} 
                     alt={feature.title}
