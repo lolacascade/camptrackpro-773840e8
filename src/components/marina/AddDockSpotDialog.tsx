@@ -6,7 +6,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Plus } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import { DockSpotForm, DockSpotFormValues } from "./dock-spot-dialog/DockSpotForm"
@@ -56,11 +55,6 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Space
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Space</DialogTitle>
