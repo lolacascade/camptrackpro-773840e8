@@ -21,12 +21,12 @@ export function ChatAssistant() {
 
   const fetchParkInsights = async () => {
     try {
-      const { data: view, error: viewError } = await supabase
+      // First try to get data from the view without using .single()
+      const { data: viewData, error: viewError } = await supabase
         .from('chat_marina_insights')
-        .select('*')
-        .single();
+        .select('*');
 
-      if (viewError) {
+      if (viewError || !viewData || viewData.length === 0) {
         // If view doesn't return data, fetch from individual tables
         const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
           supabase.from('slots').select('*').eq('user_id', session?.user?.id),
@@ -45,7 +45,8 @@ export function ChatAssistant() {
 
         setParkInsights(insights);
       } else {
-        setParkInsights(view);
+        // Use the first row from the view if multiple rows exist
+        setParkInsights(viewData[0]);
       }
     } catch (error) {
       console.error('Error fetching park insights:', error);
