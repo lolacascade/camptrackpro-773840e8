@@ -28,6 +28,7 @@ export function DataTableFilterItem({
       options={options}
       placeholder={`All ${name}s`}
       name={name}
+      className="min-w-[180px]"
     />
   );
 }
