@@ -32,11 +32,14 @@ export function DataTableFilterItem({
         onChange(newValue);
       }}
     >
-      <SelectTrigger className="w-[180px] h-11 border-[#E8EBEB] text-[#133134] bg-white">
+      <SelectTrigger 
+        className="w-[180px] h-11 border-[#E8EBEB] text-[#133134] bg-white"
+        aria-label={`Filter by ${name}`}
+      >
         <SelectValue placeholder={`All ${name}s`} />
       </SelectTrigger>
       <SelectContent 
-        className="bg-white border border-[#E8EBEB] shadow-lg z-[100]"
+        className="bg-white border border-[#E8EBEB] shadow-lg z-[9999]"
         position="popper"
         sideOffset={5}
         align="start"
@@ -45,7 +48,7 @@ export function DataTableFilterItem({
           <SelectItem 
             key={option.value} 
             value={option.value}
-            className="cursor-pointer hover:bg-gray-100 py-2 px-4"
+            className="cursor-pointer hover:bg-gray-100 py-2 px-4 focus:bg-gray-100 focus:text-[#133134] outline-none"
           >
             {option.label}
           </SelectItem>
