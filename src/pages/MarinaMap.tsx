@@ -14,7 +14,7 @@ import { AddDockSpotDialog } from "@/components/marina/AddDockSpotDialog";
 export default function MarinaMap() {
   const { data: marinaStats, isLoading } = useMarineStats();
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Generate sample data for the chart
   const generateMonthlyData = () => {
@@ -50,7 +50,7 @@ export default function MarinaMap() {
 
   const handleEdit = (slot: Slot) => {
     setSelectedSlot(slot);
-    setIsDrawerOpen(true);
+    setIsDialogOpen(true);
   };
 
   return (
@@ -70,12 +70,12 @@ export default function MarinaMap() {
           <SlotTable onEdit={handleEdit} />
 
           <AddDockSpotDialog
-            open={isDrawerOpen}
-            onClose={() => {
-              setIsDrawerOpen(false);
+            isOpen={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            onDockSpotAdded={() => {
+              setIsDialogOpen(false);
               setSelectedSlot(null);
             }}
-            slot={selectedSlot}
           />
         </div>
       </PageContainer>
