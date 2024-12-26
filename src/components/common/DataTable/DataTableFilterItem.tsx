@@ -27,12 +27,15 @@ export function DataTableFilterItem({
   return (
     <Select 
       value={value} 
-      onValueChange={onChange}
+      onValueChange={(newValue) => {
+        console.log('Filter changing:', name, newValue);
+        onChange(newValue);
+      }}
     >
       <SelectTrigger className="w-40 h-11 border-[#E8EBEB] text-[#133134] bg-white">
         <SelectValue placeholder={`All ${name}s`} />
       </SelectTrigger>
-      <SelectContent className="bg-white border border-[#E8EBEB] shadow-lg">
+      <SelectContent className="bg-white border border-[#E8EBEB] shadow-lg z-[1001]">
         {options.map((option) => (
           <SelectItem 
             key={option.value} 
