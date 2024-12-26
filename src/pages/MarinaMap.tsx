@@ -6,9 +6,15 @@ import { format, subMonths, addMonths } from "date-fns";
 import { useMarineStats } from "@/hooks/marina/use-marina-stats";
 import { MarinaStatsCards } from "@/components/marina/overview/MarinaStatsCards";
 import { MarinaHeader } from "@/components/marina/overview/MarinaHeader";
+import { SlotTable } from "@/components/marina/SlotTable";
+import { useState } from "react";
+import { Slot } from "@/types/slot";
+import { AddDockSpotDialog } from "@/components/marina/AddDockSpotDialog";
 
 export default function MarinaMap() {
   const { data: marinaStats, isLoading } = useMarineStats();
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Generate sample data for the chart
   const generateMonthlyData = () => {
@@ -42,6 +48,11 @@ export default function MarinaMap() {
     return data;
   };
 
+  const handleEdit = (slot: Slot) => {
+    setSelectedSlot(slot);
+    setIsDrawerOpen(true);
+  };
+
   return (
     <PageWithChat>
       <PageContainer>
@@ -56,13 +67,16 @@ export default function MarinaMap() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="aspect-[16/9] bg-[#F8F9FA] rounded-lg flex items-center justify-center">
-                <p className="text-muted-foreground">Interactive campsite map will be displayed here</p>
-              </div>
-            </CardContent>
-          </Card>
+          <SlotTable onEdit={handleEdit} />
+
+          <AddDockSpotDialog
+            open={isDrawerOpen}
+            onClose={() => {
+              setIsDrawerOpen(false);
+              setSelectedSlot(null);
+            }}
+            slot={selectedSlot}
+          />
         </div>
       </PageContainer>
     </PageWithChat>
