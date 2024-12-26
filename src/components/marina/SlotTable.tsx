@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from '@supabase/auth-helpers-react';
 import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 interface SlotTableProps {
   onEdit: (slot: Slot) => void;
@@ -28,7 +29,6 @@ export function SlotTable({ onEdit }: SlotTableProps) {
 
       if (error) throw error;
       
-      // Ensure the data matches the Slot type
       const typedSlots = (data || []).map(slot => ({
         ...slot,
         status: slot.status as "available" | "occupied" | "maintenance"
