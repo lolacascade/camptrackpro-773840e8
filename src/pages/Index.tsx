@@ -11,7 +11,7 @@ export default function Index() {
   return (
     <div className="min-h-screen flex flex-col bg-[#0D1D1F]">
       <LandingHeader />
-      <main className="flex-grow">
+      <main className="flex-grow pt-16">
         <HeroSection />
         <ValueProposition />
         <KeyFeatures />
