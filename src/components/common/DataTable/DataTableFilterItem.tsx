@@ -27,16 +27,13 @@ export function DataTableFilterItem({
   return (
     <Select 
       value={value} 
-      onValueChange={(newValue) => {
-        console.log('Filter changing in FilterItem:', name, newValue);
-        onChange(newValue);
-      }}
+      onValueChange={onChange}
     >
       <SelectTrigger className="w-40 h-11 border-[#E8EBEB] text-[#133134] bg-white">
         <SelectValue placeholder={`All ${name}s`} />
       </SelectTrigger>
       <SelectContent 
-        className="bg-white border border-[#E8EBEB] shadow-lg"
+        className="bg-white border border-[#E8EBEB] shadow-lg z-50"
         position="popper"
         sideOffset={5}
         align="start"
