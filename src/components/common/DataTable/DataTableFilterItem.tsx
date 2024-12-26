@@ -27,10 +27,7 @@ export function DataTableFilterItem({
   return (
     <Select 
       value={value} 
-      onValueChange={(newValue) => {
-        console.log('Filter changing in FilterItem:', name, newValue);
-        onChange(newValue);
-      }}
+      onValueChange={onChange}
     >
       <SelectTrigger className="w-40 h-11 border-[#E8EBEB] text-[#133134] bg-white">
         <SelectValue placeholder={`All ${name}s`} />
