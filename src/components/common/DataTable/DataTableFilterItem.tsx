@@ -25,7 +25,10 @@ export function DataTableFilterItem({
   onChange,
 }: DataTableFilterItemProps) {
   return (
-    <Select value={value} onValueChange={onChange}>
+    <Select 
+      value={value} 
+      onValueChange={onChange}
+    >
       <SelectTrigger className="w-40 h-11 border-[#E8EBEB] text-[#133134] bg-white">
         <SelectValue placeholder={`All ${name}s`} />
       </SelectTrigger>

@@ -27,7 +27,10 @@ export function DataTableFiltersBar({ filters }: DataTableFiltersBarProps) {
           name={filter.name}
           options={filter.options}
           value={filter.value}
-          onChange={filter.onChange}
+          onChange={(value) => {
+            console.log('Filter changed:', filter.name, value);
+            filter.onChange(value);
+          }}
         />
       ))}
     </div>
