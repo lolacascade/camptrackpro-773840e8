@@ -27,6 +27,7 @@ export function DataTableFilterItem({
       }}
       options={options}
       placeholder={`All ${name}s`}
+      name={name}
     />
   );
 }

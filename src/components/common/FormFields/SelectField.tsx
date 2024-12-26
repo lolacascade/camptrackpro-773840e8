@@ -1,10 +1,6 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import React from 'react';
+import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 interface SelectOption {
   label: string;
@@ -17,6 +13,7 @@ interface SelectFieldProps {
   options: SelectOption[];
   placeholder?: string;
   className?: string;
+  name?: string;
 }
 
 export function SelectField({
@@ -25,30 +22,35 @@ export function SelectField({
   options,
   placeholder = "Select option",
   className,
+  name,
 }: SelectFieldProps) {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger 
-        className={`w-[180px] h-11 border-[#E8EBEB] text-[#133134] bg-white ${className}`}
+    <div className="relative">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        name={name}
+        className={cn(
+          "w-full h-11 px-3 py-2 rounded-md border border-[#E8EBEB] bg-white text-[#133134]",
+          "appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C0CCAB]",
+          "disabled:cursor-not-allowed disabled:opacity-50",
+          className
+        )}
       >
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent
-        className="bg-white border border-[#E8EBEB] shadow-lg"
-        position="popper"
-        sideOffset={5}
-        align="start"
-      >
+        <option value="" disabled>
+          {placeholder}
+        </option>
         {options.map((option) => (
-          <SelectItem
-            key={option.value}
+          <option 
+            key={option.value} 
             value={option.value}
-            className="cursor-pointer hover:bg-gray-100 py-2 px-4"
+            className="py-2"
           >
             {option.label}
-          </SelectItem>
+          </option>
         ))}
-      </SelectContent>
-    </Select>
+      </select>
+      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none text-[#133134] opacity-50" />
+    </div>
   );
 }

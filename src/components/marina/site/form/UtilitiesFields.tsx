@@ -1,6 +1,7 @@
-import { FormSelect } from "@/components/common/FormSelect"
-import type { HookupType, PowerOption, SurfaceType, SiteType } from "../types"
-import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS, SITE_TYPE_OPTIONS } from "../types"
+import { FormSelect } from "@/components/common/FormSelect";
+import { SelectField } from "@/components/common/FormFields/SelectField";
+import type { HookupType, PowerOption, SurfaceType, SiteType } from "../types";
+import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS, SITE_TYPE_OPTIONS } from "../types";
 
 interface UtilitiesFieldsProps {
   hookupType: HookupType;
@@ -32,39 +33,35 @@ export function UtilitiesFields({
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
-        <FormSelect
-          id="site_type"
-          label="Site Type"
+        <SelectField
+          name="site_type"
           value={getValue(siteType)}
-          onValueChange={handleValueChange(onSiteTypeChange)}
+          onChange={handleValueChange(onSiteTypeChange)}
           options={SITE_TYPE_OPTIONS}
-          tabIndex={1}
+          placeholder="Select site type"
         />
-        <FormSelect
-          id="hookup_type"
-          label="Hookup Type"
+        <SelectField
+          name="hookup_type"
           value={getValue(hookupType)}
-          onValueChange={handleValueChange(onHookupTypeChange)}
+          onChange={handleValueChange(onHookupTypeChange)}
           options={HOOKUP_TYPE_OPTIONS}
-          tabIndex={2}
+          placeholder="Select hookup type"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <FormSelect
-          id="power_option"
-          label="Power Option"
+        <SelectField
+          name="power_option"
           value={getValue(powerOption)}
-          onValueChange={handleValueChange(onPowerOptionChange)}
+          onChange={handleValueChange(onPowerOptionChange)}
           options={POWER_OPTIONS}
-          tabIndex={3}
+          placeholder="Select power option"
         />
-        <FormSelect
-          id="surface_type"
-          label="Surface Type"
+        <SelectField
+          name="surface_type"
           value={getValue(surfaceType)}
-          onValueChange={handleValueChange(onSurfaceTypeChange)}
+          onChange={handleValueChange(onSurfaceTypeChange)}
           options={SURFACE_TYPE_OPTIONS}
-          tabIndex={4}
+          placeholder="Select surface type"
         />
       </div>
     </div>
