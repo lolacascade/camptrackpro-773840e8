@@ -58,7 +58,7 @@ export const ChatInputArea = ({
   }, []);
 
   return (
-    <div className="p-4 space-y-4 bg-[#0D1D1F]/80 backdrop-blur-sm">
+    <div className="p-2 bg-[#0D1D1F]/80 backdrop-blur-sm">
       <ChatInput
         value={value}
         onChange={onChange}

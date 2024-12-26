@@ -45,7 +45,7 @@ export function PageWithChat({ children }: PageWithChatProps) {
 
   return (
     <div className="grid grid-cols-12 min-h-[calc(100vh-4rem)] gap-0">
-      <div className="col-span-3 lg:col-span-3 xl:col-span-2 h-[calc(100vh-4rem)]">
+      <div className="col-span-3 lg:col-span-3 xl:col-span-2 sticky top-16 h-[calc(100vh-4rem)]">
         <ChatAssistant />
       </div>
       <div className="col-span-9 lg:col-span-9 xl:col-span-10 overflow-y-auto">

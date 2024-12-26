@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 interface ChatSuggestionsProps {
   suggestions: string[];
@@ -7,18 +7,16 @@ interface ChatSuggestionsProps {
 
 export const ChatSuggestions = ({ suggestions, onSelect }: ChatSuggestionsProps) => {
   return (
-    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+    <div className="flex flex-wrap gap-2">
       {suggestions.map((suggestion, index) => (
-        <button
+        <Button
           key={index}
+          variant="secondary"
+          className="text-sm bg-[#1A2C2E] text-[#C0CCAB] hover:bg-[#243638] rounded-full whitespace-normal text-left h-auto py-2"
           onClick={() => onSelect(suggestion)}
-          className={cn(
-            "px-4 py-2 rounded-full text-sm whitespace-nowrap",
-            "bg-[#C0CCAB]/20 text-[#C0CCAB] hover:bg-[#C0CCAB]/30 transition-colors"
-          )}
         >
           {suggestion}
-        </button>
+        </Button>
       ))}
     </div>
   );
