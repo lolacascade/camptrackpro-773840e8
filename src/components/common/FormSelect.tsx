@@ -42,6 +42,7 @@ export function FormSelect({
           className="bg-white border border-gray-200 shadow-lg z-[100]"
           position="popper"
           sideOffset={5}
+          align="start"
         >
           {options.map(option => (
             <SelectItem
