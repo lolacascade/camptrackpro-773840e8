@@ -44,11 +44,11 @@ export function PageWithChat({ children }: PageWithChatProps) {
   }
 
   return (
-    <div className="grid grid-cols-12 min-h-[calc(100vh-4rem)] gap-0">
-      <div className="col-span-3 lg:col-span-3 xl:col-span-2 sticky top-16 h-[calc(100vh-4rem)]">
+    <div className="flex min-h-[calc(100vh-4rem)]">
+      <div className="w-[300px] fixed top-16 bottom-0 left-0 overflow-hidden">
         <ChatAssistant />
       </div>
-      <div className="col-span-9 lg:col-span-9 xl:col-span-10 overflow-y-auto">
+      <div className="ml-[300px] flex-1 overflow-y-auto">
         {children}
       </div>
     </div>

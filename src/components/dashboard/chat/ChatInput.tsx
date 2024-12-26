@@ -66,10 +66,10 @@ export const ChatInput = ({
               onSend();
             }
           }}
-          className="min-h-[44px] pr-24 bg-transparent text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none overflow-hidden py-3 px-4"
+          className="min-h-[44px] pr-24 bg-transparent text-[#0D1D1F] placeholder:text-[#0D1D1F]/50 border-none resize-none overflow-hidden py-2 px-3"
           style={{ height: textareaHeight }}
         />
-        <div className="absolute bottom-2 right-2 flex gap-2">
+        <div className="absolute bottom-1 right-1 flex gap-2">
           <ImageUpload 
             onUploadComplete={onFileUpload}
             bucket="marina-media"
