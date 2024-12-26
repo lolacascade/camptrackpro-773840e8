@@ -56,8 +56,8 @@ export function ChatAssistant() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#0D1D1F] text-white">
-      <div className="border-b border-[#C0CCAB]/20 p-4">
+    <div className="flex flex-col h-screen bg-[#0D1D1F] text-white">
+      <div className="p-4">
         <h2 className="text-xl font-semibold mb-2">RV Park Assistant</h2>
         <p className="text-sm text-[#C0CCAB]">
           Hello! I'm your RV park assistant. How can I help you today?
