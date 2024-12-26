@@ -6,7 +6,7 @@ import Login from "@/pages/Login";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Dashboard from "@/pages/Dashboard";
-import MarinaMap from "@/pages/MarinaMap";
+import Map from "@/pages/Map";
 import Customers from "@/pages/Customers";
 import CustomerDetails from "@/pages/CustomerDetails";
 import Assets from "@/pages/Assets";
@@ -19,7 +19,7 @@ const AppLayout = () => (
     <Layout>
       <Routes>
         <Route index element={<Dashboard />} />
-        <Route path="map" element={<MarinaMap />} />
+        <Route path="map" element={<Map />} />
         <Route path="customers" element={<Customers />} />
         <Route path="customers/:id" element={<CustomerDetails />} />
         <Route path="assets" element={<Assets />} />
