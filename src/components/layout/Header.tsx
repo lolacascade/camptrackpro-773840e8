@@ -28,7 +28,7 @@ export function Header() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] flex h-16 items-center justify-between px-3 sm:px-4 bg-[#0D1D1F] shadow-md">
+    <div className="fixed top-0 left-0 right-0 z-[100] flex h-16 items-center justify-between px-3 sm:px-4 bg-[#0D1D1F]">
       <div className="flex items-center gap-4">
         {isMobile && (
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
