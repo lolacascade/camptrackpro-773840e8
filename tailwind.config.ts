@@ -1,4 +1,8 @@
 import type { Config } from "tailwindcss";
+import { colors } from "./src/config/tailwind/colors";
+import { typography } from "./src/config/tailwind/typography";
+import { layout } from "./src/config/tailwind/layout";
+import { animations } from "./src/config/tailwind/animations";
 
 export default {
   darkMode: ["class"],
@@ -10,93 +14,11 @@ export default {
   ],
   prefix: "",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
+    ...layout,
     extend: {
-      fontSize: {
-        // Mobile-first font sizes (smaller)
-        'body-large': ['1rem', '1.5rem'],        // 16px for mobile
-        'heading-large': ['2rem', '1.2'],        // 32px for mobile (reduced from 40px)
-        'heading-medium': ['1.75rem', '1.2'],    // 28px for mobile (reduced from 32px)
-        'subheading': ['1.125rem', '1.5'],      // 18px for mobile
-        
-        // Desktop font sizes (lg breakpoint - 1024px)
-        'lg:body-large': ['1.125rem', '1.75rem'],   // 18px for desktop
-        'lg:heading-large': ['3.5rem', '1.4'],      // 56px for desktop
-        'lg:heading-medium': ['2.5rem', '1.4'],     // 40px for desktop
-        'lg:subheading': ['1.25rem', '1.6'],        // 20px for desktop
-      },
-      colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: {
-          DEFAULT: "#FFFFFF",
-          dark: "#0D1D1F",
-        },
-        foreground: {
-          DEFAULT: "#0D1D1F",
-          light: "#FFFFFF",
-        },
-        primary: {
-          DEFAULT: "#C0CCAB",
-          foreground: "#0D1D1F",
-          light: "#d3dbc4",
-          dark: "#a9b794",
-        },
-        secondary: {
-          DEFAULT: "#0D1D1F",
-          foreground: "#FFFFFF",
-          light: "#1a2b2d",
-          dark: "#060f10",
-        },
-        accent: {
-          DEFAULT: "#C0CCAB",
-          foreground: "#0D1D1F",
-        },
-        card: {
-          DEFAULT: "#FFFFFF",
-          foreground: "#0D1D1F",
-        },
-        popover: {
-          DEFAULT: "rgb(255 255 255 / 0.95)",
-          foreground: "#0D1D1F",
-        },
-        dialog: {
-          overlay: "rgb(0 0 0 / 0.8)",
-          content: "rgb(255 255 255 / 0.95)",
-        },
-      },
-      zIndex: {
-        'modal': '1000',
-        'popover': '1100',
-        'tooltip': '1200',
-        'overlay': '900',
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
-      },
+      ...typography,
+      colors,
+      ...animations,
     },
   },
   plugins: [require("tailwindcss-animate")],
