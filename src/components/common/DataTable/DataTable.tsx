@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useTableState } from "@/hooks/use-table-state";
+import { useDataTable } from "@/hooks/use-data-table";
 import { DataTableProps } from "./types";
 
 export function DataTable<T extends { id?: number | string }>({
@@ -26,15 +27,18 @@ export function DataTable<T extends { id?: number | string }>({
   onShowTodayChange,
   tableName,
 }: DataTableProps<T>) {
-  const [visibleColumns, setVisibleColumns] = useState<string[]>(
-    columns.map(col => col.accessorKey as string)
-  );
-
   const {
     searchTerm,
     setSearchTerm,
     currentPage,
     setCurrentPage,
+    visibleColumns,
+    setVisibleColumns,
+    visibleColumnsData,
+    handleFilterChange
+  } = useDataTable({ data, columns, filters });
+
+  const {
     localData,
     setLocalData,
     filteredAndSortedData,
@@ -88,7 +92,10 @@ export function DataTable<T extends { id?: number | string }>({
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           title={title}
-          filters={filters}
+          filters={filters.map(filter => ({
+            ...filter,
+            onChange: (value: string) => handleFilterChange(filter.name, value)
+          }))}
           showTodayOnly={showTodayOnly}
           onShowTodayChange={onShowTodayChange}
           columns={columns}
@@ -103,10 +110,6 @@ export function DataTable<T extends { id?: number | string }>({
     );
   }
 
-  const visibleColumnsData = columns.filter(
-    col => visibleColumns.includes(col.accessorKey as string)
-  );
-
   // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -119,7 +122,10 @@ export function DataTable<T extends { id?: number | string }>({
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
         title={title}
-        filters={filters}
+        filters={filters.map(filter => ({
+          ...filter,
+          onChange: (value: string) => handleFilterChange(filter.name, value)
+        }))}
         showTodayOnly={showTodayOnly}
         onShowTodayChange={onShowTodayChange}
         columns={columns}
