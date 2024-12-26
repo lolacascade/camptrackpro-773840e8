@@ -1,73 +1,31 @@
-import { Bell, Menu, Search, Settings, X } from "lucide-react";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Bell, Menu, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
-import { cn } from "@/lib/utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const navigation = [
-  { name: "Dashboard", href: "/app" },
-  { name: "Bookings", href: "/app/bookings" },
-  { name: "Customers", href: "/app/customers" },
-  { name: "Assets", href: "/app/assets" },
-  { name: "Maintenance", href: "/app/maintenance" },
-  { name: "Financials", href: "/app/financials" },
-  { name: "RV Park Map", href: "/app/map" },
-];
+import { NavigationLinks } from "./header/NavigationLinks";
+import { SearchDialog } from "./header/SearchDialog";
+import { Logo } from "./header/Logo";
 
 export function Header() {
-  const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const isMobile = useIsMobile();
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setSearchOpen((open) => !open);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
-
-  const NavigationLinks = () => (
-    <nav className={cn(
-      "flex items-center gap-2",
-      isMobile ? "flex-col items-start w-full" : "flex-row"
-    )}>
-      {navigation.map((item) => (
-        <Link
-          key={item.name}
-          to={item.href}
-          className={cn(
-            "text-sm font-medium transition-colors relative px-3 py-2 w-full sm:w-auto",
-            "after:content-[''] after:absolute after:left-0 after:bottom-[-4px] after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
-            location.pathname === item.href
-              ? "text-primary after:scale-x-100 after:bg-primary"
-              : "text-white hover:text-primary after:bg-primary",
-            isMobile && "hover:bg-white/10 rounded-lg"
-          )}
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          {item.name}
-        </Link>
-      ))}
-    </nav>
-  );
 
   return (
     <div className="flex h-16 items-center justify-between px-3 sm:px-4 bg-secondary">
@@ -81,22 +39,14 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] bg-secondary p-6">
               <div className="flex flex-col gap-8">
-                <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-                  <span className="text-white">Camp</span>
-                  <span className="text-[#C0CCAB]">Track</span>
-                  <span className="text-[#C0CCAB]">Pro</span>
-                </Link>
-                <NavigationLinks />
+                <Logo />
+                <NavigationLinks onItemClick={() => setMobileMenuOpen(false)} />
               </div>
             </SheetContent>
           </Sheet>
         )}
         
-        <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-          <span className="text-white">Camp</span>
-          <span className="text-white">Track</span>
-          <span className="text-[#C0CCAB]">Pro</span>
-        </Link>
+        <Logo />
       </div>
       
       {!isMobile && <NavigationLinks />}
@@ -105,7 +55,7 @@ export function Header() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => setOpen(true)}
+          onClick={() => setSearchOpen(true)}
           className="text-white hover:text-primary hover:bg-transparent"
         >
           <Search className="h-5 w-5" />
@@ -130,53 +80,7 @@ export function Header() {
         </Button>
       </div>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type to search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Assets">
-            <CommandItem onSelect={() => {
-              navigate("/app/assets/1");
-              setOpen(false);
-            }}>
-              <Search className="mr-2 h-4 w-4" />
-              Asset #1
-            </CommandItem>
-            <CommandItem onSelect={() => {
-              navigate("/app/assets/2");
-              setOpen(false);
-            }}>
-              <Search className="mr-2 h-4 w-4" />
-              Asset #2
-            </CommandItem>
-          </CommandGroup>
-          <CommandGroup heading="Maintenance">
-            <CommandItem onSelect={() => {
-              navigate("/app/maintenance/1");
-              setOpen(false);
-            }}>
-              <Search className="mr-2 h-4 w-4" />
-              Maintenance Request #1
-            </CommandItem>
-          </CommandGroup>
-          <CommandGroup heading="Quick Actions">
-            <CommandItem onSelect={() => {
-              navigate("/app/maintenance/new");
-              setOpen(false);
-            }}>
-              <Search className="mr-2 h-4 w-4" />
-              Create Maintenance Request
-            </CommandItem>
-            <CommandItem onSelect={() => {
-              navigate("/app/assets/new");
-              setOpen(false);
-            }}>
-              <Search className="mr-2 h-4 w-4" />
-              Register New Asset
-            </CommandItem>
-          </CommandGroup>
-        </CommandList>
-      </CommandDialog>
+      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
 
       <NotificationDrawer
         open={notificationOpen}
