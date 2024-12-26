@@ -23,10 +23,16 @@ export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
         Customers
       </button>
       <button
-        onClick={() => handleNavigation('/app/marina')}
+        onClick={() => handleNavigation('/app/bookings')}
         className="text-white hover:text-primary transition-colors"
       >
-        Marina
+        Bookings
+      </button>
+      <button
+        onClick={() => handleNavigation('/app/map')}
+        className="text-white hover:text-primary transition-colors"
+      >
+        Map
       </button>
       <button
         onClick={() => handleNavigation('/app/maintenance')}
