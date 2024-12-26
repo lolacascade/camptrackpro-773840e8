@@ -1,51 +1,44 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const handleNavigation = (path: string) => {
     navigate(path);
     onItemClick?.();
   };
 
+  const isCurrentRoute = (path: string) => {
+    return location.pathname.startsWith(`/app/${path.toLowerCase()}`);
+  };
+
+  const navItems = [
+    { path: 'dashboard', label: 'Dashboard' },
+    { path: 'customers', label: 'Customers' },
+    { path: 'bookings', label: 'Bookings' },
+    { path: 'map', label: 'Map' },
+    { path: 'maintenance', label: 'Maintenance' },
+    { path: 'financials', label: 'Financials' },
+  ];
+
   return (
     <nav className="hidden md:flex items-center gap-6">
-      <button
-        onClick={() => handleNavigation('/app/dashboard')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Dashboard
-      </button>
-      <button
-        onClick={() => handleNavigation('/app/customers')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Customers
-      </button>
-      <button
-        onClick={() => handleNavigation('/app/bookings')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Bookings
-      </button>
-      <button
-        onClick={() => handleNavigation('/app/map')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Map
-      </button>
-      <button
-        onClick={() => handleNavigation('/app/maintenance')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Maintenance
-      </button>
-      <button
-        onClick={() => handleNavigation('/app/financials')}
-        className="text-white hover:text-primary transition-colors"
-      >
-        Financials
-      </button>
+      {navItems.map(({ path, label }) => (
+        <button
+          key={path}
+          onClick={() => handleNavigation(path)}
+          className={cn(
+            "text-white transition-colors",
+            isCurrentRoute(path) 
+              ? "text-primary font-medium" 
+              : "hover:text-primary"
+          )}
+        >
+          {label}
+        </button>
+      ))}
     </nav>
   );
 }

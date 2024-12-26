@@ -1,7 +1,7 @@
 import { Bell, Menu, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -28,7 +28,7 @@ export function Header() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between px-3 sm:px-4 bg-secondary">
+    <div className="fixed top-0 left-0 right-0 z-[100] flex h-16 items-center justify-between px-3 sm:px-4 bg-[#0D1D1F] shadow-md">
       <div className="flex items-center gap-4">
         {isMobile && (
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -37,7 +37,7 @@ export function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] bg-secondary p-6">
+            <SheetContent side="left" className="w-[300px] bg-[#0D1D1F] p-6">
               <div className="flex flex-col gap-8">
                 <Logo />
                 <NavigationLinks onItemClick={() => setMobileMenuOpen(false)} />
