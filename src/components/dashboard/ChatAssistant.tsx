@@ -21,22 +21,32 @@ export function ChatAssistant() {
 
   const fetchParkInsights = async () => {
     try {
-      const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
-        supabase.from('slots').select('*'),
-        supabase.from('bookings').select('*'),
-        supabase.from('maintenance_requests').select('*'),
-        supabase.from('customers').select('*')
-      ]);
+      const { data: view, error: viewError } = await supabase
+        .from('chat_marina_insights')
+        .select('*')
+        .single();
 
-      const insights = {
-        total_spots: slotsData.data?.length || 0,
-        occupied_spots: slotsData.data?.filter(slot => slot.status === 'occupied').length || 0,
-        active_bookings: bookingsData.data?.filter(booking => booking.status === 'active').length || 0,
-        pending_maintenance: maintenanceData.data?.filter(req => req.status === 'pending').length || 0,
-        total_customers: customersData.data?.length || 0,
-      };
+      if (viewError) {
+        // If view doesn't return data, fetch from individual tables
+        const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
+          supabase.from('slots').select('*').eq('user_id', session?.user?.id),
+          supabase.from('bookings').select('*').eq('user_id', session?.user?.id),
+          supabase.from('maintenance_requests').select('*').eq('user_id', session?.user?.id),
+          supabase.from('customers').select('*').eq('user_id', session?.user?.id)
+        ]);
 
-      setParkInsights(insights);
+        const insights = {
+          total_spots: slotsData.data?.length || 0,
+          occupied_spots: slotsData.data?.filter(slot => slot.status === 'occupied').length || 0,
+          active_bookings: bookingsData.data?.filter(booking => booking.status === 'active').length || 0,
+          pending_maintenance: maintenanceData.data?.filter(req => req.status === 'pending').length || 0,
+          total_customers: customersData.data?.length || 0,
+        };
+
+        setParkInsights(insights);
+      } else {
+        setParkInsights(view);
+      }
     } catch (error) {
       console.error('Error fetching park insights:', error);
       toast.error("Failed to load park data");
