@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function Logo() {
+  const navigate = useNavigate();
+  
   return (
-    <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-      <span className="text-white">Camp</span>
-      <span className="text-white">Track</span>
-      <span className="text-[#C0CCAB]">Pro</span>
-    </Link>
+    <div 
+      onClick={() => navigate('/')}
+      className="cursor-pointer text-white hover:text-primary transition-colors"
+    >
+      <span className="text-xl font-semibold">DockEase</span>
+    </div>
   );
 }

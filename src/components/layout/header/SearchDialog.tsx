@@ -1,13 +1,5 @@
-import { Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import {
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Command, CommandInput } from "cmdk";
 
 interface SearchDialogProps {
   open: boolean;
@@ -15,55 +7,16 @@ interface SearchDialogProps {
 }
 
 export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
-  const navigate = useNavigate();
-
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder="Type to search..." />
-      <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Assets">
-          <CommandItem onSelect={() => {
-            navigate("/app/assets/1");
-            onOpenChange(false);
-          }}>
-            <Search className="mr-2 h-4 w-4" />
-            Asset #1
-          </CommandItem>
-          <CommandItem onSelect={() => {
-            navigate("/app/assets/2");
-            onOpenChange(false);
-          }}>
-            <Search className="mr-2 h-4 w-4" />
-            Asset #2
-          </CommandItem>
-        </CommandGroup>
-        <CommandGroup heading="Maintenance">
-          <CommandItem onSelect={() => {
-            navigate("/app/maintenance/1");
-            onOpenChange(false);
-          }}>
-            <Search className="mr-2 h-4 w-4" />
-            Maintenance Request #1
-          </CommandItem>
-        </CommandGroup>
-        <CommandGroup heading="Quick Actions">
-          <CommandItem onSelect={() => {
-            navigate("/app/maintenance/new");
-            onOpenChange(false);
-          }}>
-            <Search className="mr-2 h-4 w-4" />
-            Create Maintenance Request
-          </CommandItem>
-          <CommandItem onSelect={() => {
-            navigate("/app/assets/new");
-            onOpenChange(false);
-          }}>
-            <Search className="mr-2 h-4 w-4" />
-            Register New Asset
-          </CommandItem>
-        </CommandGroup>
-      </CommandList>
-    </CommandDialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="p-0">
+        <Command className="rounded-lg border shadow-md">
+          <CommandInput 
+            placeholder="Type a command or search..." 
+            className="h-12"
+          />
+        </Command>
+      </DialogContent>
+    </Dialog>
   );
 }
