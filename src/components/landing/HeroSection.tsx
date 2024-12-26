@@ -89,7 +89,7 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto bg-foreground-light rounded-xl shadow-lg p-3 sm:p-4 md:p-6 lg:p-8">
+      <div className="w-full max-w-[95vw] sm:max-w-[90vw] lg:max-w-6xl mx-auto bg-foreground-light rounded-2xl shadow-lg p-3 sm:p-4 md:p-6 lg:p-8">
         <RevenueBreakdown />
       </div>
     </div>
