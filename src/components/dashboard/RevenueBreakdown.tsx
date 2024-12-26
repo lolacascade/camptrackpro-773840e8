@@ -2,19 +2,36 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+interface RevenueData {
+  category: string;
+  amount: number;
+}
+
 export function RevenueBreakdown() {
-  const [revenueData, setRevenueData] = useState([]);
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
 
   useEffect(() => {
     const fetchRevenueData = async () => {
       const { data, error } = await supabase
-        .from('revenue')
-        .select('*');
+        .from('invoices')
+        .select('type, amount')
+        .eq('status', 'paid');
 
       if (error) {
         console.error("Error fetching revenue data:", error);
       } else {
-        setRevenueData(data);
+        // Process the data to group by type
+        const groupedData = data.reduce((acc: RevenueData[], curr) => {
+          const existingCategory = acc.find(item => item.category === curr.type);
+          if (existingCategory) {
+            existingCategory.amount += curr.amount;
+          } else {
+            acc.push({ category: curr.type, amount: curr.amount });
+          }
+          return acc;
+        }, []);
+        
+        setRevenueData(groupedData);
       }
     };
 
@@ -25,10 +42,10 @@ export function RevenueBreakdown() {
     <div className="w-full rounded-2xl bg-white p-6">
       <h2 className="text-lg font-semibold mb-4">Revenue Breakdown</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {revenueData.map((item) => (
-          <Card key={item.id} className="border border-[#E8EBEB] rounded-xl">
-            <CardContent>
-              <h3 className="text-md font-medium">{item.category}</h3>
+        {revenueData.map((item, index) => (
+          <Card key={index} className="border border-[#E8EBEB] rounded-xl">
+            <CardContent className="pt-6">
+              <h3 className="text-md font-medium capitalize">{item.category.replace('_', ' ')}</h3>
               <p className="text-lg font-bold">${item.amount.toLocaleString()}</p>
             </CardContent>
           </Card>
