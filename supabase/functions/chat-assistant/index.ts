@@ -10,7 +10,7 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, userId, parkInsights } = await req.json();
+    const { messages, conversationId, userId, marinaInsights } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       throw new Error('Invalid messages format');
@@ -37,8 +37,38 @@ serve(async (req) => {
           message: lastMessage.content,
           role: lastMessage.role,
           conversation_id: conversationId,
+          attachments: lastMessage.attachments,
         });
     }
+
+    // Construct the system message with park insights
+    const systemMessage = {
+      role: 'system',
+      content: `You are an expert RV park management assistant. Your role is to help users manage their RV park operations efficiently and professionally.
+
+Core Responsibilities:
+1. Provide accurate information about RV park operations using the provided insights
+2. Help with booking management and customer inquiries
+3. Assist with maintenance scheduling and tracking
+4. Offer guidance on park policies and procedures
+
+${marinaInsights ? `Current Park Data (Use these exact numbers in your responses):
+- Total RV Spots: ${marinaInsights.total_spots || 'Not available'}
+- Available Spots: ${marinaInsights.total_spots ? (marinaInsights.total_spots - marinaInsights.occupied_slots) : 'Not available'}
+- Occupied Spots: ${marinaInsights.occupied_slots || 'Not available'}
+- Active Bookings: ${marinaInsights.active_bookings || 'Not available'}
+- Pending Maintenance Requests: ${marinaInsights.pending_maintenance || 'Not available'}
+- Total Registered Customers: ${marinaInsights.total_customers || 'Not available'}` : 'Park data is currently unavailable.'}
+
+Guidelines:
+- Always provide specific numbers from the data above when answering availability questions
+- Be professional and courteous
+- Use RV-specific terminology
+- Keep responses concise and focused
+- If data isn't available for a specific query, acknowledge it and explain what information you can provide
+
+Remember: You're helping manage an RV park. Always use the real-time data provided above in your responses.`,
+    };
 
     // Make request to OpenAI
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -49,36 +79,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert RV park management assistant. Your role is to help users manage their RV park operations efficiently and professionally.
-
-Core Responsibilities:
-1. Provide accurate information about RV park operations using the provided insights
-2. Help with booking management and customer inquiries
-3. Assist with maintenance scheduling and tracking
-4. Offer guidance on park policies and procedures
-
-Current Park Data (Use these exact numbers in your responses):
-- Total RV Spots: ${parkInsights.total_spots}
-- Available Spots: ${parkInsights.total_spots - parkInsights.occupied_spots}
-- Occupied Spots: ${parkInsights.occupied_spots}
-- Active Bookings: ${parkInsights.active_bookings}
-- Pending Maintenance Requests: ${parkInsights.pending_maintenance}
-- Total Registered Customers: ${parkInsights.total_customers}
-
-Guidelines:
-- Always provide specific numbers from the data above when answering availability questions
-- Be professional and courteous
-- Use RV-specific terminology
-- Keep responses concise and focused
-- If data isn't available for a specific query, acknowledge it and explain what information you can provide
-
-Remember: You're helping manage an RV park. Always use the real-time data provided above in your responses.`,
-          },
-          ...messages,
-        ],
+        messages: [systemMessage, ...messages],
         temperature: 0.7,
         max_tokens: 500,
       }),
