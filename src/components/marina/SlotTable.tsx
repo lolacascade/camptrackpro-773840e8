@@ -85,11 +85,6 @@ export function SlotTable({ onEdit }: SlotTableProps) {
       sortable: true
     },
     {
-      header: "Location",
-      accessorKey: "location_identifier",
-      sortable: true
-    },
-    {
       header: "Status",
       accessorKey: "status",
       cell: (item: Slot) => {
@@ -142,7 +137,6 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           columns={columns}
           onEdit={onEdit}
           onDelete={handleDelete}
-          title="Spaces"
           isLoading={isLoading}
           filters={[
             {
