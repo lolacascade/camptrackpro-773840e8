@@ -1,10 +1,4 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SelectField } from "../FormFields/SelectField";
 
 interface FilterOption {
   label: string;
@@ -25,35 +19,14 @@ export function DataTableFilterItem({
   onChange,
 }: DataTableFilterItemProps) {
   return (
-    <Select 
-      value={value} 
-      onValueChange={(newValue) => {
+    <SelectField
+      value={value}
+      onChange={(newValue) => {
         console.log('Filter changing in FilterItem:', name, newValue);
         onChange(newValue);
       }}
-    >
-      <SelectTrigger 
-        className="w-[180px] h-11 border-[#E8EBEB] text-[#133134] bg-white"
-        aria-label={`Filter by ${name}`}
-      >
-        <SelectValue placeholder={`All ${name}s`} />
-      </SelectTrigger>
-      <SelectContent 
-        className="bg-white border border-[#E8EBEB] shadow-lg z-[9999]"
-        position="popper"
-        sideOffset={5}
-        align="start"
-      >
-        {options.map((option) => (
-          <SelectItem 
-            key={option.value} 
-            value={option.value}
-            className="cursor-pointer hover:bg-gray-100 py-2 px-4 focus:bg-gray-100 focus:text-[#133134] outline-none"
-          >
-            {option.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+      options={options}
+      placeholder={`All ${name}s`}
+    />
   );
 }
