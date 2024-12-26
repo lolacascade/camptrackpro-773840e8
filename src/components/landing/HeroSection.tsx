@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { RevenueBreakdown } from "@/components/dashboard/RevenueBreakdown";
+import { RevenueBreakdown } from "@/components/dashboard/revenue/RevenueBreakdown";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
