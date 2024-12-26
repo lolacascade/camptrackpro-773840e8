@@ -18,6 +18,12 @@ export function useDataTable<T>({ data, columns, filters }: UseDataTableProps<T>
   const [visibleColumns, setVisibleColumns] = useState<string[]>(
     columns.map(col => col.accessorKey as string)
   );
+  const [filterValues, setFilterValues] = useState<Record<string, string>>(
+    filters?.reduce((acc, filter) => ({
+      ...acc,
+      [filter.name]: filter.value || 'all'
+    }), {}) || {}
+  );
 
   const visibleColumnsData = useMemo(() => 
     columns.filter(col => visibleColumns.includes(col.accessorKey as string)),
@@ -26,6 +32,7 @@ export function useDataTable<T>({ data, columns, filters }: UseDataTableProps<T>
 
   const handleFilterChange = (filterName: string, value: string) => {
     console.log('Filter changing in hook:', filterName, value);
+    setFilterValues(prev => ({ ...prev, [filterName]: value }));
     const filter = filters?.find(f => f.name === filterName);
     if (filter) {
       filter.onChange(value);
@@ -40,6 +47,7 @@ export function useDataTable<T>({ data, columns, filters }: UseDataTableProps<T>
     visibleColumns,
     setVisibleColumns,
     visibleColumnsData,
-    handleFilterChange
+    handleFilterChange,
+    filterValues
   };
 }
