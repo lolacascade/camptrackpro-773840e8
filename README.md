@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Welcome to CampTrackPro
 
 ## Project info
 
@@ -24,10 +24,10 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone https://github.com/yourusername/camptrackpro.git
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd camptrackpro
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -52,7 +52,7 @@ npm run dev
 
 ## What technologies are used for this project?
 
-This project is built with .
+This project is built with:
 
 - Vite
 - TypeScript
