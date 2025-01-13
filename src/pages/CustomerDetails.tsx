@@ -1,47 +1,21 @@
-import { CustomerHeader } from "@/components/customers/details/CustomerHeader";
-import { CustomerDetailsInsights } from "@/components/customers/details/CustomerDetailsInsights";
-import { PageContainer } from "@/components/layout/PageContainer";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useParams } from "react-router-dom";
-import { Customer } from "@/types/customer";
+import { CustomerDetailsInsights } from "@/components/customers/details/CustomerDetailsInsights";
+import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function CustomerDetails() {
   const { id } = useParams();
+  const customerId = id ? parseInt(id, 10) : 0; // Convert string ID to number
 
-  const { data: customer, isLoading } = useQuery({
-    queryKey: ['customer-details', id],
-    queryFn: async () => {
-      if (!id) return null;
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('id', id)
-        .single();
-
-      if (error) throw error;
-      return data as Customer;
-    },
-    enabled: !!id
-  });
-
-  if (isLoading || !customer) {
-    return (
-      <PageContainer>
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-gray-200 rounded" />
-          <div className="h-64 bg-gray-200 rounded" />
-        </div>
-      </PageContainer>
-    );
+  if (!customerId) {
+    return <div>Invalid customer ID</div>;
   }
 
   return (
-    <PageContainer>
-      <div className="space-y-6">
-        <CustomerHeader customer={customer} />
-        <CustomerDetailsInsights />
-      </div>
-    </PageContainer>
+    <PageWithChat>
+      <PageContainer>
+        <CustomerDetailsInsights customerId={customerId} />
+      </PageContainer>
+    </PageWithChat>
   );
 }
