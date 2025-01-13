@@ -3,16 +3,17 @@ import { useSession } from "@supabase/auth-helpers-react";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Layout } from "@/components/layout/Layout";
 import { Index } from "@/pages/Index";
-import { Login } from "@/pages/Login";
-import { Dashboard } from "@/pages/Dashboard";
-import { Customers } from "@/pages/Customers";
-import { CustomerDetails } from "@/pages/CustomerDetails";
-import { Assets } from "@/pages/Assets";
-import { Maintenance } from "@/pages/Maintenance";
-import { Settings } from "@/pages/Settings";
-import { Financials } from "@/pages/Financials";
-import { PrivacyPolicy } from "@/pages/PrivacyPolicy";
-import { TermsOfService } from "@/pages/TermsOfService";
+import Login from "@/pages/Login";
+import Dashboard from "@/pages/Dashboard";
+import Customers from "@/pages/Customers";
+import CustomerDetails from "@/pages/CustomerDetails";
+import Assets from "@/pages/Assets";
+import Maintenance from "@/pages/Maintenance";
+import Settings from "@/pages/Settings";
+import Financials from "@/pages/Financials";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsOfService from "@/pages/TermsOfService";
+import Bookings from "@/pages/Bookings";
 
 export const AppRoutes = () => {
   const session = useSession();
@@ -30,6 +31,7 @@ export const AppRoutes = () => {
         <Route element={<Layout />}>
           <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
           <Route path="/app/dashboard" element={<Dashboard />} />
+          <Route path="/app/bookings" element={<Bookings />} />
           <Route path="/app/customers" element={<Customers />} />
           <Route path="/app/customers/:id" element={<CustomerDetails />} />
           <Route path="/app/assets" element={<Assets />} />

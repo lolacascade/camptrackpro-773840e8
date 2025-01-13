@@ -6,7 +6,7 @@ export interface Booking {
   slot_id: number;
   created_at: string | null;
   special_requirements: string | null;
-  status: string;
+  status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
   reservation_code: string;
   slot?: {
     name: string;
