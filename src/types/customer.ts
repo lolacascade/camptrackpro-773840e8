@@ -6,6 +6,7 @@ export interface Customer {
   address: string | null;
   created_at: string | null;
   updated_at: string | null;
+  user_id: string | null;
   lifetime_value: number | null;
   city: string | null;
   state: string | null;
