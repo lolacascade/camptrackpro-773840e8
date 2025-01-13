@@ -30,6 +30,9 @@ export default function Customers() {
 
       if (error) throw error;
       setCustomers(data || []);
+      if (data && data.length > 0) {
+        setSelectedCustomer(data[0]); // Select the first customer by default
+      }
     } catch (error) {
       console.error('Error fetching customers:', error);
       toast({
@@ -72,7 +75,7 @@ export default function Customers() {
             </Button>
           </div>
 
-          <CustomerInsights />
+          <CustomerInsights customer={selectedCustomer} />
 
           {isLoading ? (
             <div className="flex justify-center py-8">

@@ -25,8 +25,6 @@ export function CustomerInsights({ customer }: CustomerInsightsProps) {
         <div className="p-4 bg-white rounded-lg shadow">
           <h3 className="font-semibold mb-2">Address</h3>
           <p>{customer.address || 'N/A'}</p>
-          <p>{customer.city} {customer.state} {customer.postal_code}</p>
-          <p>{customer.country}</p>
         </div>
       </div>
     </div>
