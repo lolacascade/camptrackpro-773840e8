@@ -28,7 +28,14 @@ export function BookingsTable() {
         .order('check_in_date', { ascending: false });
 
       if (error) throw error;
-      setBookings(data || []);
+      
+      // Ensure the status is one of the allowed values
+      const typedBookings = (data || []).map(booking => ({
+        ...booking,
+        status: booking.status as Booking['status']
+      }));
+      
+      setBookings(typedBookings);
     } catch (error) {
       console.error('Error fetching bookings:', error);
       toast({
@@ -79,7 +86,7 @@ export function BookingsTable() {
         };
 
         return (
-          <Badge className={statusColors[item.status as keyof typeof statusColors] || "bg-gray-100 text-gray-800"}>
+          <Badge className={statusColors[item.status] || "bg-gray-100 text-gray-800"}>
             {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
           </Badge>
         );

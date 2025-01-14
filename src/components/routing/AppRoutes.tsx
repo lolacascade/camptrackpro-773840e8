@@ -27,18 +27,16 @@ export const AppRoutes = () => {
       <Route path="/terms-of-service" element={<TermsOfService />} />
 
       {/* Protected routes */}
-      <Route element={<ProtectedRoute />}>
-        <Route element={<Layout />}>
-          <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-          <Route path="/app/dashboard" element={<Dashboard />} />
-          <Route path="/app/bookings" element={<Bookings />} />
-          <Route path="/app/customers" element={<Customers />} />
-          <Route path="/app/customers/:id" element={<CustomerDetails />} />
-          <Route path="/app/assets" element={<Assets />} />
-          <Route path="/app/maintenance" element={<Maintenance />} />
-          <Route path="/app/settings" element={<Settings />} />
-          <Route path="/app/financials" element={<Financials />} />
-        </Route>
+      <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route index element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="bookings" element={<Bookings />} />
+        <Route path="customers" element={<Customers />} />
+        <Route path="customers/:id" element={<CustomerDetails />} />
+        <Route path="assets" element={<Assets />} />
+        <Route path="maintenance" element={<Maintenance />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="financials" element={<Financials />} />
       </Route>
 
       {/* Catch all route - redirect to home or dashboard based on auth status */}
