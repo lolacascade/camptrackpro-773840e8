@@ -1,4 +1,5 @@
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ export function Layout({ children }: LayoutProps) {
       <main className="flex-1 w-full max-w-[100vw] mt-16">
         {children}
       </main>
+      <Footer />
     </div>
   );
 }
