@@ -1,5 +1,20 @@
-import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { Check, ChevronsUpDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Label } from "@/components/ui/label"
 
 interface Option {
   value: string
@@ -29,51 +44,57 @@ export function FormSelect({
   className,
   disabled
 }: FormSelectProps) {
+  const [open, setOpen] = useState(false)
+  const selectedOption = options.find(option => option.value === value)
+
   return (
     <div className="grid gap-2">
       {label && <Label htmlFor={id}>{label}</Label>}
-      <div className="relative">
-        <select
-          id={id}
-          value={value}
-          onChange={(e) => onValueChange(e.target.value)}
-          tabIndex={tabIndex}
-          disabled={disabled}
-          className={cn(
-            "w-full h-10 px-3 rounded-md border border-input bg-white text-sm",
-            "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-            className
-          )}
-        >
-          <option value="" disabled>
-            {placeholder}
-          </option>
-          {options.map(option => (
-            <option
-              key={option.value}
-              value={option.value}
-              className="py-2"
-            >
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-          <svg
-            className="h-4 w-4 text-gray-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn(
+              "w-full justify-between",
+              !value && "text-muted-foreground",
+              className
+            )}
+            disabled={disabled}
+            tabIndex={tabIndex}
           >
-            <path
-              fillRule="evenodd"
-              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      </div>
+            {selectedOption ? selectedOption.label : placeholder}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0">
+          <Command>
+            <CommandInput placeholder={placeholder} />
+            <CommandEmpty>No option found.</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={(currentValue) => {
+                    onValueChange(currentValue === value ? "" : currentValue)
+                    setOpen(false)
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      value === option.value ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  {option.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
     </div>
   )
 }
