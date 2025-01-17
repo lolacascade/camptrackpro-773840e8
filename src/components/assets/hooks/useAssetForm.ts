@@ -4,17 +4,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 
-export function useAssetForm({ onClose, onAssetAdded }: { 
+interface UseAssetFormProps {
   onClose: () => void;
   onAssetAdded: () => void;
-}) {
+  customerId: number | null;
+}
+
+export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetFormProps) {
   const { toast } = useToast();
   const session = useSession();
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
   const [newAsset, setNewAsset] = useState<Partial<Asset>>({
     asset_name: '',
     asset_size: '',
-    customer_id: null,
+    customer_id: customerId,
     slip_id: null,
     asset_type: 'Speed Boat',
   });
@@ -64,6 +67,7 @@ export function useAssetForm({ onClose, onAssetAdded }: {
           asset_size: newAsset.asset_size,
           asset_type: newAsset.asset_type,
           slip_id: newAsset.slip_id,
+          customer_id: customerId,
           user_id: session.user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()

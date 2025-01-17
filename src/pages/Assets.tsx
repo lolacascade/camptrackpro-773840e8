@@ -87,15 +87,12 @@ export default function Assets() {
             onSearchChange={setSearchTerm}
             tableName="assets"
             onEdit={(asset) => {
-              // Handle edit action
               console.log('Edit asset:', asset);
             }}
             onViewDetails={(asset) => {
-              // Handle view details action
               console.log('View asset details:', asset);
             }}
             onDelete={(asset) => {
-              // Handle delete action
               console.log('Delete asset:', asset);
             }}
           />
@@ -109,6 +106,7 @@ export default function Assets() {
                 description: "Asset added successfully",
               });
             }}
+            customerId={null}
           />
         </div>
       </PageContainer>
