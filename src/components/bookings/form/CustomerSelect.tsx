@@ -5,13 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Customer } from "@/types/customer";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface CustomerSelectProps {
   selectedCustomerId: number | null;
@@ -22,6 +18,8 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [open, setOpen] = useState(false);
 
   const fetchCustomers = async () => {
     try {
@@ -48,6 +46,8 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
     setIsDrawerOpen(false);
   };
 
+  const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -62,22 +62,45 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
         </Button>
       </div>
 
-      <Select
-        value={selectedCustomerId?.toString() || ""}
-        onValueChange={(value) => onCustomerSelect(value ? parseInt(value) : null)}
-        disabled={isLoading}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select a customer" />
-        </SelectTrigger>
-        <SelectContent>
-          {customers.map((customer) => (
-            <SelectItem key={customer.id} value={customer.id.toString()}>
-              {customer.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Input
+            disabled={isLoading}
+            value={selectedCustomer?.name || searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="Search customers..."
+            className="w-full"
+          />
+        </PopoverTrigger>
+        <PopoverContent className="p-0" align="start">
+          <Command>
+            <CommandInput 
+              placeholder="Search customers..." 
+              value={searchValue}
+              onValueChange={setSearchValue}
+            />
+            <CommandEmpty>No customer found.</CommandEmpty>
+            <CommandGroup>
+              {customers
+                .filter(customer => 
+                  customer.name.toLowerCase().includes(searchValue.toLowerCase())
+                )
+                .map((customer) => (
+                  <CommandItem
+                    key={customer.id}
+                    onSelect={() => {
+                      onCustomerSelect(customer.id);
+                      setSearchValue(customer.name);
+                      setOpen(false);
+                    }}
+                  >
+                    {customer.name}
+                  </CommandItem>
+                ))}
+            </CommandGroup>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
       <CustomerDrawer
         customer={null}
