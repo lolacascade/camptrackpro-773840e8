@@ -72,7 +72,7 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
             className="w-full"
           />
         </PopoverTrigger>
-        {!isLoading && (
+        {customers.length > 0 && (
           <PopoverContent className="p-0" align="start">
             <Command>
               <CommandInput 
