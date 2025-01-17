@@ -1,6 +1,10 @@
 import { Header } from "./Header";
 
-export function Layout({ children }: { children: React.ReactNode }) {
+interface LayoutProps {
+  children: React.ReactNode;
+}
+
+export function Layout({ children }: LayoutProps) {
   return (
     <div className="flex min-h-screen flex-col bg-[#0D1D1F] overflow-x-hidden">
       <Header />

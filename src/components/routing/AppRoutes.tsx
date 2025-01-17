@@ -27,7 +27,16 @@ export const AppRoutes = () => {
       <Route path="/terms-of-service" element={<TermsOfService />} />
 
       {/* Protected routes */}
-      <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+      <Route 
+        path="/app" 
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Outlet />
+            </Layout>
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Navigate to="/app/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="bookings" element={<Bookings />} />
