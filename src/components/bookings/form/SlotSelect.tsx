@@ -48,14 +48,22 @@ export function SlotSelect({
 
         if (bookingsError) throw bookingsError;
 
-        const bookedSlotIds = new Set(existingBookings?.map(b => b.slot_id));
-        const availableSlots = (allSlots || []).filter(slot => !bookedSlotIds.has(slot.id));
+        const bookedSlotIds = new Set(existingBookings?.map(b => b.slot_id) || []);
+        
+        // Ensure proper typing of slots data
+        const typedSlots: Slot[] = (allSlots || []).map(slot => ({
+          ...slot,
+          status: slot.status as Slot['status'], // Explicitly type the status
+          id: slot.id,
+          name: slot.name,
+          location_identifier: slot.location_identifier
+        })).filter(slot => !bookedSlotIds.has(slot.id));
 
-        setAvailableSlots(availableSlots);
+        setAvailableSlots(typedSlots);
         
         // Set initial search value if slot is selected
         if (selectedSlotId) {
-          const selectedSlot = availableSlots.find(s => s.id === selectedSlotId);
+          const selectedSlot = typedSlots.find(s => s.id === selectedSlotId);
           if (selectedSlot) {
             setSearchValue(selectedSlot.name);
           }
@@ -109,10 +117,10 @@ export function SlotSelect({
           className="w-full"
         />
 
-        {showSuggestions && searchValue && (
+        {showSuggestions && searchValue && filteredSlots.length > 0 && (
           <div className="absolute z-[100] w-full mt-1 bg-white border rounded-md shadow-lg">
             <Command className="border-none bg-white rounded-md">
-              <CommandList className="bg-white">
+              <CommandList className="max-h-[200px] overflow-y-auto">
                 <CommandEmpty className="p-2">No sites found.</CommandEmpty>
                 <CommandGroup className="bg-white">
                   {filteredSlots.map(slot => (
