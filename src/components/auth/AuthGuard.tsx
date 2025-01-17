@@ -25,6 +25,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
         }
 
         if (!currentSession) {
+          // Only redirect to login if there's no session
           navigate('/login', { replace: true });
           toast({
             title: "Authentication required",
@@ -37,6 +38,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
         setIsLoading(false);
       } catch (error) {
         console.error('Auth check failed:', error);
+        // Only redirect on actual auth errors
         navigate('/login', { replace: true });
         toast({
           title: "Authentication error",
@@ -46,7 +48,12 @@ export function AuthGuard({ children }: AuthGuardProps) {
       }
     };
 
-    checkAuth();
+    // Only check auth if there's no session
+    if (!session) {
+      checkAuth();
+    } else {
+      setIsLoading(false);
+    }
 
     const {
       data: { subscription },
@@ -59,15 +66,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
           title: "Signed out",
           description: "You have been signed out successfully.",
         });
-      } else if (event === 'TOKEN_REFRESHED') {
-        console.log('Session token refreshed');
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, [navigate, toast, session]);
 
   if (isLoading) {
     return (
@@ -77,6 +82,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
+  // Only render children if we have a session
   if (!session) {
     return null;
   }
