@@ -14,8 +14,7 @@ export default function Login() {
   const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
-    // Single auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log('Auth state changed:', event);
       
       if (event === 'SIGNED_IN' && currentSession) {
@@ -45,15 +44,18 @@ export default function Login() {
           description: "Check your email for password reset instructions.",
         });
       }
+
+      // Handle authentication errors
+      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+        navigate('/login');
+      }
     });
 
-    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
     };
   }, [navigate, location.state?.from?.pathname, toast]);
 
-  // If already authenticated, redirect to app
   useEffect(() => {
     if (!isLoading && session) {
       const from = location.state?.from?.pathname || '/app';
@@ -61,7 +63,6 @@ export default function Login() {
     }
   }, [session, isLoading, navigate, location]);
 
-  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center">
@@ -133,6 +134,11 @@ export default function Login() {
                   textDecoration: 'none',
                   fontWeight: '500',
                 },
+                message: {
+                  color: '#EF4444',
+                  fontSize: '14px',
+                  margin: '8px 0',
+                },
               },
             }}
             providers={[]}
@@ -143,6 +149,20 @@ export default function Login() {
                 sign_in: {
                   email_label: 'Email',
                   password_label: 'Password',
+                  button_label: 'Sign In',
+                  loading_button_label: 'Signing in...',
+                  password_input_placeholder: 'Your password',
+                  email_input_placeholder: 'Your email address',
+                  link_text: "Don't have an account? Sign up",
+                },
+                sign_up: {
+                  email_label: 'Email',
+                  password_label: 'Password',
+                  button_label: 'Sign Up',
+                  loading_button_label: 'Signing up...',
+                  password_input_placeholder: 'Create a password',
+                  email_input_placeholder: 'Your email address',
+                  link_text: 'Already have an account? Sign in',
                 },
               },
             }}
