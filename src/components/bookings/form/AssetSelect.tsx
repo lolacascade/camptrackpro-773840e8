@@ -80,7 +80,7 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
       <AssetDrawer
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onAssetUpdated={handleAssetAdded}
+        onAssetAdded={handleAssetAdded}
         customerId={customerId}
       />
     </div>
