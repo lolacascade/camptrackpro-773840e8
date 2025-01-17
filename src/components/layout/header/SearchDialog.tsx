@@ -1,5 +1,5 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Command, CommandInput } from "cmdk";
+import { Command, CommandInput, CommandList, CommandEmpty } from "cmdk";
 
 interface SearchDialogProps {
   open: boolean;
@@ -15,6 +15,9 @@ export function SearchDialog({ open, onOpenChange }: SearchDialogProps) {
             placeholder="Type a command or search..." 
             className="h-12"
           />
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+          </CommandList>
         </Command>
       </DialogContent>
     </Dialog>
