@@ -17,6 +17,7 @@ export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
   const navItems = [
     { path: 'dashboard', label: 'Dashboard' },
     { path: 'customers', label: 'Customers' },
+    { path: 'assets', label: 'RVs' },
     { path: 'bookings', label: 'Bookings' },
     { path: 'map', label: 'Map' },
     { path: 'maintenance', label: 'Maintenance' },
