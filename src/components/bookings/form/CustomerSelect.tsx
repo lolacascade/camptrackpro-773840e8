@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -17,23 +17,23 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('customers')
-          .select('*')
-          .order('name');
-        
-        if (error) throw error;
-        setCustomers(data || []);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchCustomers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .order('name');
+      
+      if (error) throw error;
+      setCustomers(data || []);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCustomers();
   }, []);
 
@@ -43,7 +43,6 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
   }));
 
   const handleCustomerAdded = () => {
-    // Refresh the customers list
     fetchCustomers();
     setIsDrawerOpen(false);
   };

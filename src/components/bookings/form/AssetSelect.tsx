@@ -18,30 +18,30 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
+  const fetchAssets = async () => {
+    if (!customerId) {
+      setAssets([]);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('assets')
+        .select('*')
+        .eq('customer_id', customerId)
+        .order('asset_name');
+      
+      if (error) throw error;
+      setAssets(data || []);
+    } catch (error) {
+      console.error('Error fetching assets:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAssets = async () => {
-      if (!customerId) {
-        setAssets([]);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from('assets')
-          .select('*')
-          .eq('customer_id', customerId)
-          .order('asset_name');
-        
-        if (error) throw error;
-        setAssets(data || []);
-      } catch (error) {
-        console.error('Error fetching assets:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchAssets();
   }, [customerId]);
 
@@ -51,7 +51,6 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
   }));
 
   const handleAssetAdded = () => {
-    // Refresh the assets list
     fetchAssets();
     setIsDrawerOpen(false);
   };
@@ -79,7 +78,6 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
       />
 
       <AssetDrawer
-        asset={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         onAssetUpdated={handleAssetAdded}
