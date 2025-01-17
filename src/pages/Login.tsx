@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,6 +10,7 @@ import { useAuthState } from '@/hooks/use-auth-state';
 
 export default function Login() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { session, isLoading } = useSessionContext();
   const fromPath = location.state?.from?.pathname || '/app';
   
