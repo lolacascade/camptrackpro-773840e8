@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { FormSelect } from "@/components/common/FormSelect";
+import { Button } from "@/components/ui/button";
 import { Asset } from "@/types/asset";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface AssetSelectProps {
   selectedAssetId: number | null;
@@ -69,12 +69,14 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
           Add New
         </Button>
       </div>
-      <FormSelect
+      
+      <SelectField
         value={selectedAssetId?.toString() || ''}
-        onValueChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
+        onChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
         options={assetOptions}
         placeholder={customerId ? "Select an RV" : "Select a customer first"}
-        disabled={isLoading || !customerId}
+        className="w-full"
+        name="asset"
       />
 
       <AssetDrawer
