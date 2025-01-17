@@ -79,8 +79,7 @@ export function SlotSelect({
           pricing: slot.pricing || undefined,
           photos: slot.photos || undefined,
           notes: slot.notes || undefined,
-          distance_to_facilities: slot.distance_to_facilities || undefined,
-          assets: slot.assets || undefined
+          distance_to_facilities: slot.distance_to_facilities || undefined
         })).filter(slot => !bookedSlotIds.has(slot.id));
 
         setAvailableSlots(typedSlots);
