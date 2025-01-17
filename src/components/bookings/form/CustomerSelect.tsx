@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { Customer } from "@/types/customer";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "cmdk";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 
 interface CustomerSelectProps {
   selectedCustomerId: number | null;
@@ -17,9 +17,8 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [selectedCustomerName, setSelectedCustomerName] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const fetchCustomers = async () => {
     try {
@@ -31,11 +30,11 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
       if (error) throw error;
       setCustomers(data || []);
 
-      // Set initial selected customer name
+      // Set initial search value if customer is selected
       if (selectedCustomerId) {
         const selectedCustomer = data?.find(c => c.id === selectedCustomerId);
         if (selectedCustomer) {
-          setSelectedCustomerName(selectedCustomer.name);
+          setSearchValue(selectedCustomer.name);
         }
       }
     } catch (error) {
@@ -58,10 +57,14 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
     const customer = customers.find(c => c.id === parseInt(customerId));
     if (customer) {
       onCustomerSelect(customer.id);
-      setSelectedCustomerName(customer.name);
-      setOpen(false);
+      setSearchValue(customer.name);
+      setShowSuggestions(false);
     }
   };
+
+  const filteredCustomers = customers.filter(customer =>
+    customer.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
 
   return (
     <div className="space-y-2">
@@ -77,46 +80,44 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
         </Button>
       </div>
 
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="w-full justify-between"
-          >
-            {selectedCustomerName || "Select customer..."}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput
-              placeholder="Search customers..."
-              value={searchValue}
-              onValueChange={setSearchValue}
-              className="h-9"
-            />
-            <CommandList>
-              <CommandEmpty>No customers found.</CommandEmpty>
-              <CommandGroup>
-                {customers
-                  .filter(customer =>
-                    customer.name.toLowerCase().includes(searchValue.toLowerCase())
-                  )
-                  .map(customer => (
+      <div className="relative">
+        <Input
+          type="text"
+          value={searchValue}
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+            setShowSuggestions(true);
+            if (!e.target.value) {
+              onCustomerSelect(null);
+            }
+          }}
+          onFocus={() => setShowSuggestions(true)}
+          placeholder="Search customers..."
+          className="w-full"
+        />
+
+        {showSuggestions && searchValue && (
+          <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg">
+            <Command className="border-none">
+              <CommandList>
+                <CommandEmpty>No customers found.</CommandEmpty>
+                <CommandGroup>
+                  {filteredCustomers.map(customer => (
                     <CommandItem
                       key={customer.id}
                       value={customer.id.toString()}
                       onSelect={handleSelect}
+                      className="cursor-pointer hover:bg-gray-100 p-2"
                     >
                       {customer.name}
                     </CommandItem>
                   ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </div>
+        )}
+      </div>
 
       <CustomerDrawer
         customer={null}
