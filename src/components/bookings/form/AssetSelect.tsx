@@ -78,6 +78,7 @@ export function AssetSelect({
       <AssetDrawer
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
+        customerId={customerId}
         onAssetAdded={() => {
           setIsDrawerOpen(false);
           // Refetch assets when a new one is added

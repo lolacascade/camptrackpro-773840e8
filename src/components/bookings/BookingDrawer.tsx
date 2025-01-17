@@ -54,6 +54,7 @@ export function BookingDrawer({
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending',
+        slot_id: 1, // We'll need to get this from somewhere else later
         reservation_code: `RES-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         created_at: new Date().toISOString(),
       };
