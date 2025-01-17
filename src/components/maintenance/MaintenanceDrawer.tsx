@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BaseDrawer } from "@/components/common/BaseDrawer";
+import { FormSelect } from "@/components/common/FormSelect";
 
 interface MaintenanceDrawerProps {
   maintenance: Maintenance | null;
@@ -20,8 +21,9 @@ export function MaintenanceDrawer({
 }: MaintenanceDrawerProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState(maintenance?.status || 'pending');
 
-  const handleStatusChange = async (newStatus: Maintenance['status']) => {
+  const handleStatusChange = async (newStatus: string) => {
     if (!maintenance) return;
     
     setIsLoading(true);
@@ -54,6 +56,12 @@ export function MaintenanceDrawer({
 
   if (!maintenance) return null;
 
+  const statusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' }
+  ];
+
   return (
     <BaseDrawer 
       open={open} 
@@ -67,29 +75,13 @@ export function MaintenanceDrawer({
         </div>
         <div>
           <h4 className="font-medium mb-2">Status</h4>
-          <div className="flex gap-2">
-            <Button
-              variant={maintenance.status === 'pending' ? 'default' : 'outline'}
-              onClick={() => handleStatusChange('pending')}
-              disabled={isLoading}
-            >
-              Pending
-            </Button>
-            <Button
-              variant={maintenance.status === 'in_progress' ? 'default' : 'outline'}
-              onClick={() => handleStatusChange('in_progress')}
-              disabled={isLoading}
-            >
-              In Progress
-            </Button>
-            <Button
-              variant={maintenance.status === 'completed' ? 'default' : 'outline'}
-              onClick={() => handleStatusChange('completed')}
-              disabled={isLoading}
-            >
-              Completed
-            </Button>
-          </div>
+          <FormSelect
+            value={status}
+            onValueChange={handleStatusChange}
+            options={statusOptions}
+            placeholder="Select status"
+            disabled={isLoading}
+          />
         </div>
       </div>
     </BaseDrawer>

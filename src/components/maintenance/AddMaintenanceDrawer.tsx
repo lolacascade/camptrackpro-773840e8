@@ -2,9 +2,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FormSelect } from "@/components/common/FormSelect";
 import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AddMaintenanceDrawerProps {
@@ -25,6 +25,12 @@ export function AddMaintenanceDrawer({
     description: '',
     priority: 'medium',
   });
+
+  const priorityOptions = [
+    { value: 'high', label: 'High' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'low', label: 'Low' }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -87,19 +93,12 @@ export function AddMaintenanceDrawer({
             />
           </div>
           <div>
-            <Select
+            <FormSelect
               value={formData.priority}
               onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select priority" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="high">High</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-              </SelectContent>
-            </Select>
+              options={priorityOptions}
+              placeholder="Select priority"
+            />
           </div>
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={onClose} type="button">
