@@ -5,7 +5,13 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Asset } from "@/types/asset";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
-import { FormSelect } from "@/components/common/FormSelect";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface AssetSelectProps {
   selectedAssetId: number | null;
@@ -48,32 +54,37 @@ export function AssetSelect({
     fetchAssets();
   }, [customerId]);
 
-  const assetOptions = assets.map(asset => ({
-    value: asset.id.toString(),
-    label: asset.asset_name
-  }));
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>Customer's RVs</Label>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           onClick={() => setIsDrawerOpen(true)}
+          disabled={!customerId}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add New
         </Button>
       </div>
 
-      <FormSelect
-        value={selectedAssetId?.toString() || ''}
+      <Select
+        value={selectedAssetId?.toString() || ""}
         onValueChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
-        options={assetOptions}
-        placeholder={customerId ? "Select an RV" : "Select a customer first"}
         disabled={isLoading || !customerId}
-      />
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder={customerId ? "Select an RV" : "Select a customer first"} />
+        </SelectTrigger>
+        <SelectContent>
+          {assets.map((asset) => (
+            <SelectItem key={asset.id} value={asset.id.toString()}>
+              {asset.asset_name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
       <AssetDrawer
         open={isDrawerOpen}
