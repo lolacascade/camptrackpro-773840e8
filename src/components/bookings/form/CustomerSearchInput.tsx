@@ -21,6 +21,10 @@ export function CustomerSearchInput({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
+  const filteredCustomers = customers.filter(customer => 
+    customer.name.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
   if (isLoading) {
     return (
       <div className="space-y-2">
@@ -47,21 +51,19 @@ export function CustomerSearchInput({
             className="w-full"
           />
         </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
-          <Command>
-            <CommandInput 
-              placeholder="Search customers..." 
-              value={searchValue}
-              onValueChange={setSearchValue}
-            />
-            <CommandEmpty>No customer found.</CommandEmpty>
-            {customers.length > 0 && (
-              <CommandGroup>
-                {customers
-                  .filter(customer => 
-                    customer.name.toLowerCase().includes(searchValue.toLowerCase())
-                  )
-                  .map((customer) => (
+        {open && (
+          <PopoverContent className="p-0" align="start">
+            <Command>
+              <CommandInput 
+                placeholder="Search customers..." 
+                value={searchValue}
+                onValueChange={setSearchValue}
+              />
+              {filteredCustomers.length === 0 ? (
+                <CommandEmpty>No customer found.</CommandEmpty>
+              ) : (
+                <CommandGroup>
+                  {filteredCustomers.map((customer) => (
                     <CommandItem
                       key={customer.id}
                       onSelect={() => {
@@ -73,10 +75,11 @@ export function CustomerSearchInput({
                       {customer.name}
                     </CommandItem>
                   ))}
-              </CommandGroup>
-            )}
-          </Command>
-        </PopoverContent>
+                </CommandGroup>
+              )}
+            </Command>
+          </PopoverContent>
+        )}
       </Popover>
     </div>
   );
