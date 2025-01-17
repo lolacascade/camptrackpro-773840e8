@@ -6,7 +6,10 @@ interface CustomerSelectProps {
   onCustomerSelect: (customerId: number | null) => void;
 }
 
-export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: CustomerSelectProps) {
+export function CustomerSelect({ 
+  selectedCustomerId, 
+  onCustomerSelect 
+}: CustomerSelectProps) {
   const { customers, isLoading } = useCustomers();
   const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
 

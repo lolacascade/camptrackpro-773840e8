@@ -21,28 +21,41 @@ export function CustomerSearchInput({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
 
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Label>Customer</Label>
+        <Input
+          disabled
+          value=""
+          placeholder="Loading customers..."
+          className="w-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
       <Label>Customer</Label>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Input
-            disabled={isLoading}
             value={selectedCustomer?.name || searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            placeholder={isLoading ? "Loading customers..." : "Search customers..."}
+            placeholder="Search customers..."
             className="w-full"
           />
         </PopoverTrigger>
-        {!isLoading && customers.length > 0 && (
-          <PopoverContent className="p-0" align="start">
-            <Command>
-              <CommandInput 
-                placeholder="Search customers..." 
-                value={searchValue}
-                onValueChange={setSearchValue}
-              />
-              <CommandEmpty>No customer found.</CommandEmpty>
+        <PopoverContent className="p-0" align="start">
+          <Command>
+            <CommandInput 
+              placeholder="Search customers..." 
+              value={searchValue}
+              onValueChange={setSearchValue}
+            />
+            <CommandEmpty>No customer found.</CommandEmpty>
+            {customers.length > 0 && (
               <CommandGroup>
                 {customers
                   .filter(customer => 
@@ -61,9 +74,9 @@ export function CustomerSearchInput({
                     </CommandItem>
                   ))}
               </CommandGroup>
-            </Command>
-          </PopoverContent>
-        )}
+            )}
+          </Command>
+        </PopoverContent>
       </Popover>
     </div>
   );
