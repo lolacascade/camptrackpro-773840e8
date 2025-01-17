@@ -9,7 +9,6 @@ import { addDays } from "date-fns";
 import { BookingDateRange } from "./form/BookingDateRange";
 import { CustomerSelect } from "./form/CustomerSelect";
 import { AssetSelect } from "./form/AssetSelect";
-import { SlotSelect } from "./form/SlotSelect";
 import { Booking } from "@/types/booking";
 
 interface BookingDrawerProps {
@@ -36,12 +35,9 @@ export function BookingDrawer({
     booking?.customer_id || null
   );
   const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
-  const [selectedSlotId, setSelectedSlotId] = useState<number | null>(
-    booking?.slot_id || null
-  );
 
   const handleSave = async () => {
-    if (!session?.user?.id || !dateRange?.from || !dateRange?.to || !selectedCustomerId || !selectedSlotId) {
+    if (!session?.user?.id || !dateRange?.from || !dateRange?.to || !selectedCustomerId) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -55,7 +51,6 @@ export function BookingDrawer({
       const bookingData = {
         user_id: session.user.id,
         customer_id: selectedCustomerId,
-        slot_id: selectedSlotId,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending',
@@ -115,13 +110,6 @@ export function BookingDrawer({
           selectedAssetId={selectedAssetId}
           onAssetSelect={setSelectedAssetId}
           customerId={selectedCustomerId}
-        />
-
-        <SlotSelect
-          selectedSlotId={selectedSlotId}
-          onSlotSelect={setSelectedSlotId}
-          dateRange={dateRange}
-          assetId={selectedAssetId}
         />
 
         <Button 

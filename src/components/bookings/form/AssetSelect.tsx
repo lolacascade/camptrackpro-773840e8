@@ -5,43 +5,46 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Asset } from "@/types/asset";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
-import { SelectField } from "@/components/common/FormFields/SelectField";
+import { FormSelect } from "@/components/common/FormSelect";
 
 interface AssetSelectProps {
   selectedAssetId: number | null;
-  customerId: number | null;
   onAssetSelect: (assetId: number | null) => void;
+  customerId: number | null;
 }
 
-export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: AssetSelectProps) {
+export function AssetSelect({ 
+  selectedAssetId, 
+  onAssetSelect,
+  customerId 
+}: AssetSelectProps) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const fetchAssets = async () => {
-    if (!customerId) {
-      setAssets([]);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('assets')
-        .select('*')
-        .eq('customer_id', customerId)
-        .order('asset_name');
-      
-      if (error) throw error;
-      setAssets(data || []);
-    } catch (error) {
-      console.error('Error fetching assets:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchAssets = async () => {
+      if (!customerId) {
+        setAssets([]);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('assets')
+          .select('*')
+          .eq('customer_id', customerId);
+        
+        if (error) throw error;
+        setAssets(data || []);
+      } catch (error) {
+        console.error('Error fetching assets:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchAssets();
   }, [customerId]);
 
@@ -50,40 +53,47 @@ export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: Asse
     label: asset.asset_name
   }));
 
-  const handleAssetAdded = () => {
-    fetchAssets();
-    setIsDrawerOpen(false);
-  };
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label>RV</Label>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Label>Customer's RVs</Label>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setIsDrawerOpen(true)}
-          disabled={!customerId}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add New
         </Button>
       </div>
-      
-      <SelectField
+
+      <FormSelect
         value={selectedAssetId?.toString() || ''}
-        onChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
+        onValueChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
         options={assetOptions}
         placeholder={customerId ? "Select an RV" : "Select a customer first"}
-        className="w-full"
-        name="asset"
+        disabled={isLoading || !customerId}
       />
 
       <AssetDrawer
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onAssetAdded={handleAssetAdded}
-        customerId={customerId}
+        onAssetAdded={() => {
+          setIsDrawerOpen(false);
+          // Refetch assets when a new one is added
+          if (customerId) {
+            setIsLoading(true);
+            const fetchAssets = async () => {
+              const { data } = await supabase
+                .from('assets')
+                .select('*')
+                .eq('customer_id', customerId);
+              setAssets(data || []);
+              setIsLoading(false);
+            };
+            fetchAssets();
+          }
+        }}
       />
     </div>
   );
