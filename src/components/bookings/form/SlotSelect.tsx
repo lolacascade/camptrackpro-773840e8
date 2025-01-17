@@ -48,20 +48,43 @@ export function SlotSelect({
 
         if (bookingsError) throw bookingsError;
 
-        const bookedSlotIds = new Set(existingBookings?.map(b => b.slot_id) || []);
+        const bookedSlotIds = new Set((existingBookings || []).map(b => b.slot_id));
         
-        // Ensure proper typing of slots data
         const typedSlots: Slot[] = (allSlots || []).map(slot => ({
-          ...slot,
-          status: slot.status as Slot['status'], // Explicitly type the status
           id: slot.id,
           name: slot.name,
-          location_identifier: slot.location_identifier
+          status: slot.status as Slot['status'],
+          location_identifier: slot.location_identifier,
+          dock: slot.dock || undefined,
+          length_ft: slot.length_ft || undefined,
+          width_ft: slot.width_ft || undefined,
+          is_covered: slot.is_covered || undefined,
+          electricity_voltage: slot.electricity_voltage || undefined,
+          has_water: slot.has_water || undefined,
+          zone: slot.zone || undefined,
+          location_coordinates: slot.location_coordinates || undefined,
+          created_at: slot.created_at || undefined,
+          updated_at: slot.updated_at || undefined,
+          customer_id: slot.customer_id || undefined,
+          maintenance_id: slot.maintenance_id || undefined,
+          last_activity_at: slot.last_activity_at || undefined,
+          utility_connection_type: slot.utility_connection_type || undefined,
+          user_id: slot.user_id || undefined,
+          site_type: slot.site_type || undefined,
+          hookup_type: slot.hookup_type || undefined,
+          surface_type: slot.surface_type || undefined,
+          amenities: slot.amenities || undefined,
+          max_capacity: slot.max_capacity || undefined,
+          special_features: slot.special_features || undefined,
+          pricing: slot.pricing || undefined,
+          photos: slot.photos || undefined,
+          notes: slot.notes || undefined,
+          distance_to_facilities: slot.distance_to_facilities || undefined,
+          assets: slot.assets || undefined
         })).filter(slot => !bookedSlotIds.has(slot.id));
 
         setAvailableSlots(typedSlots);
         
-        // Set initial search value if slot is selected
         if (selectedSlotId) {
           const selectedSlot = typedSlots.find(s => s.id === selectedSlotId);
           if (selectedSlot) {
@@ -120,21 +143,25 @@ export function SlotSelect({
         {showSuggestions && searchValue && filteredSlots.length > 0 && (
           <div className="absolute z-[100] w-full mt-1 bg-white border rounded-md shadow-lg">
             <Command className="border-none bg-white rounded-md">
-              <CommandList className="max-h-[200px] overflow-y-auto">
+              {filteredSlots.length > 0 && (
+                <CommandList className="max-h-[200px] overflow-y-auto">
+                  <CommandGroup className="bg-white">
+                    {filteredSlots.map(slot => (
+                      <CommandItem
+                        key={slot.id}
+                        value={slot.id.toString()}
+                        onSelect={handleSelect}
+                        className="cursor-pointer hover:bg-gray-100 p-2"
+                      >
+                        {slot.name}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              )}
+              {filteredSlots.length === 0 && (
                 <CommandEmpty className="p-2">No sites found.</CommandEmpty>
-                <CommandGroup className="bg-white">
-                  {filteredSlots.map(slot => (
-                    <CommandItem
-                      key={slot.id}
-                      value={slot.id.toString()}
-                      onSelect={handleSelect}
-                      className="cursor-pointer hover:bg-gray-100 p-2"
-                    >
-                      {slot.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
+              )}
             </Command>
           </div>
         )}
