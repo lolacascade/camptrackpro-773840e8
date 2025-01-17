@@ -26,6 +26,7 @@ export function DataTable<T extends { id?: number | string }>({
   showTodayOnly,
   onShowTodayChange,
   tableName,
+  onRowClick,
 }: DataTableProps<T>) {
   const {
     searchTerm,
@@ -146,6 +147,7 @@ export function DataTable<T extends { id?: number | string }>({
             onEdit={onEdit}
             onDuplicate={onDuplicate}
             onDelete={onDelete}
+            onRowClick={onRowClick}
           />
         </Table>
       </div>

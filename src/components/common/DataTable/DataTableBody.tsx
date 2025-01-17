@@ -9,6 +9,7 @@ interface DataTableBodyProps<T> {
   onEdit?: (item: T) => void;
   onDuplicate?: (item: T) => void;
   onDelete?: (item: T) => void;
+  onRowClick?: (item: T) => void;
 }
 
 export function DataTableBody<T extends { id?: number | string }>({
@@ -18,6 +19,7 @@ export function DataTableBody<T extends { id?: number | string }>({
   onEdit,
   onDuplicate,
   onDelete,
+  onRowClick,
 }: DataTableBodyProps<T>) {
   if (data.length === 0) {
     return (
@@ -39,7 +41,8 @@ export function DataTableBody<T extends { id?: number | string }>({
       {data.map((item) => (
         <TableRow 
           key={item.id}
-          className="hover:bg-[#F8F9F9] transition-colors"
+          className={`hover:bg-[#F8F9F9] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+          onClick={() => onRowClick?.(item)}
         >
           {columns.map((column, index) => (
             <TableCell key={index}>

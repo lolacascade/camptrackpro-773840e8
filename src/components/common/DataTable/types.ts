@@ -42,4 +42,5 @@ export interface DataTableProps<T> {
   tableName?: string;
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
+  onRowClick?: (row: T) => void;
 }
