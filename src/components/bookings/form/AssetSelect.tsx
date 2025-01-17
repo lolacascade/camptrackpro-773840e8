@@ -1,0 +1,69 @@
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { FormSelect } from "@/components/common/FormSelect";
+import { Asset } from "@/types/asset";
+
+interface AssetSelectProps {
+  selectedAssetId: number | null;
+  onAssetSelect: (assetId: number | null) => void;
+  customerId: number | null;
+}
+
+export function AssetSelect({ selectedAssetId, onAssetSelect, customerId }: AssetSelectProps) {
+  const [assets, setAssets] = useState<Asset[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAssets = async () => {
+      if (!customerId) {
+        setAssets([]);
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('assets')
+          .select('*')
+          .eq('customer_id', customerId)
+          .order('asset_name');
+        
+        if (error) throw error;
+        setAssets(data || []);
+      } catch (error) {
+        console.error('Error fetching assets:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAssets();
+  }, [customerId]);
+
+  const assetOptions = assets.map(asset => ({
+    value: asset.id.toString(),
+    label: `${asset.asset_name} (${asset.asset_type})`
+  }));
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <Label>RV</Label>
+        <Button variant="ghost" size="sm" disabled={!customerId}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add New
+        </Button>
+      </div>
+      <FormSelect
+        value={selectedAssetId?.toString() || ''}
+        onValueChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
+        options={assetOptions}
+        placeholder={customerId ? "Select an RV" : "Select a customer first"}
+        disabled={!customerId}
+      />
+    </div>
+  );
+}
