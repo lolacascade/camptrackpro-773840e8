@@ -11,7 +11,7 @@ import { useDataTable } from "@/hooks/use-data-table";
 import { DataTableProps } from "./types";
 
 export function DataTable<T extends { id?: number | string }>({
-  data,
+  data = [], // Provide default empty array
   columns,
   onViewDetails,
   onEdit,
@@ -37,7 +37,11 @@ export function DataTable<T extends { id?: number | string }>({
     setVisibleColumns,
     visibleColumnsData,
     handleFilterChange
-  } = useDataTable({ data, columns, filters });
+  } = useDataTable({ 
+    data: data || [], // Ensure data is never null/undefined
+    columns: columns || [], // Ensure columns is never null/undefined
+    filters: filters || [] // Ensure filters is never null/undefined
+  });
 
   const {
     localData,
@@ -45,10 +49,10 @@ export function DataTable<T extends { id?: number | string }>({
     filteredAndSortedData,
     sortConfig: localSortConfig,
     handleSort
-  } = useTableState<T>(data);
+  } = useTableState<T>(data || []); // Ensure data is never null/undefined
 
   useEffect(() => {
-    setLocalData(data);
+    setLocalData(data || []); // Ensure data is never null/undefined
   }, [data, setLocalData]);
 
   // Real-time updates
@@ -67,12 +71,12 @@ export function DataTable<T extends { id?: number | string }>({
         (payload) => {
           console.log('Change received!', payload);
           if (payload.eventType === 'INSERT') {
-            setLocalData(prev => [...prev, payload.new as T]);
+            setLocalData(prev => [...(prev || []), payload.new as T]);
           } else if (payload.eventType === 'DELETE') {
-            setLocalData(prev => prev.filter(item => item.id !== payload.old.id));
+            setLocalData(prev => (prev || []).filter(item => item.id !== payload.old.id));
           } else if (payload.eventType === 'UPDATE') {
             setLocalData(prev => 
-              prev.map(item => 
+              (prev || []).map(item => 
                 item.id === payload.new.id ? { ...item, ...payload.new } : item
               )
             );
@@ -114,8 +118,8 @@ export function DataTable<T extends { id?: number | string }>({
   // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = filteredAndSortedData.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredAndSortedData.length / itemsPerPage);
+  const paginatedData = (filteredAndSortedData || []).slice(startIndex, endIndex);
+  const totalPages = Math.ceil((filteredAndSortedData || []).length / itemsPerPage);
 
   return (
     <div className="space-y-4">
