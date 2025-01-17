@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { FormSelect } from "@/components/common/FormSelect";
 import { Asset } from "@/types/asset";
+import { AssetDrawer } from "@/components/assets/AssetDrawer";
 
 interface AssetSelectProps {
   selectedAssetId: number | null;
-  onAssetSelect: (assetId: number | null) => void;
   customerId: number | null;
+  onAssetSelect: (assetId: number | null) => void;
 }
 
-export function AssetSelect({ selectedAssetId, onAssetSelect, customerId }: AssetSelectProps) {
+export function AssetSelect({ selectedAssetId, customerId, onAssetSelect }: AssetSelectProps) {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const fetchAssets = async () => {
@@ -45,14 +47,25 @@ export function AssetSelect({ selectedAssetId, onAssetSelect, customerId }: Asse
 
   const assetOptions = assets.map(asset => ({
     value: asset.id.toString(),
-    label: `${asset.asset_name} (${asset.asset_type})`
+    label: asset.asset_name
   }));
+
+  const handleAssetAdded = () => {
+    // Refresh the assets list
+    fetchAssets();
+    setIsDrawerOpen(false);
+  };
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>RV</Label>
-        <Button variant="ghost" size="sm" disabled={!customerId}>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => setIsDrawerOpen(true)}
+          disabled={!customerId}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add New
         </Button>
@@ -62,7 +75,15 @@ export function AssetSelect({ selectedAssetId, onAssetSelect, customerId }: Asse
         onValueChange={(value) => onAssetSelect(value ? parseInt(value) : null)}
         options={assetOptions}
         placeholder={customerId ? "Select an RV" : "Select a customer first"}
-        disabled={!customerId}
+        disabled={isLoading || !customerId}
+      />
+
+      <AssetDrawer
+        asset={null}
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onAssetUpdated={handleAssetAdded}
+        customerId={customerId}
       />
     </div>
   );

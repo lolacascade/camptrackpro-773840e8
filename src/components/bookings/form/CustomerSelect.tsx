@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { FormSelect } from "@/components/common/FormSelect";
 import { Customer } from "@/types/customer";
+import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
 
 interface CustomerSelectProps {
   selectedCustomerId: number | null;
@@ -14,6 +15,7 @@ interface CustomerSelectProps {
 export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: CustomerSelectProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -40,11 +42,21 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
     label: customer.name
   }));
 
+  const handleCustomerAdded = () => {
+    // Refresh the customers list
+    fetchCustomers();
+    setIsDrawerOpen(false);
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>Customer</Label>
-        <Button variant="ghost" size="sm">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          onClick={() => setIsDrawerOpen(true)}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add New
         </Button>
@@ -54,6 +66,14 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
         onValueChange={(value) => onCustomerSelect(value ? parseInt(value) : null)}
         options={customerOptions}
         placeholder="Select a customer"
+        disabled={isLoading}
+      />
+
+      <CustomerDrawer
+        customer={null}
+        open={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onCustomerUpdated={handleCustomerAdded}
       />
     </div>
   );
