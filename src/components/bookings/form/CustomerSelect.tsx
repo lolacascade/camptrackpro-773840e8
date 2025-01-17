@@ -97,11 +97,11 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
         />
 
         {showSuggestions && searchValue && (
-          <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg">
-            <Command className="border-none">
-              <CommandList>
-                <CommandEmpty>No customers found.</CommandEmpty>
-                <CommandGroup>
+          <div className="absolute z-[100] w-full mt-1 bg-white border rounded-md shadow-lg">
+            <Command className="border-none bg-white rounded-md">
+              <CommandList className="bg-white">
+                <CommandEmpty className="p-2">No customers found.</CommandEmpty>
+                <CommandGroup className="bg-white">
                   {filteredCustomers.map(customer => (
                     <CommandItem
                       key={customer.id}
