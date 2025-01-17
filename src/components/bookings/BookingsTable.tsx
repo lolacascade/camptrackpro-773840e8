@@ -16,6 +16,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
   const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const session = useSession();
 
   const fetchBookings = async () => {
@@ -70,17 +71,17 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     {
       header: "Check In",
       accessorKey: "check_in_date",
-      cell: (item: Booking) => format(new Date(item.check_in_date), "MMM d, yyyy")
+      cell: (item: any) => format(new Date(item.check_in_date), "MMM d, yyyy")
     },
     {
       header: "Check Out",
       accessorKey: "check_out_date",
-      cell: (item: Booking) => format(new Date(item.check_out_date), "MMM d, yyyy")
+      cell: (item: any) => format(new Date(item.check_out_date), "MMM d, yyyy")
     },
     {
       header: "Status",
       accessorKey: "status",
-      cell: (item: Booking) => {
+      cell: (item: any) => {
         const statusColors = {
           pending: "bg-yellow-100 text-yellow-800",
           confirmed: "bg-green-100 text-green-800",
@@ -111,6 +112,10 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     { label: "Cancelled", value: "cancelled" }
   ];
 
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
@@ -122,8 +127,8 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
             {
               name: "status",
               options: statusOptions,
-              value: "all",
-              onChange: () => {},
+              value: selectedStatus,
+              onChange: handleStatusChange,
             }
           ]}
           tableName="bookings"
