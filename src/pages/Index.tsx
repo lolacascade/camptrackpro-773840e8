@@ -5,6 +5,7 @@ import { PainPointsSection } from "@/components/landing/PainPointsSection";
 import { ValueProposition } from "@/components/landing/ValueProposition";
 import { CallToAction } from "@/components/landing/CallToAction";
 import { LandingHeader } from "@/components/landing/LandingHeader";
+import { Footer } from "@/components/layout/Footer";
 
 export function Index() {
   return (
@@ -18,6 +19,7 @@ export function Index() {
         <ValueProposition />
         <CallToAction />
       </main>
+      <Footer />
     </div>
   );
 }
