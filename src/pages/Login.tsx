@@ -1,93 +1,36 @@
 import { useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { Loader2 } from "lucide-react";
-import { AuthChangeEvent } from '@supabase/supabase-js';
+import { AuthLoading } from '@/components/auth/AuthLoading';
+import { AuthLogo } from '@/components/auth/AuthLogo';
+import { useAuthState } from '@/hooks/use-auth-state';
 
 export default function Login() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
   const { session, isLoading } = useSessionContext();
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, currentSession) => {
-      console.log('Auth state changed:', event);
-      
-      if (event === 'SIGNED_IN' && currentSession) {
-        const from = location.state?.from?.pathname || '/app';
-        navigate(from, { replace: true });
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in.",
-        });
-      }
-
-      if (event === 'SIGNED_OUT') {
-        localStorage.removeItem('supabase-session');
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully.",
-        });
-      }
-
-      if (event === 'USER_UPDATED') {
-        console.log('User profile updated');
-      }
-
-      if (event === 'PASSWORD_RECOVERY') {
-        toast({
-          title: "Password recovery",
-          description: "Check your email for password reset instructions.",
-        });
-      }
-
-      // Handle authentication errors
-      if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
-        navigate('/login');
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [navigate, location.state?.from?.pathname, toast]);
+  const fromPath = location.state?.from?.pathname || '/app';
+  
+  useAuthState(fromPath);
 
   useEffect(() => {
     if (!isLoading && session) {
+      // If already authenticated, redirect to the intended page
       const from = location.state?.from?.pathname || '/app';
       navigate(from, { replace: true });
     }
   }, [session, isLoading, navigate, location]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#0D1D1F] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-white text-sm">Loading authentication...</p>
-        </div>
-      </div>
-    );
+    return <AuthLoading />;
   }
 
   return (
     <div className="min-h-screen bg-[#0D1D1F] flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <Link to="/" className="inline-block">
-            <h1 className="text-4xl font-bold mb-2">
-              <span className="text-white">Camp</span>
-              <span className="text-white">Track</span>
-              <span className="text-[#C0CCAB]">Pro</span>
-            </h1>
-          </Link>
-          <p className="text-gray-400">Manage your RV park with ease</p>
-        </div>
+        <AuthLogo />
         
         <div className="bg-white rounded-lg shadow-xl p-8">
           <Auth
