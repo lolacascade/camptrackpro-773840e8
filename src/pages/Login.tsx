@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from "@/hooks/use-toast";
 import { useSessionContext } from '@supabase/auth-helpers-react';
 import { Loader2 } from "lucide-react";
+import { AuthChangeEvent } from '@supabase/supabase-js';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function Login() {
   const { session, isLoading } = useSessionContext();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, currentSession) => {
       console.log('Auth state changed:', event);
       
       if (event === 'SIGNED_IN' && currentSession) {
