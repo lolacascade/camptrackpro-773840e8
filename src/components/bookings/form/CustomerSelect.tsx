@@ -68,11 +68,11 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
             disabled={isLoading}
             value={selectedCustomer?.name || searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Search customers..."
+            placeholder={isLoading ? "Loading customers..." : "Search customers..."}
             className="w-full"
           />
         </PopoverTrigger>
-        {customers.length > 0 && (
+        {!isLoading && customers.length > 0 && (
           <PopoverContent className="p-0" align="start">
             <Command>
               <CommandInput 
