@@ -1,9 +1,12 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Customer } from "@/types/customer";
-import { useState } from "react";
 
 interface CustomerSearchInputProps {
   isLoading: boolean;
@@ -18,23 +21,15 @@ export function CustomerSearchInput({
   selectedCustomer,
   onCustomerSelect,
 }: CustomerSearchInputProps) {
-  const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
-
-  const filteredCustomers = customers.filter(customer => 
-    customer.name.toLowerCase().includes(searchValue.toLowerCase())
-  );
-
   if (isLoading) {
     return (
       <div className="space-y-2">
         <Label>Customer</Label>
-        <Input
-          disabled
-          value=""
-          placeholder="Loading customers..."
-          className="w-full"
-        />
+        <Select disabled>
+          <SelectTrigger>
+            <SelectValue placeholder="Loading customers..." />
+          </SelectTrigger>
+        </Select>
       </div>
     );
   }
@@ -42,45 +37,21 @@ export function CustomerSearchInput({
   return (
     <div className="space-y-2">
       <Label>Customer</Label>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Input
-            value={selectedCustomer?.name || searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Search customers..."
-            className="w-full"
-          />
-        </PopoverTrigger>
-        {open && (
-          <PopoverContent className="p-0" align="start">
-            <Command>
-              <CommandInput 
-                placeholder="Search customers..." 
-                value={searchValue}
-                onValueChange={setSearchValue}
-              />
-              {filteredCustomers.length === 0 ? (
-                <CommandEmpty>No customer found.</CommandEmpty>
-              ) : (
-                <CommandGroup>
-                  {filteredCustomers.map((customer) => (
-                    <CommandItem
-                      key={customer.id}
-                      onSelect={() => {
-                        onCustomerSelect(customer.id);
-                        setSearchValue(customer.name);
-                        setOpen(false);
-                      }}
-                    >
-                      {customer.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              )}
-            </Command>
-          </PopoverContent>
-        )}
-      </Popover>
+      <Select
+        value={selectedCustomer?.id.toString()}
+        onValueChange={(value) => onCustomerSelect(parseInt(value))}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select a customer" />
+        </SelectTrigger>
+        <SelectContent>
+          {customers.map((customer) => (
+            <SelectItem key={customer.id} value={customer.id.toString()}>
+              {customer.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
