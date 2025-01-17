@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Customer } from "@/types/customer";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -66,8 +65,9 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
       <Select
         value={selectedCustomerId?.toString() || ""}
         onValueChange={(value) => onCustomerSelect(value ? parseInt(value) : null)}
+        disabled={isLoading}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger>
           <SelectValue placeholder="Select a customer" />
         </SelectTrigger>
         <SelectContent>
