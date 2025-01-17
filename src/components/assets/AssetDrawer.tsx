@@ -7,12 +7,14 @@ interface AssetDrawerProps {
   open: boolean
   onClose: () => void
   onAssetAdded: () => void
+  customerId: number | null
 }
 
-export function AssetDrawer({ open, onClose, onAssetAdded }: AssetDrawerProps) {
+export function AssetDrawer({ open, onClose, onAssetAdded, customerId }: AssetDrawerProps) {
   const { newAsset, setNewAsset, availableSlots, handleSubmit } = useAssetForm({ 
     onClose, 
-    onAssetAdded 
+    onAssetAdded,
+    customerId
   })
 
   return (
