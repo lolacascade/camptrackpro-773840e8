@@ -15,6 +15,7 @@ interface FormSelectProps {
   placeholder?: string
   tabIndex?: number
   className?: string
+  disabled?: boolean
 }
 
 export function FormSelect({
@@ -25,7 +26,8 @@ export function FormSelect({
   options,
   placeholder = "Select option",
   tabIndex,
-  className
+  className,
+  disabled
 }: FormSelectProps) {
   return (
     <div className="grid gap-2">
@@ -36,6 +38,7 @@ export function FormSelect({
           value={value}
           onChange={(e) => onValueChange(e.target.value)}
           tabIndex={tabIndex}
+          disabled={disabled}
           className={cn(
             "w-full h-10 px-3 rounded-md border border-input bg-white text-sm",
             "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",

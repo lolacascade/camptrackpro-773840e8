@@ -8,7 +8,11 @@ import { Booking } from "@/types/booking";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 
-export function BookingsTable() {
+interface BookingsTableProps {
+  onEdit?: (booking: Booking) => void;
+}
+
+export function BookingsTable({ onEdit }: BookingsTableProps) {
   const { toast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -123,6 +127,7 @@ export function BookingsTable() {
             }
           ]}
           tableName="bookings"
+          onRowClick={onEdit ? (row) => onEdit(row as Booking) : undefined}
         />
       </div>
     </Card>

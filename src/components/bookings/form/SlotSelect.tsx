@@ -49,7 +49,10 @@ export function SlotSelect({
 
         // Filter out slots that have bookings in the selected date range
         const bookedSlotIds = new Set(existingBookings?.map(b => b.slot_id));
-        const availableSlots = allSlots?.filter(slot => !bookedSlotIds.has(slot.id)) || [];
+        const availableSlots = (allSlots || []).filter(slot => !bookedSlotIds.has(slot.id)).map(slot => ({
+          ...slot,
+          status: slot.status as Slot['status'] // Ensure correct type
+        }));
 
         setAvailableSlots(availableSlots);
       } catch (error) {

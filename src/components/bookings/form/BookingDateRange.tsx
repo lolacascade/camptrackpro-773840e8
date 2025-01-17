@@ -1,9 +1,10 @@
-import { DateRange, Calendar } from "@/components/ui/calendar";
-import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar"
+import { Label } from "@/components/ui/label"
+import { DateRange as DateRangeType } from "react-day-picker"
 
 interface BookingDateRangeProps {
-  dateRange: DateRange | undefined;
-  onDateRangeChange: (range: DateRange | undefined) => void;
+  dateRange: DateRangeType | undefined;
+  onDateRangeChange: (range: DateRangeType | undefined) => void;
 }
 
 export function BookingDateRange({ dateRange, onDateRangeChange }: BookingDateRangeProps) {
