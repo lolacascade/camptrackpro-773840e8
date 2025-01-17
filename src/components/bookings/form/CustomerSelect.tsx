@@ -72,34 +72,36 @@ export function CustomerSelect({ selectedCustomerId, onCustomerSelect }: Custome
             className="w-full"
           />
         </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
-          <Command>
-            <CommandInput 
-              placeholder="Search customers..." 
-              value={searchValue}
-              onValueChange={setSearchValue}
-            />
-            <CommandEmpty>No customer found.</CommandEmpty>
-            <CommandGroup>
-              {customers
-                .filter(customer => 
-                  customer.name.toLowerCase().includes(searchValue.toLowerCase())
-                )
-                .map((customer) => (
-                  <CommandItem
-                    key={customer.id}
-                    onSelect={() => {
-                      onCustomerSelect(customer.id);
-                      setSearchValue(customer.name);
-                      setOpen(false);
-                    }}
-                  >
-                    {customer.name}
-                  </CommandItem>
-                ))}
-            </CommandGroup>
-          </Command>
-        </PopoverContent>
+        {!isLoading && (
+          <PopoverContent className="p-0" align="start">
+            <Command>
+              <CommandInput 
+                placeholder="Search customers..." 
+                value={searchValue}
+                onValueChange={setSearchValue}
+              />
+              <CommandEmpty>No customer found.</CommandEmpty>
+              <CommandGroup>
+                {customers
+                  .filter(customer => 
+                    customer.name.toLowerCase().includes(searchValue.toLowerCase())
+                  )
+                  .map((customer) => (
+                    <CommandItem
+                      key={customer.id}
+                      onSelect={() => {
+                        onCustomerSelect(customer.id);
+                        setSearchValue(customer.name);
+                        setOpen(false);
+                      }}
+                    >
+                      {customer.name}
+                    </CommandItem>
+                  ))}
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        )}
       </Popover>
 
       <CustomerDrawer
