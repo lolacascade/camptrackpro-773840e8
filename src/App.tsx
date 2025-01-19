@@ -7,6 +7,8 @@ import { BrowserRouter } from "react-router-dom";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { supabase } from "@/integrations/supabase/client";
 import { AppRoutes } from "@/components/routing/AppRoutes";
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +22,28 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Listen for auth state changes
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        // Clear query cache on sign out
+        queryClient.clear();
+      }
+      
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('Auth token refreshed successfully');
+      }
+
+      if (event === 'USER_UPDATED') {
+        console.log('User profile updated');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
   return (
     <StrictMode>
       <SessionContextProvider 
