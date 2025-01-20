@@ -100,6 +100,95 @@ export type Database = {
           },
         ]
       }
+      chat_history: {
+        Row: {
+          attachments: Json | null
+          created_at: string | null
+          id: number
+          message: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: number
+          message: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: number
+          message?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      chat_marina_insights: {
+        Row: {
+          content: Json
+          created_at: string | null
+          id: number
+          insight_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: Json
+          created_at?: string | null
+          id?: number
+          insight_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: Json
+          created_at?: string | null
+          id?: number
+          insight_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      customer_notes: {
+        Row: {
+          created_at: string | null
+          customer_id: string
+          id: number
+          note: string
+          tag: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id: string
+          id?: number
+          note: string
+          tag?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string
+          id?: number
+          note?: string
+          tag?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_notes_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           address: string | null
@@ -145,6 +234,123 @@ export type Database = {
         }
         Relationships: []
       }
+      maintenance_requests: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string | null
+          customer_id: string | null
+          description: string
+          id: number
+          priority: string
+          slot_id: number | null
+          status: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          description: string
+          id?: number
+          priority?: string
+          slot_id?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          customer_id?: string | null
+          description?: string
+          id?: number
+          priority?: string
+          slot_id?: number | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marina_details: {
+        Row: {
+          address: string | null
+          approach_info: Json | null
+          contact_email: string | null
+          contact_phone: string | null
+          coordinates: Json | null
+          created_at: string | null
+          id: number
+          name: string
+          other_features: Json | null
+          photos: string[] | null
+          services_amenities: Json | null
+          social_media: Json | null
+          total_slips: number | null
+          updated_at: string | null
+          user_id: string | null
+          videos: string[] | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          approach_info?: Json | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          coordinates?: Json | null
+          created_at?: string | null
+          id?: number
+          name: string
+          other_features?: Json | null
+          photos?: string[] | null
+          services_amenities?: Json | null
+          social_media?: Json | null
+          total_slips?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          videos?: string[] | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          approach_info?: Json | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          coordinates?: Json | null
+          created_at?: string | null
+          id?: number
+          name?: string
+          other_features?: Json | null
+          photos?: string[] | null
+          services_amenities?: Json | null
+          social_media?: Json | null
+          total_slips?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          videos?: string[] | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -171,6 +377,80 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      slots: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          dock: string | null
+          electricity_voltage: string | null
+          has_water: boolean | null
+          id: number
+          is_covered: boolean | null
+          last_activity_at: string | null
+          length_ft: number | null
+          location_coordinates: Json | null
+          location_identifier: string
+          maintenance_id: number | null
+          name: string
+          status: string
+          updated_at: string | null
+          user_id: string | null
+          utility_connection_type: string | null
+          width_ft: number | null
+          zone: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          dock?: string | null
+          electricity_voltage?: string | null
+          has_water?: boolean | null
+          id?: number
+          is_covered?: boolean | null
+          last_activity_at?: string | null
+          length_ft?: number | null
+          location_coordinates?: Json | null
+          location_identifier: string
+          maintenance_id?: number | null
+          name: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+          utility_connection_type?: string | null
+          width_ft?: number | null
+          zone?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          dock?: string | null
+          electricity_voltage?: string | null
+          has_water?: boolean | null
+          id?: number
+          is_covered?: boolean | null
+          last_activity_at?: string | null
+          length_ft?: number | null
+          location_coordinates?: Json | null
+          location_identifier?: string
+          maintenance_id?: number | null
+          name?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+          utility_connection_type?: string | null
+          width_ft?: number | null
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "slots_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
