@@ -2,8 +2,8 @@ import { useCustomers } from "./useCustomers";
 import { CustomerSearchInput } from "./CustomerSearchInput";
 
 interface CustomerSelectProps {
-  selectedCustomerId: number | null;
-  onCustomerSelect: (customerId: number | null) => void;
+  selectedCustomerId: string | null;
+  onCustomerSelect: (customerId: string | null) => void;
 }
 
 export function CustomerSelect({ 

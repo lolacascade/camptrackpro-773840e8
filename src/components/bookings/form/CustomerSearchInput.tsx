@@ -12,7 +12,7 @@ interface CustomerSearchInputProps {
   isLoading: boolean;
   customers: Customer[];
   selectedCustomer: Customer | undefined;
-  onCustomerSelect: (customerId: number) => void;
+  onCustomerSelect: (customerId: string) => void;
 }
 
 export function CustomerSearchInput({
@@ -38,16 +38,16 @@ export function CustomerSearchInput({
     <div className="space-y-2">
       <Label>Customer</Label>
       <Select
-        value={selectedCustomer?.id.toString()}
-        onValueChange={(value) => onCustomerSelect(parseInt(value))}
+        value={selectedCustomer?.id}
+        onValueChange={onCustomerSelect}
       >
         <SelectTrigger>
           <SelectValue placeholder="Select a customer" />
         </SelectTrigger>
         <SelectContent>
           {customers.map((customer) => (
-            <SelectItem key={customer.id} value={customer.id.toString()}>
-              {customer.name}
+            <SelectItem key={customer.id} value={customer.id}>
+              {`${customer.first_name} ${customer.last_name}`}
             </SelectItem>
           ))}
         </SelectContent>

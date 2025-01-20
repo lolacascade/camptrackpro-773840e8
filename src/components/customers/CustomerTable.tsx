@@ -33,7 +33,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
           const { data: freshCustomers } = await supabase
             .from('customers')
             .select('*')
-            .order('name');
+            .order('first_name');
           if (freshCustomers) {
             setLocalCustomers(freshCustomers);
           }

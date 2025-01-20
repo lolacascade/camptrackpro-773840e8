@@ -9,6 +9,6 @@ export interface Customer {
   state?: string | null;
   country?: string | null;
   postal_code?: string | null;
-  created_at?: string | null;
-  updated_at?: string | null;
+  created_at: string;
+  updated_at: string;
 }

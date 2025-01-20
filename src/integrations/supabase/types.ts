@@ -42,36 +42,45 @@ export type Database = {
       bookings: {
         Row: {
           asset_id: string
+          check_in_date: string
+          check_out_date: string
           created_at: string
           created_by: string
           customer_id: string
-          end_date: string
           id: string
-          start_date: string
+          reservation_code: string | null
+          slot_id: number | null
+          special_requirements: string | null
           status: Database["public"]["Enums"]["booking_status"]
           total_amount: number
           updated_at: string
         }
         Insert: {
           asset_id: string
+          check_in_date: string
+          check_out_date: string
           created_at?: string
           created_by: string
           customer_id: string
-          end_date: string
           id?: string
-          start_date: string
+          reservation_code?: string | null
+          slot_id?: number | null
+          special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount: number
           updated_at?: string
         }
         Update: {
           asset_id?: string
+          check_in_date?: string
+          check_out_date?: string
           created_at?: string
           created_by?: string
           customer_id?: string
-          end_date?: string
           id?: string
-          start_date?: string
+          reservation_code?: string | null
+          slot_id?: number | null
+          special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number
           updated_at?: string
@@ -96,6 +105,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "slots"
             referencedColumns: ["id"]
           },
         ]
