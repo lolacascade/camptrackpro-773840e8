@@ -11,33 +11,56 @@ export type Database = {
     Tables: {
       assets: {
         Row: {
+          asset_name: string | null
+          asset_size: string | null
+          asset_type: string | null
           created_at: string
+          customer_id: string | null
           daily_rate: number
           id: string
           name: string
+          slip_id: number | null
           status: string
           type: string
           updated_at: string
         }
         Insert: {
+          asset_name?: string | null
+          asset_size?: string | null
+          asset_type?: string | null
           created_at?: string
+          customer_id?: string | null
           daily_rate: number
           id?: string
           name: string
+          slip_id?: number | null
           status?: string
           type: string
           updated_at?: string
         }
         Update: {
+          asset_name?: string | null
+          asset_size?: string | null
+          asset_type?: string | null
           created_at?: string
+          customer_id?: string | null
           daily_rate?: number
           id?: string
           name?: string
+          slip_id?: number | null
           status?: string
           type?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "assets_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       bookings: {
         Row: {
@@ -115,6 +138,42 @@ export type Database = {
             columns: ["slot_id"]
             isOneToOne: false
             referencedRelation: "slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings_assets: {
+        Row: {
+          asset_id: string | null
+          booking_id: string | null
+          created_at: string | null
+          id: number
+        }
+        Insert: {
+          asset_id?: string | null
+          booking_id?: string | null
+          created_at?: string | null
+          id?: number
+        }
+        Update: {
+          asset_id?: string | null
+          booking_id?: string | null
+          created_at?: string | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_assets_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_assets_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
         ]
