@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Asset } from "@/types/asset";
-import { Slot } from "@/types/slot";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { AssetTable } from "@/components/assets/AssetTable";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
+import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
+import { PageWithChat } from "@/components/layout/PageWithChat";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -21,21 +22,20 @@ export default function Assets() {
         .from('assets')
         .select(`
           *,
-          slots:slots(
-            id, name, dock, status, location_identifier, zone, length_ft, width_ft,
-            is_covered, has_water, electricity_voltage, utility_connection_type,
-            location_coordinates, customer_id, maintenance_id, created_at, updated_at,
-            last_activity_at, user_id
+          customers (
+            id,
+            first_name,
+            last_name
+          ),
+          slots:slip_id (
+            id,
+            name,
+            dock
           )
         `);
 
       if (error) throw error;
-
-      return (data || []).map(asset => ({
-        ...asset,
-        user_id: session?.user?.id,
-        slots: asset.slots ? (Array.isArray(asset.slots) ? asset.slots[0] : asset.slots) as Slot : null
-      })) as Asset[];
+      return data || [];
     },
     enabled: !!session?.user?.id,
   });
@@ -51,7 +51,6 @@ export default function Assets() {
   };
 
   const handleViewDetails = (asset: Asset) => {
-    // Implement view details functionality
     console.log("View details for asset:", asset);
   };
 
@@ -61,21 +60,26 @@ export default function Assets() {
   };
 
   return (
-    <PageContainer>
-      <AssetsHeader onAddAsset={handleAddAsset} />
-      <AssetTable
-        assets={assets}
-        onEdit={handleEditClick}
-        onViewDetails={handleViewDetails}
-      />
-      <AssetDrawer
-        open={isDrawerOpen}
-        onClose={handleCloseDrawer}
-        onAssetAdded={() => {
-          // Refresh data or handle asset added
-        }}
-        customerId={selectedAsset?.customer_id || null}
-      />
-    </PageContainer>
+    <PageWithChat>
+      <PageContainer>
+        <div className="space-y-6">
+          <AssetsHeader onAddAsset={handleAddAsset} />
+          <AssetStatsCards />
+          <AssetTable
+            assets={assets}
+            onEdit={handleEditClick}
+            onViewDetails={handleViewDetails}
+          />
+          <AssetDrawer
+            open={isDrawerOpen}
+            onClose={handleCloseDrawer}
+            onAssetAdded={() => {
+              // Refresh data or handle asset added
+            }}
+            customerId={selectedAsset?.customer_id || null}
+          />
+        </div>
+      </PageContainer>
+    </PageWithChat>
   );
 }
