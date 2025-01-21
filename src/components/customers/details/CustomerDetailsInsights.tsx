@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Customer } from "@/types/customer";
-import { CustomerHeader } from "./CustomerHeader";
+import { CustomerHeader } from "../CustomerHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
