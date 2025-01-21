@@ -5,16 +5,15 @@ import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function CustomerDetails() {
   const { id } = useParams();
-  const customerId = id ? parseInt(id, 10) : 0; // Convert string ID to number
 
-  if (!customerId) {
+  if (!id) {
     return <div>Invalid customer ID</div>;
   }
 
   return (
     <PageWithChat>
       <PageContainer>
-        <CustomerDetailsInsights customerId={customerId} />
+        <CustomerDetailsInsights customerId={id} />
       </PageContainer>
     </PageWithChat>
   );
