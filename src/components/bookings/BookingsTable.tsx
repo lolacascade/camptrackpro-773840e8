@@ -21,7 +21,12 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         .from('bookings')
         .select(`
           *,
-          slot:slots(id, name, status, location_identifier, dock, zone, length_ft, width_ft, is_covered, has_water, electricity_voltage, utility_connection_type),
+          slot:slots(
+            id, name, status, location_identifier, dock, zone, length_ft, width_ft, 
+            is_covered, has_water, electricity_voltage, utility_connection_type,
+            location_coordinates, customer_id, maintenance_id, created_at, updated_at,
+            last_activity_at, user_id
+          ),
           customer:customers(id, first_name, last_name, email, created_at, updated_at)
         `);
       

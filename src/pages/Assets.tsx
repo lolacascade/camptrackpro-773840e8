@@ -12,7 +12,7 @@ import { Slot } from "@/types/slot";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | undefined>();
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const session = useSession();
 
   const { data: assets = [], isLoading } = useQuery({
@@ -23,25 +23,10 @@ export default function Assets() {
         .select(`
           *,
           slots:slots(
-            id,
-            name,
-            dock,
-            status,
-            location_identifier,
-            zone,
-            length_ft,
-            width_ft,
-            is_covered,
-            has_water,
-            electricity_voltage,
-            utility_connection_type,
-            location_coordinates,
-            customer_id,
-            maintenance_id,
-            created_at,
-            updated_at,
-            last_activity_at,
-            user_id
+            id, name, dock, status, location_identifier, zone, length_ft, width_ft,
+            is_covered, has_water, electricity_voltage, utility_connection_type,
+            location_coordinates, customer_id, maintenance_id, created_at, updated_at,
+            last_activity_at, user_id
           )
         `);
 
@@ -57,7 +42,7 @@ export default function Assets() {
   });
 
   const handleCreateClick = () => {
-    setSelectedAsset(undefined);
+    setSelectedAsset(null);
     setIsDrawerOpen(true);
   };
 
@@ -68,19 +53,19 @@ export default function Assets() {
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-    setSelectedAsset(undefined);
+    setSelectedAsset(null);
   };
 
   return (
     <PageContainer>
-      <AssetsHeader onCreateClick={handleCreateClick} />
+      <AssetsHeader onCreate={handleCreateClick} />
       <AssetTable
         assets={assets}
         isLoading={isLoading}
         onEdit={handleEditClick}
       />
       <AssetDrawer
-        asset={selectedAsset}
+        selectedAsset={selectedAsset}
         open={isDrawerOpen}
         onClose={handleCloseDrawer}
       />
