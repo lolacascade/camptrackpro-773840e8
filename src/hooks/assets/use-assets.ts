@@ -25,7 +25,23 @@ export function useAssets() {
           slots:slip_id (
             id,
             name,
-            dock
+            dock,
+            zone,
+            length_ft,
+            width_ft,
+            is_covered,
+            has_water,
+            electricity_voltage,
+            utility_connection_type,
+            location_coordinates,
+            customer_id,
+            maintenance_id,
+            created_at,
+            updated_at,
+            last_activity_at,
+            user_id,
+            status,
+            location_identifier
           )
         `)
         .eq('user_id', session.user.id);
@@ -37,6 +53,7 @@ export function useAssets() {
       
       return (data || []).map((asset): Asset => ({
         ...asset,
+        id: String(asset.id),
         user_id: asset.user_id || null,
         customers: asset.customers ? {
           ...asset.customers,
@@ -45,11 +62,7 @@ export function useAssets() {
         slots: asset.slots ? {
           ...asset.slots,
           id: String(asset.slots.id),
-          user_id: null, // Add missing user_id field
-          created_at: new Date().toISOString(), // Add missing created_at field
-          updated_at: new Date().toISOString(), // Add missing updated_at field
-          status: 'available', // Add missing status field
-          location_identifier: '', // Add missing location_identifier field
+          user_id: asset.slots.user_id || null
         } : null
       }));
     },

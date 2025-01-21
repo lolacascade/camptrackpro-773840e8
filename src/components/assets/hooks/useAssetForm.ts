@@ -65,17 +65,22 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     }
 
     try {
+      const assetData = {
+        asset_name: newAsset.asset_name,
+        asset_size: newAsset.asset_size,
+        asset_type: newAsset.asset_type,
+        slip_id: newAsset.slip_id,
+        customer_id: newAsset.customer_id,
+        name: newAsset.asset_name,
+        type: newAsset.asset_type,
+        status: 'available',
+        daily_rate: newAsset.daily_rate || 0,
+        user_id: session.user.id,
+      };
+
       const { error } = await supabase
         .from('assets')
-        .insert({
-          ...newAsset,
-          name: newAsset.asset_name || '',
-          type: newAsset.asset_type || '',
-          daily_rate: newAsset.daily_rate || 0,
-          user_id: session.user.id,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+        .insert(assetData);
 
       if (error) throw error;
 
