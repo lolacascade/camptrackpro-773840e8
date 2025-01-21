@@ -67,6 +67,7 @@ export function CustomerDetailsInsights({ customerId }: CustomerDetailsInsightsP
           <Card className="p-4">
             <h3 className="text-lg font-semibold mb-4">Customer Overview</h3>
             <div className="space-y-2">
+              <p><span className="font-medium">Name:</span> {customer.first_name} {customer.last_name}</p>
               <p><span className="font-medium">Email:</span> {customer.email}</p>
               <p><span className="font-medium">Phone:</span> {customer.phone || 'N/A'}</p>
               <p><span className="font-medium">Address:</span> {customer.address || 'N/A'}</p>

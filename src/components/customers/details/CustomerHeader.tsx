@@ -23,7 +23,9 @@ export function CustomerHeader({ customer }: CustomerHeaderProps) {
       
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-semibold text-[#133134]">{customer.name}</h1>
+          <h1 className="text-3xl font-semibold text-[#133134]">
+            {`${customer.first_name} ${customer.last_name}`}
+          </h1>
           <div className="mt-2 text-gray-600">
             <p>{customer.email}</p>
             <p>{customer.phone}</p>
