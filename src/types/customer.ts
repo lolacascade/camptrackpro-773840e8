@@ -13,4 +13,8 @@ export interface Customer {
   updated_at: string;
   user_id?: string | null;
   lifetime_value?: number | null;
+  customer?: {
+    name: string;
+    email: string;
+  };
 }
