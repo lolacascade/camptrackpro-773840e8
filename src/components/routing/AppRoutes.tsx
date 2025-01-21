@@ -14,6 +14,7 @@ import Financials from "@/pages/Financials";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import TermsOfService from "@/pages/TermsOfService";
 import Bookings from "@/pages/Bookings";
+import Map from "@/pages/Map";
 
 export const AppRoutes = () => {
   const session = useSession();
@@ -46,6 +47,7 @@ export const AppRoutes = () => {
         <Route path="maintenance" element={<Maintenance />} />
         <Route path="settings" element={<Settings />} />
         <Route path="financials" element={<Financials />} />
+        <Route path="map" element={<Map />} />
       </Route>
 
       {/* Catch all route - redirect to home or dashboard based on auth status */}
