@@ -14,7 +14,8 @@ export interface Asset {
   daily_rate: number;
   customers?: {
     id: string;
-    name: string;
+    first_name: string;
+    last_name: string;
   } | null;
   slots?: {
     id: number;

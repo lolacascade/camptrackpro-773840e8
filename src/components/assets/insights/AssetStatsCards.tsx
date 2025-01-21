@@ -77,7 +77,7 @@ export function AssetStatsCards() {
       const totalAssets = assets?.length || 0;
       const activeBookings = assets?.filter(asset => 
         asset.bookings_assets?.some(ba => 
-          ba.bookings?.status === 'active'
+          ba.bookings?.status === 'confirmed'
         )
       ).length || 0;
 
@@ -116,7 +116,7 @@ export function AssetStatsCards() {
           overdue: maintenance?.filter(m => m.status === 'overdue').length || 0
         },
         bookings: {
-          active: bookings?.filter(b => b.status === 'active').length || 0,
+          active: bookings?.filter(b => b.status === 'confirmed').length || 0,
           upcoming: bookings?.filter(b => b.status === 'pending').length || 0
         }
       };

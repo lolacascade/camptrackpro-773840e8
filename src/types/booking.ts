@@ -1,18 +1,20 @@
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
 export interface Booking {
   id: string;
   customer_id: string;
+  asset_id: string;
   check_in_date: string;
   check_out_date: string;
-  slot_id: number | null;
-  created_at: string | null;
-  special_requirements: string | null;
-  status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
-  reservation_code: string;
-  user_id: string | null;
-  asset_id: string;
-  created_by: string;
+  status: BookingStatus;
   total_amount: number;
-  updated_at: string;
+  created_by: string;
+  created_at: string | null;
+  updated_at: string | null;
+  slot_id: number | null;
+  special_requirements: string | null;
+  reservation_code: string | null;
+  user_id: string | null;
   slot?: {
     name: string;
   };

@@ -31,13 +31,13 @@ export function BookingDrawer({
     from: booking?.check_in_date ? new Date(booking.check_in_date) : new Date(),
     to: booking?.check_out_date ? new Date(booking.check_out_date) : addDays(new Date(), 1)
   });
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(
     booking?.customer_id || null
   );
-  const [selectedAssetId, setSelectedAssetId] = useState<number | null>(null);
+  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
 
   const handleSave = async () => {
-    if (!session?.user?.id || !dateRange?.from || !dateRange?.to || !selectedCustomerId) {
+    if (!session?.user?.id || !dateRange?.from || !dateRange?.to || !selectedCustomerId || !selectedAssetId) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -51,9 +51,12 @@ export function BookingDrawer({
       const bookingData = {
         user_id: session.user.id,
         customer_id: selectedCustomerId,
+        asset_id: selectedAssetId,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending',
+        status: 'pending' as const,
+        total_amount: 0, // This will be calculated by the backend
+        created_by: session.user.id,
         slot_id: 1, // We'll need to get this from somewhere else later
         reservation_code: `RES-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
         created_at: new Date().toISOString(),
