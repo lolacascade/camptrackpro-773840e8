@@ -5,40 +5,13 @@ import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { AssetTable } from "@/components/assets/AssetTable";
 import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useAssets } from "@/hooks/assets/use-assets";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const session = useSession();
-
-  const { data: assets = [] } = useQuery({
-    queryKey: ['assets', session?.user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('assets')
-        .select(`
-          *,
-          customers (
-            id,
-            first_name,
-            last_name
-          ),
-          slots:slip_id (
-            id,
-            name,
-            dock
-          )
-        `);
-
-      if (error) throw error;
-      return data || [];
-    },
-    enabled: !!session?.user?.id,
-  });
+  const { data: assets = [], isLoading } = useAssets();
 
   const handleAddAsset = () => {
     setSelectedAsset(null);
@@ -69,12 +42,13 @@ export default function Assets() {
             assets={assets}
             onEdit={handleEditClick}
             onViewDetails={handleViewDetails}
+            isLoading={isLoading}
           />
           <AssetDrawer
             open={isDrawerOpen}
             onClose={handleCloseDrawer}
             onAssetAdded={() => {
-              // Refresh data or handle asset added
+              // Refresh will happen automatically via React Query
             }}
             customerId={selectedAsset?.customer_id || null}
           />

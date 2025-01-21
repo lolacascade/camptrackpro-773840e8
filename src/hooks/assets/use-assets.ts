@@ -7,7 +7,7 @@ export function useAssets() {
   const session = useSession();
 
   return useQuery({
-    queryKey: ["assets"],
+    queryKey: ["assets", session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) {
         throw new Error("No authenticated user");
@@ -17,18 +17,25 @@ export function useAssets() {
         .from("assets")
         .select(`
           *,
-          customers:customer_id(id, name),
-          slots:slip_id(id, name, dock)
+          customers (
+            id,
+            first_name,
+            last_name
+          ),
+          slots:slip_id (
+            id,
+            name,
+            dock
+          )
         `)
-        .eq('user_id', session.user.id)
-        .returns<Asset[]>();
+        .eq('user_id', session.user.id);
 
       if (error) {
         console.error('Supabase error:', error);
         throw error;
       }
       
-      return data;
+      return data || [];
     },
     enabled: !!session?.user?.id,
   });

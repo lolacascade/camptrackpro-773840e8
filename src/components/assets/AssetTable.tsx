@@ -18,9 +18,10 @@ interface AssetTableProps {
   assets: Asset[];
   onEdit: (asset: Asset) => void;
   onViewDetails: (asset: Asset) => void;
+  isLoading?: boolean;
 }
 
-export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
+export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTableProps) {
   const [typeFilter, setTypeFilter] = useState("all");
   const [customerFilter, setCustomerFilter] = useState("all");
 
@@ -53,6 +54,10 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
     if (customerFilter !== "all" && asset.customer_id?.toString() !== customerFilter) return false;
     return true;
   });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="space-y-4">
