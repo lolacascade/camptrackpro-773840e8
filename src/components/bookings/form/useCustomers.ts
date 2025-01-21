@@ -2,15 +2,11 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
 import { useToast } from "@/components/ui/use-toast";
-import { useSessionCheck } from "@/hooks/use-session-check";
 
 export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-
-  // Add session check
-  useSessionCheck();
 
   useEffect(() => {
     const fetchCustomers = async () => {
