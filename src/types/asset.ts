@@ -1,15 +1,19 @@
 export interface Asset {
-  id: number;
+  id: string;
   asset_name: string;
   asset_size: string | null;
   asset_type: string | null;
-  customer_id: number | null;
-  slip_id: number;
+  customer_id: string | null;
+  slip_id: number | null;
   user_id: string | null;
   created_at: string | null;
   updated_at: string | null;
+  name: string;
+  type: string;
+  status: string;
+  daily_rate: number;
   customers?: {
-    id: number;
+    id: string;
     name: string;
   } | null;
   slots?: {

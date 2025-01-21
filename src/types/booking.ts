@@ -1,14 +1,18 @@
 export interface Booking {
-  id: number;
-  customer_id: number;
+  id: string;
+  customer_id: string;
   check_in_date: string;
   check_out_date: string;
-  slot_id: number;
+  slot_id: number | null;
   created_at: string | null;
   special_requirements: string | null;
   status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
   reservation_code: string;
   user_id: string | null;
+  asset_id: string;
+  created_by: string;
+  total_amount: number;
+  updated_at: string;
   slot?: {
     name: string;
   };

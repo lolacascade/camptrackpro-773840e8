@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 interface UseAssetFormProps {
   onClose: () => void;
   onAssetAdded: () => void;
-  customerId: number | null;
+  customerId: string | null;
 }
 
 export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetFormProps) {
@@ -19,7 +19,11 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     asset_size: '',
     customer_id: customerId,
     slip_id: null,
-    asset_type: 'Speed Boat',
+    asset_type: '',
+    name: '',
+    type: '',
+    status: 'available',
+    daily_rate: 0
   });
 
   useEffect(() => {
@@ -63,11 +67,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
       const { error } = await supabase
         .from('assets')
         .insert({
-          asset_name: newAsset.asset_name,
-          asset_size: newAsset.asset_size,
-          asset_type: newAsset.asset_type,
-          slip_id: newAsset.slip_id,
-          customer_id: customerId,
+          ...newAsset,
           user_id: session.user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
@@ -81,7 +81,11 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         asset_size: '',
         customer_id: null,
         slip_id: null,
-        asset_type: 'Speed Boat',
+        asset_type: '',
+        name: '',
+        type: '',
+        status: 'available',
+        daily_rate: 0
       });
       
       toast({
