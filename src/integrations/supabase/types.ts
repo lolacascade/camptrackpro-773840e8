@@ -54,6 +54,7 @@ export type Database = {
           status: Database["public"]["Enums"]["booking_status"]
           total_amount: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           asset_id: string
@@ -69,6 +70,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           asset_id?: string
@@ -84,6 +86,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -215,10 +218,12 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
+          lifetime_value: number | null
           phone: string | null
           postal_code: string | null
           state: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address?: string | null
@@ -229,10 +234,12 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
+          lifetime_value?: number | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address?: string | null
@@ -243,12 +250,88 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
+          lifetime_value?: number | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string | null
+          date: string
+          description: string
+          id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string | null
+          date: string
+          description: string
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string | null
+          date?: string
+          description?: string
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      invoices: {
+        Row: {
+          amount: number
+          booking_id: string | null
+          created_at: string | null
+          id: string
+          status: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       maintenance_requests: {
         Row: {
@@ -364,6 +447,36 @@ export type Database = {
           user_id?: string | null
           videos?: string[] | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      monthly_budgets: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string | null
+          id: string
+          month: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          category: string
+          created_at?: string | null
+          id?: string
+          month: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string | null
+          id?: string
+          month?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
