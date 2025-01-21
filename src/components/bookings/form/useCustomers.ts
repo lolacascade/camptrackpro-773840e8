@@ -24,7 +24,9 @@ export function useCustomers() {
             state,
             country,
             postal_code,
-            lifetime_value
+            lifetime_value,
+            created_at,
+            updated_at
           `)
           .order('first_name', { ascending: true });
         
