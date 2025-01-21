@@ -13,43 +13,9 @@ import { PageContainer } from "@/components/layout/PageContainer";
 
 export default function Customers() {
   const { toast } = useToast();
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const session = useSession();
-
-  const fetchCustomers = async () => {
-    try {
-      if (!session?.user?.id) return;
-      
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('first_name', { ascending: true });
-
-      if (error) throw error;
-      setCustomers(data || []);
-      if (data && data.length > 0) {
-        setSelectedCustomer(data[0]); // Select the first customer by default
-      }
-    } catch (error) {
-      console.error('Error fetching customers:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load customers.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (session?.user) {
-      fetchCustomers();
-    }
-  }, [session]);
 
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -77,16 +43,9 @@ export default function Customers() {
 
           <CustomerInsights customer={selectedCustomer} />
 
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#133134]"></div>
-            </div>
-          ) : (
-            <CustomerTable
-              customers={customers}
-              onEdit={handleEdit}
-            />
-          )}
+          <CustomerTable
+            onEdit={handleEdit}
+          />
 
           <CustomerDrawer
             customer={selectedCustomer}
@@ -95,7 +54,10 @@ export default function Customers() {
               setIsDrawerOpen(false);
               setSelectedCustomer(null);
             }}
-            onCustomerUpdated={fetchCustomers}
+            onCustomerUpdated={() => {
+              setIsDrawerOpen(false);
+              setSelectedCustomer(null);
+            }}
           />
         </div>
       </PageContainer>
