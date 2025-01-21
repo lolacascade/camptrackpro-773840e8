@@ -78,7 +78,7 @@ Remember: You're helping manage an RV park. Always use the real-time data provid
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4',
         messages: [systemMessage, ...messages],
         temperature: 0.7,
         max_tokens: 500,
