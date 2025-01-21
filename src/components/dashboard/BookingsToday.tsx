@@ -21,7 +21,7 @@ export function BookingsToday() {
           id,
           check_in_date,
           check_out_date,
-          customer:customers(name, email),
+          customer:customers(first_name, last_name, email),
           slot:slots(name)
         `)
         .eq('check_in_date', new Date().toISOString().split('T')[0]);
@@ -38,6 +38,7 @@ export function BookingsToday() {
         priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
         customer: {
           ...booking.customer,
+          name: `${booking.customer.first_name} ${booking.customer.last_name}`,
           isVIP: Math.random() > 0.8
         }
       })) as Booking[];
