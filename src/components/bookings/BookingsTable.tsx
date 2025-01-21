@@ -11,25 +11,6 @@ interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
 }
 
-type BookingWithRelations = {
-  id: string;
-  customer_id: string;
-  asset_id: string;
-  check_in_date: string;
-  check_out_date: string;
-  status: Booking['status'];
-  total_amount: number;
-  created_by: string;
-  created_at: string;
-  updated_at: string;
-  slot_id: number | null;
-  special_requirements: string | null;
-  reservation_code: string | null;
-  user_id: string | null;
-  slot: { name: string } | null;
-  customer: { name: string; email: string } | null;
-}
-
 export function BookingsTable({ onEdit }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
 
@@ -38,17 +19,37 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('bookings')
-        .select('*, slot:slots(name), customer:customers(first_name, last_name, email)');
+        .select(`
+          *,
+          slot:slots(name),
+          customer:customers(id, first_name, last_name, email)
+        `);
       
       if (error) throw error;
 
-      // Transform the data to match our expected format
-      return (data || []).map((booking): BookingWithRelations => ({
-        ...booking,
+      return (data || []).map((booking): Booking => ({
+        id: booking.id,
+        customer_id: booking.customer_id,
+        asset_id: booking.asset_id,
+        check_in_date: booking.check_in_date,
+        check_out_date: booking.check_out_date,
+        status: booking.status,
+        total_amount: booking.total_amount,
+        created_at: booking.created_at,
+        updated_at: booking.updated_at,
+        slot_id: booking.slot_id,
+        special_requirements: booking.special_requirements,
+        reservation_code: booking.reservation_code,
+        user_id: booking.user_id,
         customer: booking.customer ? {
-          name: `${booking.customer.first_name} ${booking.customer.last_name}`,
-          email: booking.customer.email
-        } : null
+          id: booking.customer.id,
+          first_name: booking.customer.first_name,
+          last_name: booking.customer.last_name,
+          email: booking.customer.email,
+          created_at: booking.created_at,
+          updated_at: booking.updated_at
+        } : undefined,
+        slot: booking.slot
       }));
     }
   });
@@ -73,7 +74,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
             }
           ]}
           tableName="bookings"
-          onRowClick={onEdit ? (row) => onEdit(row as Booking) : undefined}
+          onRowClick={onEdit}
         />
       </div>
     </Card>

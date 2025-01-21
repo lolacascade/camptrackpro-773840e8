@@ -11,6 +11,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
+import { Slot } from "@/types/slot";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -38,11 +39,11 @@ export default function Assets() {
       return (data || []).map(asset => ({
         ...asset,
         user_id: session.user.id,
-        slots: asset.slots && asset.slots[0] ? {
-          id: Number(asset.slots[0].id),
-          name: String(asset.slots[0].name),
-          dock: String(asset.slots[0].dock)
-        } : null
+        slots: asset.slots ? {
+          id: asset.slots.id,
+          name: asset.slots.name,
+          dock: asset.slots.dock
+        } as Slot : null
       })) as Asset[];
     },
     enabled: !!session?.user?.id,

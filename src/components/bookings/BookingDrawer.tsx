@@ -12,14 +12,28 @@ interface BookingDrawerProps {
   onBookingUpdated: () => void;
 }
 
+type BookingFormData = Omit<Booking, 'id' | 'created_at' | 'updated_at' | 'customer' | 'slot'>;
+
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
-  const { handleSubmit } = useForm({
-    defaultValues: booking || {
+  const { handleSubmit } = useForm<BookingFormData>({
+    defaultValues: booking ? {
+      customer_id: booking.customer_id,
+      asset_id: booking.asset_id,
+      check_in_date: booking.check_in_date,
+      check_out_date: booking.check_out_date,
+      status: booking.status,
+      total_amount: booking.total_amount,
+      slot_id: booking.slot_id,
+      special_requirements: booking.special_requirements,
+      reservation_code: booking.reservation_code,
+      user_id: booking.user_id
+    } : {
       status: 'pending',
+      total_amount: 0
     }
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: BookingFormData) => {
     try {
       if (booking?.id) {
         const { error } = await supabase
