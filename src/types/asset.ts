@@ -12,4 +12,13 @@ export interface Asset {
   type: string;
   status: string;
   daily_rate: number;
+  customers?: {
+    id: string;
+    name: string;
+  } | null;
+  slots?: {
+    id: number;
+    name: string;
+    dock: string | null;
+  } | null;
 }

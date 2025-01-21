@@ -68,6 +68,9 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         .from('assets')
         .insert({
           ...newAsset,
+          name: newAsset.asset_name || '',
+          type: newAsset.asset_type || '',
+          daily_rate: newAsset.daily_rate || 0,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });

@@ -28,11 +28,7 @@ export function useAssets() {
         throw error;
       }
       
-      return data.map(asset => ({
-        ...asset,
-        customers: asset.customers || null,
-        slots: asset.slots || null
-      }));
+      return data;
     },
     enabled: !!session?.user?.id,
   });
