@@ -3,20 +3,14 @@ export interface Customer {
   first_name: string;
   last_name: string;
   email: string;
-  phone?: string | null;
-  address?: string | null;
-  city?: string | null;
-  state?: string | null;
-  country?: string | null;
-  postal_code?: string | null;
+  phone?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  postal_code?: string;
   created_at: string;
   updated_at: string;
-  user_id?: string | null;
-  lifetime_value?: number | null;
-  assets?: Array<{
-    id: string;
-    asset_name: string;
-    asset_type: string;
-    asset_size: string;
-  }>;
+  user_id?: string;
+  lifetime_value?: number;
 }

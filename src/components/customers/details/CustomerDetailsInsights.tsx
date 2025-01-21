@@ -4,109 +4,68 @@ import { CustomerHeader } from "../CustomerHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { CustomerStatsCards } from "../insights/CustomerStatsCards";
+import { AssetsTab } from "./tabs/AssetsTab";
+import { NotesTab } from "./tabs/NotesTab";
+import { MaintenanceTab } from "./tabs/MaintenanceTab";
 
 interface CustomerDetailsInsightsProps {
-  customerId: string;
+  customer: Customer;
 }
 
-export function CustomerDetailsInsights({ customerId }: CustomerDetailsInsightsProps) {
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchCustomer = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('customers')
-          .select(`
-            *,
-            assets (*)
-          `)
-          .eq('id', customerId)
-          .single();
-
-        if (error) throw error;
-        setCustomer(data);
-      } catch (error) {
-        console.error('Error fetching customer:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load customer details",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCustomer();
-  }, [customerId, toast]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!customer) {
-    return <div>Customer not found</div>;
-  }
+export function CustomerDetailsInsights({ customer }: CustomerDetailsInsightsProps) {
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="space-y-6">
       <CustomerHeader customer={customer} />
-      
-      <CustomerStatsCards customer={customer} />
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="assets">Assets</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
-        </TabsList>
+      <Card className="p-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="assets">Assets</TabsTrigger>
+            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
+            <TabsTrigger value="notes">Notes</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Customer Overview</h3>
-            <div className="space-y-2">
-              <p><span className="font-medium">Name:</span> {customer.first_name} {customer.last_name}</p>
-              <p><span className="font-medium">Email:</span> {customer.email}</p>
-              <p><span className="font-medium">Phone:</span> {customer.phone || 'N/A'}</p>
-              <p><span className="font-medium">Address:</span> {customer.address || 'N/A'}</p>
-              <p><span className="font-medium">City:</span> {customer.city || 'N/A'}</p>
-              <p><span className="font-medium">State:</span> {customer.state || 'N/A'}</p>
-              <p><span className="font-medium">Country:</span> {customer.country || 'N/A'}</p>
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="assets">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Customer Assets</h3>
-            {customer.assets && customer.assets.length > 0 ? (
-              <div className="space-y-4">
-                {customer.assets.map((asset) => (
-                  <div key={asset.id} className="p-4 border rounded-lg">
-                    <p><span className="font-medium">Name:</span> {asset.asset_name}</p>
-                    <p><span className="font-medium">Type:</span> {asset.asset_type}</p>
-                    <p><span className="font-medium">Size:</span> {asset.asset_size}</p>
+          <div className="mt-4">
+            <TabsContent value="overview">
+              <div className="grid gap-4">
+                <div>
+                  <h3 className="text-lg font-medium">Contact Information</h3>
+                  <div className="mt-2 space-y-2">
+                    <p>Email: {customer.email}</p>
+                    <p>Phone: {customer.phone || 'Not provided'}</p>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p>No assets assigned to this customer</p>
-            )}
-          </Card>
-        </TabsContent>
+                </div>
 
-        <TabsContent value="preferences">
-          <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Customer Preferences</h3>
-            <p>Preferences will be displayed here</p>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                <div>
+                  <h3 className="text-lg font-medium">Address</h3>
+                  <div className="mt-2 space-y-2">
+                    <p>{customer.address || 'No address provided'}</p>
+                    <p>
+                      {customer.city} {customer.state} {customer.postal_code}
+                    </p>
+                    <p>{customer.country}</p>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="assets">
+              <AssetsTab customerId={customer.id} />
+            </TabsContent>
+
+            <TabsContent value="maintenance">
+              <MaintenanceTab customerId={customer.id} />
+            </TabsContent>
+
+            <TabsContent value="notes">
+              <NotesTab customerId={customer.id} />
+            </TabsContent>
+          </div>
+        </Tabs>
+      </Card>
     </div>
   );
 }
