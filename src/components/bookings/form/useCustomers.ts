@@ -13,7 +13,19 @@ export function useCustomers() {
       try {
         const { data, error } = await supabase
           .from('customers')
-          .select('*')
+          .select(`
+            id,
+            first_name,
+            last_name,
+            email,
+            phone,
+            address,
+            city,
+            state,
+            country,
+            postal_code,
+            lifetime_value
+          `)
           .order('first_name', { ascending: true });
         
         if (error) throw error;
