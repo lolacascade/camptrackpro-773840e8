@@ -31,6 +31,7 @@ export const getCustomerColumns = (): Column<Customer>[] => [
   {
     header: "Phone",
     accessorKey: "phone",
+    cell: (item: Customer) => item.phone || '-',
     sortable: true
   },
   {

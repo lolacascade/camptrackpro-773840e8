@@ -11,4 +11,6 @@ export interface Customer {
   postal_code?: string | null;
   created_at: string;
   updated_at: string;
+  user_id?: string | null;
+  lifetime_value?: number | null;
 }

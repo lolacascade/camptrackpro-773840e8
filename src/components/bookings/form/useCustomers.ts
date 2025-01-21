@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
+import { useToast } from "@/components/ui/use-toast";
 
 export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchCustomers = async () => {
@@ -18,6 +20,11 @@ export function useCustomers() {
         setCustomers(data || []);
       } catch (error) {
         console.error('Error fetching customers:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load customers",
+          variant: "destructive",
+        });
         setCustomers([]);
       } finally {
         setIsLoading(false);
@@ -25,7 +32,28 @@ export function useCustomers() {
     };
 
     fetchCustomers();
-  }, []);
+
+    // Set up real-time subscription
+    const subscription = supabase
+      .channel('customers_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'customers'
+        },
+        (payload) => {
+          console.log('Change received!', payload);
+          fetchCustomers(); // Refresh the data when changes occur
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   return {
     customers,
