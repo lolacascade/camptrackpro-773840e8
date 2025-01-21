@@ -38,7 +38,12 @@ export default function Assets() {
       // Transform the data to ensure it matches the Asset type
       return (data || []).map(asset => ({
         ...asset,
-        user_id: session.user.id, // Ensure user_id is included
+        user_id: session.user.id,
+        slots: asset.slots ? {
+          id: asset.slots.id,
+          name: asset.slots.name,
+          dock: asset.slots.dock
+        } : null
       })) as Asset[];
     },
     enabled: !!session?.user?.id,
