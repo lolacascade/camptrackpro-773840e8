@@ -21,8 +21,8 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         .from('bookings')
         .select(`
           *,
-          slot:slots(name),
-          customer:customers(id, first_name, last_name, email)
+          slot:slots(id, name, status, location_identifier, dock, zone, length_ft, width_ft, is_covered, has_water, electricity_voltage, utility_connection_type),
+          customer:customers(id, first_name, last_name, email, created_at, updated_at)
         `);
       
       if (error) throw error;
@@ -41,14 +41,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         special_requirements: booking.special_requirements,
         reservation_code: booking.reservation_code,
         user_id: booking.user_id,
-        customer: booking.customer ? {
-          id: booking.customer.id,
-          first_name: booking.customer.first_name,
-          last_name: booking.customer.last_name,
-          email: booking.customer.email,
-          created_at: booking.created_at,
-          updated_at: booking.updated_at
-        } : undefined,
+        customer: booking.customer,
         slot: booking.slot
       }));
     }

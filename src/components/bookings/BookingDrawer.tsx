@@ -4,6 +4,7 @@ import { BaseDrawer } from "@/components/common/BaseDrawer";
 import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@supabase/auth-helpers-react";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -12,16 +13,29 @@ interface BookingDrawerProps {
   onBookingUpdated: () => void;
 }
 
-type BookingFormData = Omit<Booking, 'id' | 'created_at' | 'updated_at' | 'customer' | 'slot'>;
+type BookingFormData = {
+  customer_id: string;
+  asset_id: string;
+  check_in_date: string;
+  check_out_date: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  total_amount: number;
+  slot_id?: number;
+  special_requirements?: string;
+  reservation_code?: string;
+  user_id?: string;
+};
 
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
+  const session = useSession();
+  
   const { handleSubmit } = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
       check_in_date: booking.check_in_date,
       check_out_date: booking.check_out_date,
-      status: booking.status,
+      status: booking.status === 'checked_in' ? 'confirmed' : booking.status,
       total_amount: booking.total_amount,
       slot_id: booking.slot_id,
       special_requirements: booking.special_requirements,
@@ -30,15 +44,24 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     } : {
       status: 'pending',
       total_amount: 0
-    }
+    } as Partial<BookingFormData>
   });
 
   const onSubmit = async (data: BookingFormData) => {
     try {
+      if (!session?.user?.id) {
+        throw new Error("User not authenticated");
+      }
+
+      const submitData = {
+        ...data,
+        created_by: session.user.id,
+      };
+
       if (booking?.id) {
         const { error } = await supabase
           .from('bookings')
-          .update(data)
+          .update(submitData)
           .eq('id', booking.id);
 
         if (error) throw error;
@@ -46,7 +69,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
       } else {
         const { error } = await supabase
           .from('bookings')
-          .insert([data]);
+          .insert([submitData]);
 
         if (error) throw error;
         toast.success("Booking created successfully");
