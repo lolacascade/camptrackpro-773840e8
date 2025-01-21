@@ -1,6 +1,5 @@
 import { Customer } from "@/types/customer";
 import { Badge } from "@/components/ui/badge";
-import { format } from "date-fns";
 import { Column } from "@/components/common/DataTable/types";
 
 export const getCustomerColumns = (): Column<Customer>[] => [
@@ -35,11 +34,11 @@ export const getCustomerColumns = (): Column<Customer>[] => [
     sortable: true
   },
   {
-    header: "Member Since",
-    accessorKey: "created_at",
+    header: "Location",
+    accessorKey: "city",
     cell: (item: Customer) => {
-      if (!item.created_at) return null;
-      return format(new Date(item.created_at), "MMM d, yyyy");
+      const location = [item.city, item.state].filter(Boolean).join(', ');
+      return location || '-';
     },
     sortable: true
   }

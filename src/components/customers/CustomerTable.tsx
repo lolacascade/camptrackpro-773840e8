@@ -15,10 +15,33 @@ interface CustomerTableProps {
 export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
+  const [localCustomers, setLocalCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchCustomers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .order('first_name', { ascending: true });
+
+      if (error) throw error;
+      setLocalCustomers(data || []);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load customers",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
+    fetchCustomers();
+
     const subscription = supabase
       .channel('customers_changes')
       .on(
@@ -28,15 +51,9 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
           schema: 'public',
           table: 'customers'
         },
-        async (payload) => {
+        (payload) => {
           console.log('Change received!', payload);
-          const { data: freshCustomers } = await supabase
-            .from('customers')
-            .select('*')
-            .order('first_name', { ascending: true });
-          if (freshCustomers) {
-            setLocalCustomers(freshCustomers);
-          }
+          fetchCustomers();
         }
       )
       .subscribe();
@@ -45,10 +62,6 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
       subscription.unsubscribe();
     };
   }, []);
-
-  useEffect(() => {
-    setLocalCustomers(customers);
-  }, [customers]);
 
   const handleViewDetails = (customer: Customer) => {
     navigate(`/app/customers/${customer.id}`);
@@ -83,12 +96,11 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
         <DataTable
           data={localCustomers}
           columns={getCustomerColumns()}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
           tableName="customers"
           onViewDetails={handleViewDetails}
           onEdit={onEdit}
           onDelete={handleDelete}
+          isLoading={isLoading}
         />
       </div>
     </Card>
