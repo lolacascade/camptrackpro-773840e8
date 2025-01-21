@@ -1,7 +1,7 @@
-export interface Customer {
-  id: string;
-  first_name: string;
-  last_name: string;
+import { BaseEntity } from "./common/base";
+import { PersonName } from "./common/person";
+
+export interface Customer extends BaseEntity, PersonName {
   email: string;
   phone?: string;
   address?: string;
@@ -9,8 +9,5 @@ export interface Customer {
   state?: string;
   country?: string;
   postal_code?: string;
-  created_at: string;
-  updated_at: string;
-  user_id?: string;
   lifetime_value?: number;
 }

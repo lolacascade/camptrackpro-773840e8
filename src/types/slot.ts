@@ -1,9 +1,9 @@
 import { Json } from "@/integrations/supabase/types";
+import { BaseEntity } from "./common/base";
 
-export interface Slot {
-  id: number;
+export interface Slot extends BaseEntity {
   name: string;
-  status: "available" | "occupied" | "maintenance";
+  status: 'available' | 'occupied' | 'maintenance';
   location_identifier: string;
   dock: string | null;
   zone: string | null;
@@ -16,8 +16,5 @@ export interface Slot {
   location_coordinates: Json | null;
   customer_id: string | null;
   maintenance_id: number | null;
-  created_at: string | null;
-  updated_at: string | null;
   last_activity_at: string | null;
-  user_id: string | null;
 }
