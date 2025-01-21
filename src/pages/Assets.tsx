@@ -35,14 +35,13 @@ export default function Assets() {
       
       if (error) throw error;
       
-      // Transform the data to ensure it matches the Asset type
       return (data || []).map(asset => ({
         ...asset,
         user_id: session.user.id,
         slots: asset.slots && asset.slots[0] ? {
-          id: asset.slots[0].id,
-          name: asset.slots[0].name,
-          dock: asset.slots[0].dock
+          id: Number(asset.slots[0].id),
+          name: String(asset.slots[0].name),
+          dock: String(asset.slots[0].dock)
         } : null
       })) as Asset[];
     },
