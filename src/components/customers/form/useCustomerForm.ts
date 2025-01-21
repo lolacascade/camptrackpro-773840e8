@@ -42,12 +42,14 @@ export function useCustomerForm(
 
   const onSubmit = async (formData: CustomerFormData) => {
     try {
+      const now = new Date().toISOString();
+      
       if (customer) {
         const { error } = await supabase
           .from('customers')
           .update({
             ...formData,
-            updated_at: new Date().toISOString(),
+            updated_at: now,
           })
           .eq('id', customer.id);
 
@@ -57,6 +59,8 @@ export function useCustomerForm(
           .from('customers')
           .insert([{
             ...formData,
+            created_at: now,
+            updated_at: now,
           }]);
 
         if (error) throw error;
