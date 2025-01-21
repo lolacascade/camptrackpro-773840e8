@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Asset } from "@/types/asset";
-import { Button } from "@/components/ui/button";
+import { Slot } from "@/types/slot";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { AssetTable } from "@/components/assets/AssetTable";
@@ -8,14 +8,13 @@ import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
-import { Slot } from "@/types/slot";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const session = useSession();
 
-  const { data: assets = [], isLoading } = useQuery({
+  const { data: assets = [] } = useQuery({
     queryKey: ['assets', session?.user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -41,7 +40,7 @@ export default function Assets() {
     enabled: !!session?.user?.id,
   });
 
-  const handleCreateClick = () => {
+  const handleAddAsset = () => {
     setSelectedAsset(null);
     setIsDrawerOpen(true);
   };
@@ -51,6 +50,11 @@ export default function Assets() {
     setIsDrawerOpen(true);
   };
 
+  const handleViewDetails = (asset: Asset) => {
+    // Implement view details functionality
+    console.log("View details for asset:", asset);
+  };
+
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedAsset(null);
@@ -58,15 +62,19 @@ export default function Assets() {
 
   return (
     <PageContainer>
-      <AssetsHeader onCreateClick={handleCreateClick} />
+      <AssetsHeader onAddAsset={handleAddAsset} />
       <AssetTable
         assets={assets}
         onEdit={handleEditClick}
+        onViewDetails={handleViewDetails}
       />
       <AssetDrawer
-        asset={selectedAsset}
         open={isDrawerOpen}
         onClose={handleCloseDrawer}
+        onAssetAdded={() => {
+          // Refresh data or handle asset added
+        }}
+        customerId={selectedAsset?.customer_id || null}
       />
     </PageContainer>
   );
