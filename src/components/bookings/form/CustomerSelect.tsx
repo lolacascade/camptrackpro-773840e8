@@ -1,24 +1,24 @@
-import { useCustomers } from "./useCustomers";
-import { CustomerSearchInput } from "./CustomerSearchInput";
+import { Customer } from "@/types/customer";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface CustomerSelectProps {
-  selectedCustomerId: string | null;
-  onCustomerSelect: (customerId: string | null) => void;
+  value: string;
+  onSelect: (customerId: string) => void;
+  customers: Customer[];
 }
 
-export function CustomerSelect({ 
-  selectedCustomerId, 
-  onCustomerSelect 
-}: CustomerSelectProps) {
-  const { customers, isLoading } = useCustomers();
-  const selectedCustomer = customers.find(c => c.id === selectedCustomerId);
+export function CustomerSelect({ value, onSelect, customers }: CustomerSelectProps) {
+  const options = customers.map(customer => ({
+    value: customer.id,
+    label: `${customer.first_name} ${customer.last_name}`
+  }));
 
   return (
-    <CustomerSearchInput
-      isLoading={isLoading}
-      customers={customers}
-      selectedCustomer={selectedCustomer}
-      onCustomerSelect={onCustomerSelect}
+    <SelectField
+      value={value}
+      onChange={onSelect}
+      options={options}
+      placeholder="Select customer"
     />
   );
 }

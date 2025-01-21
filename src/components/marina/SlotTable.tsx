@@ -4,7 +4,11 @@ import { getSlotColumns } from "./table/SlotTableColumns";
 import { supabase } from "@/integrations/supabase/client";
 import type { Slot } from "@/types/slot";
 
-export function SlotTable() {
+interface SlotTableProps {
+  onEdit?: (slot: Slot) => void;
+}
+
+export function SlotTable({ onEdit }: SlotTableProps) {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,10 +45,8 @@ export function SlotTable() {
     fetchSlots();
   }, []);
 
-  const handleSlipClick = (slip_id: string) => {
-    // Convert string ID back to number for database query
-    const numericId = parseInt(slip_id, 10);
-    console.log('Clicked slip:', numericId);
+  const handleSlipClick = (slip: Slot) => {
+    console.log('Clicked slip:', slip);
   };
 
   return (
@@ -52,7 +54,8 @@ export function SlotTable() {
       data={slots}
       columns={getSlotColumns()}
       isLoading={isLoading}
-      onRowClick={(row) => handleSlipClick(row.id)}
+      onRowClick={handleSlipClick}
+      onEdit={onEdit}
     />
   );
 }

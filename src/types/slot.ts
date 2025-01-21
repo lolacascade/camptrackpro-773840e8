@@ -17,4 +17,5 @@ export interface Slot extends BaseEntity {
   customer_id: string | null;
   maintenance_id: number | null;
   last_activity_at: string | null;
+  user_id: string | null;
 }
