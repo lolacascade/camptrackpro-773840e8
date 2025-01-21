@@ -16,7 +16,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
     try {
       const { error } = await supabase
         .from('slots')
-        .insert([{
+        .insert({
           name: values.name,
           dock: values.dock,
           length_ft: values.length_ft,
@@ -24,8 +24,10 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
           is_covered: values.is_covered,
           electricity_voltage: values.electricity_voltage,
           has_water: values.has_water,
-          status: values.status
-        }]);
+          status: values.status,
+          location_identifier: values.name, // Using name as location identifier
+          user_id: (await supabase.auth.getUser()).data.user?.id
+        });
 
       if (error) throw error;
 
@@ -35,6 +37,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
       toast({
         title: "Dock Spot Added",
         description: `New dock spot ${values.name} has been created.`,
+        className: "bg-white",
       });
     } catch (error) {
       console.error('Error creating slip:', error);
@@ -42,6 +45,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
         title: "Error",
         description: "Failed to create dock spot. Please try again.",
         variant: "destructive",
+        className: "bg-white",
       });
     }
   };

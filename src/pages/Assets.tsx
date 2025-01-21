@@ -8,10 +8,24 @@ import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+
+  const { data: assets = [], isLoading } = useQuery({
+    queryKey: ['assets'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('assets')
+        .select('*, customers(id, first_name, last_name), slots(id, name, dock)');
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const handleAddAsset = () => {
     setSelectedAsset(null);
@@ -23,13 +37,14 @@ export default function Assets() {
     setIsDrawerOpen(true);
   };
 
+  const handleViewDetails = (asset: Asset) => {
+    // Implement view details functionality if needed
+    console.log('View details:', asset);
+  };
+
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
     setSelectedAsset(null);
-  };
-
-  const getCustomerName = (customer: { first_name: string; last_name: string }) => {
-    return `${customer.first_name} ${customer.last_name}`;
   };
 
   return (
@@ -47,15 +62,17 @@ export default function Assets() {
           </div>
 
           <AssetStatsCards />
-          <AssetTable onEdit={handleEditAsset} />
+          <AssetTable 
+            assets={assets} 
+            onEdit={handleEditAsset} 
+            onViewDetails={handleViewDetails}
+          />
 
           <AssetDrawer
-            asset={selectedAsset}
             open={isDrawerOpen}
             onClose={handleDrawerClose}
             onAssetUpdated={() => {
-              // Trigger a refetch in AssetTable
-              // This will be handled by the query invalidation
+              // Trigger a refetch in AssetTable via React Query invalidation
             }}
           />
         </div>
