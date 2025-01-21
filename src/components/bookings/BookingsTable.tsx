@@ -11,6 +11,25 @@ interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
 }
 
+type BookingWithRelations = {
+  id: string;
+  customer_id: string;
+  asset_id: string;
+  check_in_date: string;
+  check_out_date: string;
+  status: Booking['status'];
+  total_amount: number;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  slot_id: number | null;
+  special_requirements: string | null;
+  reservation_code: string | null;
+  user_id: string | null;
+  slot: { name: string } | null;
+  customer: { name: string; email: string } | null;
+}
+
 export function BookingsTable({ onEdit }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
 
@@ -19,10 +38,18 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('bookings')
-        .select('*, slot:slots(name), customer:customers(name, email)');
+        .select('*, slot:slots(name), customer:customers(first_name, last_name, email)');
       
       if (error) throw error;
-      return data || [];
+
+      // Transform the data to match our expected format
+      return (data || []).map((booking): BookingWithRelations => ({
+        ...booking,
+        customer: booking.customer ? {
+          name: `${booking.customer.first_name} ${booking.customer.last_name}`,
+          email: booking.customer.email
+        } : null
+      }));
     }
   });
 
