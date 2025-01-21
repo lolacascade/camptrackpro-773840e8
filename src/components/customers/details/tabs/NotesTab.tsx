@@ -9,7 +9,7 @@ interface NotesTabProps {
 
 export function NotesTab({ customer }: NotesTabProps) {
   const { data: notes, isLoading } = useQuery({
-    queryKey: ['customer-notes', customer.id],
+    queryKey: ['customer-notes', String(customer.id)],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('customer_notes')

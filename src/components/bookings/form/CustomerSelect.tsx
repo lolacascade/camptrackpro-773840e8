@@ -9,7 +9,7 @@ interface CustomerSelectProps {
 
 export function CustomerSelect({ value, onSelect, customers }: CustomerSelectProps) {
   const options = customers.map(customer => ({
-    value: customer.id,
+    value: String(customer.id), // Ensure ID is always a string
     label: `${customer.first_name} ${customer.last_name}`
   }));
 

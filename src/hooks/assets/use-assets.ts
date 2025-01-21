@@ -62,7 +62,8 @@ export function useAssets() {
         slots: asset.slots ? {
           ...asset.slots,
           id: String(asset.slots.id),
-          user_id: asset.slots.user_id || null
+          user_id: asset.slots.user_id || null,
+          status: asset.slots.status as 'available' | 'occupied' | 'maintenance'
         } : null
       }));
     },
