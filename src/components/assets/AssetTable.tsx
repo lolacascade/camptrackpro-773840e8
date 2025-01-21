@@ -39,7 +39,7 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
       options: [
         { label: "All Customers", value: "all" },
         ...(assets?.map(asset => ({
-          label: asset.customers?.name || 'Unassigned',
+          label: asset.customers ? `${asset.customers.first_name} ${asset.customers.last_name}` : 'Unassigned',
           value: String(asset.customer_id || 'unassigned')
         })) || [])
       ],
@@ -85,7 +85,11 @@ export function AssetTable({ assets, onEdit, onViewDetails }: AssetTableProps) {
                     {asset.asset_type || 'Unspecified'}
                   </Badge>
                 </TableCell>
-                <TableCell>{asset.customers?.name || 'Unassigned'}</TableCell>
+                <TableCell>
+                  {asset.customers 
+                    ? `${asset.customers.first_name} ${asset.customers.last_name}`
+                    : 'Unassigned'}
+                </TableCell>
                 <TableCell>{asset.slots?.name || 'Unassigned'}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
