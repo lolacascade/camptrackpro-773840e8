@@ -6,8 +6,8 @@ export interface Asset {
   customer_id: string | null;
   slip_id: number | null;
   user_id: string | null;
-  created_at: string | null;
-  updated_at: string | null;
+  created_at: string;
+  updated_at: string;
   name: string;
   type: string;
   status: string;

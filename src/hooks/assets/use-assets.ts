@@ -35,7 +35,7 @@ export function useAssets() {
         throw error;
       }
       
-      return data || [];
+      return (data || []) as Asset[];
     },
     enabled: !!session?.user?.id,
   });

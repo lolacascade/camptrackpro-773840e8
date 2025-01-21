@@ -23,7 +23,8 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     name: '',
     type: '',
     status: 'available',
-    daily_rate: 0
+    daily_rate: 0,
+    user_id: session?.user?.id || null
   });
 
   useEffect(() => {
@@ -71,6 +72,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
           name: newAsset.asset_name || '',
           type: newAsset.asset_type || '',
           daily_rate: newAsset.daily_rate || 0,
+          user_id: session.user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
@@ -87,7 +89,8 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         name: '',
         type: '',
         status: 'available',
-        daily_rate: 0
+        daily_rate: 0,
+        user_id: session?.user?.id || null
       });
       
       toast({
