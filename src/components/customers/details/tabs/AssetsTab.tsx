@@ -1,28 +1,62 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Customer } from "@/types/customer";
+import { Asset } from "@/types/asset";
 import { DataTable } from "@/components/common/DataTable/DataTable";
+import { Badge } from "@/components/ui/badge";
 
 interface AssetsTabProps {
-  assets: any[];
-  isLoading: boolean;
+  customer: Customer;
 }
 
-export function AssetsTab({ assets, isLoading }: AssetsTabProps) {
+export function AssetsTab({ customer }: AssetsTabProps) {
+  const { data: assets, isLoading } = useQuery({
+    queryKey: ['customer-assets', customer.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('assets')
+        .select('*')
+        .eq('customer_id', customer.id);
+
+      if (error) throw error;
+      return data as Asset[];
+    }
+  });
+
+  const columns = [
+    {
+      header: "Asset Name",
+      accessorKey: "asset_name",
+      sortable: true,
+    },
+    {
+      header: "Type",
+      accessorKey: "asset_type",
+      cell: (asset: Asset) => (
+        <Badge variant="secondary">
+          {asset.asset_type || 'Unspecified'}
+        </Badge>
+      ),
+      sortable: true,
+    },
+    {
+      header: "Size",
+      accessorKey: "asset_size",
+      sortable: true,
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      sortable: true,
+    }
+  ];
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Assets</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          data={assets || []}
-          columns={[
-            { header: "Name", accessorKey: "asset_name" },
-            { header: "Type", accessorKey: "asset_type" },
-            { header: "Size", accessorKey: "asset_size" }
-          ]}
-          isLoading={isLoading}
-        />
-      </CardContent>
-    </Card>
+    <DataTable
+      data={assets || []}
+      columns={columns}
+      isLoading={isLoading}
+      tableName="customer-assets"
+    />
   );
 }

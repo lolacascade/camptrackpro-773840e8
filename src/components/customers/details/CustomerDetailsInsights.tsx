@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { AssetsTab } from "./tabs/AssetsTab";
 import { NotesTab } from "./tabs/NotesTab";
-import { MaintenanceTab } from "./tabs/MaintenanceTab";
 
 interface CustomerDetailsInsightsProps {
   customer: Customer;
@@ -24,7 +23,6 @@ export function CustomerDetailsInsights({ customer }: CustomerDetailsInsightsPro
           <TabsList>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="assets">Assets</TabsTrigger>
-            <TabsTrigger value="maintenance">Maintenance</TabsTrigger>
             <TabsTrigger value="notes">Notes</TabsTrigger>
           </TabsList>
 
@@ -53,15 +51,11 @@ export function CustomerDetailsInsights({ customer }: CustomerDetailsInsightsPro
             </TabsContent>
 
             <TabsContent value="assets">
-              <AssetsTab customerId={customer.id} />
-            </TabsContent>
-
-            <TabsContent value="maintenance">
-              <MaintenanceTab customerId={customer.id} />
+              <AssetsTab customer={customer} />
             </TabsContent>
 
             <TabsContent value="notes">
-              <NotesTab customerId={customer.id} />
+              <NotesTab customer={customer} />
             </TabsContent>
           </div>
         </Tabs>
