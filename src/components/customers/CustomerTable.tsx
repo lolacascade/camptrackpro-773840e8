@@ -12,7 +12,7 @@ interface CustomerTableProps {
   onEdit: (customer: Customer) => void;
 }
 
-export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
+export function CustomerTable({ customers: initialCustomers, onEdit }: CustomerTableProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [localCustomers, setLocalCustomers] = useState<Customer[]>([]);
@@ -42,6 +42,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   useEffect(() => {
     fetchCustomers();
 
+    // Set up real-time subscription
     const subscription = supabase
       .channel('customers_changes')
       .on(
@@ -53,7 +54,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
         },
         (payload) => {
           console.log('Change received!', payload);
-          fetchCustomers();
+          fetchCustomers(); // Refresh the data when changes occur
         }
       )
       .subscribe();
