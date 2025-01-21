@@ -28,7 +28,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
             location_coordinates, customer_id, maintenance_id, created_at, updated_at,
             last_activity_at, user_id
           ),
-          customer:customers(id, first_name, last_name, email, created_at, updated_at)
+          customer:customers(*)
         `);
       
       if (error) throw error;
@@ -47,8 +47,15 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         special_requirements: booking.special_requirements,
         reservation_code: booking.reservation_code,
         user_id: booking.user_id,
-        customer: booking.customer,
-        slot: booking.slot as Slot
+        customer: booking.customer ? {
+          ...booking.customer,
+          user_id: booking.customer.user_id || null
+        } : undefined,
+        slot: booking.slot ? {
+          ...booking.slot,
+          id: String(booking.slot.id), // Convert number to string
+          user_id: booking.slot.user_id || null
+        } as Slot : undefined
       }));
     }
   });

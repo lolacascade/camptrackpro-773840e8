@@ -31,7 +31,9 @@ export function SlotTable({ onEdit }: SlotTableProps) {
       
       const typedSlots = (data || []).map(slot => ({
         ...slot,
-        status: slot.status as "available" | "occupied" | "maintenance"
+        id: String(slot.id), // Convert number to string
+        status: slot.status as "available" | "occupied" | "maintenance",
+        user_id: slot.user_id || null
       }));
       
       setSlots(typedSlots);

@@ -35,7 +35,23 @@ export function useAssets() {
         throw error;
       }
       
-      return (data || []) as Asset[];
+      return (data || []).map((asset): Asset => ({
+        ...asset,
+        user_id: asset.user_id || null,
+        customers: asset.customers ? {
+          ...asset.customers,
+          id: String(asset.customers.id)
+        } : null,
+        slots: asset.slots ? {
+          ...asset.slots,
+          id: String(asset.slots.id),
+          user_id: null, // Add missing user_id field
+          created_at: new Date().toISOString(), // Add missing created_at field
+          updated_at: new Date().toISOString(), // Add missing updated_at field
+          status: 'available', // Add missing status field
+          location_identifier: '', // Add missing location_identifier field
+        } : null
+      }));
     },
     enabled: !!session?.user?.id,
   });

@@ -27,7 +27,8 @@ export function useCustomers() {
             postal_code,
             lifetime_value,
             created_at,
-            updated_at
+            updated_at,
+            user_id
           `)
           .order('first_name', { ascending: true });
         
@@ -37,7 +38,10 @@ export function useCustomers() {
         }
         
         console.log("Customers data:", data);
-        setCustomers(data || []);
+        setCustomers((data || []).map(customer => ({
+          ...customer,
+          user_id: customer.user_id || null
+        })));
       } catch (error) {
         console.error('Error in useCustomers:', error);
         toast({
