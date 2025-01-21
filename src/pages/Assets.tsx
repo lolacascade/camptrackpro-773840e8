@@ -10,30 +10,37 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@supabase/auth-helpers-react";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
+  const session = useSession();
 
   const { data: assets = [], isLoading } = useQuery({
     queryKey: ['assets'],
     queryFn: async () => {
+      if (!session?.user?.id) {
+        throw new Error("No authenticated user");
+      }
+
       const { data, error } = await supabase
         .from('assets')
-        .select('*, customers(id, first_name, last_name), slots(id, name, dock)');
+        .select(`
+          *,
+          customers(id, first_name, last_name),
+          slots(id, name, dock)
+        `)
+        .eq('user_id', session.user.id);
       
       if (error) throw error;
-      return data || [];
-    }
+      return data as Asset[];
+    },
+    enabled: !!session?.user?.id,
   });
 
   const handleAddAsset = () => {
-    setSelectedAsset(null);
-    setIsDrawerOpen(true);
-  };
-
-  const handleEditAsset = (asset: Asset) => {
-    setSelectedAsset(asset);
+    setSelectedCustomerId(null);
     setIsDrawerOpen(true);
   };
 
@@ -44,7 +51,7 @@ export default function Assets() {
 
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
-    setSelectedAsset(null);
+    setSelectedCustomerId(null);
   };
 
   return (
@@ -64,16 +71,16 @@ export default function Assets() {
           <AssetStatsCards />
           <AssetTable 
             assets={assets} 
-            onEdit={handleEditAsset} 
             onViewDetails={handleViewDetails}
           />
 
           <AssetDrawer
             open={isDrawerOpen}
             onClose={handleDrawerClose}
-            onAssetUpdated={() => {
-              // Trigger a refetch in AssetTable via React Query invalidation
+            onAssetAdded={() => {
+              // This will trigger a refetch via React Query invalidation
             }}
+            customerId={selectedCustomerId}
           />
         </div>
       </PageContainer>
