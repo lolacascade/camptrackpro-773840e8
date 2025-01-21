@@ -34,7 +34,12 @@ export default function Assets() {
         .eq('user_id', session.user.id);
       
       if (error) throw error;
-      return data as Asset[];
+      
+      // Transform the data to ensure it matches the Asset type
+      return (data || []).map(asset => ({
+        ...asset,
+        user_id: session.user.id, // Ensure user_id is included
+      })) as Asset[];
     },
     enabled: !!session?.user?.id,
   });
@@ -47,6 +52,11 @@ export default function Assets() {
   const handleViewDetails = (asset: Asset) => {
     // Implement view details functionality if needed
     console.log('View details:', asset);
+  };
+
+  const handleEditAsset = (asset: Asset) => {
+    console.log('Edit asset:', asset);
+    // Implement edit functionality if needed
   };
 
   const handleDrawerClose = () => {
@@ -72,6 +82,7 @@ export default function Assets() {
           <AssetTable 
             assets={assets} 
             onViewDetails={handleViewDetails}
+            onEdit={handleEditAsset}
           />
 
           <AssetDrawer
