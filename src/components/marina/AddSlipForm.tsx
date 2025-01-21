@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 interface AddSlipFormProps {
   onSuccess: () => void;
@@ -28,15 +28,14 @@ export function AddSlipForm({ onSuccess, onCancel }: AddSlipFormProps) {
       setIsLoading(true);
       const { error } = await supabase
         .from('slots')
-        .insert([
-          {
-            name: data.name,
-            dock: data.dock,
-            length_ft: data.length_ft,
-            width_ft: data.width_ft,
-            status: 'available'
-          }
-        ]);
+        .insert([{
+          name: data.name,
+          dock: data.dock,
+          length_ft: data.length_ft,
+          width_ft: data.width_ft,
+          status: 'available',
+          location_identifier: data.name // Using name as location identifier
+        }]);
 
       if (error) throw error;
 

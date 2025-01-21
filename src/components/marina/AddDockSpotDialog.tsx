@@ -31,7 +31,8 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
           is_covered: values.is_covered,
           electricity_voltage: values.electricity_voltage,
           has_water: values.has_water,
-          status: values.status
+          status: values.status,
+          location_identifier: values.name // Using name as location identifier
         }]);
 
       if (error) throw error;

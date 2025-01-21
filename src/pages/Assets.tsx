@@ -1,112 +1,62 @@
 import { useState } from "react";
-import { DataTable } from "@/components/common/DataTable/DataTable";
-import type { Column } from "@/components/common/DataTable/types";
-import type { Asset } from "@/types/asset";
-import { useAssets } from "@/hooks/assets/use-assets";
-import { useSession } from "@supabase/auth-helpers-react";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { AssetTable } from "@/components/assets/AssetTable";
+import { AssetDrawer } from "@/components/assets/AssetDrawer";
+import { Asset } from "@/types/asset";
+import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
+import { AssetsHeader } from "@/components/assets/AssetsHeader";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { Badge } from "@/components/ui/badge";
-import { AssetsHeader } from "@/components/assets/AssetsHeader";
-import { AssetDrawer } from "@/components/assets/AssetDrawer";
-import { useToast } from "@/components/ui/use-toast";
-import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 
 export default function Assets() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isAddAssetOpen, setIsAddAssetOpen] = useState(false);
-  const session = useSession();
-  const { data: assets, isLoading, error, refetch } = useAssets();
-  const { toast } = useToast();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
-  const columns: Column<Asset>[] = [
-    {
-      header: "Asset Name",
-      accessorKey: "asset_name",
-      sortable: true,
-    },
-    {
-      header: "Size",
-      accessorKey: "asset_size",
-      sortable: true,
-    },
-    {
-      header: "Type",
-      accessorKey: "asset_type",
-      cell: (asset) => (
-        <Badge variant="secondary">
-          {asset.asset_type || 'Unspecified'}
-        </Badge>
-      ),
-      sortable: true,
-    },
-    {
-      header: "Customer",
-      accessorKey: "customers",
-      cell: (asset) => asset.customers?.name || 'Unassigned',
-      sortable: true,
-    },
-    {
-      header: "Slot",
-      accessorKey: "slots",
-      cell: (asset) => asset.slots?.name || 'Unassigned',
-      sortable: true,
-    },
-  ];
+  const handleAddAsset = () => {
+    setSelectedAsset(null);
+    setIsDrawerOpen(true);
+  };
 
-  if (error) {
-    toast({
-      title: "Error loading assets",
-      description: "Please try refreshing the page",
-      variant: "destructive",
-    });
-    console.error('Error loading assets:', error);
-  }
+  const handleEditAsset = (asset: Asset) => {
+    setSelectedAsset(asset);
+    setIsDrawerOpen(true);
+  };
 
-  if (!session) {
-    return (
-      <PageContainer>
-        <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-          <p className="text-lg text-gray-600">Please sign in to view assets</p>
-        </div>
-      </PageContainer>
-    );
-  }
+  const handleDrawerClose = () => {
+    setIsDrawerOpen(false);
+    setSelectedAsset(null);
+  };
+
+  const getCustomerName = (customer: { first_name: string; last_name: string }) => {
+    return `${customer.first_name} ${customer.last_name}`;
+  };
 
   return (
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <AssetsHeader onAddAsset={() => setIsAddAssetOpen(true)} />
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-semibold text-[#133134]">Assets</h1>
+            <Button 
+              onClick={handleAddAsset}
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+            >
+              <Plus className="mr-2 h-4 w-4" /> New Asset
+            </Button>
+          </div>
+
           <AssetStatsCards />
-          <DataTable
-            data={assets || []}
-            columns={columns}
-            isLoading={isLoading}
-            searchTerm={searchTerm}
-            onSearchChange={setSearchTerm}
-            tableName="assets"
-            onEdit={(asset) => {
-              console.log('Edit asset:', asset);
+          <AssetTable onEdit={handleEditAsset} />
+
+          <AssetDrawer
+            asset={selectedAsset}
+            open={isDrawerOpen}
+            onClose={handleDrawerClose}
+            onAssetUpdated={() => {
+              // Trigger a refetch in AssetTable
+              // This will be handled by the query invalidation
             }}
-            onViewDetails={(asset) => {
-              console.log('View asset details:', asset);
-            }}
-            onDelete={(asset) => {
-              console.log('Delete asset:', asset);
-            }}
-          />
-          <AssetDrawer 
-            open={isAddAssetOpen}
-            onClose={() => setIsAddAssetOpen(false)}
-            onAssetAdded={() => {
-              refetch();
-              toast({
-                title: "Success",
-                description: "Asset added successfully",
-              });
-            }}
-            customerId={null}
           />
         </div>
       </PageContainer>

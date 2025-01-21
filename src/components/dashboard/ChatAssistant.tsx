@@ -21,13 +21,11 @@ export function ChatAssistant() {
 
   const fetchParkInsights = async () => {
     try {
-      // First try to get data from the view without using .single()
       const { data: viewData, error: viewError } = await supabase
         .from('chat_marina_insights')
         .select('*');
 
       if (viewError || !viewData || viewData.length === 0) {
-        // If view doesn't return data, fetch from individual tables
         const [slotsData, bookingsData, maintenanceData, customersData] = await Promise.all([
           supabase.from('slots').select('*').eq('user_id', session?.user?.id),
           supabase.from('bookings').select('*').eq('user_id', session?.user?.id),
@@ -38,14 +36,13 @@ export function ChatAssistant() {
         const insights = {
           total_spots: slotsData.data?.length || 0,
           occupied_spots: slotsData.data?.filter(slot => slot.status === 'occupied').length || 0,
-          active_bookings: bookingsData.data?.filter(booking => booking.status === 'active').length || 0,
+          active_bookings: bookingsData.data?.filter(booking => booking.status === 'confirmed').length || 0,
           pending_maintenance: maintenanceData.data?.filter(req => req.status === 'pending').length || 0,
           total_customers: customersData.data?.length || 0,
         };
 
         setParkInsights(insights);
       } else {
-        // Use the first row from the view if multiple rows exist
         setParkInsights(viewData[0]);
       }
     } catch (error) {
@@ -59,7 +56,11 @@ export function ChatAssistant() {
     
     try {
       const history = await chatService.loadMessages(session.user.id, conversationId);
-      setMessages(history);
+      setMessages(history.map(msg => ({
+        role: msg.role as 'assistant' | 'user',
+        content: msg.content,
+        attachments: Array.isArray(msg.attachments) ? msg.attachments : undefined
+      })));
     } catch (error) {
       console.error('Error loading chat history:', error);
       toast.error("Failed to load chat history");
