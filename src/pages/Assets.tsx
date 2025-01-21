@@ -35,7 +35,7 @@ export default function Assets() {
       return (data || []).map(asset => ({
         ...asset,
         user_id: session?.user?.id,
-        slots: asset.slots as Slot
+        slots: asset.slots ? (Array.isArray(asset.slots) ? asset.slots[0] : asset.slots) as Slot : null
       })) as Asset[];
     },
     enabled: !!session?.user?.id,
@@ -58,14 +58,13 @@ export default function Assets() {
 
   return (
     <PageContainer>
-      <AssetsHeader onCreate={handleCreateClick} />
+      <AssetsHeader onCreateClick={handleCreateClick} />
       <AssetTable
         assets={assets}
-        isLoading={isLoading}
         onEdit={handleEditClick}
       />
       <AssetDrawer
-        selectedAsset={selectedAsset}
+        asset={selectedAsset}
         open={isDrawerOpen}
         onClose={handleCloseDrawer}
       />

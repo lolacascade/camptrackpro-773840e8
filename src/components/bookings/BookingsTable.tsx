@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { supabase } from "@/integrations/supabase/client";
+import { Slot } from "@/types/slot";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -47,7 +48,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         reservation_code: booking.reservation_code,
         user_id: booking.user_id,
         customer: booking.customer,
-        slot: booking.slot
+        slot: booking.slot as Slot
       }));
     }
   });
