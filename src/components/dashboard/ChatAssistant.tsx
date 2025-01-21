@@ -59,7 +59,9 @@ export function ChatAssistant() {
       setMessages(history.map(msg => ({
         role: msg.role as 'assistant' | 'user',
         content: msg.content,
-        attachments: Array.isArray(msg.attachments) ? msg.attachments : undefined
+        attachments: Array.isArray(msg.attachments) 
+          ? msg.attachments.map(att => typeof att === 'string' ? att : String(att))
+          : undefined
       })));
     } catch (error) {
       console.error('Error loading chat history:', error);
