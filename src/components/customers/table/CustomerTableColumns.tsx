@@ -1,18 +1,19 @@
-import { Badge } from "@/components/ui/badge";
 import { Customer } from "@/types/customer";
-import { Column } from "@/components/common/DataTable/types";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { Column } from "@/components/common/DataTable/types";
 
 export const getCustomerColumns = (): Column<Customer>[] => [
   {
     header: "Name",
-    accessorKey: "name",
+    accessorKey: "first_name",
     cell: (item: Customer) => {
       const isVip = (item.lifetime_value || 0) >= 10000; // VIP threshold at $10,000
+      const fullName = `${item.first_name} ${item.last_name}`;
       
       return (
         <div className="flex items-center gap-2">
-          <span>{item.name}</span>
+          <span>{fullName}</span>
           {isVip && (
             <Badge variant="secondary" className="bg-purple-100 text-purple-800">
               VIP

@@ -12,7 +12,7 @@ export function useCustomers() {
         const { data, error } = await supabase
           .from('customers')
           .select('*')
-          .order('name');
+          .order('first_name', { ascending: true });
         
         if (error) throw error;
         setCustomers(data || []);
