@@ -4,7 +4,7 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { getCustomerColumns } from "./table/CustomerTableColumns";
-import { useCustomersTable } from "@/hooks/customers/use-customers-table";
+import { useCustomers } from "@/components/bookings/form/useCustomers";
 import { supabase } from "@/integrations/supabase/client";
 
 interface CustomerTableProps {
@@ -14,7 +14,7 @@ interface CustomerTableProps {
 export function CustomerTable({ onEdit }: CustomerTableProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { customers, isLoading, refetch } = useCustomersTable();
+  const { customers, isLoading } = useCustomers();
 
   const handleViewDetails = (customer: Customer) => {
     navigate(`/app/customers/${customer.id}`);
@@ -33,8 +33,6 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
         title: "Success",
         description: "Customer deleted successfully",
       });
-      
-      refetch();
     } catch (error) {
       console.error('Error deleting customer:', error);
       toast({

@@ -30,10 +30,14 @@ export function useCustomers() {
           `)
           .order('first_name', { ascending: true });
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching customers:', error);
+          throw error;
+        }
+        
         setCustomers(data || []);
       } catch (error) {
-        console.error('Error fetching customers:', error);
+        console.error('Error in useCustomers:', error);
         toast({
           title: "Error",
           description: "Failed to load customers",
