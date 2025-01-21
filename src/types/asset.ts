@@ -1,6 +1,6 @@
 export interface Asset {
   id: string;
-  asset_name: string;
+  asset_name: string | null;
   asset_size: string | null;
   asset_type: string | null;
   customer_id: string | null;
@@ -12,13 +12,4 @@ export interface Asset {
   type: string;
   status: string;
   daily_rate: number;
-  customers?: {
-    id: string;
-    name: string;
-  } | null;
-  slots?: {
-    id: number;
-    name: string;
-    dock: string | null;
-  } | null;
 }

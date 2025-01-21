@@ -68,7 +68,6 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         .from('assets')
         .insert({
           ...newAsset,
-          user_id: session.user.id,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });

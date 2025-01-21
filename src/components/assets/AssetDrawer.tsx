@@ -7,7 +7,7 @@ interface AssetDrawerProps {
   open: boolean
   onClose: () => void
   onAssetAdded: () => void
-  customerId: number | null
+  customerId: string | null
 }
 
 export function AssetDrawer({ open, onClose, onAssetAdded, customerId }: AssetDrawerProps) {
