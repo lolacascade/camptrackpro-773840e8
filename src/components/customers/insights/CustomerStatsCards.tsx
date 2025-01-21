@@ -1,4 +1,4 @@
-import { Users, TrendingUp, Activity, Star } from "lucide-react";
+import { Users, TrendingUp, Star, Activity } from "lucide-react";
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,7 +16,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         return {
           totalCustomers: 1,
           newCustomers: 0,
-          engagementRate: 0,
           rating: {
             overall: 4.8,
             service: 4.9,
@@ -31,10 +30,10 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
 
       if (error) throw error;
 
+      const totalCustomers = customers?.length || 0;
       const now = new Date();
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-      const totalCustomers = customers?.length || 0;
       const newCustomers = customers?.filter(c => 
         new Date(c.created_at!) >= lastMonth
       ).length || 0;
@@ -48,7 +47,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
       return {
         totalCustomers,
         newCustomers,
-        engagementRate: 0,
         rating
       };
     }
@@ -63,13 +61,13 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         value={customerStats.totalCustomers.toString()}
         icon={Users}
         trend={{
-          value: "8%",
+          value: "+12%",
           isPositive: true,
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Active", value: `${customerStats.totalCustomers}`, percentage: 100 },
-          { label: "Inactive", value: "0", percentage: 0 }
+          { label: "New", value: "45", percentage: 60 },
+          { label: "Returning", value: "30", percentage: 40 }
         ]}
       />
 

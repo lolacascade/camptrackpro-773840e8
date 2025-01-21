@@ -13,8 +13,10 @@ export interface Customer {
   updated_at: string;
   user_id?: string | null;
   lifetime_value?: number | null;
-  customer?: {
-    name: string;
-    email: string;
-  };
+  assets?: Array<{
+    id: string;
+    asset_name: string;
+    asset_type: string;
+    asset_size: string;
+  }>;
 }

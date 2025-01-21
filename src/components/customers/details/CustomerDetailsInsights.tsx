@@ -21,7 +21,10 @@ export function CustomerDetailsInsights({ customerId }: CustomerDetailsInsightsP
       try {
         const { data, error } = await supabase
           .from('customers')
-          .select('*')
+          .select(`
+            *,
+            assets (*)
+          `)
           .eq('id', customerId)
           .single();
 
@@ -59,7 +62,7 @@ export function CustomerDetailsInsights({ customerId }: CustomerDetailsInsightsP
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="assets">Assets</TabsTrigger>
           <TabsTrigger value="preferences">Preferences</TabsTrigger>
         </TabsList>
 
@@ -78,10 +81,22 @@ export function CustomerDetailsInsights({ customerId }: CustomerDetailsInsightsP
           </Card>
         </TabsContent>
 
-        <TabsContent value="history">
+        <TabsContent value="assets">
           <Card className="p-4">
-            <h3 className="text-lg font-semibold mb-4">Customer History</h3>
-            <p>Customer since: {new Date(customer.created_at).toLocaleDateString()}</p>
+            <h3 className="text-lg font-semibold mb-4">Customer Assets</h3>
+            {customer.assets && customer.assets.length > 0 ? (
+              <div className="space-y-4">
+                {customer.assets.map((asset) => (
+                  <div key={asset.id} className="p-4 border rounded-lg">
+                    <p><span className="font-medium">Name:</span> {asset.asset_name}</p>
+                    <p><span className="font-medium">Type:</span> {asset.asset_type}</p>
+                    <p><span className="font-medium">Size:</span> {asset.asset_size}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No assets assigned to this customer</p>
+            )}
           </Card>
         </TabsContent>
 
