@@ -2,17 +2,29 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Booking } from "@/types/booking";
-import { useBookings } from "./hooks/useBookings";
+import { useQuery } from "@tanstack/react-query";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
 }
 
 export function BookingsTable({ onEdit }: BookingsTableProps) {
-  const { bookings, isLoading } = useBookings();
   const [selectedStatus, setSelectedStatus] = useState("all");
+
+  const { data: bookings = [], isLoading } = useQuery({
+    queryKey: ['bookings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*, slot:slots(name), customer:customers(name, email)');
+      
+      if (error) throw error;
+      return data || [];
+    }
+  });
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
