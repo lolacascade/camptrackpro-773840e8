@@ -29,7 +29,7 @@ export default function Assets() {
         .select(`
           *,
           customers(id, first_name, last_name),
-          slots(id, name, dock)
+          slots:slip_id(id, name, dock)
         `)
         .eq('user_id', session.user.id);
       
@@ -39,10 +39,10 @@ export default function Assets() {
       return (data || []).map(asset => ({
         ...asset,
         user_id: session.user.id,
-        slots: asset.slots ? {
-          id: asset.slots.id,
-          name: asset.slots.name,
-          dock: asset.slots.dock
+        slots: asset.slots && asset.slots[0] ? {
+          id: asset.slots[0].id,
+          name: asset.slots[0].name,
+          dock: asset.slots[0].dock
         } : null
       })) as Asset[];
     },
@@ -55,13 +55,11 @@ export default function Assets() {
   };
 
   const handleViewDetails = (asset: Asset) => {
-    // Implement view details functionality if needed
     console.log('View details:', asset);
   };
 
   const handleEditAsset = (asset: Asset) => {
     console.log('Edit asset:', asset);
-    // Implement edit functionality if needed
   };
 
   const handleDrawerClose = () => {
