@@ -63,14 +63,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <BookingsStatCard 
         customer={customer}
-        totalBookings={String(customerStats.totalBookings)}
-        activeBookings={String(customerStats.activeBookings)}
-        totalCustomers={String(customerStats.totalCustomers)}
+        totalBookings={String(customerStats.totalBookings || 0)}
+        activeBookings={String(customerStats.activeBookings || 0)}
+        totalCustomers={String(customerStats.totalCustomers || 0)}
       />
       <AssetsStatCard 
         customer={customer}
-        totalAssets={String(customerStats.totalAssets)}
-        newCustomers={String(customerStats.newCustomers)}
+        totalAssets={String(customerStats.totalAssets || 0)}
+        newCustomers={String(customerStats.newCustomers || 0)}
       />
       <RatingStatCard rating={customerStats.rating} />
       <LifetimeValueStatCard value={customerStats.lifetimeValue} />
