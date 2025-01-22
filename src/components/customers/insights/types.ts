@@ -4,5 +4,5 @@ export interface ChartData {
   year: string;
   newCustomers: number;
   existingCustomers: number;
-  isProjected?: boolean;
+  isProjected: boolean;
 }
