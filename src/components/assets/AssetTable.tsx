@@ -16,6 +16,21 @@ interface AssetTableProps {
 export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTableProps) {
   const [typeFilter, setTypeFilter] = useState("all");
   const [customerFilter, setCustomerFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Create unique customer options from assets
+  const customerOptions = [
+    { label: "All Customers", value: "all" },
+    ...Array.from(new Set(assets?.map(asset => asset.customer_id)))
+      .filter(Boolean)
+      .map(customerId => {
+        const asset = assets.find(a => a.customer_id === customerId);
+        return {
+          label: asset?.customers ? `${asset.customers.first_name} ${asset.customers.last_name}` : 'Unassigned',
+          value: String(customerId)
+        };
+      })
+  ];
 
   const filters = [
     {
@@ -29,21 +44,32 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
     },
     {
       name: "customer",
-      options: [
-        { label: "All Customers", value: "all" },
-        ...(assets?.map(asset => ({
-          label: asset.customers ? `${asset.customers.first_name} ${asset.customers.last_name}` : 'Unassigned',
-          value: String(asset.customer_id || 'unassigned')
-        })) || [])
-      ],
+      options: customerOptions,
       value: customerFilter,
       onChange: setCustomerFilter
     }
   ];
 
+  // Filter assets based on all criteria
   const filteredAssets = assets?.filter(asset => {
+    // Type filter
     if (typeFilter !== "all" && asset.asset_type !== typeFilter) return false;
+    
+    // Customer filter
     if (customerFilter !== "all" && String(asset.customer_id) !== customerFilter) return false;
+    
+    // Search term
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        asset.asset_name?.toLowerCase().includes(searchLower) ||
+        asset.asset_type?.toLowerCase().includes(searchLower) ||
+        asset.asset_size?.toLowerCase().includes(searchLower) ||
+        asset.customers?.first_name?.toLowerCase().includes(searchLower) ||
+        asset.customers?.last_name?.toLowerCase().includes(searchLower)
+      );
+    }
+    
     return true;
   }) || [];
 
@@ -62,7 +88,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
       <DataTableFiltersBar filters={filters} />
       <div className="rounded-lg border border-[#E8EBEB] bg-white">
         <Table>
-          <AssetTableHeader />
+          <AssetTableHeader searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           <AssetTableBody
             assets={filteredAssets}
             onEdit={onEdit}
