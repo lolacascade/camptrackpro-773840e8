@@ -5,6 +5,7 @@ import { BookingsStatCard } from "./stats/BookingsStatCard";
 import { AssetsStatCard } from "./stats/AssetsStatCard";
 import { RatingStatCard } from "./stats/RatingStatCard";
 import { LifetimeValueStatCard } from "./stats/LifetimeValueStatCard";
+import { toStringSafe } from "@/lib/typeUtils";
 
 interface CustomerStatsCardsProps {
   customer?: Customer;
@@ -63,14 +64,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <BookingsStatCard 
         customer={customer}
-        totalBookings={String(customerStats.totalBookings || "0")}
-        activeBookings={String(customerStats.activeBookings || "0")}
-        totalCustomers={String(customerStats.totalCustomers || "0")}
+        totalBookings={toStringSafe(customerStats.totalBookings)}
+        activeBookings={toStringSafe(customerStats.activeBookings)}
+        totalCustomers={toStringSafe(customerStats.totalCustomers)}
       />
       <AssetsStatCard 
         customer={customer}
-        totalAssets={String(customerStats.totalAssets || "0")}
-        newCustomers={String(customerStats.newCustomers || "0")}
+        totalAssets={toStringSafe(customerStats.totalAssets)}
+        newCustomers={toStringSafe(customerStats.newCustomers)}
       />
       <RatingStatCard rating={customerStats.rating} />
       <LifetimeValueStatCard value={customerStats.lifetimeValue} />

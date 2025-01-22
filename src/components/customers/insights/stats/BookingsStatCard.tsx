@@ -28,12 +28,15 @@ export function BookingsStatCard({
       breakdown={[
         { 
           label: "Active", 
-          value: String(customer ? activeBookings : 45), 
+          value: customer ? activeBookings : "45", 
           percentage: 60 
         },
         { 
           label: "Completed", 
-          value: String(customer ? (Number(totalBookings) - Number(activeBookings)) : 30), 
+          value: String(customer ? 
+            (Number(totalBookings) - Number(activeBookings)) : 
+            30
+          ), 
           percentage: 40 
         }
       ]}
