@@ -1,17 +1,16 @@
-import { Table } from "@/components/ui/table";
-import { DataTableHeader } from "./DataTableHeader";
-import { DataTableHeaderRow } from "./DataTableHeaderRow";
-import { DataTableBody } from "./DataTableBody";
-import { DataTablePagination } from "./DataTablePagination";
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useTableState } from "@/hooks/use-table-state";
 import { useDataTable } from "@/hooks/use-data-table";
+import { useDataSearch } from "@/hooks/use-data-search";
+import { DataTableHeader } from "./DataTableHeader";
+import { DataTableContent } from "./DataTableContent";
+import { DataTablePagination } from "./DataTablePagination";
 import { DataTableProps } from "./types";
 
 export function DataTable<T extends { id?: number | string }>({
-  data = [], // Provide default empty array
+  data = [],
   columns,
   onViewDetails,
   onEdit,
@@ -37,22 +36,20 @@ export function DataTable<T extends { id?: number | string }>({
     visibleColumnsData,
     handleFilterChange
   } = useDataTable({ 
-    data: data || [], // Ensure data is never null/undefined
-    columns: columns || [], // Ensure columns is never null/undefined
-    filters: filters || [] // Ensure filters is never null/undefined
+    data: data || [],
+    columns: columns || [],
+    filters: filters || []
   });
 
   const {
     localData,
     setLocalData,
-    filteredAndSortedData,
     sortConfig: localSortConfig,
     handleSort
-  } = useTableState<T>(data || []); // Ensure data is never null/undefined
+  } = useTableState<T>(data || []);
 
-  useEffect(() => {
-    setLocalData(data || []); // Ensure data is never null/undefined
-  }, [data, setLocalData]);
+  // Apply search filter
+  const searchFilteredData = useDataSearch(localData, searchTerm);
 
   // Real-time updates
   useEffect(() => {
@@ -117,8 +114,8 @@ export function DataTable<T extends { id?: number | string }>({
   // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = (filteredAndSortedData || []).slice(startIndex, endIndex);
-  const totalPages = Math.ceil((filteredAndSortedData || []).length / itemsPerPage);
+  const paginatedData = searchFilteredData.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(searchFilteredData.length / itemsPerPage);
 
   return (
     <div className="space-y-4">
@@ -136,23 +133,16 @@ export function DataTable<T extends { id?: number | string }>({
         onColumnVisibilityChange={setVisibleColumns}
       />
 
-      <div className="rounded-md border bg-white">
-        <Table>
-          <DataTableHeaderRow
-            columns={visibleColumnsData}
-            sortConfig={localSortConfig}
-            onSort={handleSort}
-          />
-          <DataTableBody
-            data={paginatedData}
-            columns={visibleColumnsData}
-            onViewDetails={onViewDetails}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            onRowClick={onRowClick}
-          />
-        </Table>
-      </div>
+      <DataTableContent
+        data={paginatedData}
+        columns={visibleColumnsData}
+        sortConfig={localSortConfig}
+        onSort={handleSort}
+        onViewDetails={onViewDetails}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onRowClick={onRowClick}
+      />
 
       <DataTablePagination
         currentPage={currentPage}
