@@ -1,33 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { Profile } from "@/types/database/auth";
+import { Profile } from "@/types/common/person";
 
 export function useProfile() {
-  const session = useSession();
-
   return useQuery({
-    queryKey: ["profile", session?.user?.id],
-    queryFn: async (): Promise<Profile | null> => {
-      if (!session?.user?.id) {
-        return null;
+    queryKey: ["profile"],
+    queryFn: async (): Promise<Profile> => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        throw new Error("No authenticated user");
       }
 
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", session.user.id)
-        .maybeSingle();
+        .eq("id", user.id)
+        .single();
 
       if (error) {
         console.error("Error fetching profile:", error);
-        toast.error("Failed to fetch user profile");
         throw error;
       }
 
-      return profile;
+      return {
+        id: profile.id,
+        role: profile.role,
+        first_name: profile.first_name || "",
+        last_name: profile.last_name || ""
+      };
     },
-    enabled: !!session?.user?.id,
+    retry: 1
   });
 }

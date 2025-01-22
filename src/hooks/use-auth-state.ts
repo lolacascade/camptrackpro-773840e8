@@ -15,27 +15,16 @@ export function useAuthState(fromPath: string = '/app') {
       if (event === 'SIGNED_IN' && currentSession) {
         navigate(fromPath, { replace: true });
         toast({
-          title: "Welcome back!",
+          title: "Welcome!",
           description: "You have successfully signed in.",
         });
       }
 
       if (event === 'SIGNED_OUT') {
-        localStorage.removeItem('supabase-session');
+        navigate('/login', { replace: true });
         toast({
           title: "Signed out",
           description: "You have been signed out successfully.",
-        });
-      }
-
-      if (event === 'USER_UPDATED') {
-        console.log('User profile updated');
-      }
-
-      if (event === 'PASSWORD_RECOVERY') {
-        toast({
-          title: "Password recovery",
-          description: "Check your email for password reset instructions.",
         });
       }
     });
