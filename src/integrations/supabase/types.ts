@@ -583,7 +583,6 @@ export type Database = {
         Row: {
           created_at: string | null
           customer_id: string | null
-          dock: string | null
           electricity_voltage: string | null
           has_water: boolean | null
           id: number
@@ -599,12 +598,10 @@ export type Database = {
           user_id: string | null
           utility_connection_type: string | null
           width_ft: number | null
-          zone: string | null
         }
         Insert: {
           created_at?: string | null
           customer_id?: string | null
-          dock?: string | null
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
@@ -620,12 +617,10 @@ export type Database = {
           user_id?: string | null
           utility_connection_type?: string | null
           width_ft?: number | null
-          zone?: string | null
         }
         Update: {
           created_at?: string | null
           customer_id?: string | null
-          dock?: string | null
           electricity_voltage?: string | null
           has_water?: boolean | null
           id?: number
@@ -641,7 +636,6 @@ export type Database = {
           user_id?: string | null
           utility_connection_type?: string | null
           width_ft?: number | null
-          zone?: string | null
         }
         Relationships: [
           {
