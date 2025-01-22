@@ -34,14 +34,14 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
       onDockSpotAdded();
       
       toast({
-        title: "Dock Spot Added",
-        description: `New dock spot ${values.name} has been created.`,
+        title: "Spot Added",
+        description: `New spot ${values.name} has been created.`,
       });
     } catch (error) {
-      console.error('Error creating slip:', error);
+      console.error('Error creating spot:', error);
       toast({
         title: "Error",
-        description: "Failed to create dock spot. Please try again.",
+        description: "Failed to create spot. Please try again.",
         variant: "destructive",
       });
     }
@@ -51,7 +51,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
     <BaseDrawer
       open={isOpen}
       onClose={() => onOpenChange(false)}
-      title="Add New Dock Spot"
+      title="Add New Spot"
     >
       <DockSpotForm onSubmit={onSubmit} />
     </BaseDrawer>

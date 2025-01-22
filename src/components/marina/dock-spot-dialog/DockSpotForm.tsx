@@ -9,10 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Dock spot name must be at least 2 characters.",
+    message: "Spot name must be at least 2 characters.",
   }),
-  length_ft: z.number().min(1, "Length must be greater than 0"),
-  width_ft: z.number().min(1, "Width must be greater than 0"),
+  length_ft: z.number().optional(),
+  width_ft: z.number().optional(),
   is_covered: z.boolean().default(false),
   electricity_voltage: z.string().optional(),
   has_water: z.boolean().default(false),
@@ -31,8 +31,8 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      length_ft: 0,
-      width_ft: 0,
+      length_ft: undefined,
+      width_ft: undefined,
       is_covered: false,
       has_water: false,
       status: 'available',
@@ -48,7 +48,7 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Dock Spot Name</FormLabel>
+              <FormLabel>Spot Name *</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., A1, B2..." {...field} />
               </FormControl>
@@ -62,12 +62,13 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
             name="length_ft"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Length (ft)</FormLabel>
+                <FormLabel>Length (ft) (optional)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     {...field}
-                    onChange={e => field.onChange(Number(e.target.value))}
+                    onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ''}
                   />
                 </FormControl>
                 <FormMessage />
@@ -79,12 +80,13 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
             name="width_ft"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Width (ft)</FormLabel>
+                <FormLabel>Width (ft) (optional)</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     {...field}
-                    onChange={e => field.onChange(Number(e.target.value))}
+                    onChange={e => field.onChange(e.target.value ? Number(e.target.value) : undefined)}
+                    value={field.value || ''}
                   />
                 </FormControl>
                 <FormMessage />
@@ -97,7 +99,7 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
           name="electricity_voltage"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Electricity</FormLabel>
+              <FormLabel>Electricity (optional)</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -125,7 +127,7 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
                 />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>Covered Slip</FormLabel>
+                <FormLabel>Covered Spot</FormLabel>
               </div>
             </FormItem>
           )}
@@ -148,7 +150,7 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
           )}
         />
         <Button type="submit" className="w-full">
-          Create Dock Spot
+          Create Spot
         </Button>
       </form>
     </Form>
