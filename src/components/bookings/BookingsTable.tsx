@@ -7,6 +7,7 @@ import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
+import { toast } from "sonner";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -18,6 +19,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['bookings'],
     queryFn: async () => {
+      console.log('Fetching bookings...');
       const { data, error } = await supabase
         .from('bookings')
         .select(`
@@ -31,9 +33,15 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
           customer:customers(*)
         `);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching bookings:', error);
+        toast.error("Failed to fetch bookings");
+        throw error;
+      }
 
-      return (data || []).map((booking): Booking => ({
+      console.log('Bookings data received:', data);
+      
+      const mappedData = (data || []).map((booking): Booking => ({
         id: booking.id,
         customer_id: booking.customer_id,
         asset_id: booking.asset_id,
@@ -58,6 +66,9 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
           user_id: booking.slot.user_id || null
         } as Slot : undefined
       }));
+
+      console.log('Mapped bookings data:', mappedData);
+      return mappedData;
     }
   });
 
