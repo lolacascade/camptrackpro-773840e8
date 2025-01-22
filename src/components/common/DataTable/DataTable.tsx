@@ -51,6 +51,11 @@ export function DataTable<T extends { id?: number | string }>({
     handleSort
   } = useTableState<T>(data || []);
 
+  // Update localData when data prop changes
+  useEffect(() => {
+    setLocalData(data);
+  }, [data, setLocalData]);
+
   // Apply search filter
   const searchFilteredData = useDataSearch(localData, searchTerm);
   console.log('Filtered data length:', searchFilteredData.length);

@@ -48,7 +48,9 @@ export function DataTableBody<T extends { id?: number | string }>({
             <TableCell key={index}>
               {column.cell
                 ? column.cell(item)
-                : String(item[column.accessorKey] || "")}
+                : item[column.accessorKey as keyof T] !== null 
+                  ? String(item[column.accessorKey as keyof T])
+                  : 'N/A'}
             </TableCell>
           ))}
           <TableCell>
