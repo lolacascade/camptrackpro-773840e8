@@ -1,11 +1,5 @@
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface DashboardFiltersProps {
   searchQuery: string;
@@ -22,6 +16,14 @@ export function DashboardFilters({
   onDockFilterChange,
   availableDocks,
 }: DashboardFiltersProps) {
+  const dockOptions = [
+    { value: 'all', label: 'All Docks' },
+    ...availableDocks.map(dock => ({
+      value: dock,
+      label: `Dock ${dock}`
+    }))
+  ];
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <Input
@@ -31,19 +33,13 @@ export function DashboardFilters({
         className="sm:max-w-[200px]"
       />
       
-      <Select value={dockFilter} onValueChange={onDockFilterChange}>
-        <SelectTrigger className="sm:max-w-[200px]">
-          <SelectValue placeholder="Filter by dock" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Docks</SelectItem>
-          {availableDocks.map((dock) => (
-            <SelectItem key={dock} value={dock}>
-              Dock {dock}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SelectField
+        value={dockFilter}
+        onChange={onDockFilterChange}
+        options={dockOptions}
+        placeholder="Filter by dock"
+        className="sm:max-w-[200px]"
+      />
     </div>
   );
 }

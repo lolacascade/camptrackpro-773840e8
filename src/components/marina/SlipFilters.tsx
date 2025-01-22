@@ -1,11 +1,5 @@
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface SlipFiltersProps {
   searchQuery: string;
@@ -26,6 +20,21 @@ export function SlipFilters({
   onDockFilterChange,
   availableDocks,
 }: SlipFiltersProps) {
+  const statusOptions = [
+    { value: 'all', label: 'All Statuses' },
+    { value: 'available', label: 'Available' },
+    { value: 'occupied', label: 'Occupied' },
+    { value: 'maintenance', label: 'Maintenance' }
+  ];
+
+  const dockOptions = [
+    { value: 'all', label: 'All Docks' },
+    ...availableDocks.map(dock => ({
+      value: dock,
+      label: dock
+    }))
+  ];
+
   return (
     <div className="flex flex-col md:flex-row gap-4">
       <div className="flex-1">
@@ -36,30 +45,20 @@ export function SlipFilters({
           className="border-[#E8EBEB] text-[#133134]"
         />
       </div>
-      <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-        <SelectTrigger className="w-[180px] border-[#E8EBEB] text-[#133134]">
-          <SelectValue placeholder="Filter by status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Statuses</SelectItem>
-          <SelectItem value="available">Available</SelectItem>
-          <SelectItem value="occupied">Occupied</SelectItem>
-          <SelectItem value="maintenance">Maintenance</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select value={dockFilter} onValueChange={onDockFilterChange}>
-        <SelectTrigger className="w-[180px] border-[#E8EBEB] text-[#133134]">
-          <SelectValue placeholder="Filter by dock" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Docks</SelectItem>
-          {availableDocks.map((dock) => (
-            <SelectItem key={dock} value={dock}>
-              {dock}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <SelectField
+        value={statusFilter}
+        onChange={onStatusFilterChange}
+        options={statusOptions}
+        placeholder="Filter by status"
+        className="w-[180px]"
+      />
+      <SelectField
+        value={dockFilter}
+        onChange={onDockFilterChange}
+        options={dockOptions}
+        placeholder="Filter by dock"
+        className="w-[180px]"
+      />
     </div>
   );
 }

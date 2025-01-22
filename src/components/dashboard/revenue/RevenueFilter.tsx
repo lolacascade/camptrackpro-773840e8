@@ -1,4 +1,4 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 import { RevenueCategory } from "./types";
 
 interface RevenueFilterProps {
@@ -7,17 +7,20 @@ interface RevenueFilterProps {
 }
 
 export function RevenueFilter({ value, onChange }: RevenueFilterProps) {
+  const options = [
+    { value: 'all', label: 'All Categories' },
+    { value: 'renewals', label: 'Slip Renewals' },
+    { value: 'new_rentals', label: 'New Rentals' },
+    { value: 'maintenance', label: 'Maintenance Services' }
+  ];
+
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder="Filter by category" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">All Categories</SelectItem>
-        <SelectItem value="renewals">Slip Renewals</SelectItem>
-        <SelectItem value="new_rentals">New Rentals</SelectItem>
-        <SelectItem value="maintenance">Maintenance Services</SelectItem>
-      </SelectContent>
-    </Select>
+    <SelectField
+      value={value}
+      onChange={onChange}
+      options={options}
+      placeholder="Filter by category"
+      className="w-[200px]"
+    />
   );
 }

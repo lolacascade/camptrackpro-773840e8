@@ -1,4 +1,4 @@
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface BookingsPriorityFilterProps {
   value: string;
@@ -6,17 +6,20 @@ interface BookingsPriorityFilterProps {
 }
 
 export function BookingsPriorityFilter({ value, onChange }: BookingsPriorityFilterProps) {
+  const priorityOptions = [
+    { value: 'all', label: 'All Priorities' },
+    { value: 'high', label: 'High Priority' },
+    { value: 'medium', label: 'Medium Priority' },
+    { value: 'low', label: 'Low Priority' }
+  ];
+
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Filter by priority" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">All Priorities</SelectItem>
-        <SelectItem value="high">High Priority</SelectItem>
-        <SelectItem value="medium">Medium Priority</SelectItem>
-        <SelectItem value="low">Low Priority</SelectItem>
-      </SelectContent>
-    </Select>
+    <SelectField
+      value={value}
+      onChange={onChange}
+      options={priorityOptions}
+      placeholder="Filter by priority"
+      className="w-[180px]"
+    />
   );
 }
