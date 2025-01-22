@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
 import { getSlotColumns } from "./table/SlotTableColumns";
 import { toast } from "sonner";
+import { useState } from "react";
+import { EntityDrawer } from "@/components/common/EntityDrawer";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -18,6 +20,9 @@ const statusOptions = [
 ];
 
 export function SlotTable({ onEdit }: SlotTableProps) {
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const { data: slots = [], isLoading, refetch } = useQuery({
     queryKey: ['slots'],
     queryFn: async () => {
@@ -68,10 +73,41 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     }
   };
 
-  const handleViewDetails = (slot: Slot) => {
-    console.log('View details for slot:', slot);
-    toast.info("Viewing slot details");
+  const handleEdit = (slot: Slot) => {
+    setSelectedSlot(slot);
+    setIsDrawerOpen(true);
   };
+
+  const handleViewDetails = (slot: Slot) => {
+    setSelectedSlot(slot);
+    setIsDrawerOpen(true);
+  };
+
+  const slotFields = [
+    { name: 'name', label: 'Name', type: 'text' as const, required: true },
+    { name: 'status', label: 'Status', type: 'select' as const, required: true, 
+      options: [
+        { value: 'available', label: 'Available' },
+        { value: 'occupied', label: 'Occupied' },
+        { value: 'maintenance', label: 'Maintenance' }
+      ]
+    },
+    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
+    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
+    { name: 'is_covered', label: 'Is Covered', type: 'select' as const,
+      options: [
+        { value: 'true', label: 'Yes' },
+        { value: 'false', label: 'No' }
+      ]
+    },
+    { name: 'has_water', label: 'Has Water', type: 'select' as const,
+      options: [
+        { value: 'true', label: 'Yes' },
+        { value: 'false', label: 'No' }
+      ]
+    },
+    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
+  ];
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
@@ -82,7 +118,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           isLoading={isLoading}
           tableName="slots"
           onViewDetails={handleViewDetails}
-          onEdit={onEdit}
+          onEdit={handleEdit}
           onDelete={handleDelete}
           filters={[
             {
@@ -92,6 +128,23 @@ export function SlotTable({ onEdit }: SlotTableProps) {
               onChange: () => {},
             }
           ]}
+        />
+
+        <EntityDrawer
+          entity={selectedSlot}
+          open={isDrawerOpen}
+          onClose={() => {
+            setIsDrawerOpen(false);
+            setSelectedSlot(null);
+          }}
+          onEntityUpdated={() => {
+            refetch();
+            setIsDrawerOpen(false);
+            setSelectedSlot(null);
+          }}
+          title="Slot"
+          fields={slotFields}
+          tableName="slots"
         />
       </div>
     </Card>
