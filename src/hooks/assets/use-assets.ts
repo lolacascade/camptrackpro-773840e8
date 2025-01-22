@@ -59,9 +59,12 @@ export function useAssets() {
         } : null,
         slots: asset.slots ? {
           ...asset.slots,
-          id: String(asset.slots.id),
-          user_id: asset.slots.user_id || null,
-          status: asset.slots.status as 'available' | 'occupied' | 'maintenance'
+          id: Number(asset.slots.id),
+          status: asset.slots.status as 'available' | 'occupied' | 'maintenance',
+          length_ft: asset.slots.length_ft ? Number(asset.slots.length_ft) : null,
+          width_ft: asset.slots.width_ft ? Number(asset.slots.width_ft) : null,
+          maintenance_id: asset.slots.maintenance_id ? Number(asset.slots.maintenance_id) : null,
+          user_id: asset.slots.user_id || null
         } : null
       }));
     },

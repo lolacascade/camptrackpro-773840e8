@@ -50,7 +50,11 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         customer: booking.customer,
         slot: booking.slot ? {
           ...booking.slot,
-          id: String(booking.slot.id),
+          id: Number(booking.slot.id),
+          status: booking.slot.status as Slot['status'],
+          length_ft: booking.slot.length_ft ? Number(booking.slot.length_ft) : null,
+          width_ft: booking.slot.width_ft ? Number(booking.slot.width_ft) : null,
+          maintenance_id: booking.slot.maintenance_id ? Number(booking.slot.maintenance_id) : null,
           user_id: booking.slot.user_id || null
         } as Slot : undefined
       }));
