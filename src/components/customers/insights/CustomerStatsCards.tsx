@@ -1,119 +1,75 @@
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
+import { Customer } from "@/types/customer";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 import { useProfile } from "@/hooks/use-profile";
+import { StatsCard } from "@/components/common/StatsCard";
+import { Ship, DollarSign, Star, Calendar } from "lucide-react";
 
-export function CustomerStatsCards() {
+interface CustomerStatsCardsProps {
+  customer: Customer | null;
+}
+
+export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
   const { data: profile } = useProfile();
-  const { data: stats } = useQuery({
-    queryKey: ['expense-stats'],
-    queryFn: async () => {
-      const currentDate = new Date();
-      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-      // Get current month's expenses
-      const { data: currentExpenses } = await supabase
-        .from('expenses')
-        .select('amount, category')
-        .gte('date', firstDayOfMonth.toISOString())
-        .lte('date', lastDayOfMonth.toISOString());
-
-      // Get previous month's expenses
-      const { data: previousExpenses } = await supabase
-        .from('expenses')
-        .select('amount')
-        .gte('date', new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString())
-        .lte('date', new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString());
-
-      // Get monthly budget - handle case where no budget exists
-      const { data: budgets } = await supabase
-        .from('monthly_budgets')
-        .select('amount')
-        .eq('month', firstDayOfMonth.toISOString().split('T')[0]);
-
-      const currentTotal = currentExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const previousTotal = previousExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const monthlyBudget = budgets?.[0]?.amount || 0;
-
-      // Calculate category percentages
-      const categoryTotals: { [key: string]: number } = {};
-      currentExpenses?.forEach(exp => {
-        categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
-      });
-
-      const largestExpense = currentExpenses?.reduce((max, exp) => 
-        exp.amount > max.amount ? exp : max, 
-        { amount: 0, category: 'None' }
-      );
-
-      return {
-        currentTotal,
-        previousTotal,
-        monthlyBudget,
-        categoryTotals,
-        largestExpense
-      };
-    }
-  });
-
-  const percentageChange = stats?.previousTotal 
-    ? ((stats.currentTotal - stats.previousTotal) / stats.previousTotal) * 100 
-    : 0;
-
-  const budgetStatus = stats?.monthlyBudget 
-    ? ((stats.currentTotal / stats.monthlyBudget) * 100)
-    : 0;
-
-  const categoryBreakdown = stats?.categoryTotals 
-    ? Object.entries(stats.categoryTotals).map(([category, amount]) => ({
-        label: category,
-        value: `$${amount.toLocaleString()}`,
-        percentage: Math.round((amount / stats.currentTotal) * 100)
-      }))
-    : [];
+  if (!customer) return null;
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <EnhancedStatCard
-        title="Total Expenses"
-        value={`$${stats?.currentTotal.toLocaleString() || '0'}`}
-        icon={DollarSign}
+      <StatsCard
+        title="Active Assets"
+        value="2"
+        icon={Ship}
         trend={{
-          value: `${Math.abs(percentageChange).toFixed(1)}%`,
-          isPositive: percentageChange <= 0,
-          comparedTo: "last month"
+          value: "1 more",
+          isPositive: true,
+          comparedTo: "than last month"
         }}
-        breakdown={categoryBreakdown.slice(0, 2)}
-      />
-      <EnhancedStatCard
-        title="Largest Expense"
-        value={`$${stats?.largestExpense.amount.toLocaleString() || '0'}`}
-        icon={TrendingUp}
         breakdown={[
-          { label: "Category", value: stats?.largestExpense.category || 'None' },
-          { label: "% of Total", value: `${Math.round((stats?.largestExpense.amount / (stats?.currentTotal || 1)) * 100)}%` }
+          { label: "Long-term", value: "1" },
+          { label: "Short-term", value: "1" }
         ]}
       />
-      <EnhancedStatCard
-        title="Expense Categories"
-        value={`${categoryBreakdown.length || 0}`}
-        icon={PieChart}
-        breakdown={categoryBreakdown}
-      />
-      <EnhancedStatCard
-        title="Budget Status"
-        value={`${budgetStatus.toFixed(1)}%`}
-        icon={AlertCircle}
+      <StatsCard
+        title="Lifetime Value"
+        value={`$${customer.lifetime_value?.toLocaleString() || '0'}`}
+        icon={DollarSign}
         trend={{
-          value: `${Math.abs(100 - budgetStatus).toFixed(1)}%`,
-          isPositive: budgetStatus <= 100,
-          comparedTo: "monthly budget"
+          value: "12%",
+          isPositive: true,
+          comparedTo: "than last year"
         }}
         breakdown={[
-          { label: "Spent", value: `$${stats?.currentTotal.toLocaleString() || '0'}` },
-          { label: "Budget", value: `$${stats?.monthlyBudget.toLocaleString() || '0'}` }
+          { label: "This Year", value: "$12,000" },
+          { label: "Last Year", value: "$10,000" }
+        ]}
+      />
+      <StatsCard
+        title="Customer Rating"
+        value="4.8"
+        icon={Star}
+        trend={{
+          value: "0.2",
+          isPositive: true,
+          comparedTo: "than average"
+        }}
+        breakdown={[
+          { label: "Total Reviews", value: "12" },
+          { label: "Last Review", value: format(new Date(), 'MMM dd, yyyy') }
+        ]}
+      />
+      <StatsCard
+        title="Average Stay"
+        value="45 days"
+        icon={Calendar}
+        trend={{
+          value: "5 days",
+          isPositive: true,
+          comparedTo: "than average"
+        }}
+        breakdown={[
+          { label: "Longest Stay", value: "60 days" },
+          { label: "Shortest Stay", value: "30 days" }
         ]}
       />
     </div>
