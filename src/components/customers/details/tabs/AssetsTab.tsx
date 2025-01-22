@@ -11,7 +11,7 @@ interface AssetsTabProps {
 
 export function AssetsTab({ customer }: AssetsTabProps) {
   const { data: assets, isLoading } = useQuery({
-    queryKey: ['customer-assets', customer.id.toString()],
+    queryKey: ['customer-assets', customer.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('assets')
