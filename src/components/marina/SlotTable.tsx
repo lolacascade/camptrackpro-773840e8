@@ -4,6 +4,7 @@ import { getSlotColumns } from "./table/SlotTableColumns";
 import { supabase } from "@/integrations/supabase/client";
 import type { Slot } from "@/types/slot";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -15,32 +16,45 @@ export function SlotTable({ onEdit }: SlotTableProps) {
 
   useEffect(() => {
     const fetchSlots = async () => {
-      const { data, error } = await supabase
-        .from('slots')
-        .select(`
-          *,
-          assets (*)
-        `);
+      try {
+        const { data, error } = await supabase
+          .from('slots')
+          .select(`
+            *,
+            assets (*)
+          `);
 
-      if (error) {
-        console.error('Error fetching slots:', error);
+        if (error) {
+          console.error('Error fetching slots:', error);
+          toast.error('Failed to load slots');
+          return;
+        }
+
+        if (!data) {
+          console.log('No slots found');
+          setSlots([]);
+          return;
+        }
+
+        const typedSlots = data.map(slot => ({
+          ...slot,
+          id: String(slot.id),
+          status: slot.status as "available" | "occupied" | "maintenance",
+          user_id: slot.user_id || null,
+          assets: slot.assets?.map(asset => ({
+            ...asset,
+            id: String(asset.id)
+          }))
+        }));
+        
+        console.log('Fetched slots:', typedSlots);
+        setSlots(typedSlots);
+      } catch (error) {
+        console.error('Error in fetchSlots:', error);
+        toast.error('Failed to load slots');
+      } finally {
         setIsLoading(false);
-        return;
       }
-
-      const typedSlots = (data || []).map(slot => ({
-        ...slot,
-        id: String(slot.id),
-        status: slot.status as "available" | "occupied" | "maintenance",
-        user_id: slot.user_id || null,
-        assets: slot.assets?.map(asset => ({
-          ...asset,
-          id: String(asset.id)
-        }))
-      }));
-      
-      setSlots(typedSlots);
-      setIsLoading(false);
     };
 
     fetchSlots();
@@ -59,6 +73,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           isLoading={isLoading}
           onRowClick={handleSlipClick}
           onEdit={onEdit}
+          title="Spots"
         />
       </div>
     </Card>
