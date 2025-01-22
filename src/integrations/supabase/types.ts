@@ -395,7 +395,7 @@ export type Database = {
           first_name: string
           id: string
           last_name: string
-          lifetime_value: number | null
+          lifetime_value: string | null
           organization_id: string | null
           phone: string | null
           postal_code: string | null
@@ -413,7 +413,7 @@ export type Database = {
           first_name: string
           id?: string
           last_name: string
-          lifetime_value?: number | null
+          lifetime_value?: string | null
           organization_id?: string | null
           phone?: string | null
           postal_code?: string | null
@@ -431,7 +431,7 @@ export type Database = {
           first_name?: string
           id?: string
           last_name?: string
-          lifetime_value?: number | null
+          lifetime_value?: string | null
           organization_id?: string | null
           phone?: string | null
           postal_code?: string | null

@@ -9,5 +9,5 @@ export interface Customer extends BaseEntity, PersonName {
   state?: string;
   country?: string;
   postal_code?: string;
-  lifetime_value?: number;
+  lifetime_value?: string;
 }

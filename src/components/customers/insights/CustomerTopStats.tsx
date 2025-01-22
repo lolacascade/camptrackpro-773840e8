@@ -33,7 +33,7 @@ export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
 
       <EnhancedStatCard
         title="Total Spent"
-        value={`$${(customerStats?.totalSpent || 0).toFixed(2)}`}
+        value={`$${customer.lifetime_value || "0"}`}
         icon={DollarSign}
         trend={{
           value: "+12%",
