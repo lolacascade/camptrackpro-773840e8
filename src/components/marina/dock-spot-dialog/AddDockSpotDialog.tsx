@@ -18,7 +18,6 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
         .from('slots')
         .insert({
           name: values.name,
-          dock: values.dock,
           length_ft: values.length_ft,
           width_ft: values.width_ft,
           is_covered: values.is_covered,
