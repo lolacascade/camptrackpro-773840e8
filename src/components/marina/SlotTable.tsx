@@ -3,6 +3,7 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
+import { Column } from "@/components/common/DataTable/types";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -27,16 +28,20 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     }
   });
 
-  const columns = [
+  const columns: Column<Slot>[] = [
     { header: "Name", accessorKey: "name" },
     { header: "Status", accessorKey: "status" },
     { header: "Length (ft)", accessorKey: "length_ft" },
     { header: "Width (ft)", accessorKey: "width_ft" },
-    { header: "Covered", accessorKey: "is_covered", 
-      cell: ({ row }: { row: any }) => row.original.is_covered ? "Yes" : "No" 
+    { 
+      header: "Covered", 
+      accessorKey: "is_covered",
+      cell: (slot: Slot) => slot.is_covered ? "Yes" : "No"
     },
-    { header: "Water", accessorKey: "has_water",
-      cell: ({ row }: { row: any }) => row.original.has_water ? "Yes" : "No"
+    { 
+      header: "Water", 
+      accessorKey: "has_water",
+      cell: (slot: Slot) => slot.has_water ? "Yes" : "No"
     },
     { header: "Electricity", accessorKey: "electricity_voltage" },
   ];

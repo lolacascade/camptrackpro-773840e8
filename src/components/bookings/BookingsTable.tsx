@@ -23,7 +23,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         .select(`
           *,
           slot:slots(
-            id, name, status, location_identifier, dock, zone, length_ft, width_ft, 
+            id, name, status, location_identifier, length_ft, width_ft, 
             is_covered, has_water, electricity_voltage, utility_connection_type,
             location_coordinates, customer_id, maintenance_id, created_at, updated_at,
             last_activity_at, user_id
@@ -47,13 +47,10 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         special_requirements: booking.special_requirements,
         reservation_code: booking.reservation_code,
         user_id: booking.user_id,
-        customer: booking.customer ? {
-          ...booking.customer,
-          user_id: booking.customer.user_id || null
-        } : undefined,
+        customer: booking.customer,
         slot: booking.slot ? {
           ...booking.slot,
-          id: String(booking.slot.id), // Convert number to string
+          id: String(booking.slot.id),
           user_id: booking.slot.user_id || null
         } as Slot : undefined
       }));

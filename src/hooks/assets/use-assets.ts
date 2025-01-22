@@ -25,8 +25,8 @@ export function useAssets() {
           slots:slip_id (
             id,
             name,
-            dock,
-            zone,
+            status,
+            location_identifier,
             length_ft,
             width_ft,
             is_covered,
@@ -39,9 +39,7 @@ export function useAssets() {
             created_at,
             updated_at,
             last_activity_at,
-            user_id,
-            status,
-            location_identifier
+            user_id
           )
         `)
         .eq('user_id', session.user.id);
