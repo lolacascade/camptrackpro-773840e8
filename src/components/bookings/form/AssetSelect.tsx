@@ -23,7 +23,7 @@ export function AssetSelect({ value, onSelect }: AssetSelectProps) {
   });
 
   const options = assets.map(asset => ({
-    value: asset.id,
+    value: asset.id.toString(),
     label: `${asset.asset_name} (${asset.asset_type})`
   }));
 

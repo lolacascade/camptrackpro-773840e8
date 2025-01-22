@@ -12,6 +12,7 @@ import { SlotSelect } from "./form/SlotSelect";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
+import { useCustomers } from "./form/useCustomers";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -29,6 +30,7 @@ type BookingFormData = {
 
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const session = useSession();
+  const { customers } = useCustomers();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 7)
@@ -58,7 +60,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         ...data,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending',
+        status: 'pending' as const,
         created_by: session.user.id,
         user_id: session.user.id,
         total_amount: 0 // This will be calculated by the database function
@@ -99,6 +101,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         <CustomerSelect
           value={watch('customer_id') || ''}
           onSelect={(value) => setValue('customer_id', value)}
+          customers={customers}
         />
 
         <BookingDateRange
