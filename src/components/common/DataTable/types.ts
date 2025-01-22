@@ -29,7 +29,6 @@ export interface DataTableProps<T> {
   columns: Column<T>[];
   onViewDetails?: (item: T) => void;
   onEdit?: (item: T) => void;
-  onDuplicate?: (item: T) => void;
   onDelete?: (item: T) => void;
   title?: string;
   itemsPerPage?: number;

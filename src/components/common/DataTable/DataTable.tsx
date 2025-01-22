@@ -15,7 +15,6 @@ export function DataTable<T extends { id?: number | string }>({
   columns,
   onViewDetails,
   onEdit,
-  onDuplicate,
   onDelete,
   title,
   itemsPerPage = 10,
@@ -149,7 +148,6 @@ export function DataTable<T extends { id?: number | string }>({
             columns={visibleColumnsData}
             onViewDetails={onViewDetails}
             onEdit={onEdit}
-            onDuplicate={onDuplicate}
             onDelete={onDelete}
             onRowClick={onRowClick}
           />
