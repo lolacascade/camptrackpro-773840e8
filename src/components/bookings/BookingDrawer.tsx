@@ -5,6 +5,13 @@ import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
+import { CustomerSelect } from "./form/CustomerSelect";
+import { BookingDateRange } from "./form/BookingDateRange";
+import { AssetSelect } from "./form/AssetSelect";
+import { SlotSelect } from "./form/SlotSelect";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
+import { addDays } from "date-fns";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -16,35 +23,24 @@ interface BookingDrawerProps {
 type BookingFormData = {
   customer_id: string;
   asset_id: string;
-  check_in_date: string;
-  check_out_date: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  total_amount: number;
-  slot_id?: number;
+  slot_id: number;
   special_requirements?: string;
-  reservation_code?: string;
-  user_id?: string;
 };
 
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const session = useSession();
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 7)
+  });
   
-  const { handleSubmit } = useForm<BookingFormData>({
+  const { register, handleSubmit, setValue, watch } = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
-      check_in_date: booking.check_in_date,
-      check_out_date: booking.check_out_date,
-      status: booking.status === 'checked_in' ? 'confirmed' : booking.status,
-      total_amount: booking.total_amount,
       slot_id: booking.slot_id,
-      special_requirements: booking.special_requirements,
-      reservation_code: booking.reservation_code,
-      user_id: booking.user_id
-    } : {
-      status: 'pending',
-      total_amount: 0
-    } as Partial<BookingFormData>
+      special_requirements: booking.special_requirements
+    } : {}
   });
 
   const onSubmit = async (data: BookingFormData) => {
@@ -53,9 +49,19 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         throw new Error("User not authenticated");
       }
 
+      if (!dateRange?.from || !dateRange?.to) {
+        toast.error("Please select a date range");
+        return;
+      }
+
       const submitData = {
         ...data,
+        check_in_date: dateRange.from.toISOString(),
+        check_out_date: dateRange.to.toISOString(),
+        status: 'pending',
         created_by: session.user.id,
+        user_id: session.user.id,
+        total_amount: 0 // This will be calculated by the database function
       };
 
       if (booking?.id) {
@@ -90,7 +96,27 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
       title={booking ? "Edit Booking" : "New Booking"}
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Form fields will be added here in future updates */}
+        <CustomerSelect
+          value={watch('customer_id') || ''}
+          onSelect={(value) => setValue('customer_id', value)}
+        />
+
+        <BookingDateRange
+          dateRange={dateRange}
+          onDateRangeChange={setDateRange}
+        />
+
+        <AssetSelect
+          value={watch('asset_id') || ''}
+          onSelect={(value) => setValue('asset_id', value)}
+        />
+
+        <SlotSelect
+          value={watch('slot_id')?.toString() || ''}
+          onSelect={(value) => setValue('slot_id', parseInt(value))}
+          dateRange={dateRange}
+        />
+
         <Button type="submit" className="w-full">
           {booking ? "Update Booking" : "Create Booking"}
         </Button>
