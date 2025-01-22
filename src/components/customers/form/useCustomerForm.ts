@@ -42,26 +42,17 @@ export function useCustomerForm(
 
   const onSubmit = async (formData: CustomerFormData) => {
     try {
-      const now = new Date().toISOString();
-      
       if (customer) {
         const { error } = await supabase
           .from('customers')
-          .update({
-            ...formData,
-            updated_at: now,
-          })
-          .eq('id', customer.id.toString());
+          .update(formData)
+          .eq('id', customer.id);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('customers')
-          .insert([{
-            ...formData,
-            created_at: now,
-            updated_at: now,
-          }]);
+          .insert([formData]);
 
         if (error) throw error;
       }

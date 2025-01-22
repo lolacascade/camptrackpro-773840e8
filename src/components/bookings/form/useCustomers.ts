@@ -11,37 +11,13 @@ export function useCustomers() {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        console.log("Fetching customers...");
         const { data, error } = await supabase
           .from('customers')
-          .select(`
-            id,
-            first_name,
-            last_name,
-            email,
-            phone,
-            address,
-            city,
-            state,
-            country,
-            postal_code,
-            lifetime_value,
-            created_at,
-            updated_at,
-            user_id
-          `)
-          .order('first_name', { ascending: true });
+          .select('*')
+          .order('first_name');
         
-        if (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-        
-        console.log("Customers data:", data);
-        setCustomers((data || []).map(customer => ({
-          ...customer,
-          user_id: customer.user_id || null
-        })));
+        if (error) throw error;
+        setCustomers(data || []);
       } catch (error) {
         console.error('Error in useCustomers:', error);
         toast({
@@ -49,7 +25,6 @@ export function useCustomers() {
           description: "Failed to load customers",
           variant: "destructive",
         });
-        setCustomers([]);
       } finally {
         setIsLoading(false);
       }
@@ -57,20 +32,12 @@ export function useCustomers() {
 
     fetchCustomers();
 
-    // Set up real-time subscription
     const subscription = supabase
       .channel('customers_changes')
       .on(
         'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'customers'
-        },
-        (payload) => {
-          console.log('Change received!', payload);
-          fetchCustomers(); // Refresh the data when changes occur
-        }
+        { event: '*', schema: 'public', table: 'customers' },
+        fetchCustomers
       )
       .subscribe();
 
@@ -79,8 +46,5 @@ export function useCustomers() {
     };
   }, [toast]);
 
-  return {
-    customers,
-    isLoading,
-  };
+  return { customers, isLoading };
 }

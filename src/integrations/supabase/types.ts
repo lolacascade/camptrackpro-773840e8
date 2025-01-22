@@ -81,7 +81,7 @@ export type Database = {
           asset_type: string | null
           created_at: string
           customer_id: string | null
-          daily_rate: number
+          daily_rate: number | null
           id: string
           name: string
           organization_id: string | null
@@ -98,7 +98,7 @@ export type Database = {
           asset_type?: string | null
           created_at?: string
           customer_id?: string | null
-          daily_rate: number
+          daily_rate?: number | null
           id?: string
           name: string
           organization_id?: string | null
@@ -115,7 +115,7 @@ export type Database = {
           asset_type?: string | null
           created_at?: string
           customer_id?: string | null
-          daily_rate?: number
+          daily_rate?: number | null
           id?: string
           name?: string
           organization_id?: string | null
@@ -171,7 +171,7 @@ export type Database = {
           slot_id: number | null
           special_requirements: string | null
           status: Database["public"]["Enums"]["booking_status"]
-          total_amount: number
+          total_amount: number | null
           updated_at: string
           user_id: string | null
         }
@@ -189,7 +189,7 @@ export type Database = {
           slot_id?: number | null
           special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
-          total_amount: number
+          total_amount?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -207,7 +207,7 @@ export type Database = {
           slot_id?: number | null
           special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
-          total_amount?: number
+          total_amount?: number | null
           updated_at?: string
           user_id?: string | null
         }
@@ -458,7 +458,7 @@ export type Database = {
       }
       expenses: {
         Row: {
-          amount: number
+          amount: number | null
           category: string
           created_at: string | null
           date: string
@@ -468,7 +468,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          amount: number
+          amount?: number | null
           category: string
           created_at?: string | null
           date: string
@@ -478,7 +478,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          amount?: number
+          amount?: number | null
           category?: string
           created_at?: string | null
           date?: string
@@ -491,7 +491,7 @@ export type Database = {
       }
       invoices: {
         Row: {
-          amount: number
+          amount: number | null
           booking_id: string | null
           created_at: string | null
           id: string
@@ -501,7 +501,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          amount: number
+          amount?: number | null
           booking_id?: string | null
           created_at?: string | null
           id?: string
@@ -511,7 +511,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          amount?: number
+          amount?: number | null
           booking_id?: string | null
           created_at?: string | null
           id?: string
@@ -649,7 +649,7 @@ export type Database = {
       }
       monthly_budgets: {
         Row: {
-          amount: number
+          amount: number | null
           category: string
           created_at: string | null
           id: string
@@ -658,7 +658,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          amount: number
+          amount?: number | null
           category: string
           created_at?: string | null
           id?: string
@@ -667,7 +667,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          amount?: number
+          amount?: number | null
           category?: string
           created_at?: string | null
           id?: string
