@@ -163,7 +163,7 @@ export type Database = {
           check_in_date: string
           check_out_date: string
           created_at: string
-          created_by: string
+          created_by: string | null
           customer_id: string
           id: string
           organization_id: string | null
@@ -181,7 +181,7 @@ export type Database = {
           check_in_date: string
           check_out_date: string
           created_at?: string
-          created_by: string
+          created_by?: string | null
           customer_id: string
           id?: string
           organization_id?: string | null
@@ -199,7 +199,7 @@ export type Database = {
           check_in_date?: string
           check_out_date?: string
           created_at?: string
-          created_by?: string
+          created_by?: string | null
           customer_id?: string
           id?: string
           organization_id?: string | null

@@ -48,9 +48,12 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
       return data;
     },
     enabled: !!session?.user?.id
@@ -67,8 +70,9 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
   const onSubmit = async (data: BookingFormData) => {
     try {
-      if (!session?.user?.id || !profile?.id) {
-        throw new Error("User not authenticated or profile not found");
+      if (!session?.user?.id) {
+        toast.error("User not authenticated");
+        return;
       }
 
       if (!dateRange?.from || !dateRange?.to) {
@@ -81,7 +85,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending' as BookingStatus,
-        created_by: profile.id, // Using profile.id instead of session.user.id
+        created_by: profile?.id, // This can now be null
         user_id: session.user.id,
         total_amount: 0 // This will be calculated by the database function
       };
