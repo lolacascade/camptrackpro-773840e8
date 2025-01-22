@@ -1,11 +1,11 @@
 import { Table } from "@/components/ui/table";
 import { Asset } from "@/types/asset";
-import { DataTableFiltersBar } from "@/components/common/DataTable/DataTableFiltersBar";
 import { useState } from "react";
 import { ASSET_TYPES } from "./form/AssetFormFields";
 import { AssetTableHeader } from "./table/AssetTableHeader";
 import { AssetTableBody } from "./table/AssetTableBody";
 import { Card } from "@/components/ui/card";
+import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -33,24 +33,6 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
       })
   ];
 
-  const filters = [
-    {
-      name: "type",
-      options: [
-        { label: "All Types", value: "all" },
-        ...ASSET_TYPES
-      ],
-      value: typeFilter,
-      onChange: setTypeFilter
-    },
-    {
-      name: "customer",
-      options: customerOptions,
-      value: customerFilter,
-      onChange: setCustomerFilter
-    }
-  ];
-
   // Filter assets based on all criteria
   const filteredAssets = assets?.filter(asset => {
     // Type filter
@@ -76,18 +58,34 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Card className="p-6">
-          <div className="text-center">Loading...</div>
-        </Card>
-      </div>
+      <Card className="p-6">
+        <div className="text-center">Loading...</div>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <DataTableFiltersBar filters={filters} />
-      <Card className="overflow-hidden">
+    <Card className="p-6">
+      <div className="space-y-4">
+        <div className="flex flex-wrap gap-4">
+          <SelectField
+            value={typeFilter}
+            onChange={setTypeFilter}
+            options={[
+              { label: "All Types", value: "all" },
+              ...ASSET_TYPES
+            ]}
+            placeholder="Filter by type"
+            className="w-[200px]"
+          />
+          <SelectField
+            value={customerFilter}
+            onChange={setCustomerFilter}
+            options={customerOptions}
+            placeholder="Filter by customer"
+            className="w-[200px]"
+          />
+        </div>
         <Table>
           <AssetTableHeader searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           <AssetTableBody
@@ -96,7 +94,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             onViewDetails={onViewDetails}
           />
         </Table>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }
