@@ -26,7 +26,7 @@ export function CustomerInsights({ customer }: CustomerInsightsProps) {
 
       return {
         totalBookings: bookings?.length || 0,
-        activeBookings: bookings?.filter(b => b.status === 'confirmed' || b.status === 'checked_in').length || 0,
+        activeBookings: bookings?.filter(b => b.status === 'confirmed').length || 0,
         totalSpent,
         avgBookingValue: bookings?.length ? totalSpent / bookings.length : 0
       };
