@@ -78,7 +78,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   };
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+    <Card className="border border-[#E8EBEB] rounded-xl">
       <div className="p-4">
         <DataTable
           data={localCustomers}
