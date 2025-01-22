@@ -6,9 +6,12 @@ export function Logo() {
   return (
     <div 
       onClick={() => navigate('/')}
-      className="cursor-pointer text-white hover:text-primary transition-colors"
+      className="cursor-pointer hover:opacity-90 transition-colors"
     >
-      <span className="text-xl font-semibold">DockEase</span>
+      <span className="text-xl font-semibold">
+        <span className="text-white">CampTrack</span>
+        <span className="text-[#F2FCE2]">Pro</span>
+      </span>
     </div>
   );
 }
