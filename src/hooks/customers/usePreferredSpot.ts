@@ -1,59 +1,41 @@
-import { useSession } from '@supabase/auth-helpers-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function usePreferredSpot() {
-  const session = useSession();
-
+export function usePreferredSpot(customerId?: string) {
   return useQuery({
-    queryKey: ['preferredSpot'],
+    queryKey: ['preferred-spot', customerId],
     queryFn: async () => {
-      console.log('Fetching preferred spot...');
-      
-      const { data, error } = await supabase
+      if (!customerId) return null;
+
+      const { data: bookings } = await supabase
         .from('bookings')
-        .select(`
-          slot_id,
-          slots (
-            name,
-            zone,
-            dock
-          )
-        `)
-        .not('slot_id', 'is', null);
-      
-      if (error) {
-        console.error('Error fetching bookings:', error);
-        throw error;
-      }
-      
-      if (!data || data.length === 0) {
-        console.log('No bookings found');
-        return 'No bookings yet';
-      }
-      
+        .select('slot_id')
+        .eq('customer_id', customerId);
+
+      if (!bookings?.length) return null;
+
       // Count occurrences of each slot
-      const slotCounts = data.reduce((acc: Record<string, { count: number; details: any }>, booking) => {
-        const slotId = booking.slot_id;
-        if (!acc[slotId]) {
-          acc[slotId] = { count: 0, details: booking.slots };
+      const slotCounts = bookings.reduce((acc, booking) => {
+        if (booking.slot_id) {
+          acc[booking.slot_id] = (acc[booking.slot_id] || 0) + 1;
         }
-        acc[slotId].count++;
         return acc;
-      }, {});
-      
-      // Find the slot with the highest count
-      const [, mostBooked] = Object.entries(slotCounts)
-        .sort(([, a], [, b]) => b.count - a.count)[0];
-      
-      console.log('Most booked slot:', mostBooked);
-      
-      if (!mostBooked?.details) return 'No preference yet';
-      
-      return `${mostBooked.details.dock || ''} ${mostBooked.details.name}${
-        mostBooked.details.zone ? ` (${mostBooked.details.zone})` : ''
-      }`.trim();
+      }, {} as Record<number, number>);
+
+      // Find the most frequent slot
+      const mostFrequentSlotId = Object.entries(slotCounts)
+        .sort(([, a], [, b]) => b - a)[0]?.[0];
+
+      if (!mostFrequentSlotId) return null;
+
+      const { data: slot } = await supabase
+        .from('slots')
+        .select('*')
+        .eq('id', mostFrequentSlotId)
+        .single();
+
+      return slot;
     },
-    enabled: !!session?.user?.id
+    enabled: !!customerId
   });
 }

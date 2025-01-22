@@ -1,28 +1,30 @@
-import { useSession } from '@supabase/auth-helpers-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { differenceInDays } from "date-fns";
 
-export function useAverageStayDuration() {
-  const session = useSession();
-
+export function useAverageStayDuration(customerId?: string) {
   return useQuery({
-    queryKey: ['averageStayDuration'],
+    queryKey: ['average-stay-duration', customerId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!customerId) return null;
+
+      const { data: bookings } = await supabase
         .from('bookings')
-        .select('check_in_date, check_out_date');
-      
-      if (error) throw error;
-      
-      const durations = data.map(booking => {
-        const checkIn = new Date(booking.check_in_date);
-        const checkOut = new Date(booking.check_out_date);
-        return Math.ceil((checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60 * 24));
-      });
-      
-      const average = durations.reduce((sum, duration) => sum + duration, 0) / durations.length;
-      return `${Math.round(average)} days`;
+        .select('check_in_date, check_out_date')
+        .eq('customer_id', customerId);
+
+      if (!bookings?.length) return 0;
+
+      const totalDays = bookings.reduce((acc, booking) => {
+        const days = differenceInDays(
+          new Date(booking.check_out_date),
+          new Date(booking.check_in_date)
+        );
+        return acc + days;
+      }, 0);
+
+      return totalDays / bookings.length;
     },
-    enabled: !!session?.user?.id
+    enabled: !!customerId
   });
 }

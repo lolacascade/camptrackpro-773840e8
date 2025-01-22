@@ -1,47 +1,22 @@
-import { useSession } from '@supabase/auth-helpers-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function useAverageValue() {
-  const session = useSession();
-
+export function useAverageValue(customerId?: string) {
   return useQuery({
-    queryKey: ['customerAverageValue'],
+    queryKey: ['average-value', customerId],
     queryFn: async () => {
-      console.log('Calculating average revenue per stay...');
-      
-      // Get all paid invoices with their booking details
-      const { data: invoices, error: invoicesError } = await supabase
-        .from('invoices')
-        .select('amount')
-        .eq('status', 'paid');
+      if (!customerId) return null;
 
-      if (invoicesError) {
-        console.error('Error fetching invoices:', invoicesError);
-        throw invoicesError;
-      }
+      const { data: bookings } = await supabase
+        .from('bookings')
+        .select('total_amount')
+        .eq('customer_id', customerId);
 
-      if (!invoices || invoices.length === 0) {
-        console.log('No paid invoices found');
-        return '$0.00';
-      }
+      if (!bookings?.length) return 0;
 
-      // Calculate total amount and count of invoices
-      const totalAmount = invoices.reduce((sum, invoice) => sum + Number(invoice.amount), 0);
-      const totalInvoices = invoices.length;
-
-      console.log(`Total amount: ${totalAmount}, Total invoices: ${totalInvoices}`);
-
-      // Calculate average
-      const average = totalAmount / totalInvoices;
-      
-      return average.toLocaleString('en-US', { 
-        style: 'currency', 
-        currency: 'USD',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
+      const totalValue = bookings.reduce((acc, booking) => acc + Number(booking.total_amount), 0);
+      return totalValue / bookings.length;
     },
-    enabled: !!session?.user?.id
+    enabled: !!customerId
   });
 }

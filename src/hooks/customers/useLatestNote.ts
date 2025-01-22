@@ -1,23 +1,22 @@
-import { useSession } from '@supabase/auth-helpers-react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export function useLatestNote() {
-  const session = useSession();
-
+export function useLatestNote(customerId?: string) {
   return useQuery({
-    queryKey: ['latestNote'],
+    queryKey: ['latest-note', customerId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      if (!customerId) return null;
+
+      const { data } = await supabase
         .from('customer_notes')
-        .select('note, tag')
+        .select('*')
+        .eq('customer_id', customerId)
         .order('created_at', { ascending: false })
-        .limit(1);
-      
-      if (error) throw error;
-      
-      return data[0] ? `${data[0].tag}: ${data[0].note}` : 'No notes yet';
+        .limit(1)
+        .single();
+
+      return data;
     },
-    enabled: !!session?.user?.id
+    enabled: !!customerId
   });
 }
