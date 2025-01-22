@@ -26,6 +26,9 @@ export function DataTable<T extends { id?: number | string }>({
   tableName,
   onRowClick,
 }: DataTableProps<T>) {
+  console.log('DataTable received data:', data);
+  console.log('DataTable received tableName:', tableName);
+
   const {
     searchTerm,
     setSearchTerm,
@@ -50,11 +53,13 @@ export function DataTable<T extends { id?: number | string }>({
 
   // Apply search filter
   const searchFilteredData = useDataSearch(localData, searchTerm);
+  console.log('Filtered data length:', searchFilteredData.length);
 
   // Real-time updates
   useEffect(() => {
     if (!tableName) return;
 
+    console.log('Setting up real-time subscription for table:', tableName);
     const channel = supabase
       .channel('table_db_changes')
       .on(
@@ -82,6 +87,7 @@ export function DataTable<T extends { id?: number | string }>({
       .subscribe();
 
     return () => {
+      console.log('Cleaning up subscription for table:', tableName);
       supabase.removeChannel(channel);
     };
   }, [tableName, setLocalData]);
@@ -116,6 +122,9 @@ export function DataTable<T extends { id?: number | string }>({
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = searchFilteredData.slice(startIndex, endIndex);
   const totalPages = Math.ceil(searchFilteredData.length / itemsPerPage);
+
+  console.log('Paginated data length:', paginatedData.length);
+  console.log('Total pages:', totalPages);
 
   return (
     <div className="space-y-4">

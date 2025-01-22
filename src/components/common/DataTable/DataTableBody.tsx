@@ -19,7 +19,9 @@ export function DataTableBody<T extends { id?: number | string }>({
   onDelete,
   onRowClick,
 }: DataTableBodyProps<T>) {
-  if (data.length === 0) {
+  console.log('DataTableBody received data:', data);
+
+  if (!data || data.length === 0) {
     return (
       <TableBody>
         <TableRow>
