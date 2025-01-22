@@ -29,24 +29,29 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
 
   useEffect(() => {
     const fetchAvailableSlots = async () => {
-      const { data, error } = await supabase
-        .from('slots')
-        .select('id, name')
-        .eq('status', 'available');
+      try {
+        const { data, error } = await supabase
+          .from('slots')
+          .select('id, name')
+          .eq('status', 'available');
 
-      if (error) {
+        if (error) throw error;
+        setAvailableSlots(data || []);
+      } catch (error) {
         console.error('Error fetching slots:', error);
-        return;
+        toast({
+          title: "Error",
+          description: "Failed to fetch available slots.",
+          variant: "destructive",
+        });
       }
-
-      setAvailableSlots(data || []);
     };
 
     fetchAvailableSlots();
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async () => {
-    if (!session) {
+    if (!session?.user?.id) {
       toast({
         title: "Error",
         description: "You must be signed in to add assets.",
@@ -80,9 +85,16 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
 
       const { error } = await supabase
         .from('assets')
-        .insert(assetData);
+        .insert([assetData])
+        .select()
+        .single();
 
       if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Asset added successfully.",
+      });
 
       onClose();
       setNewAsset({
@@ -98,17 +110,12 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         user_id: session?.user?.id || null
       });
       
-      toast({
-        title: "Success",
-        description: "Asset added successfully.",
-      });
-      
       onAssetAdded();
     } catch (error) {
       console.error('Error adding asset:', error);
       toast({
         title: "Error",
-        description: "Failed to add asset.",
+        description: "Failed to add asset. Please try again.",
         variant: "destructive",
       });
     }
