@@ -128,11 +128,11 @@ export function AssetStatsCards() {
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Total RVs"
-        value={`${(stats.totalAssets.motorhomes || 0) + (stats.totalAssets.trailers || 0)}`}
+        value={String((stats.totalAssets.motorhomes || 0) + (stats.totalAssets.trailers || 0))}
         icon={Caravan}
         breakdown={[
-          { label: "Motorhomes", value: stats.totalAssets.motorhomes.toString(), percentage: 70 },
-          { label: "Trailers", value: stats.totalAssets.trailers.toString(), percentage: 30 }
+          { label: "Motorhomes", value: String(stats.totalAssets.motorhomes), percentage: 70 },
+          { label: "Trailers", value: String(stats.totalAssets.trailers), percentage: 30 }
         ]}
       />
       <EnhancedStatCard
@@ -151,7 +151,7 @@ export function AssetStatsCards() {
       />
       <EnhancedStatCard
         title="Maintenance Status"
-        value={`${stats.maintenance.scheduled + stats.maintenance.overdue}`}
+        value={String(stats.maintenance.scheduled + stats.maintenance.overdue)}
         icon={Wrench}
         trend={{
           value: "2 tasks",
@@ -159,13 +159,13 @@ export function AssetStatsCards() {
           comparedTo: "last week"
         }}
         breakdown={[
-          { label: "Scheduled", value: stats.maintenance.scheduled.toString(), percentage: 60 },
-          { label: "Overdue", value: stats.maintenance.overdue.toString(), percentage: 40 }
+          { label: "Scheduled", value: String(stats.maintenance.scheduled), percentage: 60 },
+          { label: "Overdue", value: String(stats.maintenance.overdue), percentage: 40 }
         ]}
       />
       <EnhancedStatCard
         title="Bookings"
-        value={`${stats.bookings.active + stats.bookings.upcoming}`}
+        value={String(stats.bookings.active + stats.bookings.upcoming)}
         icon={Calendar}
         trend={{
           value: "3 bookings",
@@ -173,8 +173,8 @@ export function AssetStatsCards() {
           comparedTo: "last week"
         }}
         breakdown={[
-          { label: "Active", value: stats.bookings.active.toString(), percentage: 80 },
-          { label: "Upcoming", value: stats.bookings.upcoming.toString(), percentage: 20 }
+          { label: "Active", value: String(stats.bookings.active), percentage: 80 },
+          { label: "Upcoming", value: String(stats.bookings.upcoming), percentage: 20 }
         ]}
       />
     </div>
