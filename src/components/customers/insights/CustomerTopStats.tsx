@@ -8,32 +8,31 @@ interface CustomerTopStatsProps {
 }
 
 export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
-  const { data: customerStats } = useCustomerStats(customer?.id);
+  const { data: stats } = useCustomerStats(customer?.id);
+  const totalBookings = stats?.totalBookings || 0;
+  const activeBookings = stats?.activeBookings || 0;
+  const lifetimeValue = customer.lifetime_value ? parseFloat(customer.lifetime_value) : 0;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <EnhancedStatCard
         title="Total Bookings"
-        value={String(customerStats?.totalBookings || "0")}
+        value={String(totalBookings)}
         icon={Users}
         trend={{
-          value: String(customerStats?.activeBookings || "0"),
+          value: String(activeBookings),
           isPositive: true,
           comparedTo: "active bookings"
         }}
         breakdown={[
-          { label: "Active", value: String(customerStats?.activeBookings || "0"), percentage: 60 },
-          { 
-            label: "Completed", 
-            value: String((customerStats?.totalBookings || 0) - (customerStats?.activeBookings || 0)), 
-            percentage: 40 
-          }
+          { label: "Active", value: String(activeBookings), percentage: 60 },
+          { label: "Completed", value: String(totalBookings - activeBookings), percentage: 40 }
         ]}
       />
 
       <EnhancedStatCard
         title="Total Spent"
-        value={`$${customer.lifetime_value || "0"}`}
+        value={`$${lifetimeValue.toFixed(2)}`}
         icon={DollarSign}
         trend={{
           value: "+12%",

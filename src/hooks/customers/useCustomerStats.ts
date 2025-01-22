@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export const useCustomerStats = (customerId?: string) => {
-  const { data, isLoading } = useQuery({
+  return useQuery({
     queryKey: ['customer-stats', customerId],
     queryFn: async () => {
       if (!customerId) return null;
@@ -19,9 +19,4 @@ export const useCustomerStats = (customerId?: string) => {
     },
     enabled: !!customerId
   });
-
-  return {
-    data,
-    isLoading
-  };
 };
