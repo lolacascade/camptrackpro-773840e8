@@ -10,7 +10,7 @@ interface TrendInfo {
 
 interface Breakdown {
   label: string;
-  value: string;
+  value: string | number;
   percentage?: number;
 }
 
@@ -21,7 +21,7 @@ interface Action {
 
 interface EnhancedStatCardProps {
   title: string;
-  value: string;
+  value: string | number;
   icon: LucideIcon;
   trend?: TrendInfo;
   breakdown?: Breakdown[];
