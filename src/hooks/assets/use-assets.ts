@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
+import { toast } from "sonner";
 
 export function useAssets() {
   const session = useSession();
@@ -14,11 +15,23 @@ export function useAssets() {
       }
 
       // Get user role from profiles
-      const { data: userProfile } = await supabase
+      const { data: userProfile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
         .eq('id', session.user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+        toast.error("Failed to fetch user profile");
+        throw profileError;
+      }
+
+      if (!userProfile) {
+        console.error('No user profile found');
+        toast.error("User profile not found");
+        throw new Error("User profile not found");
+      }
 
       const query = supabase
         .from("assets")
