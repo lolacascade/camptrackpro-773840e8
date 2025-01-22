@@ -13,6 +13,7 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
 import { useCustomers } from "./form/useCustomers";
+import { useQuery } from "@tanstack/react-query";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -38,6 +39,23 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     to: addDays(new Date(), 7)
   });
   
+  // Fetch the user's profile to get the correct ID for created_by
+  const { data: profile } = useQuery({
+    queryKey: ['profile', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!session?.user?.id
+  });
+
   const { register, handleSubmit, setValue, watch } = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
@@ -49,8 +67,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
   const onSubmit = async (data: BookingFormData) => {
     try {
-      if (!session?.user?.id) {
-        throw new Error("User not authenticated");
+      if (!session?.user?.id || !profile?.id) {
+        throw new Error("User not authenticated or profile not found");
       }
 
       if (!dateRange?.from || !dateRange?.to) {
@@ -63,7 +81,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending' as BookingStatus,
-        created_by: session.user.id,
+        created_by: profile.id, // Using profile.id instead of session.user.id
         user_id: session.user.id,
         total_amount: 0 // This will be calculated by the database function
       };
