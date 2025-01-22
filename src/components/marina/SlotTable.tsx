@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
 import { Column } from "@/components/common/DataTable/types";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -40,6 +41,27 @@ export function SlotTable({ onEdit }: SlotTableProps) {
       }));
     }
   });
+
+  const handleDelete = async (slot: Slot) => {
+    try {
+      const { error } = await supabase
+        .from('slots')
+        .delete()
+        .eq('id', slot.id);
+
+      if (error) throw error;
+
+      toast.success("Slot deleted successfully");
+    } catch (error) {
+      console.error('Error deleting slot:', error);
+      toast.error("Failed to delete slot");
+    }
+  };
+
+  const handleViewDetails = (slot: Slot) => {
+    console.log('View details for slot:', slot);
+    // Implement view details logic here
+  };
 
   const columns: Column<Slot>[] = [
     { 
@@ -104,7 +126,9 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           columns={columns}
           isLoading={isLoading}
           tableName="slots"
-          onRowClick={onEdit}
+          onViewDetails={handleViewDetails}
+          onEdit={onEdit}
+          onDelete={handleDelete}
           filters={[
             {
               name: "status",
