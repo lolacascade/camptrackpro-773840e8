@@ -1,14 +1,26 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card } from "@/components/ui/card"
 import { UseFormReturn } from "react-hook-form"
 import { DockSpotFormValues } from "../types"
+import { SelectField } from "@/components/common/FormFields/SelectField"
 
 interface UtilitiesSectionProps {
   form: UseFormReturn<DockSpotFormValues>
 }
 
 export function UtilitiesSection({ form }: UtilitiesSectionProps) {
+  const voltageOptions = [
+    { label: "30A", value: "30A" },
+    { label: "50A", value: "50A" },
+    { label: "100A", value: "100A" }
+  ]
+
+  const connectionOptions = [
+    { label: "Standard", value: "standard" },
+    { label: "Premium", value: "premium" },
+    { label: "Basic", value: "basic" }
+  ]
+
   return (
     <Card className="p-4">
       <h3 className="text-lg font-medium mb-4">Utilities</h3>
@@ -19,18 +31,14 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Electricity</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select voltage" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="30A">30A</SelectItem>
-                  <SelectItem value="50A">50A</SelectItem>
-                  <SelectItem value="100A">100A</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <SelectField
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={voltageOptions}
+                  placeholder="Select voltage"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -41,18 +49,14 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Utility Connection Type</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select connection type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="standard">Standard</SelectItem>
-                  <SelectItem value="premium">Premium</SelectItem>
-                  <SelectItem value="basic">Basic</SelectItem>
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <SelectField
+                  value={field.value}
+                  onChange={field.onChange}
+                  options={connectionOptions}
+                  placeholder="Select connection type"
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
