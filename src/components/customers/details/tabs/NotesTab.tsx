@@ -9,12 +9,12 @@ interface NotesTabProps {
 
 export function NotesTab({ customer }: NotesTabProps) {
   const { data: notes, isLoading } = useQuery({
-    queryKey: ['customer-notes', customer.id],
+    queryKey: ['customer-notes', customer.id.toString()],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('customer_notes')
         .select('*')
-        .eq('customer_id', customer.id)
+        .eq('customer_id', customer.id.toString())
         .order('created_at', { ascending: false });
 
       if (error) throw error;

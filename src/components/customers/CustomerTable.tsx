@@ -17,7 +17,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   const { customers, isLoading } = useCustomers();
 
   const handleViewDetails = (customer: Customer) => {
-    navigate(`/app/customers/${customer.id}`);
+    navigate(`/app/customers/${customer.id.toString()}`);
   };
 
   const handleDelete = async (customer: Customer) => {
@@ -25,7 +25,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       const { error } = await supabase
         .from('customers')
         .delete()
-        .eq('id', customer.id);
+        .eq('id', customer.id.toString());
 
       if (error) throw error;
 
