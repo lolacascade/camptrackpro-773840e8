@@ -34,11 +34,14 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           return;
         }
 
-        // Map the data to match the Slot type
+        // Map the data to match the Slot type with proper status typing
         const typedSlots = data.map(slot => ({
           ...slot,
           id: String(slot.id),
-          status: slot.status || "available",
+          // Ensure status is one of the allowed values, default to "available"
+          status: (slot.status === "occupied" || slot.status === "maintenance") 
+            ? slot.status 
+            : "available",
           location_identifier: slot.location_identifier || "",
           name: slot.name || "",
           dock: slot.dock || null,
