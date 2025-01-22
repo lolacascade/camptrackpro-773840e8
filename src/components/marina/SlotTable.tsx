@@ -13,15 +13,20 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   const { data: slots = [], isLoading } = useQuery({
     queryKey: ['slots'],
     queryFn: async () => {
+      console.log('Fetching slots...');
       const { data, error } = await supabase
         .from('slots')
         .select('*');
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching slots:', error);
+        throw error;
+      }
 
+      console.log('Fetched slots:', data);
       return (data || []).map((slot): Slot => ({
         ...slot,
-        id: String(slot.id),
+        id: slot.id,
         user_id: slot.user_id || null,
         status: slot.status as 'available' | 'occupied' | 'maintenance'
       }));
@@ -29,21 +34,43 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   });
 
   const columns: Column<Slot>[] = [
-    { header: "Name", accessorKey: "name" },
-    { header: "Status", accessorKey: "status" },
-    { header: "Length (ft)", accessorKey: "length_ft" },
-    { header: "Width (ft)", accessorKey: "width_ft" },
+    { 
+      header: "Name", 
+      accessorKey: "name",
+      sortable: true 
+    },
+    { 
+      header: "Status", 
+      accessorKey: "status",
+      sortable: true 
+    },
+    { 
+      header: "Length (ft)", 
+      accessorKey: "length_ft",
+      sortable: true 
+    },
+    { 
+      header: "Width (ft)", 
+      accessorKey: "width_ft",
+      sortable: true 
+    },
     { 
       header: "Covered", 
       accessorKey: "is_covered",
-      cell: (slot: Slot) => slot.is_covered ? "Yes" : "No"
+      cell: (slot: Slot) => slot.is_covered ? "Yes" : "No",
+      sortable: true 
     },
     { 
       header: "Water", 
       accessorKey: "has_water",
-      cell: (slot: Slot) => slot.has_water ? "Yes" : "No"
+      cell: (slot: Slot) => slot.has_water ? "Yes" : "No",
+      sortable: true 
     },
-    { header: "Electricity", accessorKey: "electricity_voltage" },
+    { 
+      header: "Electricity", 
+      accessorKey: "electricity_voltage",
+      sortable: true 
+    },
   ];
 
   return (
