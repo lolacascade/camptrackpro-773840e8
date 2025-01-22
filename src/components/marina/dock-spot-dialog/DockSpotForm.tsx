@@ -11,7 +11,6 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Dock spot name must be at least 2 characters.",
   }),
-  dock: z.string().min(1, "Dock is required"),
   length_ft: z.number().min(1, "Length must be greater than 0"),
   width_ft: z.number().min(1, "Width must be greater than 0"),
   is_covered: z.boolean().default(false),
@@ -32,7 +31,6 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      dock: '',
       length_ft: 0,
       width_ft: 0,
       is_covered: false,
@@ -53,19 +51,6 @@ export function DockSpotForm({ onSubmit, defaultValues }: DockSpotFormProps) {
               <FormLabel>Dock Spot Name</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., A1, B2..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="dock"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Dock</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., A, B..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
