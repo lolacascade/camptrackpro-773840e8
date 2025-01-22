@@ -9,8 +9,73 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      account_roles: {
+        Row: {
+          account_id: string | null
+          created_at: string
+          id: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          created_at?: string
+          id?: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "account_roles_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          organization_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          organization_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          organization_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
+          account_id: string | null
           asset_name: string | null
           asset_size: string | null
           asset_type: string | null
@@ -19,6 +84,7 @@ export type Database = {
           daily_rate: number
           id: string
           name: string
+          organization_id: string | null
           slip_id: number | null
           status: string
           type: string
@@ -26,6 +92,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           asset_name?: string | null
           asset_size?: string | null
           asset_type?: string | null
@@ -34,6 +101,7 @@ export type Database = {
           daily_rate: number
           id?: string
           name: string
+          organization_id?: string | null
           slip_id?: number | null
           status?: string
           type: string
@@ -41,6 +109,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           asset_name?: string | null
           asset_size?: string | null
           asset_type?: string | null
@@ -49,6 +118,7 @@ export type Database = {
           daily_rate?: number
           id?: string
           name?: string
+          organization_id?: string | null
           slip_id?: number | null
           status?: string
           type?: string
@@ -57,10 +127,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "assets_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "assets_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
@@ -74,6 +158,7 @@ export type Database = {
       }
       bookings: {
         Row: {
+          account_id: string | null
           asset_id: string
           check_in_date: string
           check_out_date: string
@@ -81,6 +166,7 @@ export type Database = {
           created_by: string
           customer_id: string
           id: string
+          organization_id: string | null
           reservation_code: string | null
           slot_id: number | null
           special_requirements: string | null
@@ -90,6 +176,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           asset_id: string
           check_in_date: string
           check_out_date: string
@@ -97,6 +184,7 @@ export type Database = {
           created_by: string
           customer_id: string
           id?: string
+          organization_id?: string | null
           reservation_code?: string | null
           slot_id?: number | null
           special_requirements?: string | null
@@ -106,6 +194,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           asset_id?: string
           check_in_date?: string
           check_out_date?: string
@@ -113,6 +202,7 @@ export type Database = {
           created_by?: string
           customer_id?: string
           id?: string
+          organization_id?: string | null
           reservation_code?: string | null
           slot_id?: number | null
           special_requirements?: string | null
@@ -122,6 +212,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_asset_id_fkey"
             columns: ["asset_id"]
@@ -141,6 +238,13 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
@@ -282,6 +386,7 @@ export type Database = {
       }
       customers: {
         Row: {
+          account_id: string | null
           address: string | null
           city: string | null
           country: string | null
@@ -291,6 +396,7 @@ export type Database = {
           id: string
           last_name: string
           lifetime_value: number | null
+          organization_id: string | null
           phone: string | null
           postal_code: string | null
           state: string | null
@@ -298,6 +404,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           address?: string | null
           city?: string | null
           country?: string | null
@@ -307,6 +414,7 @@ export type Database = {
           id?: string
           last_name: string
           lifetime_value?: number | null
+          organization_id?: string | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
@@ -314,6 +422,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           address?: string | null
           city?: string | null
           country?: string | null
@@ -323,13 +432,29 @@ export type Database = {
           id?: string
           last_name?: string
           lifetime_value?: number | null
+          organization_id?: string | null
           phone?: string | null
           postal_code?: string | null
           state?: string | null
           updated_at?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       expenses: {
         Row: {
@@ -552,35 +677,110 @@ export type Database = {
         }
         Relationships: []
       }
-      profiles: {
+      organization_roles: {
         Row: {
           created_at: string
-          first_name: string | null
           id: string
-          last_name: string | null
-          role: Database["public"]["Enums"]["user_role"]
+          organization_id: string | null
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id?: string | null
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string | null
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_roles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
           updated_at: string
         }
         Insert: {
           created_at?: string
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
+          id?: string
+          name: string
           updated_at?: string
         }
         Update: {
           created_at?: string
-          first_name?: string | null
           id?: string
-          last_name?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
+          name?: string
           updated_at?: string
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          account_id: string | null
+          created_at: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          organization_id: string | null
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          created_at?: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          created_at?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          organization_id?: string | null
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       slots: {
         Row: {
+          account_id: string | null
           created_at: string | null
           customer_id: string | null
           electricity_voltage: string | null
@@ -593,6 +793,7 @@ export type Database = {
           location_identifier: string | null
           maintenance_id: number | null
           name: string
+          organization_id: string | null
           status: string
           updated_at: string | null
           user_id: string | null
@@ -600,6 +801,7 @@ export type Database = {
           width_ft: number | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string | null
           customer_id?: string | null
           electricity_voltage?: string | null
@@ -612,6 +814,7 @@ export type Database = {
           location_identifier?: string | null
           maintenance_id?: number | null
           name: string
+          organization_id?: string | null
           status?: string
           updated_at?: string | null
           user_id?: string | null
@@ -619,6 +822,7 @@ export type Database = {
           width_ft?: number | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string | null
           customer_id?: string | null
           electricity_voltage?: string | null
@@ -631,6 +835,7 @@ export type Database = {
           location_identifier?: string | null
           maintenance_id?: number | null
           name?: string
+          organization_id?: string | null
           status?: string
           updated_at?: string | null
           user_id?: string | null
@@ -639,10 +844,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "slots_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "slots_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "slots_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
