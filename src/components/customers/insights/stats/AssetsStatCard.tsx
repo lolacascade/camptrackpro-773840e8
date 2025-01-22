@@ -1,6 +1,7 @@
 import { TrendingUp } from "lucide-react";
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Customer } from "@/types/customer";
+import { toStringSafe } from "@/lib/typeUtils";
 
 interface AssetsStatCardProps {
   customer?: Customer;
@@ -26,7 +27,7 @@ export function AssetsStatCard({
       breakdown={[
         { 
           label: "Active", 
-          value: String(customer ? totalAssets : 5), 
+          value: toStringSafe(customer ? totalAssets : 5), 
           percentage: 63 
         },
         { 

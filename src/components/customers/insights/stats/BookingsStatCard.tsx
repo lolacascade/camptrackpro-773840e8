@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Customer } from "@/types/customer";
+import { toStringSafe } from "@/lib/typeUtils";
 
 interface BookingsStatCardProps {
   customer?: Customer;
@@ -28,12 +29,12 @@ export function BookingsStatCard({
       breakdown={[
         { 
           label: "Active", 
-          value: customer ? activeBookings : "45", 
+          value: activeBookings, 
           percentage: 60 
         },
         { 
           label: "Completed", 
-          value: String(customer ? 
+          value: toStringSafe(customer ? 
             (Number(totalBookings) - Number(activeBookings)) : 
             30
           ), 
