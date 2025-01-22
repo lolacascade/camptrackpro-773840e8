@@ -2,35 +2,22 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
+import { useProfile } from "@/hooks/use-profile";
 import { toast } from "sonner";
 
 export function useAssets() {
   const session = useSession();
+  const { data: profile } = useProfile();
 
   return useQuery({
     queryKey: ["assets", session?.user?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<Asset[]> => {
       if (!session?.user?.id) {
         throw new Error("No authenticated user");
       }
 
-      // Get user role from profiles
-      const { data: userProfile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error('Error fetching user profile:', profileError);
-        toast.error("Failed to fetch user profile");
-        throw profileError;
-      }
-
-      if (!userProfile) {
-        console.error('No user profile found');
-        toast.error("User profile not found");
-        throw new Error("User profile not found");
+      if (!profile) {
+        throw new Error("No user profile found");
       }
 
       const query = supabase

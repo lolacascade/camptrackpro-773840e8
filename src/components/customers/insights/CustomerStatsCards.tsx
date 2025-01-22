@@ -1,80 +1,121 @@
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Customer } from "@/types/customer";
-import { BookingsStatCard } from "./stats/BookingsStatCard";
-import { AssetsStatCard } from "./stats/AssetsStatCard";
-import { RatingStatCard } from "./stats/RatingStatCard";
-import { LifetimeValueStatCard } from "./stats/LifetimeValueStatCard";
-import { toStringSafe } from "@/lib/typeUtils";
+import { useProfile } from "@/hooks/use-profile";
 
-interface CustomerStatsCardsProps {
-  customer?: Customer;
-}
-
-export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
-  const { data: customerStats } = useQuery({
-    queryKey: ['customer-stats', customer?.id],
+export function CustomerStatsCards() {
+  const { data: profile } = useProfile();
+  const { data: stats } = useQuery({
+    queryKey: ['expense-stats'],
     queryFn: async () => {
-      if (customer) {
-        // Single customer view stats
-        const { data: bookings } = await supabase
-          .from('bookings')
-          .select('*')
-          .eq('customer_id', customer.id);
+      const currentDate = new Date();
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 
-        const { data: assets } = await supabase
-          .from('assets')
-          .select('*')
-          .eq('customer_id', customer.id);
+      // Get current month's expenses
+      const { data: currentExpenses } = await supabase
+        .from('expenses')
+        .select('amount, category')
+        .gte('date', firstDayOfMonth.toISOString())
+        .lte('date', lastDayOfMonth.toISOString());
 
-        return {
-          totalBookings: bookings?.length || 0,
-          activeBookings: bookings?.filter(b => b.status === 'confirmed').length || 0,
-          totalAssets: assets?.length || 0,
-          rating: 4.8,
-          lifetimeValue: customer.lifetime_value || 0
-        };
-      }
+      // Get previous month's expenses
+      const { data: previousExpenses } = await supabase
+        .from('expenses')
+        .select('amount')
+        .gte('date', new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString())
+        .lte('date', new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString());
 
-      // Overview stats for all customers
-      const { data: customers } = await supabase
-        .from('customers')
-        .select('id, created_at');
+      // Get monthly budget - handle case where no budget exists
+      const { data: budgets } = await supabase
+        .from('monthly_budgets')
+        .select('amount')
+        .eq('month', firstDayOfMonth.toISOString().split('T')[0]);
 
-      const totalCustomers = customers?.length || 0;
-      const now = new Date();
-      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-      const newCustomers = customers?.filter(c => 
-        new Date(c.created_at) >= lastMonth
-      ).length || 0;
+      const currentTotal = currentExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+      const previousTotal = previousExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+      const monthlyBudget = budgets?.[0]?.amount || 0;
+
+      // Calculate category percentages
+      const categoryTotals: { [key: string]: number } = {};
+      currentExpenses?.forEach(exp => {
+        categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
+      });
+
+      const largestExpense = currentExpenses?.reduce((max, exp) => 
+        exp.amount > max.amount ? exp : max, 
+        { amount: 0, category: 'None' }
+      );
 
       return {
-        totalCustomers,
-        newCustomers,
-        rating: 4.8,
-        lifetimeValue: 0
+        currentTotal,
+        previousTotal,
+        monthlyBudget,
+        categoryTotals,
+        largestExpense
       };
-    },
-    enabled: true
+    }
   });
 
-  if (!customerStats) return null;
+  const percentageChange = stats?.previousTotal 
+    ? ((stats.currentTotal - stats.previousTotal) / stats.previousTotal) * 100 
+    : 0;
+
+  const budgetStatus = stats?.monthlyBudget 
+    ? ((stats.currentTotal / stats.monthlyBudget) * 100)
+    : 0;
+
+  const categoryBreakdown = stats?.categoryTotals 
+    ? Object.entries(stats.categoryTotals).map(([category, amount]) => ({
+        label: category,
+        value: `$${amount.toLocaleString()}`,
+        percentage: Math.round((amount / stats.currentTotal) * 100)
+      }))
+    : [];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <BookingsStatCard 
-        customer={customer}
-        totalBookings={toStringSafe(customerStats.totalBookings)}
-        activeBookings={toStringSafe(customerStats.activeBookings)}
-        totalCustomers={toStringSafe(customerStats.totalCustomers)}
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <EnhancedStatCard
+        title="Total Expenses"
+        value={`$${stats?.currentTotal.toLocaleString() || '0'}`}
+        icon={DollarSign}
+        trend={{
+          value: `${Math.abs(percentageChange).toFixed(1)}%`,
+          isPositive: percentageChange <= 0,
+          comparedTo: "last month"
+        }}
+        breakdown={categoryBreakdown.slice(0, 2)}
       />
-      <AssetsStatCard 
-        customer={customer}
-        totalAssets={toStringSafe(customerStats.totalAssets)}
-        newCustomers={toStringSafe(customerStats.newCustomers)}
+      <EnhancedStatCard
+        title="Largest Expense"
+        value={`$${stats?.largestExpense.amount.toLocaleString() || '0'}`}
+        icon={TrendingUp}
+        breakdown={[
+          { label: "Category", value: stats?.largestExpense.category || 'None' },
+          { label: "% of Total", value: `${Math.round((stats?.largestExpense.amount / (stats?.currentTotal || 1)) * 100)}%` }
+        ]}
       />
-      <RatingStatCard rating={customerStats.rating} />
-      <LifetimeValueStatCard value={customerStats.lifetimeValue} />
+      <EnhancedStatCard
+        title="Expense Categories"
+        value={`${categoryBreakdown.length || 0}`}
+        icon={PieChart}
+        breakdown={categoryBreakdown}
+      />
+      <EnhancedStatCard
+        title="Budget Status"
+        value={`${budgetStatus.toFixed(1)}%`}
+        icon={AlertCircle}
+        trend={{
+          value: `${Math.abs(100 - budgetStatus).toFixed(1)}%`,
+          isPositive: budgetStatus <= 100,
+          comparedTo: "monthly budget"
+        }}
+        breakdown={[
+          { label: "Spent", value: `$${stats?.currentTotal.toLocaleString() || '0'}` },
+          { label: "Budget", value: `$${stats?.monthlyBudget.toLocaleString() || '0'}` }
+        ]}
+      />
     </div>
   );
 }
