@@ -879,13 +879,21 @@ export type Database = {
         }
         Returns: number
       }
-      check_user_role: {
-        Args: {
-          user_id: string
-          required_role: Database["public"]["Enums"]["user_role"]
-        }
-        Returns: boolean
-      }
+      check_user_role:
+        | {
+            Args: {
+              user_id: string
+              required_role: Database["public"]["Enums"]["user_role"]
+            }
+            Returns: boolean
+          }
+        | {
+            Args: {
+              user_id: string
+              required_role: string
+            }
+            Returns: boolean
+          }
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"

@@ -28,7 +28,6 @@ export default function Assets() {
 
   const handleViewDetails = (asset: Asset) => {
     console.log("View details for asset:", asset);
-    // Implement view details functionality
     toast({
       title: "Coming Soon",
       description: "Asset details view is under development",
@@ -40,12 +39,16 @@ export default function Assets() {
     setSelectedAsset(null);
   };
 
+  // Handle error outside of render
   if (error) {
-    toast({
-      title: "Error",
-      description: "Failed to load assets. Please try again.",
-      variant: "destructive",
-    });
+    // Use setTimeout to avoid state updates during render
+    setTimeout(() => {
+      toast({
+        title: "Error",
+        description: "Failed to load assets. Please try again.",
+        variant: "destructive",
+      });
+    }, 0);
   }
 
   return (
@@ -68,7 +71,6 @@ export default function Assets() {
             open={isDrawerOpen}
             onClose={handleCloseDrawer}
             onAssetAdded={() => {
-              // Refresh will happen automatically via React Query
               toast({
                 title: "Success",
                 description: "Asset has been added successfully",
