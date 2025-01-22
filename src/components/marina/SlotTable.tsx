@@ -3,6 +3,7 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { getSlotColumns } from "./table/SlotTableColumns";
 import { supabase } from "@/integrations/supabase/client";
 import type { Slot } from "@/types/slot";
+import { Card } from "@/components/ui/card";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -50,12 +51,16 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   };
 
   return (
-    <DataTable
-      data={slots}
-      columns={getSlotColumns()}
-      isLoading={isLoading}
-      onRowClick={handleSlipClick}
-      onEdit={onEdit}
-    />
+    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+      <div className="p-4">
+        <DataTable
+          data={slots}
+          columns={getSlotColumns()}
+          isLoading={isLoading}
+          onRowClick={handleSlipClick}
+          onEdit={onEdit}
+        />
+      </div>
+    </Card>
   );
 }
