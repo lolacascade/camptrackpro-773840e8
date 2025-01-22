@@ -41,20 +41,26 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
     }
   ];
 
-  const filteredAssets = assets.filter(asset => {
+  const filteredAssets = assets?.filter(asset => {
     if (typeFilter !== "all" && asset.asset_type !== typeFilter) return false;
-    if (customerFilter !== "all" && asset.customer_id?.toString() !== customerFilter) return false;
+    if (customerFilter !== "all" && String(asset.customer_id) !== customerFilter) return false;
     return true;
-  });
+  }) || [];
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="space-y-4">
+        <div className="rounded-lg border border-[#E8EBEB]">
+          <div className="p-8 text-center">Loading...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="space-y-4">
       <DataTableFiltersBar filters={filters} />
-      <div className="rounded-lg border border-[#E8EBEB] bg-white overflow-hidden">
+      <div className="rounded-lg border border-[#E8EBEB] bg-white">
         <Table>
           <AssetTableHeader />
           <AssetTableBody
