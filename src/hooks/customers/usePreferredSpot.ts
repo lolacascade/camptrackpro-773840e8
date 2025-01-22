@@ -23,8 +23,8 @@ export function usePreferredSpot(customerId?: string) {
       }, {} as Record<number, number>);
 
       // Find the most frequent slot
-      const mostFrequentSlotId = Object.entries(slotCounts)
-        .sort(([, a], [, b]) => b - a)[0]?.[0];
+      const mostFrequentSlotId = Number(Object.entries(slotCounts)
+        .sort(([, a], [, b]) => b - a)[0]?.[0]);
 
       if (!mostFrequentSlotId) return null;
 

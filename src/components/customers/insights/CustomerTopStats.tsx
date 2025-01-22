@@ -14,18 +14,18 @@ export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <EnhancedStatCard
         title="Total Bookings"
-        value={customerStats?.totalBookings.toString() || "0"}
+        value={String(customerStats?.totalBookings || "0")}
         icon={Users}
         trend={{
-          value: customerStats?.activeBookings.toString() || "0",
+          value: String(customerStats?.activeBookings || "0"),
           isPositive: true,
           comparedTo: "active bookings"
         }}
         breakdown={[
-          { label: "Active", value: customerStats?.activeBookings.toString() || "0", percentage: 60 },
+          { label: "Active", value: String(customerStats?.activeBookings || "0"), percentage: 60 },
           { 
             label: "Completed", 
-            value: (customerStats?.totalBookings - (customerStats?.activeBookings || 0)).toString() || "0", 
+            value: String((customerStats?.totalBookings || 0) - (customerStats?.activeBookings || 0)), 
             percentage: 40 
           }
         ]}
@@ -33,7 +33,7 @@ export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
 
       <EnhancedStatCard
         title="Total Spent"
-        value={`$${customerStats?.totalSpent.toFixed(2) || "0.00"}`}
+        value={`$${(customerStats?.totalSpent || 0).toFixed(2)}`}
         icon={DollarSign}
         trend={{
           value: "+12%",
