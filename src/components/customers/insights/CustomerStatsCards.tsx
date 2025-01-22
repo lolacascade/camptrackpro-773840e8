@@ -61,7 +61,7 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Total Bookings"
-        value={customer ? customerStats.totalBookings?.toString() : customerStats.totalCustomers?.toString()}
+        value={customer ? String(customerStats.totalBookings) : String(customerStats.totalCustomers)}
         icon={Users}
         trend={{
           value: "+12%",
@@ -69,14 +69,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Active", value: customer ? customerStats.activeBookings?.toString() : "45", percentage: 60 },
-          { label: "Completed", value: customer ? (customerStats.totalBookings - customerStats.activeBookings)?.toString() : "30", percentage: 40 }
+          { label: "Active", value: customer ? String(customerStats.activeBookings) : "45", percentage: 60 },
+          { label: "Completed", value: customer ? String(customerStats.totalBookings - customerStats.activeBookings) : "30", percentage: 40 }
         ]}
       />
 
       <EnhancedStatCard
         title={customer ? "Assets" : "New Customers"}
-        value={customer ? customerStats.totalAssets?.toString() : customerStats.newCustomers?.toString()}
+        value={customer ? String(customerStats.totalAssets) : String(customerStats.newCustomers)}
         icon={TrendingUp}
         trend={{
           value: customer ? "2 assets" : `${customerStats.newCustomers} customers`,
@@ -84,7 +84,7 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Active", value: customer ? customerStats.totalAssets?.toString() : "5", percentage: 63 },
+          { label: "Active", value: customer ? String(customerStats.totalAssets) : "5", percentage: 63 },
           { label: "Inactive", value: "0", percentage: 37 }
         ]}
       />
