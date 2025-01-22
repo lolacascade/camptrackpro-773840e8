@@ -51,7 +51,7 @@ export function useCustomerForm(
             ...formData,
             updated_at: now,
           })
-          .eq('id', customer.id);
+          .eq('id', customer.id.toString());
 
         if (error) throw error;
       } else {
