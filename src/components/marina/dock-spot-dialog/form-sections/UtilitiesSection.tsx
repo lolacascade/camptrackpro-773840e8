@@ -33,7 +33,7 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
               <FormLabel>Electricity</FormLabel>
               <FormControl>
                 <SelectField
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={field.onChange}
                   options={voltageOptions}
                   placeholder="Select voltage"
@@ -51,7 +51,7 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
               <FormLabel>Utility Connection Type</FormLabel>
               <FormControl>
                 <SelectField
-                  value={field.value}
+                  value={field.value || ''}
                   onChange={field.onChange}
                   options={connectionOptions}
                   placeholder="Select connection type"

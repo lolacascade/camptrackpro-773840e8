@@ -1,4 +1,3 @@
-import { FormSelect } from "@/components/common/FormSelect";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import type { HookupType, PowerOption, SurfaceType, SiteType } from "../types";
 import { HOOKUP_TYPE_OPTIONS, POWER_OPTIONS, SURFACE_TYPE_OPTIONS, SITE_TYPE_OPTIONS } from "../types";
