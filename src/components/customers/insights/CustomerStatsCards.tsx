@@ -13,43 +13,46 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     queryKey: ['customer-stats', customer?.id],
     queryFn: async () => {
       if (customer) {
+        // Single customer view stats
+        const { data: bookings } = await supabase
+          .from('bookings')
+          .select('*')
+          .eq('customer_id', customer.id);
+
+        const { data: assets } = await supabase
+          .from('assets')
+          .select('*')
+          .eq('customer_id', customer.id);
+
         return {
-          totalCustomers: 1,
-          newCustomers: 0,
-          rating: {
-            overall: 4.8,
-            service: 4.9,
-            communication: 4.7
-          }
+          totalBookings: bookings?.length || 0,
+          activeBookings: bookings?.filter(b => b.status === 'confirmed').length || 0,
+          totalAssets: assets?.length || 0,
+          rating: 4.8,
+          lifetimeValue: customer.lifetime_value || 0
         };
       }
 
-      const { data: customers, error } = await supabase
+      // Overview stats for all customers
+      const { data: customers } = await supabase
         .from('customers')
         .select('id, created_at');
-
-      if (error) throw error;
 
       const totalCustomers = customers?.length || 0;
       const now = new Date();
       const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
       const newCustomers = customers?.filter(c => 
-        new Date(c.created_at!) >= lastMonth
+        new Date(c.created_at) >= lastMonth
       ).length || 0;
-
-      const rating = {
-        overall: 4.8,
-        service: 4.9,
-        communication: 4.7
-      };
 
       return {
         totalCustomers,
         newCustomers,
-        rating
+        rating: 4.8,
+        lifetimeValue: 0
       };
-    }
+    },
+    enabled: true
   });
 
   if (!customerStats) return null;
@@ -57,8 +60,8 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
-        title="Total Customers"
-        value={customerStats.totalCustomers.toString()}
+        title="Total Bookings"
+        value={customer ? customerStats.totalBookings?.toString() : customerStats.totalCustomers?.toString()}
         icon={Users}
         trend={{
           value: "+12%",
@@ -66,29 +69,29 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "New", value: "45", percentage: 60 },
-          { label: "Returning", value: "30", percentage: 40 }
+          { label: "Active", value: customer ? customerStats.activeBookings?.toString() : "45", percentage: 60 },
+          { label: "Completed", value: customer ? (customerStats.totalBookings - customerStats.activeBookings)?.toString() : "30", percentage: 40 }
         ]}
       />
 
       <EnhancedStatCard
-        title="New Customers"
-        value={customerStats.newCustomers.toString()}
+        title={customer ? "Assets" : "New Customers"}
+        value={customer ? customerStats.totalAssets?.toString() : customerStats.newCustomers?.toString()}
         icon={TrendingUp}
         trend={{
-          value: `${customerStats.newCustomers} customers`,
+          value: customer ? "2 assets" : `${customerStats.newCustomers} customers`,
           isPositive: true,
           comparedTo: "last month"
         }}
         breakdown={[
-          { label: "Website", value: "5", percentage: 63 },
-          { label: "Referrals", value: "3", percentage: 37 }
+          { label: "Active", value: customer ? customerStats.totalAssets?.toString() : "5", percentage: 63 },
+          { label: "Inactive", value: "0", percentage: 37 }
         ]}
       />
 
       <EnhancedStatCard
         title="Customer Rating"
-        value={`${customerStats.rating.overall}/5`}
+        value={`${customerStats.rating}/5`}
         icon={Star}
         trend={{
           value: "0.2",
@@ -96,14 +99,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
           comparedTo: "last rating"
         }}
         breakdown={[
-          { label: "Service", value: `${customerStats.rating.service}/5`, percentage: 95 },
-          { label: "Communication", value: `${customerStats.rating.communication}/5`, percentage: 90 }
+          { label: "Service", value: "4.9/5", percentage: 95 },
+          { label: "Communication", value: "4.7/5", percentage: 90 }
         ]}
       />
 
       <EnhancedStatCard
         title="Lifetime Value"
-        value={customer?.lifetime_value ? `$${customer.lifetime_value}` : '$0'}
+        value={`$${customerStats.lifetimeValue}`}
         icon={Activity}
         trend={{
           value: "3%",
