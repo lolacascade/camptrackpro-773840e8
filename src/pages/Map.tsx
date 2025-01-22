@@ -5,8 +5,13 @@ import { Anchor, Ship, Wrench, DollarSign } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockSpotDialog";
 
 export default function Map() {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { data: stats } = useQuery({
     queryKey: ['marina-stats'],
     queryFn: async () => {
@@ -32,7 +37,15 @@ export default function Map() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-8">
-          <h1 className="text-3xl font-semibold text-[#133134]">Marina Map</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-semibold text-[#133134]">MAP</h1>
+            <Button 
+              onClick={() => setIsDialogOpen(true)}
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add Spot
+            </Button>
+          </div>
           
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <EnhancedStatCard
@@ -90,6 +103,16 @@ export default function Map() {
 
           <SlotTable />
         </div>
+
+        <AddDockSpotDialog
+          isOpen={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          onDockSpotAdded={() => {
+            setIsDialogOpen(false);
+            // Refresh the data
+            window.location.reload();
+          }}
+        />
       </PageContainer>
     </PageWithChat>
   );
