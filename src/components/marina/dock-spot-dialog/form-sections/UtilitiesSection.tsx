@@ -1,11 +1,11 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
-import { UseFormReturn } from "react-hook-form";
-import { DockSpotFormValues } from "../types";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card } from "@/components/ui/card"
+import { UseFormReturn } from "react-hook-form"
+import { DockSpotFormValues } from "../types"
 
 interface UtilitiesSectionProps {
-  form: UseFormReturn<DockSpotFormValues>;
+  form: UseFormReturn<DockSpotFormValues>
 }
 
 export function UtilitiesSection({ form }: UtilitiesSectionProps) {
@@ -59,5 +59,5 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
         />
       </div>
     </Card>
-  );
+  )
 }
