@@ -1,4 +1,4 @@
-import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { FormField, FormItem, FormLabel, FormMessage, FormControl } from "@/components/ui/form"
 import { Card } from "@/components/ui/card"
 import { UseFormReturn } from "react-hook-form"
 import { DockSpotFormValues } from "../types"
@@ -63,5 +63,5 @@ export function UtilitiesSection({ form }: UtilitiesSectionProps) {
         />
       </div>
     </Card>
-  )
+  );
 }
