@@ -61,7 +61,7 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Total Bookings"
-        value={customer ? String(customerStats.totalBookings) : String(customerStats.totalCustomers)}
+        value={String(customer ? customerStats.totalBookings : customerStats.totalCustomers)}
         icon={Users}
         trend={{
           value: "+12%",
