@@ -8,11 +8,13 @@ import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const { data: assets = [], isLoading } = useAssets();
+  const { data: assets = [], isLoading, error } = useAssets();
+  const { toast } = useToast();
 
   const handleAddAsset = () => {
     setSelectedAsset(null);
@@ -26,12 +28,25 @@ export default function Assets() {
 
   const handleViewDetails = (asset: Asset) => {
     console.log("View details for asset:", asset);
+    // Implement view details functionality
+    toast({
+      title: "Coming Soon",
+      description: "Asset details view is under development",
+    });
   };
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
     setSelectedAsset(null);
   };
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to load assets. Please try again.",
+      variant: "destructive",
+    });
+  }
 
   return (
     <PageWithChat>
@@ -54,6 +69,10 @@ export default function Assets() {
             onClose={handleCloseDrawer}
             onAssetAdded={() => {
               // Refresh will happen automatically via React Query
+              toast({
+                title: "Success",
+                description: "Asset has been added successfully",
+              });
             }}
             customerId={selectedAsset?.customer_id || null}
           />

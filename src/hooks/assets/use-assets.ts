@@ -13,7 +13,14 @@ export function useAssets() {
         throw new Error("No authenticated user");
       }
 
-      const { data, error } = await supabase
+      // Get user role from profiles
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+      const query = supabase
         .from("assets")
         .select(`
           *,
@@ -43,6 +50,8 @@ export function useAssets() {
           )
         `)
         .order('created_at', { ascending: false });
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Supabase error:', error);
