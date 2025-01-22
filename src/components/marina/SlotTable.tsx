@@ -4,10 +4,18 @@ import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
 import { Column } from "@/components/common/DataTable/types";
+import { Badge } from "@/components/ui/badge";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
 }
+
+const statusOptions = [
+  { label: "All Statuses", value: "all" },
+  { label: "Available", value: "available" },
+  { label: "Occupied", value: "occupied" },
+  { label: "Maintenance", value: "maintenance" }
+];
 
 export function SlotTable({ onEdit }: SlotTableProps) {
   const { data: slots = [], isLoading } = useQuery({
@@ -42,6 +50,21 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     { 
       header: "Status", 
       accessorKey: "status",
+      cell: (slot: Slot) => {
+        const colorMap: Record<string, string> = {
+          available: "bg-green-100 text-green-800",
+          occupied: "bg-blue-100 text-blue-800",
+          maintenance: "bg-yellow-100 text-yellow-800"
+        };
+
+        return (
+          <Badge 
+            className={`${colorMap[slot.status]} border-none`}
+          >
+            {slot.status.charAt(0).toUpperCase() + slot.status.slice(1)}
+          </Badge>
+        );
+      },
       sortable: true 
     },
     { 
@@ -82,6 +105,14 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           isLoading={isLoading}
           tableName="slots"
           onRowClick={onEdit}
+          filters={[
+            {
+              name: "status",
+              options: statusOptions,
+              value: "all",
+              onChange: () => {} // This will be handled internally by DataTable
+            }
+          ]}
         />
       </div>
     </Card>
