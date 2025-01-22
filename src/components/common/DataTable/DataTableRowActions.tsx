@@ -20,10 +20,17 @@ export function DataTableRowActions<T>({
   onEdit,
   onDelete,
 }: DataTableRowActionsProps<T>) {
+  if (!onViewDetails && !onEdit && !onDelete) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button 
+          variant="ghost" 
+          className="h-8 w-8 p-0 hover:bg-slate-100"
+        >
           <span className="sr-only">Open menu</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -43,11 +50,17 @@ export function DataTableRowActions<T>({
           </svg>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px] bg-white">
+      <DropdownMenuContent 
+        align="end" 
+        className="w-[160px] bg-white shadow-md rounded-md border border-gray-200"
+      >
         {onViewDetails && (
           <DropdownMenuItem 
-            onClick={() => onViewDetails(row)}
-            className="cursor-pointer hover:bg-slate-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewDetails(row);
+            }}
+            className="cursor-pointer hover:bg-slate-50 flex items-center px-3 py-2"
           >
             <Eye className="mr-2 h-4 w-4" />
             View Details
@@ -55,8 +68,11 @@ export function DataTableRowActions<T>({
         )}
         {onEdit && (
           <DropdownMenuItem 
-            onClick={() => onEdit(row)}
-            className="cursor-pointer hover:bg-slate-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(row);
+            }}
+            className="cursor-pointer hover:bg-slate-50 flex items-center px-3 py-2"
           >
             <Pencil className="mr-2 h-4 w-4" />
             Edit
@@ -64,8 +80,11 @@ export function DataTableRowActions<T>({
         )}
         {onDelete && (
           <DropdownMenuItem
-            onClick={() => onDelete(row)}
-            className="cursor-pointer text-red-600 hover:bg-slate-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(row);
+            }}
+            className="cursor-pointer text-red-600 hover:bg-slate-50 flex items-center px-3 py-2"
           >
             <Trash className="mr-2 h-4 w-4" />
             Delete
