@@ -1,7 +1,8 @@
 import { BaseDrawer } from "@/components/common/BaseDrawer";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { DockSpotForm, DockSpotFormValues } from "./DockSpotForm";
+import { DockSpotForm } from "./DockSpotForm";
+import { DockSpotFormValues } from "./types";
 
 interface AddDockSpotDialogProps {
   isOpen: boolean;

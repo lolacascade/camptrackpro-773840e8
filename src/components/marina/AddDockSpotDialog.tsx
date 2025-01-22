@@ -8,7 +8,8 @@ import {
 } from "@/components/ui/dialog"
 import { useToast } from "@/components/ui/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import { DockSpotForm, DockSpotFormValues } from "./dock-spot-dialog/DockSpotForm"
+import { DockSpotForm } from "./dock-spot-dialog/DockSpotForm"
+import { DockSpotFormValues } from "./dock-spot-dialog/types"
 
 export interface AddDockSpotDialogProps {
   isOpen: boolean;
