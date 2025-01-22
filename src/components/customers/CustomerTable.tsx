@@ -1,22 +1,53 @@
+import { useEffect, useState } from "react";
 import { Customer } from "@/types/customer";
-import { Card } from "@/components/ui/card";
-import { DataTable } from "@/components/common/DataTable/DataTable";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { getCustomerColumns } from "./table/CustomerTableColumns";
 import { supabase } from "@/integrations/supabase/client";
+import { DataTable } from "@/components/common/DataTable/DataTable";
+import { getCustomerColumns } from "./table/CustomerTableColumns";
+import { useToast } from "@/hooks/use-toast";
 
 interface CustomerTableProps {
   onEdit: (customer: Customer) => void;
 }
 
 export function CustomerTable({ onEdit }: CustomerTableProps) {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleViewDetails = (customer: Customer) => {
-    navigate(`/app/customers/${customer.id}`);
+  const fetchCustomers = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('customers')
+        .select('*')
+        .order('first_name');
+      
+      if (error) throw error;
+      setCustomers(data || []);
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load customers",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchCustomers();
+
+    const subscription = supabase
+      .channel('customers_changes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'customers' }, 
+        () => fetchCustomers())
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const handleDelete = async (customer: Customer) => {
     try {
@@ -42,16 +73,13 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   };
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <div className="p-4">
-        <DataTable
-          tableName="customers"
-          columns={getCustomerColumns()}
-          onViewDetails={handleViewDetails}
-          onEdit={onEdit}
-          onDelete={handleDelete}
-        />
-      </div>
-    </Card>
+    <DataTable
+      data={customers}
+      columns={getCustomerColumns()}
+      onEdit={onEdit}
+      onDelete={handleDelete}
+      isLoading={isLoading}
+      tableName="customers"
+    />
   );
 }

@@ -7,8 +7,8 @@ export const getCustomerColumns = (): Column<Customer>[] => [
     header: "Name",
     accessorKey: "first_name",
     cell: (item: Customer) => {
-      const isVip = item.lifetime_value ? parseFloat(item.lifetime_value) >= 10000 : false;
       const fullName = `${item.first_name} ${item.last_name}`;
+      const isVip = item.lifetime_value && parseFloat(item.lifetime_value) >= 10000;
       
       return (
         <div className="flex items-center gap-2">

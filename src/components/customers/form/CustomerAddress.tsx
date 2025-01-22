@@ -8,45 +8,32 @@ interface CustomerAddressProps {
 export function CustomerAddress({ register }: CustomerAddressProps) {
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="address">Address</Label>
-        <Input
-          id="address"
-          {...register("address")}
-        />
+        <Input id="address" {...register('address')} className="mt-1" />
       </div>
-
+      
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="city">City</Label>
-          <Input
-            id="city"
-            {...register("city")}
-          />
+          <Input id="city" {...register('city')} className="mt-1" />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="state">State/Province</Label>
-          <Input
-            id="state"
-            {...register("state")}
-          />
+        
+        <div>
+          <Label htmlFor="state">State</Label>
+          <Input id="state" {...register('state')} className="mt-1" />
         </div>
       </div>
-
+      
       <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+        <div>
           <Label htmlFor="country">Country</Label>
-          <Input
-            id="country"
-            {...register("country")}
-          />
+          <Input id="country" {...register('country')} className="mt-1" />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="postal_code">Postal/Zip Code</Label>
-          <Input
-            id="postal_code"
-            {...register("postal_code")}
-          />
+        
+        <div>
+          <Label htmlFor="postal_code">Postal Code</Label>
+          <Input id="postal_code" {...register('postal_code')} className="mt-1" />
         </div>
       </div>
     </div>

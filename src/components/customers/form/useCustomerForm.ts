@@ -1,32 +1,17 @@
 import { useForm } from "react-hook-form";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
-
-interface CustomerFormData {
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  state?: string;
-  country?: string;
-  postal_code?: string;
-}
+import { supabase } from "@/integrations/supabase/client";
 
 export function useCustomerForm(
   customer: Customer | null,
   onCustomerUpdated: () => void,
   onClose: () => void
 ) {
-  const { toast } = useToast();
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting }
-  } = useForm<CustomerFormData>({
+  } = useForm({
     defaultValues: customer || {
       first_name: '',
       last_name: '',
@@ -40,7 +25,7 @@ export function useCustomerForm(
     }
   });
 
-  const onSubmit = async (formData: CustomerFormData) => {
+  const onSubmit = async (formData: any) => {
     try {
       if (customer) {
         const { error } = await supabase
@@ -57,19 +42,9 @@ export function useCustomerForm(
         if (error) throw error;
       }
 
-      toast({
-        title: "Success",
-        description: `Customer ${customer ? 'updated' : 'added'} successfully.`,
-      });
       onCustomerUpdated();
-      onClose();
     } catch (error) {
       console.error('Error saving customer:', error);
-      toast({
-        title: "Error",
-        description: `Failed to ${customer ? 'update' : 'add'} customer.`,
-        variant: "destructive",
-      });
     }
   };
 
@@ -78,7 +53,6 @@ export function useCustomerForm(
     handleSubmit,
     errors,
     isSubmitting,
-    onSubmit,
-    reset
+    onSubmit
   };
 }
