@@ -62,63 +62,65 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   return (
     <div className="space-y-4">
       <DataTableFiltersBar filters={filters} />
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Asset Name</TableHead>
-            <TableHead>Size</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Slot</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAssets.length === 0 ? (
+      <div className="rounded-lg border border-[#E8EBEB] bg-white overflow-hidden">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-4">
-                No assets found
-              </TableCell>
+              <TableHead>Asset Name</TableHead>
+              <TableHead>Size</TableHead>
+              <TableHead>Type</TableHead>
+              <TableHead>Customer</TableHead>
+              <TableHead>Slot</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
-          ) : (
-            filteredAssets.map((asset) => (
-              <TableRow key={asset.id}>
-                <TableCell className="font-medium">{asset.asset_name}</TableCell>
-                <TableCell>{asset.asset_size || 'N/A'}</TableCell>
-                <TableCell>
-                  <Badge variant="secondary">
-                    {asset.asset_type || 'Unspecified'}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {asset.customers 
-                    ? `${asset.customers.first_name} ${asset.customers.last_name}`
-                    : 'Unassigned'}
-                </TableCell>
-                <TableCell>{asset.slots?.name || 'Unassigned'}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(asset)}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onViewDetails(asset)}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
+          </TableHeader>
+          <TableBody>
+            {filteredAssets.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-4">
+                  No assets found
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              filteredAssets.map((asset) => (
+                <TableRow key={asset.id}>
+                  <TableCell className="font-medium">{asset.asset_name}</TableCell>
+                  <TableCell>{asset.asset_size || 'N/A'}</TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {asset.asset_type || 'Unspecified'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {asset.customers 
+                      ? `${asset.customers.first_name} ${asset.customers.last_name}`
+                      : 'Unassigned'}
+                  </TableCell>
+                  <TableCell>{asset.slots?.name || 'Unassigned'}</TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEdit(asset)}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onViewDetails(asset)}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 }
