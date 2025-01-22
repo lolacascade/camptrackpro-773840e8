@@ -4,19 +4,19 @@ import { Customer } from "@/types/customer";
 
 interface AssetsStatCardProps {
   customer?: Customer;
-  totalAssets?: number;
-  newCustomers?: number;
+  totalAssets: string;
+  newCustomers: string;
 }
 
 export function AssetsStatCard({ 
   customer, 
-  totalAssets = 0, 
-  newCustomers = 0 
+  totalAssets, 
+  newCustomers 
 }: AssetsStatCardProps) {
   return (
     <EnhancedStatCard
       title={customer ? "Assets" : "New Customers"}
-      value={String(customer ? totalAssets : newCustomers)}
+      value={customer ? totalAssets : newCustomers}
       icon={TrendingUp}
       trend={{
         value: customer ? "2 assets" : `${newCustomers} customers`,

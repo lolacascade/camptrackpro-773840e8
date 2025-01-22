@@ -63,14 +63,14 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <BookingsStatCard 
         customer={customer}
-        totalBookings={customerStats.totalBookings}
-        activeBookings={customerStats.activeBookings}
-        totalCustomers={customerStats.totalCustomers}
+        totalBookings={String(customerStats.totalBookings)}
+        activeBookings={String(customerStats.activeBookings)}
+        totalCustomers={String(customerStats.totalCustomers)}
       />
       <AssetsStatCard 
         customer={customer}
-        totalAssets={customerStats.totalAssets}
-        newCustomers={customerStats.newCustomers}
+        totalAssets={String(customerStats.totalAssets)}
+        newCustomers={String(customerStats.newCustomers)}
       />
       <RatingStatCard rating={customerStats.rating} />
       <LifetimeValueStatCard value={customerStats.lifetimeValue} />

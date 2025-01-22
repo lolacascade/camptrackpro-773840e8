@@ -4,21 +4,21 @@ import { Customer } from "@/types/customer";
 
 interface BookingsStatCardProps {
   customer?: Customer;
-  totalBookings?: number;
-  activeBookings?: number;
-  totalCustomers?: number;
+  totalBookings: string;
+  activeBookings: string;
+  totalCustomers: string;
 }
 
 export function BookingsStatCard({ 
   customer, 
-  totalBookings = 0, 
-  activeBookings = 0,
-  totalCustomers = 0 
+  totalBookings, 
+  activeBookings,
+  totalCustomers 
 }: BookingsStatCardProps) {
   return (
     <EnhancedStatCard
       title="Total Bookings"
-      value={String(customer ? totalBookings : totalCustomers)}
+      value={customer ? totalBookings : totalCustomers}
       icon={Users}
       trend={{
         value: "+12%",
@@ -33,7 +33,7 @@ export function BookingsStatCard({
         },
         { 
           label: "Completed", 
-          value: String(customer ? (totalBookings - activeBookings) : 30), 
+          value: String(customer ? (Number(totalBookings) - Number(activeBookings)) : 30), 
           percentage: 40 
         }
       ]}
