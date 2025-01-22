@@ -44,10 +44,13 @@ export function SlotTable({ onEdit }: SlotTableProps) {
 
   const handleDelete = async (slot: Slot) => {
     try {
+      // Convert the id to a number since that's what the database expects
+      const slotId = typeof slot.id === 'string' ? parseInt(slot.id, 10) : slot.id;
+      
       const { error } = await supabase
         .from('slots')
         .delete()
-        .eq('id', slot.id);
+        .eq('id', slotId);
 
       if (error) throw error;
 
