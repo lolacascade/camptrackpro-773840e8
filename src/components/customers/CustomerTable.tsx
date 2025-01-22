@@ -18,7 +18,7 @@ export function CustomerTable({ customers, onEdit }: CustomerTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [localCustomers, setLocalCustomers] = useState<Customer[]>(customers);
 
-  useEffect(() => {
+  //useEffect(() => {
     /*const subscription = supabase
       .channel('customers_changes')
       .on(
