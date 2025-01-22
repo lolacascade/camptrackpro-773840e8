@@ -2,8 +2,9 @@ import { Json } from "@/integrations/supabase/types";
 import { BaseEntity } from "./common/base";
 
 export interface Slot extends BaseEntity {
+  id: number;  // Changed from string | number to just number
   name: string;
-  status: 'available' | 'occupied' | 'maintenance';
+  status: 'available' | 'occupied' | 'maintenance';  // Made this a union type
   location_identifier: string;
   length_ft: number | null;
   width_ft: number | null;

@@ -32,19 +32,29 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         return [];
       }
 
-      console.log('Fetched slots:', data);
-      return data || [];
+      // Ensure the data matches our Slot type
+      const typedSlots = (data || []).map(slot => ({
+        ...slot,
+        id: Number(slot.id),
+        status: slot.status as Slot['status'],
+        is_covered: Boolean(slot.is_covered),
+        has_water: Boolean(slot.has_water),
+        length_ft: slot.length_ft ? Number(slot.length_ft) : null,
+        width_ft: slot.width_ft ? Number(slot.width_ft) : null,
+        maintenance_id: slot.maintenance_id ? Number(slot.maintenance_id) : null
+      }));
+
+      console.log('Fetched slots:', typedSlots);
+      return typedSlots;
     }
   });
 
   const handleDelete = async (slot: Slot) => {
     try {
-      const slotId = typeof slot.id === 'string' ? parseInt(slot.id, 10) : slot.id;
-      
       const { error } = await supabase
         .from('slots')
         .delete()
-        .eq('id', slotId);
+        .eq('id', slot.id);
 
       if (error) {
         toast.error("Failed to delete slot");

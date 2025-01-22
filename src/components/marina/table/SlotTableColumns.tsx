@@ -21,7 +21,7 @@ export const getSlotColumns = (): Column<Slot>[] => [
 
       return (
         <Badge 
-          className={`${colorMap[slot.status as keyof typeof colorMap]} border-none`}
+          className={`${colorMap[slot.status]} border-none`}
         >
           {slot.status.charAt(0).toUpperCase() + slot.status.slice(1)}
         </Badge>
@@ -32,13 +32,13 @@ export const getSlotColumns = (): Column<Slot>[] => [
     header: "Length (ft)",
     accessorKey: "length_ft",
     sortable: true,
-    cell: (slot: Slot) => slot.length_ft || 'N/A',
+    cell: (slot: Slot) => slot.length_ft?.toString() || 'N/A',
   },
   {
     header: "Width (ft)",
     accessorKey: "width_ft",
     sortable: true,
-    cell: (slot: Slot) => slot.width_ft || 'N/A',
+    cell: (slot: Slot) => slot.width_ft?.toString() || 'N/A',
   },
   {
     header: "Electricity",
