@@ -591,7 +591,7 @@ export type Database = {
           last_activity_at: string | null
           length_ft: number | null
           location_coordinates: Json | null
-          location_identifier: string
+          location_identifier: string | null
           maintenance_id: number | null
           name: string
           status: string
@@ -612,7 +612,7 @@ export type Database = {
           last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
-          location_identifier: string
+          location_identifier?: string | null
           maintenance_id?: number | null
           name: string
           status?: string
@@ -633,7 +633,7 @@ export type Database = {
           last_activity_at?: string | null
           length_ft?: number | null
           location_coordinates?: Json | null
-          location_identifier?: string
+          location_identifier?: string | null
           maintenance_id?: number | null
           name?: string
           status?: string
