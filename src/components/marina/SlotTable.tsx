@@ -13,6 +13,7 @@ interface SlotTableProps {
 export function SlotTable({ onEdit }: SlotTableProps) {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     const fetchSlots = async () => {
@@ -34,15 +35,12 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           return;
         }
 
-        // Map the data to match the Slot type with proper status typing
         const typedSlots: Slot[] = data.map(slot => ({
           ...slot,
           id: String(slot.id),
-          // Ensure status is one of the allowed values, default to "available"
           status: (slot.status === "occupied" || slot.status === "maintenance" || slot.status === "available") 
             ? (slot.status as "occupied" | "maintenance" | "available")
             : "available",
-          location_identifier: slot.location_identifier || "",
           name: slot.name || "",
           dock: slot.dock || null,
           zone: slot.zone || null,
@@ -78,6 +76,20 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     console.log('Clicked slip:', slip);
   };
 
+  const filters = [
+    {
+      name: "status",
+      options: [
+        { label: "All Statuses", value: "all" },
+        { label: "Available", value: "available" },
+        { label: "Occupied", value: "occupied" },
+        { label: "Maintenance", value: "maintenance" }
+      ],
+      value: statusFilter,
+      onChange: setStatusFilter
+    }
+  ];
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-white">
       <div className="p-4">
@@ -88,6 +100,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           onRowClick={handleSlipClick}
           onEdit={onEdit}
           title="Spots"
+          filters={filters}
         />
       </div>
     </Card>

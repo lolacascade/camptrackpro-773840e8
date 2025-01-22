@@ -9,11 +9,6 @@ export const getSlotColumns = (): Column<Slot>[] => [
     sortable: true,
   },
   {
-    header: "Location",
-    accessorKey: "location_identifier",
-    sortable: true,
-  },
-  {
     header: "Status",
     accessorKey: "status",
     sortable: true,
