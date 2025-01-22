@@ -35,12 +35,12 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         }
 
         // Map the data to match the Slot type with proper status typing
-        const typedSlots = data.map(slot => ({
+        const typedSlots: Slot[] = data.map(slot => ({
           ...slot,
           id: String(slot.id),
           // Ensure status is one of the allowed values, default to "available"
-          status: (slot.status === "occupied" || slot.status === "maintenance") 
-            ? slot.status 
+          status: (slot.status === "occupied" || slot.status === "maintenance" || slot.status === "available") 
+            ? (slot.status as "occupied" | "maintenance" | "available")
             : "available",
           location_identifier: slot.location_identifier || "",
           name: slot.name || "",
@@ -56,7 +56,9 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           customer_id: slot.customer_id || null,
           maintenance_id: slot.maintenance_id || null,
           last_activity_at: slot.last_activity_at || null,
-          user_id: slot.user_id || null
+          user_id: slot.user_id || null,
+          created_at: slot.created_at || null,
+          updated_at: slot.updated_at || null
         }));
         
         console.log('Fetched slots:', typedSlots);
