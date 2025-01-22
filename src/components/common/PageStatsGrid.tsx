@@ -28,8 +28,8 @@ export function PageStatsGrid({ title, stats }: PageStatsGridProps) {
             comparedTo: "last week"
           }}
           breakdown={[
-            { label: "Occupied Sites", value: stats.occupiedSlips.toString(), percentage: Math.round((stats.occupiedSlips/stats.totalSlips) * 100) },
-            { label: "Total Sites", value: stats.totalSlips.toString() }
+            { label: "Occupied Sites", value: stats.occupiedSlips, percentage: Math.round((stats.occupiedSlips/stats.totalSlips) * 100) },
+            { label: "Total Sites", value: stats.totalSlips }
           ]}
         />
         <EnhancedStatCard
@@ -49,7 +49,7 @@ export function PageStatsGrid({ title, stats }: PageStatsGridProps) {
         />
         <EnhancedStatCard
           title="Active RVs"
-          value={stats.activeRVs.toString()}
+          value={stats.activeRVs}
           icon={Ship}
           trend={{
             value: "3 RVs",
@@ -63,7 +63,7 @@ export function PageStatsGrid({ title, stats }: PageStatsGridProps) {
         />
         <EnhancedStatCard
           title="Pending Maintenance"
-          value={stats.pendingMaintenance.toString()}
+          value={stats.pendingMaintenance}
           icon={Wrench}
           trend={{
             value: "2 tasks",
