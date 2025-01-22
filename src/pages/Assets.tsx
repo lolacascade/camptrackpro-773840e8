@@ -7,6 +7,7 @@ import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { Card } from "@/components/ui/card";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -37,13 +38,17 @@ export default function Assets() {
       <PageContainer>
         <div className="space-y-6">
           <AssetsHeader onAddAsset={handleAddAsset} />
-          <AssetStatsCards />
-          <AssetTable
-            assets={assets}
-            onEdit={handleEditClick}
-            onViewDetails={handleViewDetails}
-            isLoading={isLoading}
-          />
+          <Card className="p-6">
+            <AssetStatsCards />
+            <div className="mt-6">
+              <AssetTable
+                assets={assets}
+                onEdit={handleEditClick}
+                onViewDetails={handleViewDetails}
+                isLoading={isLoading}
+              />
+            </div>
+          </Card>
           <AssetDrawer
             open={isDrawerOpen}
             onClose={handleCloseDrawer}

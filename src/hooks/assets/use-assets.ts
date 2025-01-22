@@ -42,7 +42,8 @@ export function useAssets() {
             user_id
           )
         `)
-        .eq('user_id', session.user.id);
+        .eq('user_id', session.user.id)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Supabase error:', error);
@@ -64,8 +65,13 @@ export function useAssets() {
           length_ft: asset.slots.length_ft ? Number(asset.slots.length_ft) : null,
           width_ft: asset.slots.width_ft ? Number(asset.slots.width_ft) : null,
           maintenance_id: asset.slots.maintenance_id ? Number(asset.slots.maintenance_id) : null,
-          user_id: asset.slots.user_id || null
-        } : null
+          user_id: asset.slots.user_id || null,
+          created_at: new Date(asset.slots.created_at).toISOString(),
+          updated_at: new Date(asset.slots.updated_at).toISOString(),
+          last_activity_at: asset.slots.last_activity_at ? new Date(asset.slots.last_activity_at).toISOString() : null
+        } : null,
+        created_at: new Date(asset.created_at).toISOString(),
+        updated_at: new Date(asset.updated_at).toISOString()
       }));
     },
     enabled: !!session?.user?.id,

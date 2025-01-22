@@ -5,6 +5,7 @@ import { useState } from "react";
 import { ASSET_TYPES } from "./form/AssetFormFields";
 import { AssetTableHeader } from "./table/AssetTableHeader";
 import { AssetTableBody } from "./table/AssetTableBody";
+import { Card } from "@/components/ui/card";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -76,9 +77,9 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <div className="rounded-lg border border-[#E8EBEB]">
-          <div className="p-8 text-center">Loading...</div>
-        </div>
+        <Card className="p-6">
+          <div className="text-center">Loading...</div>
+        </Card>
       </div>
     );
   }
@@ -86,7 +87,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   return (
     <div className="space-y-4">
       <DataTableFiltersBar filters={filters} />
-      <div className="rounded-lg border border-[#E8EBEB] bg-white">
+      <Card className="overflow-hidden">
         <Table>
           <AssetTableHeader searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           <AssetTableBody
@@ -95,7 +96,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             onViewDetails={onViewDetails}
           />
         </Table>
-      </div>
+      </Card>
     </div>
   );
 }
