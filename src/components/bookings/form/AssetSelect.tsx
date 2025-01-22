@@ -24,7 +24,7 @@ export function AssetSelect({ value, onSelect }: AssetSelectProps) {
 
   const options = assets.map(asset => ({
     value: asset.id.toString(),
-    label: `${asset.asset_name} (${asset.asset_type})`
+    label: `${asset.asset_name || asset.name} (${asset.asset_type || asset.type})`
   }));
 
   return (

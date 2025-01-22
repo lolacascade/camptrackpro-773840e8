@@ -28,6 +28,8 @@ type BookingFormData = {
   special_requirements?: string;
 };
 
+type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const session = useSession();
   const { customers } = useCustomers();
@@ -60,7 +62,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         ...data,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending' as const,
+        status: 'pending' as BookingStatus,
         created_by: session.user.id,
         user_id: session.user.id,
         total_amount: 0 // This will be calculated by the database function
