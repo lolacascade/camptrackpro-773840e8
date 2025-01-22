@@ -1,4 +1,5 @@
 import { Customer } from "@/types/customer";
+import { CustomerStatsCards } from "./insights/CustomerStatsCards";
 
 interface CustomerInsightsProps {
   customer: Customer | null;
@@ -14,23 +15,9 @@ export function CustomerInsights({ customer }: CustomerInsightsProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">{`${customer.first_name} ${customer.last_name}`}</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h3 className="font-semibold mb-2">Contact Information</h3>
-          <p>Email: {customer.email}</p>
-          <p>Phone: {customer.phone || 'N/A'}</p>
-        </div>
-        <div className="p-4 bg-white rounded-lg shadow">
-          <h3 className="font-semibold mb-2">Address</h3>
-          <p>{customer.address || 'N/A'}</p>
-          {customer.city && <p>{customer.city}</p>}
-          {customer.state && <p>{customer.state}</p>}
-          {customer.country && <p>{customer.country}</p>}
-          {customer.postal_code && <p>{customer.postal_code}</p>}
-        </div>
-      </div>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold text-[#133134]">{`${customer.first_name} ${customer.last_name}`}</h2>
+      <CustomerStatsCards customer={customer} />
     </div>
   );
 }
