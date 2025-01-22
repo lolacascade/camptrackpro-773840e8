@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useToast } from "@/components/ui/use-toast";
+import { BaseDrawer } from "@/components/common/BaseDrawer";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DockSpotForm, DockSpotFormValues } from "./DockSpotForm";
 
@@ -37,7 +37,6 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
       toast({
         title: "Dock Spot Added",
         description: `New dock spot ${values.name} has been created.`,
-        className: "bg-white",
       });
     } catch (error) {
       console.error('Error creating slip:', error);
@@ -45,19 +44,17 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
         title: "Error",
         description: "Failed to create dock spot. Please try again.",
         variant: "destructive",
-        className: "bg-white",
       });
     }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Dock Spot</DialogTitle>
-        </DialogHeader>
-        <DockSpotForm onSubmit={onSubmit} />
-      </DialogContent>
-    </Dialog>
+    <BaseDrawer
+      open={isOpen}
+      onClose={() => onOpenChange(false)}
+      title="Add New Dock Spot"
+    >
+      <DockSpotForm onSubmit={onSubmit} />
+    </BaseDrawer>
   );
 }
