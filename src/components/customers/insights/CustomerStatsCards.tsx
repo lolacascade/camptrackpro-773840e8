@@ -1,8 +1,10 @@
-import { Users, TrendingUp, Star, Activity } from "lucide-react";
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
+import { BookingsStatCard } from "./stats/BookingsStatCard";
+import { AssetsStatCard } from "./stats/AssetsStatCard";
+import { RatingStatCard } from "./stats/RatingStatCard";
+import { LifetimeValueStatCard } from "./stats/LifetimeValueStatCard";
 
 interface CustomerStatsCardsProps {
   customer?: Customer;
@@ -59,65 +61,19 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <EnhancedStatCard
-        title="Total Bookings"
-        value={customer ? String(customerStats.totalBookings) : String(customerStats.totalCustomers)}
-        icon={Users}
-        trend={{
-          value: "+12%",
-          isPositive: true,
-          comparedTo: "last month"
-        }}
-        breakdown={[
-          { label: "Active", value: String(customer ? customerStats.activeBookings : 45), percentage: 60 },
-          { label: "Completed", value: String(customer ? (customerStats.totalBookings - customerStats.activeBookings) : 30), percentage: 40 }
-        ]}
+      <BookingsStatCard 
+        customer={customer}
+        totalBookings={customerStats.totalBookings}
+        activeBookings={customerStats.activeBookings}
+        totalCustomers={customerStats.totalCustomers}
       />
-
-      <EnhancedStatCard
-        title={customer ? "Assets" : "New Customers"}
-        value={String(customer ? customerStats.totalAssets : customerStats.newCustomers)}
-        icon={TrendingUp}
-        trend={{
-          value: customer ? "2 assets" : `${customerStats.newCustomers} customers`,
-          isPositive: true,
-          comparedTo: "last month"
-        }}
-        breakdown={[
-          { label: "Active", value: String(customer ? customerStats.totalAssets : 5), percentage: 63 },
-          { label: "Inactive", value: "0", percentage: 37 }
-        ]}
+      <AssetsStatCard 
+        customer={customer}
+        totalAssets={customerStats.totalAssets}
+        newCustomers={customerStats.newCustomers}
       />
-
-      <EnhancedStatCard
-        title="Customer Rating"
-        value={`${customerStats.rating}/5`}
-        icon={Star}
-        trend={{
-          value: "0.2",
-          isPositive: true,
-          comparedTo: "last rating"
-        }}
-        breakdown={[
-          { label: "Service", value: "4.9/5", percentage: 95 },
-          { label: "Communication", value: "4.7/5", percentage: 90 }
-        ]}
-      />
-
-      <EnhancedStatCard
-        title="Lifetime Value"
-        value={`$${customerStats.lifetimeValue}`}
-        icon={Activity}
-        trend={{
-          value: "3%",
-          isPositive: true,
-          comparedTo: "last month"
-        }}
-        breakdown={[
-          { label: "Services", value: "60%", percentage: 60 },
-          { label: "Products", value: "40%", percentage: 40 }
-        ]}
-      />
+      <RatingStatCard rating={customerStats.rating} />
+      <LifetimeValueStatCard value={customerStats.lifetimeValue} />
     </div>
   );
 }
