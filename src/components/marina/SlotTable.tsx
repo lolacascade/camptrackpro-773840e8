@@ -19,10 +19,8 @@ export function SlotTable({ onEdit }: SlotTableProps) {
       try {
         const { data, error } = await supabase
           .from('slots')
-          .select(`
-            *,
-            assets (*)
-          `);
+          .select('*')
+          .order('created_at', { ascending: false });
 
         if (error) {
           console.error('Error fetching slots:', error);
@@ -36,15 +34,26 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           return;
         }
 
+        // Map the data to match the Slot type
         const typedSlots = data.map(slot => ({
           ...slot,
           id: String(slot.id),
-          status: slot.status as "available" | "occupied" | "maintenance",
-          user_id: slot.user_id || null,
-          assets: slot.assets?.map(asset => ({
-            ...asset,
-            id: String(asset.id)
-          }))
+          status: slot.status || "available",
+          location_identifier: slot.location_identifier || "",
+          name: slot.name || "",
+          dock: slot.dock || null,
+          zone: slot.zone || null,
+          length_ft: slot.length_ft || null,
+          width_ft: slot.width_ft || null,
+          is_covered: slot.is_covered || false,
+          has_water: slot.has_water || false,
+          electricity_voltage: slot.electricity_voltage || null,
+          utility_connection_type: slot.utility_connection_type || null,
+          location_coordinates: slot.location_coordinates || null,
+          customer_id: slot.customer_id || null,
+          maintenance_id: slot.maintenance_id || null,
+          last_activity_at: slot.last_activity_at || null,
+          user_id: slot.user_id || null
         }));
         
         console.log('Fetched slots:', typedSlots);
@@ -65,7 +74,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   };
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+    <Card className="border border-[#E8EBEB] rounded-xl bg-white">
       <div className="p-4">
         <DataTable
           data={slots}
