@@ -5,8 +5,6 @@ export interface Slot extends BaseEntity {
   name: string;
   status: 'available' | 'occupied' | 'maintenance';
   location_identifier: string;
-  dock: string | null;
-  zone: string | null;
   length_ft: number | null;
   width_ft: number | null;
   is_covered: boolean | null;
