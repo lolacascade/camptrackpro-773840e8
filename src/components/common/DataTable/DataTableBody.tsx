@@ -7,7 +7,6 @@ interface DataTableBodyProps<T> {
   columns: Column<T>[];
   onViewDetails?: (item: T) => void;
   onEdit?: (item: T) => void;
-  onDuplicate?: (item: T) => void;
   onDelete?: (item: T) => void;
   onRowClick?: (item: T) => void;
 }
@@ -17,7 +16,6 @@ export function DataTableBody<T extends { id?: number | string }>({
   columns,
   onViewDetails,
   onEdit,
-  onDuplicate,
   onDelete,
   onRowClick,
 }: DataTableBodyProps<T>) {
@@ -56,7 +54,6 @@ export function DataTableBody<T extends { id?: number | string }>({
               row={item}
               onEdit={onEdit}
               onViewDetails={onViewDetails}
-              onDuplicate={onDuplicate}
               onDelete={onDelete}
             />
           </TableCell>
