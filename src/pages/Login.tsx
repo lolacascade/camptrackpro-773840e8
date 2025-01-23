@@ -17,10 +17,9 @@ export default function Login() {
 
   useEffect(() => {
     if (!isLoading && session) {
-      const from = location.state?.from?.pathname || '/app';
-      navigate(from, { replace: true });
+      navigate(fromPath, { replace: true });
     }
-  }, [session, isLoading, navigate, location]);
+  }, [session, isLoading, navigate, fromPath]);
 
   if (isLoading) {
     return <AuthLoading />;
