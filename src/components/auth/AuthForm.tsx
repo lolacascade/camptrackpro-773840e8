@@ -1,12 +1,17 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
+import { useSearchParams } from 'react-router-dom';
 
 export function AuthForm() {
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode') || 'signin';
+
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
       <Auth
         supabaseClient={supabase}
+        view={mode === 'signup' ? 'sign_up' : 'sign_in'}
         appearance={{
           theme: ThemeSupa,
           variables: {
