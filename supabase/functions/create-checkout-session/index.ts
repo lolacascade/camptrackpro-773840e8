@@ -51,12 +51,12 @@ serve(async (req) => {
       customerId = customer.id;
     }
 
-    // Create checkout session
+    // Create checkout session with your specific price ID
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       line_items: [
         {
-          price: 'YOUR_PRICE_ID', // Replace with your actual price ID
+          price: 'price_1QTRMgHvvbsk6Sn0PznsfXSf', // Your provided price ID
           quantity: 1,
         },
       ],

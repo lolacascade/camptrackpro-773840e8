@@ -7,7 +7,7 @@ import { CallToAction } from "@/components/landing/CallToAction";
 import { LandingHeader } from "@/components/landing/LandingHeader";
 import { Footer } from "@/components/layout/Footer";
 
-export function Index() {
+export default function Index() {
   return (
     <div className="min-h-screen bg-secondary">
       <LandingHeader />
