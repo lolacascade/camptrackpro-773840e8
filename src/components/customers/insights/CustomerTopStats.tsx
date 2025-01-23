@@ -8,7 +8,7 @@ interface CustomerTopStatsProps {
 }
 
 export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
-  const { data: stats } = useCustomerStats(customer?.id);
+  const { data: stats } = useCustomerStats(customer?.id.toString());
   const totalBookings = stats?.totalBookings || 0;
   const activeBookings = stats?.activeBookings || 0;
   const lifetimeValue = customer.lifetime_value ? parseFloat(customer.lifetime_value) : 0;

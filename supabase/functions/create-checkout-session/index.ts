@@ -12,19 +12,20 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseClient = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-  );
-
   try {
+    const { organizationId } = await req.json();
+    
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    );
+
+    // Get the session or user object
     const authHeader = req.headers.get('Authorization')!;
     const token = authHeader.replace('Bearer ', '');
-    const { data } = await supabaseClient.auth.getUser(token);
-    const user = data.user;
-    const email = user?.email;
+    const { data: { user } } = await supabaseClient.auth.getUser(token);
 
-    if (!email) {
+    if (!user?.email) {
       throw new Error('No email found');
     }
 
@@ -32,41 +33,41 @@ serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
+    // Create or retrieve customer
     const customers = await stripe.customers.list({
-      email: email,
+      email: user.email,
       limit: 1,
     });
 
-    let customer_id = undefined;
-    if (customers.data.length > 0) {
-      customer_id = customers.data[0].id;
-      const subscriptions = await stripe.subscriptions.list({
-        customer: customers.data[0].id,
-        status: 'active',
-        limit: 1,
-      });
+    let customerId = customers.data[0]?.id;
 
-      if (subscriptions.data.length > 0) {
-        throw new Error("Customer already has an active subscription");
-      }
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        metadata: {
+          organization_id: organizationId,
+        },
+      });
+      customerId = customer.id;
     }
 
-    console.log('Creating payment session...');
+    // Create checkout session
     const session = await stripe.checkout.sessions.create({
-      customer: customer_id,
-      customer_email: customer_id ? undefined : email,
+      customer: customerId,
       line_items: [
         {
-          price: 'price_1QTRMgHvvbsk6Sn0PznsfXSf',
+          price: 'YOUR_PRICE_ID', // Replace with your actual price ID
           quantity: 1,
         },
       ],
       mode: 'subscription',
-      success_url: `${req.headers.get('origin')}/customers`,
-      cancel_url: `${req.headers.get('origin')}/customers`,
+      success_url: `${req.headers.get('origin')}/app`,
+      cancel_url: `${req.headers.get('origin')}/organization-setup`,
+      metadata: {
+        organization_id: organizationId,
+      },
     });
 
-    console.log('Payment session created:', session.id);
     return new Response(
       JSON.stringify({ url: session.url }),
       { 
@@ -75,7 +76,7 @@ serve(async (req) => {
       }
     );
   } catch (error) {
-    console.error('Error creating payment session:', error);
+    console.error('Error creating checkout session:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { 

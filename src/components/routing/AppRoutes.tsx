@@ -1,66 +1,103 @@
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { useSession } from "@supabase/auth-helpers-react";
+import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Layout } from "@/components/layout/Layout";
-import { Index } from "@/pages/Index";
 import Login from "@/pages/Login";
+import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Customers from "@/pages/Customers";
 import CustomerDetails from "@/pages/CustomerDetails";
 import Assets from "@/pages/Assets";
+import Bookings from "@/pages/Bookings";
 import Maintenance from "@/pages/Maintenance";
 import Settings from "@/pages/Settings";
 import Financials from "@/pages/Financials";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import TermsOfService from "@/pages/TermsOfService";
-import Bookings from "@/pages/Bookings";
-import Map from "@/pages/Map";
+import MarinaMap from "@/pages/MarinaMap";
+import OrganizationSetup from "@/pages/OrganizationSetup";
 
-export const AppRoutes = () => {
-  const session = useSession();
-
+export function AppRoutes() {
   return (
     <Routes>
-      {/* Public routes */}
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/terms-of-service" element={<TermsOfService />} />
-
-      {/* Protected routes */}
-      <Route 
-        path="/app" 
+      <Route
+        path="/organization-setup"
         element={
           <ProtectedRoute>
-            <Layout>
-              <Outlet />
-            </Layout>
+            <OrganizationSetup />
           </ProtectedRoute>
         }
-      >
-        <Route index element={<Navigate to="/app/dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="bookings" element={<Bookings />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="customers/:id" element={<CustomerDetails />} />
-        <Route path="assets" element={<Assets />} />
-        <Route path="maintenance" element={<Maintenance />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="financials" element={<Financials />} />
-        <Route path="map" element={<Map />} />
-      </Route>
-
-      {/* Catch all route - redirect to home or dashboard based on auth status */}
-      <Route 
-        path="*" 
+      />
+      <Route
+        path="/app"
         element={
-          session ? (
-            <Navigate to="/app/dashboard" replace />
-          ) : (
-            <Navigate to="/" replace />
-          )
-        } 
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customers"
+        element={
+          <ProtectedRoute>
+            <Customers />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/customers/:id"
+        element={
+          <ProtectedRoute>
+            <CustomerDetails />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/assets"
+        element={
+          <ProtectedRoute>
+            <Assets />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bookings"
+        element={
+          <ProtectedRoute>
+            <Bookings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/maintenance"
+        element={
+          <ProtectedRoute>
+            <Maintenance />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/financials"
+        element={
+          <ProtectedRoute>
+            <Financials />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/marina-map"
+        element={
+          <ProtectedRoute>
+            <MarinaMap />
+          </ProtectedRoute>
+        }
       />
     </Routes>
   );
-};
+}
