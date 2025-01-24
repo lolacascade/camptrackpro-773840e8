@@ -2,16 +2,81 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 export function AuthForm() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') || 'signin';
+  const [companyName, setCompanyName] = useState('');
+  const [phone, setPhone] = useState('');
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && mode === 'signup' && session?.user) {
+        try {
+          const { error } = await supabase
+            .from('profiles')
+            .update({
+              company_name: companyName,
+              phone: phone,
+              role: 'admin'
+            })
+            .eq('id', session.user.id);
+
+          if (error) throw error;
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          toast({
+            title: "Error",
+            description: "Failed to save company information. Please try again.",
+            variant: "destructive",
+          });
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [companyName, phone, mode, toast]);
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
       <h1 className="text-2xl font-semibold text-center mb-6">
         {mode === 'signup' ? 'Create an Account' : 'Welcome Back'}
       </h1>
+      
+      {mode === 'signup' && (
+        <div className="space-y-4 mb-6">
+          <div>
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input
+              id="companyName"
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Enter your company name"
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+              className="mt-1"
+            />
+          </div>
+        </div>
+      )}
+
       <Auth
         supabaseClient={supabase}
         view={mode === 'signup' ? 'sign_up' : 'sign_in'}
