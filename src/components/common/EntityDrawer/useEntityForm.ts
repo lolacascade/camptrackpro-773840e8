@@ -32,10 +32,10 @@ export function useEntityForm(
   });
 
   const handleSave = async () => {
-    if (!session?.user?.id || !userProfile?.account_id) {
+    if (!session?.user?.id || !userProfile?.organization_id || !userProfile?.account_id) {
       toast({
         title: "Error",
-        description: "You must be logged in and have an account to perform this action.",
+        description: "You must be logged in and have an organization/account to perform this action.",
         variant: "destructive",
       })
       return
@@ -58,6 +58,7 @@ export function useEntityForm(
     try {
       const dataToSave = {
         ...formData,
+        organization_id: userProfile.organization_id,
         account_id: userProfile.account_id,
         user_id: session.user.id,
         updated_at: new Date().toISOString(),
