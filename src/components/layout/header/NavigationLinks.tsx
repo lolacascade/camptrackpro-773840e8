@@ -19,7 +19,7 @@ export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
     { path: 'customers', label: 'Customers' },
     { path: 'assets', label: 'RVs' },
     { path: 'bookings', label: 'Bookings' },
-    { path: 'map', label: 'Map' },
+    { path: 'sitemap', label: 'Sitemap' },
     { path: 'maintenance', label: 'Maintenance' },
     { path: 'financials', label: 'Financials' },
   ];

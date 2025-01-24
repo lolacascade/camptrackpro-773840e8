@@ -11,7 +11,7 @@ import Bookings from "@/pages/Bookings";
 import Maintenance from "@/pages/Maintenance";
 import Settings from "@/pages/Settings";
 import Financials from "@/pages/Financials";
-import MarinaMap from "@/pages/MarinaMap";
+import Sitemap from "@/pages/Sitemap";
 import OrganizationSetup from "@/pages/OrganizationSetup";
 
 export function AppRoutes() {
@@ -32,7 +32,7 @@ export function AppRoutes() {
         <Route path="/app/maintenance" element={<Maintenance />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/financials" element={<Financials />} />
-        <Route path="/app/map" element={<MarinaMap />} />
+        <Route path="/app/sitemap" element={<Sitemap />} />
         <Route path="/app/organization-setup" element={<OrganizationSetup />} />
       </Route>
     </Routes>
