@@ -103,16 +103,16 @@ export function SlotTable({ onEdit }: SlotTableProps) {
 
   return (
     <Card 
-      data-component-path="src/components/marina/SlotTable.tsx" 
-      data-component-name="Card" 
-      data-component-line="105" 
-      data-component-file="SlotTable.tsx" 
+      data-component-path="src/components/marina/SlotTable.tsx"
+      data-component-name="Card"
+      data-component-line="105"
+      data-component-file="SlotTable.tsx"
       className="border border-[#E8EBEB] rounded-xl bg-transparent"
     >
       <div 
-        data-component-path="src/components/marina/SlotTable.tsx" 
-        data-component-name="div" 
-        data-component-line="106" 
+        data-component-path="src/components/marina/SlotTable.tsx"
+        data-component-name="div"
+        data-component-line="106"
         className="p-4"
       >
         <DataTable<Slot>
@@ -137,6 +137,9 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         />
 
         <EntityDrawer
+          data-component-path="src/components/marina/SlotTable.tsx"
+          data-component-name="EntityDrawer"
+          data-component-line="139"
           entity={selectedSlot}
           open={isDrawerOpen}
           onClose={() => {
