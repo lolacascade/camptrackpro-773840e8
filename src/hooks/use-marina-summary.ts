@@ -1,31 +1,27 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MarinaSummary } from "@/types/dashboard";
+import { useSession } from "@supabase/auth-helpers-react";
 
 export function useMarinaSummary() {
+  const session = useSession();
+
   return useQuery({
-    queryKey: ["marina-summary"],
-    queryFn: async (): Promise<MarinaSummary> => {
-      // Fetch data from Supabase
-      const { data: slots, error } = await supabase
-        .from("slots")
-        .select("status")
-        .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+    queryKey: ['marina-summary', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) return null;
 
-      if (error) throw error;
+      const { data, error } = await supabase
+        .from('marina_details')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
-      const totalSlips = slots?.length ?? 0;
-      const occupiedSlips = slots?.filter(slot => slot.status === "occupied").length ?? 0;
-      const occupancyRate = totalSlips > 0 ? Math.round((occupiedSlips / totalSlips) * 100) : 0;
+      if (error && error.code !== 'PGRST116') {
+        throw error;
+      }
 
-      return {
-        totalSlips,
-        occupiedSlips,
-        activeRVs: occupiedSlips, // Assuming one RV per occupied slot
-        occupancyRate,
-        monthlyRevenue: 45000, // Example data
-        pendingMaintenance: 8, // Example data
-      };
+      return data;
     },
+    enabled: !!session?.user?.id
   });
 }
