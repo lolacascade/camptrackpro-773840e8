@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Booking } from "@/types/booking";
 import { useQuery } from "@tanstack/react-query";
 import { getBookingColumns } from "./table/BookingTableColumns";
@@ -15,6 +15,50 @@ interface BookingsTableProps {
 
 export function BookingsTable({ onEdit }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
+
+  // Add example booking on component mount
+  useEffect(() => {
+    const addExampleBooking = async () => {
+      const { data: existingBookings } = await supabase
+        .from('bookings')
+        .select('*')
+        .limit(1);
+
+      if (!existingBookings?.length) {
+        const { data: customer } = await supabase
+          .from('customers')
+          .select('*')
+          .limit(1)
+          .single();
+
+        const { data: asset } = await supabase
+          .from('assets')
+          .select('*')
+          .limit(1)
+          .single();
+
+        if (customer && asset) {
+          const { error } = await supabase
+            .from('bookings')
+            .insert([{
+              customer_id: customer.id,
+              asset_id: asset.id,
+              check_in_date: new Date().toISOString(),
+              check_out_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+              status: 'pending',
+              total_amount: 1000,
+              special_requirements: 'Example booking'
+            }]);
+
+          if (error) {
+            console.error('Error adding example booking:', error);
+          }
+        }
+      }
+    };
+
+    addExampleBooking();
+  }, []);
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['bookings'],

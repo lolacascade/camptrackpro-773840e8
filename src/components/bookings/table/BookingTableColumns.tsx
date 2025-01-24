@@ -1,5 +1,9 @@
 import { Column } from "@/components/common/DataTable/types";
 import { Booking } from "@/types/booking";
+import { Button } from "@/components/ui/button";
+import { Edit, Plus, X } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export const getBookingColumns = (): Column<Booking>[] => [
   {
@@ -15,7 +19,6 @@ export const getBookingColumns = (): Column<Booking>[] => [
     header: "Asset Name",
     accessorKey: "asset_id",
     cell: (booking: Booking) => {
-      // Get the asset name from the related asset
       return booking.asset?.asset_name || booking.asset?.name || '-';
     },
     sortable: true
@@ -53,10 +56,36 @@ export const getBookingColumns = (): Column<Booking>[] => [
   {
     header: "Actions",
     accessorKey: "actions",
-    cell: (booking: Booking) => (
-      <div>
-        {/* Actions will be handled by DataTableRowActions component */}
-      </div>
-    )
+    cell: (booking: Booking) => {
+      const handleCancel = async () => {
+        try {
+          const { error } = await supabase
+            .from('bookings')
+            .update({ status: 'cancelled' })
+            .eq('id', booking.id);
+
+          if (error) throw error;
+          toast.success("Booking cancelled successfully");
+        } catch (error) {
+          console.error('Error cancelling booking:', error);
+          toast.error("Failed to cancel booking");
+        }
+      };
+
+      return (
+        <div className="flex gap-2">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCancel();
+            }}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      );
+    }
   }
 ];
