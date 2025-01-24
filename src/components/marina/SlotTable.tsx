@@ -7,7 +7,6 @@ import { getSlotColumns } from "./table/SlotTableColumns";
 import { toast } from "sonner";
 import { useState } from "react";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
-import { useSession } from "@supabase/auth-helpers-react";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -23,20 +22,6 @@ const statusOptions = [
 export function SlotTable({ onEdit }: SlotTableProps) {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const session = useSession();
-
-  const { data: userProfile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session?.user?.id)
-        .single();
-      return profile;
-    },
-    enabled: !!session?.user?.id
-  });
 
   const { data: slots = [], isLoading, refetch } = useQuery({
     queryKey: ['slots'],
@@ -50,7 +35,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         return [];
       }
 
-      return data;
+      return data as Slot[];
     }
   });
 
