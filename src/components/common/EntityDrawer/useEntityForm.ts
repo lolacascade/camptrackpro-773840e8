@@ -52,7 +52,7 @@ export function useEntityForm(
 
     setIsSaving(true)
     try {
-      const dataToSave: FormDataType = {
+      const dataToSave = {
         ...formData,
         user_id: session!.user.id,
         updated_at: new Date().toISOString(),
