@@ -1,15 +1,16 @@
-import { PageContainer } from "@/components/layout/PageContainer";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWithChat } from "@/components/layout/PageWithChat";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { useState } from "react";
 import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockSpotDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { getSlotColumns } from "@/components/marina/table/SlotTableColumns";
 import { useToast } from "@/components/ui/use-toast";
+import { Slot } from "@/types/slot";
 
 export default function Sitemap() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,7 +46,7 @@ export default function Sitemap() {
     }
   });
 
-  const { data: slots, isLoading: slotsLoading } = useQuery({
+  const { data: slots = [], isLoading: slotsLoading } = useQuery<Slot[]>({
     queryKey: ['slots'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -129,10 +130,11 @@ export default function Sitemap() {
             </Card>
           </div>
 
-          <DataTable
+          <DataTable<Slot>
             columns={getSlotColumns()}
-            data={slots || []}
+            data={slots}
             isLoading={slotsLoading}
+            tableName="slots"
           />
         </div>
 
