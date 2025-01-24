@@ -4,7 +4,7 @@ import { useSessionContext } from '@supabase/auth-helpers-react';
 import { AuthLoading } from '@/components/auth/AuthLoading';
 import { AuthLogo } from '@/components/auth/AuthLogo';
 import { AuthContainer } from '@/components/auth/AuthContainer';
-import { AuthForm } from '@/components/auth/AuthForm';
+import { SignIn } from '@/components/auth/SignIn';
 import { useAuthState } from '@/hooks/use-auth-state';
 
 export default function Login() {
@@ -28,7 +28,7 @@ export default function Login() {
   return (
     <AuthContainer>
       <AuthLogo />
-      <AuthForm />
+      <SignIn />
     </AuthContainer>
   );
 }

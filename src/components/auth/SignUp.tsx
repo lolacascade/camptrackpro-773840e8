@@ -128,7 +128,7 @@ export function SignUp() {
         }}
         providers={[]}
         redirectTo={`${window.location.origin}/app`}
-        handleSubmit={handleSignUp}
+        onSubmit={handleSignUp}
         localization={{
           variables: {
             sign_up: {
