@@ -7,6 +7,7 @@ import { getSlotColumns } from "./table/SlotTableColumns";
 import { toast } from "sonner";
 import { useState } from "react";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
+import { useSession } from "@supabase/auth-helpers-react";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
@@ -22,6 +23,20 @@ const statusOptions = [
 export function SlotTable({ onEdit }: SlotTableProps) {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const session = useSession();
+
+  const { data: userProfile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session?.user?.id)
+        .single();
+      return profile;
+    },
+    enabled: !!session?.user?.id
+  });
 
   const { data: slots = [], isLoading, refetch } = useQuery({
     queryKey: ['slots'],
@@ -37,20 +52,8 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         return [];
       }
 
-      // Ensure the data matches our Slot type
-      const typedSlots = (data || []).map(slot => ({
-        ...slot,
-        id: Number(slot.id),
-        status: slot.status as Slot['status'],
-        is_covered: Boolean(slot.is_covered),
-        has_water: Boolean(slot.has_water),
-        length_ft: slot.length_ft ? Number(slot.length_ft) : null,
-        width_ft: slot.width_ft ? Number(slot.width_ft) : null,
-        maintenance_id: slot.maintenance_id ? Number(slot.maintenance_id) : null
-      }));
-
-      console.log('Fetched slots:', typedSlots);
-      return typedSlots;
+      console.log('Fetched slots:', data);
+      return data || [];
     }
   });
 

@@ -3,6 +3,7 @@ import { useSession } from '@supabase/auth-helpers-react'
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import type { Field, TableName } from "./types"
+import { useQuery } from "@tanstack/react-query"
 
 export function useEntityForm(
   entity: any,
@@ -17,11 +18,24 @@ export function useEntityForm(
   const [isSaving, setIsSaving] = useState(false)
   const session = useSession()
 
+  const { data: userProfile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session?.user?.id)
+        .single();
+      return profile;
+    },
+    enabled: !!session?.user?.id
+  });
+
   const handleSave = async () => {
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !userProfile?.account_id) {
       toast({
         title: "Error",
-        description: "You must be logged in to perform this action.",
+        description: "You must be logged in and have an account to perform this action.",
         variant: "destructive",
       })
       return
@@ -44,6 +58,7 @@ export function useEntityForm(
     try {
       const dataToSave = {
         ...formData,
+        account_id: userProfile.account_id,
         user_id: session.user.id,
         updated_at: new Date().toISOString(),
       }
