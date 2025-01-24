@@ -6,12 +6,12 @@ export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
   const location = useLocation();
   
   const handleNavigation = (path: string) => {
-    navigate(`/app/${path.toLowerCase()}`);
+    navigate(`/app/${path}`);
     onItemClick?.();
   };
 
   const isCurrentRoute = (path: string) => {
-    return location.pathname === `/app/${path.toLowerCase()}`;
+    return location.pathname === `/app/${path}`;
   };
 
   const navItems = [
