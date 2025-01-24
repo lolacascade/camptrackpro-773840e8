@@ -34,25 +34,15 @@ export function useCustomerForm(
         const { error } = await supabase
           .from('customers')
           .update(formData)
-          .eq('id', customer.id.toString());
+          .eq('id', customer.id);
 
         if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: "Customer updated successfully",
-        });
       } else {
         const { error } = await supabase
           .from('customers')
           .insert([formData]);
 
         if (error) throw error;
-        
-        toast({
-          title: "Success",
-          description: "Customer added successfully",
-        });
       }
 
       onCustomerUpdated();

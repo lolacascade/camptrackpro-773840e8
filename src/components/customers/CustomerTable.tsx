@@ -37,16 +37,6 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
 
   useEffect(() => {
     fetchCustomers();
-
-    const subscription = supabase
-      .channel('customers_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'customers' }, 
-        () => fetchCustomers())
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   const handleDelete = async (customer: Customer) => {
@@ -54,7 +44,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       const { error } = await supabase
         .from('customers')
         .delete()
-        .eq('id', customer.id.toString());
+        .eq('id', customer.id);
 
       if (error) throw error;
 
@@ -62,6 +52,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
         title: "Success",
         description: "Customer deleted successfully",
       });
+      fetchCustomers();
     } catch (error) {
       console.error('Error deleting customer:', error);
       toast({
