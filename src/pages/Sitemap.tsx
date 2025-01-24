@@ -1,7 +1,4 @@
 import { PageContainer } from "@/components/layout/PageContainer";
-import { SlotTable } from "@/components/marina/SlotTable";
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { Anchor, Ship, Activity, DollarSign } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageWithChat } from "@/components/layout/PageWithChat";
@@ -9,15 +6,30 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockSpotDialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { DataTable } from "@/components/common/DataTable/DataTable";
+import { slotColumns } from "@/components/marina/table/SlotTableColumns";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function Sitemap() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { data: stats } = useQuery({
+  const { toast } = useToast();
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['marina-stats'],
     queryFn: async () => {
-      const { data: slots } = await supabase
+      const { data: slots, error } = await supabase
         .from('slots')
         .select('*');
+
+      if (error) {
+        toast({
+          title: "Error fetching marina stats",
+          description: error.message,
+          variant: "destructive",
+        });
+        return null;
+      }
 
       const totalSlots = slots?.length || 0;
       const occupiedSlots = slots?.filter(slot => slot.status === 'occupied').length || 0;
@@ -30,6 +42,26 @@ export default function Sitemap() {
         maintenanceSlots,
         occupancyRate
       };
+    }
+  });
+
+  const { data: slots, isLoading: slotsLoading } = useQuery({
+    queryKey: ['slots'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('slots')
+        .select('*');
+
+      if (error) {
+        toast({
+          title: "Error fetching slots",
+          description: error.message,
+          variant: "destructive",
+        });
+        return [];
+      }
+
+      return data || [];
     }
   });
 
@@ -48,60 +80,60 @@ export default function Sitemap() {
           </div>
           
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            <EnhancedStatCard
-              title="Total Sites"
-              value={`${stats?.totalSlots || 0}`}
-              icon={Anchor}
-              breakdown={[
-                { label: "Occupied", value: stats?.occupiedSlots.toString() || "0", percentage: stats?.occupancyRate || 0 },
-                { label: "Available", value: ((stats?.totalSlots || 0) - (stats?.occupiedSlots || 0)).toString(), percentage: 100 - (stats?.occupancyRate || 0) }
-              ]}
-            />
-            <EnhancedStatCard
-              title="Site Utilization"
-              value="85%"
-              icon={Activity}
-              trend={{
-                value: "5%",
-                isPositive: true,
-                comparedTo: "last month"
-              }}
-              breakdown={[
-                { label: "Peak Hours", value: "95%", percentage: 95 },
-                { label: "Off Hours", value: "75%", percentage: 75 }
-              ]}
-            />
-            <EnhancedStatCard
-              title="Most Booked Site"
-              value="Dock A-12"
-              icon={Ship}
-              trend={{
-                value: "3 bookings",
-                isPositive: true,
-                comparedTo: "last week"
-              }}
-              breakdown={[
-                { label: "This Month", value: "15 bookings", percentage: 100 },
-                { label: "Last Month", value: "12 bookings", percentage: 80 }
-              ]}
-            />
-            <EnhancedStatCard
-              title="Current Occupancy"
-              value={`${stats?.occupancyRate || 0}%`}
-              icon={DollarSign}
-              trend={{
-                value: "8%",
-                isPositive: true,
-                comparedTo: "last month"
-              }}
-              breakdown={[
-                { label: "Long-term", value: "70%", percentage: 70 },
-                { label: "Short-term", value: "30%", percentage: 30 }
-              ]}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Sites</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.totalSlots || 0}</div>
+                <p className="text-sm text-muted-foreground">
+                  {stats?.occupiedSlots || 0} occupied, {stats?.maintenanceSlots || 0} in maintenance
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Site Utilization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">85%</div>
+                <p className="text-sm text-muted-foreground">
+                  5% increase from last month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Most Booked Site</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">Dock A-12</div>
+                <p className="text-sm text-muted-foreground">
+                  15 bookings this month
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Current Occupancy</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats?.occupancyRate || 0}%</div>
+                <p className="text-sm text-muted-foreground">
+                  8% increase from last month
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
-          <SlotTable />
+          <DataTable
+            columns={slotColumns}
+            data={slots || []}
+            isLoading={slotsLoading}
+          />
         </div>
 
         <AddDockSpotDialog
