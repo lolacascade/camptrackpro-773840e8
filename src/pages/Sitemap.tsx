@@ -8,7 +8,7 @@ import { useState } from "react";
 import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockSpotDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { slotColumns } from "@/components/marina/table/SlotTableColumns";
+import { getSlotColumns } from "@/components/marina/table/SlotTableColumns";
 import { useToast } from "@/components/ui/use-toast";
 
 export default function Sitemap() {
@@ -130,7 +130,7 @@ export default function Sitemap() {
           </div>
 
           <DataTable
-            columns={slotColumns}
+            columns={getSlotColumns()}
             data={slots || []}
             isLoading={slotsLoading}
           />
