@@ -12,9 +12,12 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
-    header: "Asset",
+    header: "Asset Name",
     accessorKey: "asset_id",
-    cell: (booking: Booking) => booking.asset_id,
+    cell: (booking: Booking) => {
+      // Get the asset name from the related asset
+      return booking.asset?.asset_name || booking.asset?.name || '-';
+    },
     sortable: true
   },
   {
@@ -36,6 +39,12 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
+    header: "Reserved Spot",
+    accessorKey: "slot",
+    cell: (booking: Booking) => booking.slot?.name || 'Unassigned',
+    sortable: true
+  },
+  {
     header: "Total Amount",
     accessorKey: "total_amount",
     cell: (booking: Booking) => `$${booking.total_amount.toFixed(2)}`,
@@ -46,7 +55,7 @@ export const getBookingColumns = (): Column<Booking>[] => [
     accessorKey: "actions",
     cell: (booking: Booking) => (
       <div>
-        {/* Add action buttons here */}
+        {/* Actions will be handled by DataTableRowActions component */}
       </div>
     )
   }
