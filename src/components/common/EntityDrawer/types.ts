@@ -4,7 +4,7 @@ import type { Database } from "@/integrations/supabase/types"
 type DatabaseTables = Database['public']['Tables']
 export type TableNames = keyof DatabaseTables
 
-export type FormValue = string | number | boolean | null | undefined;
+export type FormValue = string | number | null | undefined;
 
 export interface FormDataType {
   [key: string]: FormValue;

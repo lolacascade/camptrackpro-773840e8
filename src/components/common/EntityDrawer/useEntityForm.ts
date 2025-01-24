@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useSession } from '@supabase/auth-helpers-react'
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import type { Field, TableNames, FormDataType } from "./types"
+import type { Field, TableNames, FormDataType, FormValue } from "./types"
 
 export function useEntityForm(
   entity: FormDataType | null,

@@ -6,7 +6,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button"
 import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
-import { NumericFormat } from 'react-number-format'
 import { cn } from "@/lib/utils"
 import type { FormField } from "./types"
 
@@ -16,7 +15,7 @@ export function EntityField({ field }: { field: FormField }) {
       case 'select':
         return (
           <Select
-            value={field.value || ''}
+            value={field.value?.toString() || ''}
             onValueChange={field.onChange}
           >
             <SelectTrigger className="w-full bg-white border-input">
@@ -41,14 +40,10 @@ export function EntityField({ field }: { field: FormField }) {
         )
       case 'number':
         return (
-          <NumericFormat
-            customInput={Input}
-            thousandSeparator=","
-            decimalScale={2}
-            fixedDecimalScale
-            prefix="$"
-            value={field.value || ''}
-            onValueChange={(values) => field.onChange(values.floatValue)}
+          <Input
+            type="number"
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(parseFloat(e.target.value))}
             className="bg-white"
           />
         )
@@ -80,7 +75,7 @@ export function EntityField({ field }: { field: FormField }) {
       default:
         return (
           <Input
-            value={field.value || ''}
+            value={field.value?.toString() || ''}
             onChange={(e) => field.onChange(e.target.value)}
             className="bg-white"
           />
