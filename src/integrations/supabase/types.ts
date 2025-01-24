@@ -935,6 +935,12 @@ export type Database = {
             }
             Returns: boolean
           }
+      user_belongs_to_organization: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"

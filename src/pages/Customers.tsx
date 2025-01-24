@@ -7,6 +7,7 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { CustomerStatsCards } from "@/components/customers/CustomerStatsCards";
 
 export default function Customers() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -45,6 +46,8 @@ export default function Customers() {
               <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </div>
+
+          <CustomerStatsCards />
 
           <CustomerTable onEdit={handleEdit} />
 
