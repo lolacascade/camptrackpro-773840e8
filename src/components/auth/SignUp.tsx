@@ -128,7 +128,6 @@ export function SignUp() {
         }}
         providers={[]}
         redirectTo={`${window.location.origin}/app`}
-        onSubmit={(formData: { email: string; password: string }) => handleSignUp(formData)}
         localization={{
           variables: {
             sign_up: {
