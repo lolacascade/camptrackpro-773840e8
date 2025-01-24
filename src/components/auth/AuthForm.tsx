@@ -142,8 +142,7 @@ export function AuthForm() {
               loading_button_label: 'Signing in...',
               password_input_placeholder: 'Your password',
               email_input_placeholder: 'Your email address',
-              link_text: "Don't have an account? Sign up",
-              forgot_password_text: 'Forgot password?'
+              link_text: "Don't have an account? Sign up"
             },
             sign_up: {
               email_label: 'Email',
@@ -152,8 +151,7 @@ export function AuthForm() {
               loading_button_label: 'Signing up...',
               password_input_placeholder: 'Create a password',
               email_input_placeholder: 'Your email address',
-              link_text: 'Already have an account? Sign in',
-              forgot_password_text: 'Forgot password?'
+              link_text: 'Already have an account? Sign in'
             },
           },
         }}
