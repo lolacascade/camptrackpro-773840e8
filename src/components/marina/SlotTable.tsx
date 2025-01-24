@@ -12,13 +12,6 @@ interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
 }
 
-const statusOptions = [
-  { label: "All Statuses", value: "all" },
-  { label: "Available", value: "available" },
-  { label: "Occupied", value: "occupied" },
-  { label: "Maintenance", value: "maintenance" }
-];
-
 export function SlotTable({ onEdit }: SlotTableProps) {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -64,6 +57,13 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     setSelectedSlot(slot);
     setIsDrawerOpen(true);
   };
+
+  const statusOptions = [
+    { label: "All Statuses", value: "all" },
+    { label: "Available", value: "available" },
+    { label: "Occupied", value: "occupied" },
+    { label: "Maintenance", value: "maintenance" }
+  ];
 
   const slotFields = [
     { name: 'name', label: 'Name', type: 'text' as const, required: true },
