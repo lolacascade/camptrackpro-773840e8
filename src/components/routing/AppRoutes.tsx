@@ -1,8 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Layout } from "@/components/layout/Layout";
-import { SignIn } from "@/components/auth/SignIn";
-import { SignUp } from "@/components/auth/SignUp";
+import Login from "@/pages/Login";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Customers from "@/pages/Customers";
@@ -20,8 +19,7 @@ export function AppRoutes() {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Index />} />
-      <Route path="/login" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
       
       {/* Protected routes with app layout */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

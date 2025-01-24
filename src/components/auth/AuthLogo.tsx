@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function AuthLogo() {
   return (
-    <div className="text-center mb-6">
+    <div className="text-center">
       <Link to="/" className="inline-block">
         <h1 className="text-4xl font-bold mb-2">
           <span className="text-white">Camp</span>

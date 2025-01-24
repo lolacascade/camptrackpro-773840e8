@@ -1,12 +1,15 @@
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
+import { useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 
-export function SignUp() {
+export function AuthForm() {
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode') || 'signin';
   const [companyName, setCompanyName] = useState('');
   const [phone, setPhone] = useState('');
   const { toast } = useToast();
@@ -43,39 +46,41 @@ export function SignUp() {
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
       <h1 className="text-2xl font-semibold text-center mb-6">
-        Create an Account
+        {mode === 'signup' ? 'Create an Account' : 'Welcome Back'}
       </h1>
       
-      <div className="space-y-4 mb-6">
-        <div>
-          <Label htmlFor="companyName">Company Name</Label>
-          <Input
-            id="companyName"
-            type="text"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
-            placeholder="Enter your company name"
-            className="mt-1"
-            required
-          />
+      {mode === 'signup' && (
+        <div className="space-y-4 mb-6">
+          <div>
+            <Label htmlFor="companyName">Company Name</Label>
+            <Input
+              id="companyName"
+              type="text"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              placeholder="Enter your company name"
+              className="mt-1"
+              required
+            />
+          </div>
+          <div>
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+              className="mt-1"
+              required
+            />
+          </div>
         </div>
-        <div>
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            id="phone"
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter your phone number"
-            className="mt-1"
-            required
-          />
-        </div>
-      </div>
+      )}
 
       <Auth
         supabaseClient={supabase}
-        view="sign_up"
+        view={mode === 'signup' ? 'sign_up' : 'sign_in'}
         appearance={{
           theme: ThemeSupa,
           variables: {
@@ -128,8 +133,18 @@ export function SignUp() {
         }}
         providers={[]}
         redirectTo={`${window.location.origin}/app`}
+        {...(mode === 'signup' ? { handleSubmit: handleSignUp } : {})}
         localization={{
           variables: {
+            sign_in: {
+              email_label: 'Email',
+              password_label: 'Password',
+              button_label: 'Sign In',
+              loading_button_label: 'Signing in...',
+              password_input_placeholder: 'Your password',
+              email_input_placeholder: 'Your email address',
+              link_text: "Don't have an account? Sign up"
+            },
             sign_up: {
               email_label: 'Email',
               password_label: 'Password',
@@ -138,7 +153,7 @@ export function SignUp() {
               password_input_placeholder: 'Create a password',
               email_input_placeholder: 'Your email address',
               link_text: 'Already have an account? Sign in'
-            }
+            },
           },
         }}
       />
