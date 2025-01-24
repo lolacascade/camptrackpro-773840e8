@@ -14,35 +14,39 @@ export function AuthForm() {
   const [phone, setPhone] = useState('');
   const { toast } = useToast();
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && mode === 'signup' && session?.user) {
-        try {
-          const { error } = await supabase
-            .from('profiles')
-            .update({
-              company_name: companyName,
-              phone: phone,
-              role: 'admin'
-            })
-            .eq('id', session.user.id);
+  const handleSignUp = async (event: any) => {
+    event.preventDefault();
+    
+    const email = event.target.email.value;
+    const password = event.target.password.value;
 
-          if (error) throw error;
-        } catch (error) {
-          console.error('Error updating profile:', error);
-          toast({
-            title: "Error",
-            description: "Failed to save company information. Please try again.",
-            variant: "destructive",
-          });
-        }
-      }
-    });
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            company_name: companyName,
+            phone: phone,
+          },
+        },
+      });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [companyName, phone, mode, toast]);
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Your account has been created successfully.",
+      });
+    } catch (error: any) {
+      console.error('Error during signup:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to create account. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
@@ -61,6 +65,7 @@ export function AuthForm() {
               onChange={(e) => setCompanyName(e.target.value)}
               placeholder="Enter your company name"
               className="mt-1"
+              required
             />
           </div>
           <div>
@@ -72,6 +77,7 @@ export function AuthForm() {
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Enter your phone number"
               className="mt-1"
+              required
             />
           </div>
         </div>
@@ -132,7 +138,7 @@ export function AuthForm() {
         }}
         providers={[]}
         redirectTo={`${window.location.origin}/app`}
-        magicLink={true}
+        onSubmit={mode === 'signup' ? handleSignUp : undefined}
         localization={{
           variables: {
             sign_in: {
