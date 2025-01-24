@@ -52,8 +52,29 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         return [];
       }
 
-      console.log('Fetched slots:', data);
-      return data || [];
+      // Transform the data to match our Slot type
+      const transformedSlots: Slot[] = (data || []).map(slot => ({
+        id: slot.id,
+        name: slot.name,
+        status: slot.status as 'available' | 'occupied' | 'maintenance',
+        location_identifier: slot.location_identifier || '',
+        length_ft: slot.length_ft,
+        width_ft: slot.width_ft,
+        is_covered: Boolean(slot.is_covered),
+        has_water: Boolean(slot.has_water),
+        electricity_voltage: slot.electricity_voltage,
+        utility_connection_type: slot.utility_connection_type,
+        location_coordinates: slot.location_coordinates,
+        customer_id: slot.customer_id,
+        maintenance_id: slot.maintenance_id,
+        last_activity_at: slot.last_activity_at,
+        user_id: slot.user_id,
+        account_id: slot.account_id,
+        organization_id: slot.organization_id
+      }));
+
+      console.log('Transformed slots:', transformedSlots);
+      return transformedSlots;
     }
   });
 
@@ -115,7 +136,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable
+        <DataTable<Slot>
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
