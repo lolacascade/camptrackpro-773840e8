@@ -21,23 +21,17 @@ export function StatsGrid({
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <StatsCard
-        title="Total Occupancy"
-        value={`${occupancyRate}%`}
+        title="Total Customers"
+        value={totalSlips}
         icon={Anchor}
         trend={{
           value: "5%",
-          isPositive: false,
-          comparedTo: "compared to last week"
+          isPositive: true,
+          comparedTo: "compared to last month"
         }}
         breakdown={[
-          { label: "Occupied Slips", value: occupiedSlips, percentage: Math.round((occupiedSlips/totalSlips) * 100) },
-          { label: "Total Slips", value: totalSlips }
-        ]}
-        recommendedActions={[
-          { 
-            label: "Promote available slips with 10% discount",
-            impact: "Potential +15% occupancy increase"
-          }
+          { label: "Active", value: occupiedSlips, percentage: Math.round((occupiedSlips/totalSlips) * 100) },
+          { label: "Total", value: totalSlips }
         ]}
       />
       <StatsCard
@@ -50,27 +44,27 @@ export function StatsGrid({
           comparedTo: "compared to last month"
         }}
         breakdown={[
-          { label: "Slip Renewals", value: "$20,000", percentage: 44 },
-          { label: "New Rentals", value: "$15,000", percentage: 33 },
-          { label: "Maintenance", value: "$10,231", percentage: 23 }
+          { label: "Renewals", value: "$20,000", percentage: 44 },
+          { label: "New Customers", value: "$15,000", percentage: 33 },
+          { label: "Services", value: "$10,231", percentage: 23 }
         ]}
       />
       <StatsCard
-        title="Active Boats"
+        title="New This Month"
         value={activeBoats}
         icon={Ship}
         trend={{
-          value: "3 boats",
+          value: "3 customers",
           isPositive: true,
-          comparedTo: "compared to last week"
+          comparedTo: "compared to last month"
         }}
         breakdown={[
-          { label: "Long-term", value: "12", percentage: 80 },
-          { label: "Short-term", value: "3", percentage: 20 }
+          { label: "Direct", value: "12", percentage: 80 },
+          { label: "Referral", value: "3", percentage: 20 }
         ]}
       />
       <StatsCard
-        title="Pending Maintenance"
+        title="Pending Actions"
         value={pendingMaintenance}
         icon={Wrench}
         trend={{
@@ -79,14 +73,8 @@ export function StatsGrid({
           comparedTo: "compared to last week"
         }}
         breakdown={[
-          { label: "Urgent", value: "3", percentage: 38 },
-          { label: "Scheduled", value: "5", percentage: 62 }
-        ]}
-        recommendedActions={[
-          { 
-            label: "Schedule urgent dock repairs",
-            impact: "Prevents potential revenue loss"
-          }
+          { label: "Follow-ups", value: "3", percentage: 38 },
+          { label: "Reviews", value: "5", percentage: 62 }
         ]}
       />
     </div>
