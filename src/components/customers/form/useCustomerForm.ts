@@ -17,7 +17,17 @@ export function useCustomerForm(
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm({
-    defaultValues: customer || {
+    defaultValues: customer ? {
+      first_name: customer.first_name,
+      last_name: customer.last_name,
+      email: customer.email,
+      phone: customer.phone || '',
+      address: customer.address || '',
+      city: customer.city || '',
+      state: customer.state || '',
+      country: customer.country || '',
+      postal_code: customer.postal_code || ''
+    } : {
       first_name: '',
       last_name: '',
       email: '',
@@ -51,15 +61,25 @@ export function useCustomerForm(
         const { error } = await supabase
           .from('customers')
           .update(dataWithContext)
-          .eq('id', customer.id as string);
+          .eq('id', customer.id);
 
         if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Customer updated successfully",
+        });
       } else {
         const { error } = await supabase
           .from('customers')
           .insert([dataWithContext]);
 
         if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Customer added successfully",
+        });
       }
 
       onCustomerUpdated();
