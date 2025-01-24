@@ -4,9 +4,10 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import type { Field, TableNames } from "./types"
 
-// Define a simple type for form data to prevent deep type instantiation
+// Define a more specific type for form data values
+type FormValue = string | number | null | undefined;
 interface FormDataType {
-  [key: string]: string | number | boolean | null | undefined;
+  [key: string]: FormValue;
 }
 
 export function useEntityForm(
