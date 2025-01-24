@@ -9,6 +9,9 @@ export function AuthForm() {
 
   return (
     <div className="bg-white rounded-lg shadow-xl p-8">
+      <h1 className="text-2xl font-semibold text-center mb-6">
+        {mode === 'signup' ? 'Create an Account' : 'Welcome Back'}
+      </h1>
       <Auth
         supabaseClient={supabase}
         view={mode === 'signup' ? 'sign_up' : 'sign_in'}
