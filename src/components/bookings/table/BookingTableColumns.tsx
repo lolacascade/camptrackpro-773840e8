@@ -1,7 +1,6 @@
 import { Column } from "@/components/common/DataTable/types";
 import { Booking } from "@/types/booking";
-import { Button } from "@/components/ui/button";
-import { Edit, Plus, X } from "lucide-react";
+import { DataTableRowActions } from "@/components/common/DataTable/DataTableRowActions";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -73,18 +72,12 @@ export const getBookingColumns = (): Column<Booking>[] => [
       };
 
       return (
-        <div className="flex gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCancel();
-            }}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
+        <DataTableRowActions 
+          row={booking}
+          onViewDetails={(row) => console.log('View details', row)}
+          onEdit={(row) => console.log('Edit', row)}
+          onDelete={handleCancel}
+        />
       );
     }
   }
