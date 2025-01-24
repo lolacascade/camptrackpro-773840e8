@@ -1,34 +1,30 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useSession } from '@supabase/auth-helpers-react'
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import type { Field, TableNames, FormDataType, FormValue } from "./types"
+import type { Field } from "./types"
 
 export function useEntityForm(
-  entity: FormDataType | null,
+  entity: any,
   fields: Field[],
-  tableName: TableNames,
+  tableName: string,
   onEntityUpdated: () => void,
   onClose: () => void
 ) {
   const { toast } = useToast()
-  const [formData, setFormData] = useState<FormDataType>(entity || {})
+  const [formData, setFormData] = useState(entity || {})
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const session = useSession()
 
-  useEffect(() => {
-    setFormData(entity || {})
-  }, [entity])
-
-  const validateForm = () => {
+  const handleSave = async () => {
     if (!session?.user?.id) {
       toast({
         title: "Error",
         description: "You must be logged in to perform this action.",
         variant: "destructive",
       })
-      return false
+      return
     }
 
     const missingFields = fields
@@ -41,20 +37,14 @@ export function useEntityForm(
         description: `Required fields missing: ${missingFields.join(', ')}`,
         variant: "destructive",
       })
-      return false
+      return
     }
-
-    return true
-  }
-
-  const handleSave = async () => {
-    if (!validateForm()) return
 
     setIsSaving(true)
     try {
       const dataToSave = {
         ...formData,
-        user_id: session!.user.id,
+        user_id: session.user.id,
         updated_at: new Date().toISOString(),
       }
 
@@ -63,7 +53,6 @@ export function useEntityForm(
           .from(tableName)
           .update(dataToSave)
           .eq('id', entity.id)
-          .eq('user_id', session!.user.id)
 
         if (error) throw error
       } else {
@@ -103,7 +92,6 @@ export function useEntityForm(
         .from(tableName)
         .delete()
         .eq('id', entity.id)
-        .eq('user_id', session.user.id)
 
       if (error) throw error
 
