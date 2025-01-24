@@ -30,7 +30,8 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
             location_coordinates, customer_id, maintenance_id, created_at, updated_at,
             last_activity_at, user_id
           ),
-          customer:customers(*)
+          customer:customers(*),
+          asset:assets(*)
         `);
       
       if (error) {
@@ -56,6 +57,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         reservation_code: booking.reservation_code,
         user_id: booking.user_id,
         customer: booking.customer,
+        asset: booking.asset,
         slot: booking.slot ? {
           ...booking.slot,
           id: Number(booking.slot.id),
