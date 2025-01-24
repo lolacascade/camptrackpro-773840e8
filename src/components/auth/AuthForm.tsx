@@ -2,7 +2,7 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useSearchParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
@@ -14,16 +14,11 @@ export function AuthForm() {
   const [phone, setPhone] = useState('');
   const { toast } = useToast();
 
-  const handleSignUp = async (event: any) => {
-    event.preventDefault();
-    
-    const email = event.target.email.value;
-    const password = event.target.password.value;
-
+  const handleSignUp = async (formData: { email: string; password: string }) => {
     try {
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
         options: {
           data: {
             company_name: companyName,
@@ -138,7 +133,7 @@ export function AuthForm() {
         }}
         providers={[]}
         redirectTo={`${window.location.origin}/app`}
-        onSubmit={mode === 'signup' ? handleSignUp : undefined}
+        {...(mode === 'signup' ? { handleSubmit: handleSignUp } : {})}
         localization={{
           variables: {
             sign_in: {
