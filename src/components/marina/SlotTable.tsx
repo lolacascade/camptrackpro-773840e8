@@ -2,14 +2,26 @@ import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { Slot } from "@/types/slot";
 import { getSlotColumns } from "./table/SlotTableColumns";
 import { toast } from "sonner";
 import { useState } from "react";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { useSession } from "@supabase/auth-helpers-react";
 
-export function SlotTable() {
-  const [selectedSlot, setSelectedSlot] = useState(null);
+interface SlotTableProps {
+  onEdit?: (slot: Slot) => void;
+}
+
+const statusOptions = [
+  { label: "All Statuses", value: "all" },
+  { label: "Available", value: "available" },
+  { label: "Occupied", value: "occupied" },
+  { label: "Maintenance", value: "maintenance" }
+];
+
+export function SlotTable({ onEdit }: SlotTableProps) {
+  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const session = useSession();
 
@@ -42,7 +54,7 @@ export function SlotTable() {
     }
   });
 
-  const handleDelete = async (slot) => {
+  const handleDelete = async (slot: Slot) => {
     try {
       const { error } = await supabase
         .from('slots')
@@ -58,19 +70,23 @@ export function SlotTable() {
     }
   };
 
-  const handleEdit = (slot) => {
+  const handleEdit = (slot: Slot) => {
     setSelectedSlot(slot);
     setIsDrawerOpen(true);
   };
 
-  const handleViewDetails = (slot) => {
+  const handleViewDetails = (slot: Slot) => {
     setSelectedSlot(slot);
     setIsDrawerOpen(true);
   };
 
   const slotFields = [
     { name: 'name', label: 'Name', type: 'text', required: true },
-    { name: 'status', label: 'Status', type: 'select', required: true, 
+    { 
+      name: 'status', 
+      label: 'Status', 
+      type: 'select', 
+      required: true, 
       options: [
         { value: 'available', label: 'Available' },
         { value: 'occupied', label: 'Occupied' },
@@ -79,13 +95,19 @@ export function SlotTable() {
     },
     { name: 'length_ft', label: 'Length (ft)', type: 'number' },
     { name: 'width_ft', label: 'Width (ft)', type: 'number' },
-    { name: 'is_covered', label: 'Is Covered', type: 'select',
+    { 
+      name: 'is_covered', 
+      label: 'Is Covered', 
+      type: 'select',
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
       ]
     },
-    { name: 'has_water', label: 'Has Water', type: 'select',
+    { 
+      name: 'has_water', 
+      label: 'Has Water', 
+      type: 'select',
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
@@ -97,7 +119,7 @@ export function SlotTable() {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable
+        <DataTable<Slot>
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
@@ -108,12 +130,7 @@ export function SlotTable() {
           filters={[
             {
               name: "status",
-              options: [
-                { label: "All Statuses", value: "all" },
-                { label: "Available", value: "available" },
-                { label: "Occupied", value: "occupied" },
-                { label: "Maintenance", value: "maintenance" }
-              ],
+              options: statusOptions,
               value: "all",
               onChange: () => {},
             }
