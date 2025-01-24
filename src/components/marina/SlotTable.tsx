@@ -102,9 +102,23 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   ];
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <div className="p-4">
+    <Card 
+      data-component-path="src/components/marina/SlotTable.tsx" 
+      data-component-name="Card" 
+      data-component-line="105" 
+      data-component-file="SlotTable.tsx" 
+      className="border border-[#E8EBEB] rounded-xl bg-transparent"
+    >
+      <div 
+        data-component-path="src/components/marina/SlotTable.tsx" 
+        data-component-name="div" 
+        data-component-line="106" 
+        className="p-4"
+      >
         <DataTable<Slot>
+          data-component-path="src/components/marina/SlotTable.tsx"
+          data-component-name="DataTable"
+          data-component-line="107"
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
