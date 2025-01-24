@@ -4,15 +4,17 @@ import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
 import type { Field, TableNames } from "./types"
 
+type FormDataType = Record<string, any>
+
 export function useEntityForm(
-  entity: any,
+  entity: FormDataType | null,
   fields: Field[],
   tableName: TableNames,
   onEntityUpdated: () => void,
   onClose: () => void
 ) {
   const { toast } = useToast()
-  const [formData, setFormData] = useState<any>({})
+  const [formData, setFormData] = useState<FormDataType>(entity || {})
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const session = useSession()
@@ -52,7 +54,7 @@ export function useEntityForm(
 
     setIsSaving(true)
     try {
-      const dataToSave = {
+      const dataToSave: FormDataType = {
         ...formData,
         user_id: session!.user.id,
         updated_at: new Date().toISOString(),
