@@ -12,12 +12,19 @@ export interface Field {
   options?: { value: string; label: string }[];
 }
 
+export interface FormField extends Field {
+  value: FormValue;
+  onChange: (value: FormValue) => void;
+}
+
+export type TableName = 'expenses' | 'slots' | 'customers' | 'assets' | 'bookings';
+
 export interface EntityDrawerProps {
-  entity: any; // Simplified from FormDataType to any
+  entity: any;
   open: boolean;
   onClose: () => void;
   onEntityUpdated: () => void;
   title: string;
   fields: Field[];
-  tableName: string;
+  tableName: TableName;
 }

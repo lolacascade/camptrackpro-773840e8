@@ -2,12 +2,12 @@ import { useState } from "react"
 import { useSession } from '@supabase/auth-helpers-react'
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import type { Field } from "./types"
+import type { Field, TableName } from "./types"
 
 export function useEntityForm(
   entity: any,
   fields: Field[],
-  tableName: string,
+  tableName: TableName,
   onEntityUpdated: () => void,
   onClose: () => void
 ) {
