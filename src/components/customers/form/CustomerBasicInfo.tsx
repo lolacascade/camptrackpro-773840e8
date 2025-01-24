@@ -70,6 +70,15 @@ export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) 
           className="mt-1" 
         />
       </div>
+
+      <div>
+        <Label htmlFor="lifetime_value">Lifetime Value</Label>
+        <Input 
+          id="lifetime_value" 
+          {...register('lifetime_value')} 
+          className="mt-1" 
+        />
+      </div>
     </div>
   );
 }

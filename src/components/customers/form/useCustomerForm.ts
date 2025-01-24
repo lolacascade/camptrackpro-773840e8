@@ -18,15 +18,16 @@ export function useCustomerForm(
     formState: { errors, isSubmitting }
   } = useForm({
     defaultValues: customer ? {
-      first_name: customer.first_name,
-      last_name: customer.last_name,
-      email: customer.email,
+      first_name: customer.first_name || '',
+      last_name: customer.last_name || '',
+      email: customer.email || '',
       phone: customer.phone || '',
       address: customer.address || '',
       city: customer.city || '',
       state: customer.state || '',
       country: customer.country || '',
-      postal_code: customer.postal_code || ''
+      postal_code: customer.postal_code || '',
+      lifetime_value: customer.lifetime_value || ''
     } : {
       first_name: '',
       last_name: '',
@@ -36,7 +37,8 @@ export function useCustomerForm(
       city: '',
       state: '',
       country: '',
-      postal_code: ''
+      postal_code: '',
+      lifetime_value: ''
     }
   });
 
