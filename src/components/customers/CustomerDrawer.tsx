@@ -24,7 +24,11 @@ export function CustomerDrawer({
     errors,
     isSubmitting,
     onSubmit
-  } = useCustomerForm(customer, onCustomerUpdated, onClose);
+  } = useCustomerForm({
+    customer,
+    onCustomerUpdated,
+    onClose
+  });
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
