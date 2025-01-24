@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
-import { getSlotColumns } from "./table/SlotTableColumns";
-import { toast } from "sonner";
 import { useState } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
+import { getSlotColumns } from "./table/SlotTableColumns";
 
 interface SlotTableProps {
   onEdit?: (slot: Slot) => void;
