@@ -35,20 +35,20 @@ const App = () => {
 
   return (
     <StrictMode>
-      <SessionContextProvider 
-        supabaseClient={supabase}
-        initialSession={null}
-      >
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+      <BrowserRouter>
+        <SessionContextProvider 
+          supabaseClient={supabase}
+          initialSession={null}
+        >
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
               <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </SessionContextProvider>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </SessionContextProvider>
+      </BrowserRouter>
     </StrictMode>
   );
 };
