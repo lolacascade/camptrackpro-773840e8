@@ -36,7 +36,6 @@ export function DataTableHeaderRow<T>({
             </div>
           </TableHead>
         ))}
-        <TableHead className="text-[#133134]">Actions</TableHead>
       </TableRow>
     </TableHeader>
   );
