@@ -8,7 +8,7 @@ export function Logo() {
       onClick={() => navigate('/')}
       className="cursor-pointer text-white hover:text-primary transition-colors"
     >
-      <span className="text-xl font-semibold">DockEase</span>
+      <span className="text-xl font-semibold">CampTrackPro</span>
     </div>
   );
 }
