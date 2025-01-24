@@ -7,7 +7,7 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { StatsGrid } from "@/components/common/StatsGrid";
+import { CustomerStatsGrid } from "@/components/customers/CustomerStatsGrid";
 
 export default function Customers() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
@@ -47,15 +47,7 @@ export default function Customers() {
             </Button>
           </div>
 
-          <StatsGrid
-            occupancyRate={85}
-            occupiedSlips={17}
-            totalSlips={20}
-            activeBoats={15}
-            monthlyRevenue={45000}
-            pendingMaintenance={8}
-          />
-
+          <CustomerStatsGrid />
           <CustomerTable onEdit={handleEdit} />
 
           <CustomerDrawer
