@@ -51,7 +51,7 @@ export function useCustomerForm(
         const { error } = await supabase
           .from('customers')
           .update(dataWithContext)
-          .eq('id', customer.id);
+          .eq('id', customer.id as string);
 
         if (error) throw error;
       } else {
