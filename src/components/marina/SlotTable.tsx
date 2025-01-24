@@ -2,26 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Slot } from "@/types/slot";
 import { getSlotColumns } from "./table/SlotTableColumns";
 import { toast } from "sonner";
 import { useState } from "react";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { useSession } from "@supabase/auth-helpers-react";
 
-interface SlotTableProps {
-  onEdit?: (slot: Slot) => void;
-}
-
-const statusOptions = [
-  { label: "All Statuses", value: "all" },
-  { label: "Available", value: "available" },
-  { label: "Occupied", value: "occupied" },
-  { label: "Maintenance", value: "maintenance" }
-];
-
-export function SlotTable({ onEdit }: SlotTableProps) {
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+export function SlotTable() {
+  const [selectedSlot, setSelectedSlot] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const session = useSession();
 
@@ -41,102 +29,75 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   const { data: slots = [], isLoading, refetch } = useQuery({
     queryKey: ['slots'],
     queryFn: async () => {
-      console.log('Fetching slots...');
       const { data, error } = await supabase
         .from('slots')
         .select('*');
 
       if (error) {
-        console.error('Error fetching slots:', error);
         toast.error("Failed to fetch slots");
         return [];
       }
 
-      // Transform the data to match our Slot type
-      const transformedSlots: Slot[] = (data || []).map(slot => ({
-        id: slot.id,
-        name: slot.name,
-        status: slot.status as 'available' | 'occupied' | 'maintenance',
-        location_identifier: slot.location_identifier || '',
-        length_ft: slot.length_ft,
-        width_ft: slot.width_ft,
-        is_covered: Boolean(slot.is_covered),
-        has_water: Boolean(slot.has_water),
-        electricity_voltage: slot.electricity_voltage,
-        utility_connection_type: slot.utility_connection_type,
-        location_coordinates: slot.location_coordinates,
-        customer_id: slot.customer_id,
-        maintenance_id: slot.maintenance_id,
-        last_activity_at: slot.last_activity_at,
-        user_id: slot.user_id,
-        account_id: slot.account_id,
-        organization_id: slot.organization_id
-      }));
-
-      console.log('Transformed slots:', transformedSlots);
-      return transformedSlots;
+      return data;
     }
   });
 
-  const handleDelete = async (slot: Slot) => {
+  const handleDelete = async (slot) => {
     try {
       const { error } = await supabase
         .from('slots')
         .delete()
         .eq('id', slot.id);
 
-      if (error) {
-        toast.error("Failed to delete slot");
-        throw error;
-      }
+      if (error) throw error;
 
       toast.success("Slot deleted successfully");
       refetch();
     } catch (error) {
-      console.error('Error deleting slot:', error);
+      toast.error("Failed to delete slot");
     }
   };
 
-  const handleEdit = (slot: Slot) => {
+  const handleEdit = (slot) => {
     setSelectedSlot(slot);
     setIsDrawerOpen(true);
   };
 
-  const handleViewDetails = (slot: Slot) => {
+  const handleViewDetails = (slot) => {
     setSelectedSlot(slot);
     setIsDrawerOpen(true);
   };
 
   const slotFields = [
-    { name: 'name', label: 'Name', type: 'text' as const, required: true },
-    { name: 'status', label: 'Status', type: 'select' as const, required: true, 
+    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'status', label: 'Status', type: 'select', required: true, 
       options: [
         { value: 'available', label: 'Available' },
         { value: 'occupied', label: 'Occupied' },
         { value: 'maintenance', label: 'Maintenance' }
       ]
     },
-    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
-    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
-    { name: 'is_covered', label: 'Is Covered', type: 'select' as const,
+    { name: 'length_ft', label: 'Length (ft)', type: 'number' },
+    { name: 'width_ft', label: 'Width (ft)', type: 'number' },
+    { name: 'is_covered', label: 'Is Covered', type: 'select',
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
       ]
     },
-    { name: 'has_water', label: 'Has Water', type: 'select' as const,
+    { name: 'has_water', label: 'Has Water', type: 'select',
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
       ]
     },
-    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
+    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' },
   ];
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable<Slot>
+        <DataTable
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
@@ -147,7 +108,12 @@ export function SlotTable({ onEdit }: SlotTableProps) {
           filters={[
             {
               name: "status",
-              options: statusOptions,
+              options: [
+                { label: "All Statuses", value: "all" },
+                { label: "Available", value: "available" },
+                { label: "Occupied", value: "occupied" },
+                { label: "Maintenance", value: "maintenance" }
+              ],
               value: "all",
               onChange: () => {},
             }
