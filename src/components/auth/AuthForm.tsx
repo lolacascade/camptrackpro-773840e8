@@ -143,7 +143,6 @@ export function AuthForm() {
               password_input_placeholder: 'Your password',
               email_input_placeholder: 'Your email address',
               link_text: "Don't have an account? Sign up",
-              magic_link_text: 'Send a magic link email',
               forgot_password_text: 'Forgot password?'
             },
             sign_up: {
@@ -154,7 +153,6 @@ export function AuthForm() {
               password_input_placeholder: 'Create a password',
               email_input_placeholder: 'Your email address',
               link_text: 'Already have an account? Sign in',
-              magic_link_text: 'Send a magic link email',
               forgot_password_text: 'Forgot password?'
             },
           },
