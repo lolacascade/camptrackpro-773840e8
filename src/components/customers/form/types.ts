@@ -1,0 +1,20 @@
+import { Customer } from "@/types/customer";
+
+export interface CustomerFormData {
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  postal_code: string;
+  lifetime_value: string;
+}
+
+export interface UseCustomerFormProps {
+  customer: Customer | null;
+  onCustomerUpdated: () => void;
+  onClose: () => void;
+}

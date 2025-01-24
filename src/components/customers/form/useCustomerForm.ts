@@ -1,14 +1,15 @@
 import { useForm } from "react-hook-form";
-import { Customer } from "@/types/customer";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
+import { saveCustomer } from "./customerService";
+import { getDefaultValues } from "./utils";
+import { UseCustomerFormProps, CustomerFormData } from "./types";
 
-export function useCustomerForm(
-  customer: Customer | null,
-  onCustomerUpdated: () => void,
-  onClose: () => void
-) {
+export function useCustomerForm({
+  customer,
+  onCustomerUpdated,
+  onClose
+}: UseCustomerFormProps) {
   const { toast } = useToast();
   const { organizationId, accountId } = useOrganization();
   
@@ -16,33 +17,11 @@ export function useCustomerForm(
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
-  } = useForm({
-    defaultValues: customer ? {
-      first_name: customer.first_name || '',
-      last_name: customer.last_name || '',
-      email: customer.email || '',
-      phone: customer.phone || '',
-      address: customer.address || '',
-      city: customer.city || '',
-      state: customer.state || '',
-      country: customer.country || '',
-      postal_code: customer.postal_code || '',
-      lifetime_value: customer.lifetime_value || ''
-    } : {
-      first_name: '',
-      last_name: '',
-      email: '',
-      phone: '',
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      postal_code: '',
-      lifetime_value: ''
-    }
+  } = useForm<CustomerFormData>({
+    defaultValues: getDefaultValues(customer)
   });
 
-  const onSubmit = async (formData: any) => {
+  const onSubmit = async (formData: CustomerFormData) => {
     if (!organizationId || !accountId) {
       toast({
         title: "Error",
@@ -53,36 +32,17 @@ export function useCustomerForm(
     }
 
     try {
-      const dataWithContext = {
-        ...formData,
-        organization_id: organizationId,
-        account_id: accountId
-      };
+      const message = await saveCustomer(
+        formData, 
+        customer?.id?.toString() || null,
+        organizationId,
+        accountId
+      );
 
-      if (customer) {
-        const { error } = await supabase
-          .from('customers')
-          .update(dataWithContext)
-          .eq('id', customer.id.toString());
-
-        if (error) throw error;
-
-        toast({
-          title: "Success",
-          description: "Customer updated successfully",
-        });
-      } else {
-        const { error } = await supabase
-          .from('customers')
-          .insert([dataWithContext]);
-
-        if (error) throw error;
-
-        toast({
-          title: "Success",
-          description: "Customer added successfully",
-        });
-      }
+      toast({
+        title: "Success",
+        description: message,
+      });
 
       onCustomerUpdated();
       onClose();
