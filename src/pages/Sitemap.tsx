@@ -49,7 +49,7 @@ export default function Sitemap() {
           
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <EnhancedStatCard
-              title="Total Docks"
+              title="Total Sites"
               value={`${stats?.totalSlots || 0}`}
               icon={Anchor}
               breakdown={[
@@ -58,7 +58,7 @@ export default function Sitemap() {
               ]}
             />
             <EnhancedStatCard
-              title="Dock Utilization"
+              title="Site Utilization"
               value="85%"
               icon={Activity}
               trend={{
