@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { getCustomerColumns } from "./table/CustomerTableColumns";
 import { useToast } from "@/hooks/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface CustomerTableProps {
   onEdit: (customer: Customer) => void;
@@ -13,13 +14,17 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
 
   const fetchCustomers = async () => {
+    if (!organizationId || !accountId) return;
+    
     try {
       const { data, error } = await supabase
         .from('customers')
         .select('*')
-        .order('first_name');
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
       
       if (error) throw error;
       setCustomers(data || []);
@@ -36,8 +41,10 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   };
 
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    if (organizationId && accountId) {
+      fetchCustomers();
+    }
+  }, [organizationId, accountId]);
 
   const handleDelete = async (customer: Customer) => {
     try {

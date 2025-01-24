@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 export function useCustomerForm(
   customer: Customer | null,
@@ -9,6 +10,7 @@ export function useCustomerForm(
   onClose: () => void
 ) {
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
   
   const {
     register,
@@ -29,18 +31,33 @@ export function useCustomerForm(
   });
 
   const onSubmit = async (formData: any) => {
+    if (!organizationId || !accountId) {
+      toast({
+        title: "Error",
+        description: "Organization or account context is missing",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      const dataWithContext = {
+        ...formData,
+        organization_id: organizationId,
+        account_id: accountId
+      };
+
       if (customer) {
         const { error } = await supabase
           .from('customers')
-          .update(formData)
+          .update(dataWithContext)
           .eq('id', customer.id);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('customers')
-          .insert([formData]);
+          .insert([dataWithContext]);
 
         if (error) throw error;
       }
