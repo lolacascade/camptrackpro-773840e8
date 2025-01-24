@@ -81,11 +81,11 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   };
 
   const slotFields = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'name', label: 'Name', type: 'text' as const, required: true },
     { 
       name: 'status', 
       label: 'Status', 
-      type: 'select', 
+      type: 'select' as const, 
       required: true, 
       options: [
         { value: 'available', label: 'Available' },
@@ -93,12 +93,12 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         { value: 'maintenance', label: 'Maintenance' }
       ]
     },
-    { name: 'length_ft', label: 'Length (ft)', type: 'number' },
-    { name: 'width_ft', label: 'Width (ft)', type: 'number' },
+    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
+    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
     { 
       name: 'is_covered', 
       label: 'Is Covered', 
-      type: 'select',
+      type: 'select' as const,
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
@@ -107,13 +107,13 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     { 
       name: 'has_water', 
       label: 'Has Water', 
-      type: 'select',
+      type: 'select' as const,
       options: [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' }
       ]
     },
-    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' },
+    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
   ];
 
   return (
