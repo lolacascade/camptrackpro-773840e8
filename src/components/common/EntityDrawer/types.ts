@@ -17,7 +17,7 @@ export interface FormField extends Field {
   onChange: (value: FormValue) => void;
 }
 
-export type TableName = 'expenses' | 'slots' | 'customers' | 'assets' | 'bookings';
+export type TableName = 'customers' | 'assets' | 'slots' | 'bookings' | 'maintenance_requests' | 'expenses';
 
 export interface EntityDrawerProps {
   entity: any;
