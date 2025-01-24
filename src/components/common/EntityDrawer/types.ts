@@ -4,6 +4,13 @@ import type { Database } from "@/integrations/supabase/types"
 type DatabaseTables = Database['public']['Tables']
 export type TableNames = keyof DatabaseTables
 
+export type FormValue = string | number | boolean | null | undefined;
+
+export interface FormDataType {
+  [key: string]: FormValue;
+  user_id?: string;
+}
+
 export interface Field {
   name: string
   label: string
@@ -13,7 +20,7 @@ export interface Field {
 }
 
 export interface EntityDrawerProps {
-  entity: any
+  entity: FormDataType | null
   open: boolean
   onClose: () => void
   onEntityUpdated: () => void
@@ -23,6 +30,6 @@ export interface EntityDrawerProps {
 }
 
 export interface FormField extends Field {
-  value: any
-  onChange: (value: any) => void
+  value: FormValue
+  onChange: (value: FormValue) => void
 }

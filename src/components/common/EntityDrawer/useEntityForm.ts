@@ -2,13 +2,7 @@ import { useState, useEffect } from "react"
 import { useSession } from '@supabase/auth-helpers-react'
 import { useToast } from "@/hooks/use-toast"
 import { supabase } from "@/integrations/supabase/client"
-import type { Field, TableNames } from "./types"
-
-// Define a more specific type for form data values
-type FormValue = string | number | null | undefined;
-interface FormDataType {
-  [key: string]: FormValue;
-}
+import type { Field, TableNames, FormDataType } from "./types"
 
 export function useEntityForm(
   entity: FormDataType | null,
