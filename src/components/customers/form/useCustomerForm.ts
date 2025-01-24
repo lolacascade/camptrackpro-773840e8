@@ -1,12 +1,15 @@
 import { useForm } from "react-hook-form";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 export function useCustomerForm(
   customer: Customer | null,
   onCustomerUpdated: () => void,
   onClose: () => void
 ) {
+  const { toast } = useToast();
+  
   const {
     register,
     handleSubmit,
@@ -34,17 +37,33 @@ export function useCustomerForm(
           .eq('id', customer.id.toString());
 
         if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: "Customer updated successfully",
+        });
       } else {
         const { error } = await supabase
           .from('customers')
           .insert([formData]);
 
         if (error) throw error;
+        
+        toast({
+          title: "Success",
+          description: "Customer added successfully",
+        });
       }
 
       onCustomerUpdated();
+      onClose();
     } catch (error) {
       console.error('Error saving customer:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save customer",
+        variant: "destructive",
+      });
     }
   };
 
