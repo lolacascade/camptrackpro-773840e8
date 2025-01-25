@@ -3,6 +3,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { DockSpotForm } from "./DockSpotForm";
 import { DockSpotFormValues } from "./types";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface AddDockSpotDialogProps {
   isOpen: boolean;
@@ -12,9 +13,22 @@ interface AddDockSpotDialogProps {
 
 export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: AddDockSpotDialogProps) {
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
 
   const onSubmit = async (values: DockSpotFormValues) => {
+    if (!organizationId || !accountId) {
+      toast({
+        title: "Error",
+        description: "Missing organization or account context",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
+      const { data: userData } = await supabase.auth.getUser();
+      const userId = userData.user?.id;
+
       const { error } = await supabase
         .from('slots')
         .insert({
@@ -25,8 +39,10 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
           electricity_voltage: values.electricity_voltage,
           has_water: values.has_water,
           status: values.status,
-          location_identifier: values.name, // Using name as location identifier
-          user_id: (await supabase.auth.getUser()).data.user?.id
+          location_identifier: values.name,
+          user_id: userId,
+          organization_id: organizationId,
+          account_id: accountId
         });
 
       if (error) throw error;
@@ -35,7 +51,7 @@ export function AddDockSpotDialog({ isOpen, onOpenChange, onDockSpotAdded }: Add
       onDockSpotAdded();
       
       toast({
-        title: "Spot Added",
+        title: "Success",
         description: `New spot ${values.name} has been created.`,
       });
     } catch (error) {
