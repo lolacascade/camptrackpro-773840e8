@@ -11,6 +11,8 @@ export const dockSpotFormSchema = z.object({
   electricity_voltage: z.string().optional(),
   utility_connection_type: z.string().optional(),
   status: z.enum(['available', 'occupied', 'maintenance']).default('available'),
+  organization_id: z.string().uuid().optional(),
+  account_id: z.string().uuid().optional(),
 });
 
 export type DockSpotFormValues = z.infer<typeof dockSpotFormSchema>;
