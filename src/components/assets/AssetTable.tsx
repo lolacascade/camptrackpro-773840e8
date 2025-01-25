@@ -27,7 +27,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
       .map(customerId => {
         const asset = assets.find(a => a.customer_id === customerId);
         return {
-          label: asset?.customers ? `${asset.customers.first_name} ${asset.customers.last_name}` : 'Unassigned',
+          label: asset?.customer ? `${asset.customer.first_name} ${asset.customer.last_name}` : 'Unassigned',
           value: String(customerId)
         };
       })
@@ -48,8 +48,8 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
         asset.asset_name?.toLowerCase().includes(searchLower) ||
         asset.asset_type?.toLowerCase().includes(searchLower) ||
         asset.asset_size?.toLowerCase().includes(searchLower) ||
-        asset.customers?.first_name?.toLowerCase().includes(searchLower) ||
-        asset.customers?.last_name?.toLowerCase().includes(searchLower)
+        asset.customer?.first_name?.toLowerCase().includes(searchLower) ||
+        asset.customer?.last_name?.toLowerCase().includes(searchLower)
       );
     }
     

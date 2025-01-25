@@ -21,11 +21,11 @@ export function AssetTableRow({ asset, onEdit, onViewDetails }: AssetTableRowPro
         </Badge>
       </TableCell>
       <TableCell>
-        {asset.customers 
-          ? `${asset.customers.first_name} ${asset.customers.last_name}`
+        {asset.customer 
+          ? `${asset.customer.first_name} ${asset.customer.last_name}`
           : 'Unassigned'}
       </TableCell>
-      <TableCell>{asset.slots?.name || 'Unassigned'}</TableCell>
+      <TableCell>{asset.site?.name || 'Unassigned'}</TableCell>
       <TableCell>
         <div className="flex gap-2">
           <Button

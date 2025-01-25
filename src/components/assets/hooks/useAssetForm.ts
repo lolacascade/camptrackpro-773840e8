@@ -18,7 +18,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     asset_name: '',
     asset_size: '',
     customer_id: customerId,
-    slip_id: null,
+    site_id: null,
     asset_type: '',
     name: '',
     type: '',
@@ -31,17 +31,17 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     const fetchAvailableSlots = async () => {
       try {
         const { data, error } = await supabase
-          .from('slots')
+          .from('sites')
           .select('id, name')
           .eq('status', 'available');
 
         if (error) throw error;
         setAvailableSlots(data || []);
       } catch (error) {
-        console.error('Error fetching slots:', error);
+        console.error('Error fetching sites:', error);
         toast({
           title: "Error",
-          description: "Failed to fetch available slots.",
+          description: "Failed to fetch available sites.",
           variant: "destructive",
         });
       }
@@ -60,7 +60,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
       return;
     }
 
-    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.slip_id) {
+    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.site_id) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -74,7 +74,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         asset_name: newAsset.asset_name,
         asset_size: newAsset.asset_size,
         asset_type: newAsset.asset_type,
-        slip_id: newAsset.slip_id,
+        site_id: newAsset.site_id,
         customer_id: newAsset.customer_id,
         name: newAsset.asset_name,
         type: newAsset.asset_type,
@@ -101,7 +101,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         asset_name: '',
         asset_size: '',
         customer_id: null,
-        slip_id: null,
+        site_id: null,
         asset_type: '',
         name: '',
         type: '',

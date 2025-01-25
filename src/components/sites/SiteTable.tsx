@@ -104,7 +104,7 @@ export function SiteTable({ onEdit }: SiteTableProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable<Site>
+        <DataTable
           data={sites}
           columns={getSiteColumns()}
           isLoading={isLoading}

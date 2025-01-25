@@ -12,11 +12,11 @@ export interface Asset {
   asset_type: string | null;
   site_id: number | null;
   customer_id: string | null;
+  customer?: Customer | null;
+  site?: Site | null;
   user_id: string | null;
   organization_id: string | null;
   account_id: string | null;
   created_at: string;
   updated_at: string;
-  customer?: Customer;
-  site?: Site;
 }

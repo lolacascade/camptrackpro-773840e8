@@ -20,6 +20,7 @@ export const getSiteColumns = (): Column<Site>[] => [
   },
   {
     header: "Size",
+    accessorKey: "size",
     cell: (site: Site) => {
       if (!site.length_ft && !site.width_ft) return "N/A";
       return `${site.length_ft || 0}' x ${site.width_ft || 0}'`;
@@ -28,6 +29,7 @@ export const getSiteColumns = (): Column<Site>[] => [
   },
   {
     header: "Utilities",
+    accessorKey: "utilities",
     cell: (site: Site) => {
       const utilities = [];
       if (site.has_water) utilities.push("Water");

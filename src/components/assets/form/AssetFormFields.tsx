@@ -59,10 +59,10 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="slip_id">Site *</Label>
+        <Label htmlFor="site_id">Site *</Label>
         <SelectField
-          value={newAsset.slip_id?.toString() || ''}
-          onChange={(value) => setNewAsset({ ...newAsset, slip_id: parseInt(value) })}
+          value={newAsset.site_id?.toString() || ''}
+          onChange={(value) => setNewAsset({ ...newAsset, site_id: parseInt(value) })}
           options={slotOptions}
           placeholder="Select a site"
         />
