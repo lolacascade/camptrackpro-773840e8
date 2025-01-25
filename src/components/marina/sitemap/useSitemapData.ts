@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
 interface MarinaStats {
@@ -12,18 +12,13 @@ interface MarinaStats {
 }
 
 export function useSitemapData() {
-  const { toast } = useToast();
   const { organizationId, accountId } = useOrganization();
 
   const { data: stats, isLoading: statsLoading } = useQuery<MarinaStats>({
     queryKey: ['marina-stats', organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        toast({
-          title: "Error",
-          description: "Organization or account context not found",
-          variant: "destructive",
-        });
+        toast.error("Organization or account context not found");
         throw new Error("Missing organization or account context");
       }
 
@@ -35,11 +30,7 @@ export function useSitemapData() {
 
       if (error) {
         console.error("Error fetching marina stats:", error);
-        toast({
-          title: "Error fetching marina stats",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching marina stats");
         throw error;
       }
 
@@ -62,11 +53,7 @@ export function useSitemapData() {
     queryKey: ['slots', organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        toast({
-          title: "Error",
-          description: "Organization or account context not found",
-          variant: "destructive",
-        });
+        toast.error("Organization or account context not found");
         throw new Error("Missing organization or account context");
       }
 
@@ -78,11 +65,7 @@ export function useSitemapData() {
 
       if (error) {
         console.error("Error fetching slots:", error);
-        toast({
-          title: "Error fetching slots",
-          description: error.message,
-          variant: "destructive",
-        });
+        toast.error("Error fetching slots");
         throw error;
       }
 
