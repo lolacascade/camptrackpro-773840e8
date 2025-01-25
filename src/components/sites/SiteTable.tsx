@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Card } from "@/components/ui/card";
 import { Site } from "@/types/site";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -102,7 +101,7 @@ export function SiteTable({ onEdit }: SiteTableProps) {
   ];
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+    <div className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
         <DataTable
           data={sites}
@@ -139,6 +138,6 @@ export function SiteTable({ onEdit }: SiteTableProps) {
           tableName="sites"
         />
       </div>
-    </Card>
+    </div>
   );
 }
