@@ -105,7 +105,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable<Slot>
+        <DataTable
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
