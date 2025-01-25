@@ -1,23 +1,21 @@
-export type FormValue = string | number | null | undefined;
+import { ReactNode } from "react";
 
-export interface FormDataType {
-  [key: string]: FormValue;
-}
+export type TableName = 
+  | "sites" 
+  | "customers" 
+  | "assets" 
+  | "bookings" 
+  | "maintenance_requests" 
+  | "expenses" 
+  | "invoices";
 
 export interface Field {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'select' | 'date';
+  type: 'text' | 'number' | 'select' | 'date' | 'textarea' | 'checkbox';
   required?: boolean;
   options?: { value: string; label: string }[];
 }
-
-export interface FormField extends Field {
-  value: FormValue;
-  onChange: (value: FormValue) => void;
-}
-
-export type TableName = 'customers' | 'assets' | 'slots' | 'bookings' | 'maintenance_requests' | 'expenses';
 
 export interface EntityDrawerProps {
   entity: any;
