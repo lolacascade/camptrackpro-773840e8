@@ -1,6 +1,8 @@
 import { Badge } from "@/components/ui/badge";
 import { Column } from "@/components/common/DataTable/types";
 import { Slot } from "@/types/slot";
+import { Eye, Edit2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const getSlotColumns = (): Column<Slot>[] => [
   {
@@ -57,6 +59,45 @@ export const getSlotColumns = (): Column<Slot>[] => [
         {slot.has_water && (
           <Badge variant="outline">Water</Badge>
         )}
+      </div>
+    ),
+  },
+  {
+    header: "Actions",
+    accessorKey: "actions",
+    cell: (slot: Slot) => (
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('View details:', slot);
+          }}
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('Edit:', slot);
+          }}
+        >
+          <Edit2 className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-red-500 hover:text-red-600"
+          onClick={(e) => {
+            e.stopPropagation();
+            console.log('Delete:', slot);
+          }}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
       </div>
     ),
   },
