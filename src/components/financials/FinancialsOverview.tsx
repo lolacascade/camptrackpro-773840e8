@@ -27,13 +27,13 @@ export function FinancialsOverview() {
       
       <ExpenseTable
         onEdit={handleEditExpense}
-        isLoading={isLoading}
       />
 
       <AddExpenseDrawer
         open={isAddExpenseOpen}
         onClose={handleDrawerClose}
         expense={selectedExpense}
+        onExpenseUpdated={refetch}
       />
     </div>
   );

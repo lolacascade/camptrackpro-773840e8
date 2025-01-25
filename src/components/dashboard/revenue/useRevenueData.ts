@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { RevenueCategory } from "./types";
+import { RevenueCategory, RevenueData } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
-import { toast } from "sonner";
 
 interface ChartDataItem {
   monthKey: string;
@@ -15,7 +14,7 @@ interface ChartDataItem {
   maintenanceServices: number;
 }
 
-interface RevenueData {
+interface RevenueQueryData {
   chartData: ChartDataItem[];
   currentMonth: {
     date: Date;
@@ -32,7 +31,7 @@ interface RevenueData {
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<RevenueData>({
+  return useQuery<RevenueQueryData>({
     queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
