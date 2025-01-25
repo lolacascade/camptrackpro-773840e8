@@ -1,65 +1,57 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
-import { RevenueCategory } from "./types";
+
+export type RevenueCategory = "all" | "dockage" | "storage" | "maintenance";
 
 interface ChartDataItem {
-  monthKey: string;
   date: Date;
-  amount: number;
+  value: number;
   month: string;
   year: string;
-  slipRenewals: number;
-  newSlipRentals: number;
-  maintenanceServices: number;
 }
 
 interface MonthData {
-  date: Date;
-  month: string;
-  year: string;
-  slipRenewals: number;
-  newSlipRentals: number;
-  maintenanceServices: number;
   total: number;
-  count: number;
+  percentageChange: number;
 }
 
-interface RevenueQueryResult {
+interface RevenueData {
   chartData: ChartDataItem[];
   currentMonth: MonthData;
 }
 
-type Invoice = {
+interface Invoice {
   id: string;
   amount: number;
   type: string;
   created_at: string;
-};
+}
 
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<RevenueQueryResult>({
-    queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
+  return useQuery<RevenueData>({
+    queryKey: ['revenue', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        throw new Error("Missing organization or account context");
+        throw new Error('Organization or account context not found');
       }
 
-      const { data: invoices, error } = await supabase
+      const { data, error } = await supabase
         .from('invoices')
         .select('*')
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId) as { data: Invoice[] | null; error: any };
+        .eq('account_id', accountId);
 
       if (error) {
         console.error("Error fetching revenue data:", error);
         throw error;
       }
 
-      const chartData = processInvoicesData(invoices || []);
-      const currentMonth = getCurrentMonthData(invoices || []);
+      const invoices = data as Invoice[];
+      const chartData = processInvoicesData(invoices);
+      const currentMonth = getCurrentMonthData(invoices);
 
       return {
         chartData,
@@ -75,26 +67,22 @@ function processInvoicesData(invoices: Invoice[]): ChartDataItem[] {
     const date = new Date(invoice.created_at);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
-    const existingMonth = acc.find(item => item.monthKey === monthKey);
-    
+    const existingMonth = acc.find(item => 
+      item.month === String(date.getMonth() + 1) && 
+      item.year === String(date.getFullYear())
+    );
+
     if (existingMonth) {
-      existingMonth.amount += invoice.amount || 0;
-      if (invoice.type === 'slip_renewal') existingMonth.slipRenewals += 1;
-      if (invoice.type === 'new_slip') existingMonth.newSlipRentals += 1;
-      if (invoice.type === 'maintenance') existingMonth.maintenanceServices += 1;
+      existingMonth.value += Number(invoice.amount) || 0;
     } else {
       acc.push({
-        monthKey,
-        date,
-        month: date.toLocaleString('default', { month: 'short' }),
-        year: date.getFullYear().toString(),
-        amount: invoice.amount || 0,
-        slipRenewals: invoice.type === 'slip_renewal' ? 1 : 0,
-        newSlipRentals: invoice.type === 'new_slip' ? 1 : 0,
-        maintenanceServices: invoice.type === 'maintenance' ? 1 : 0,
+        date: new Date(date.getFullYear(), date.getMonth(), 1),
+        value: Number(invoice.amount) || 0,
+        month: String(date.getMonth() + 1),
+        year: String(date.getFullYear()),
       });
     }
-    
+
     return acc;
   }, []);
 
@@ -105,21 +93,29 @@ function getCurrentMonthData(invoices: Invoice[]): MonthData {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
-  
-  const currentMonthInvoices = invoices.filter(invoice => {
-    const invoiceDate = new Date(invoice.created_at);
-    return invoiceDate.getMonth() === currentMonth && 
-           invoiceDate.getFullYear() === currentYear;
-  });
+  const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+  const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+  const currentMonthTotal = invoices
+    .filter(invoice => {
+      const date = new Date(invoice.created_at);
+      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+    })
+    .reduce((sum, invoice) => sum + (Number(invoice.amount) || 0), 0);
+
+  const lastMonthTotal = invoices
+    .filter(invoice => {
+      const date = new Date(invoice.created_at);
+      return date.getMonth() === lastMonth && date.getFullYear() === lastMonthYear;
+    })
+    .reduce((sum, invoice) => sum + (Number(invoice.amount) || 0), 0);
+
+  const percentageChange = lastMonthTotal === 0 
+    ? 100 
+    : ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
 
   return {
-    date: currentDate,
-    month: currentDate.toLocaleString('default', { month: 'long' }),
-    year: currentYear.toString(),
-    slipRenewals: currentMonthInvoices.filter(i => i.type === 'slip_renewal').length,
-    newSlipRentals: currentMonthInvoices.filter(i => i.type === 'new_slip').length,
-    maintenanceServices: currentMonthInvoices.filter(i => i.type === 'maintenance').length,
-    total: currentMonthInvoices.reduce((sum, invoice) => sum + (invoice.amount || 0), 0),
-    count: currentMonthInvoices.length
+    total: currentMonthTotal,
+    percentageChange,
   };
 }
