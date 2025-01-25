@@ -30,7 +30,7 @@ export default function Sitemap() {
 
           <DataTable<Slot>
             columns={getSlotColumns()}
-            data={slots}
+            data={slots || []}
             isLoading={slotsLoading}
             tableName="slots"
           />
