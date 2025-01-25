@@ -1,5 +1,5 @@
 import { StatsCard } from "@/components/common/StatsCard";
-import { Anchor, Boat, Tool, TrendingUp } from "lucide-react";
+import { Anchor, Ship, Wrench, TrendingUp } from "lucide-react";
 
 interface SitemapStatsProps {
   totalSlots: number;
@@ -19,37 +19,41 @@ export function SitemapStats({
       <StatsCard
         title="Total Slots"
         value={totalSlots}
-        icon={<Anchor className="h-4 w-4" />}
+        icon={Anchor}
         trend={{
-          value: totalSlots > 0 ? "+1" : "0",
-          label: "from last month"
+          value: "+1",
+          isPositive: true,
+          comparedTo: "from last month"
         }}
       />
       <StatsCard
         title="Occupied Slots"
         value={occupiedSlots}
-        icon={<Boat className="h-4 w-4" />}
+        icon={Ship}
         trend={{
-          value: occupiedSlots > 0 ? "+2" : "0",
-          label: "from last month"
+          value: "+2",
+          isPositive: true,
+          comparedTo: "from last month"
         }}
       />
       <StatsCard
         title="Maintenance"
         value={maintenanceSlots}
-        icon={<Tool className="h-4 w-4" />}
+        icon={Wrench}
         trend={{
-          value: maintenanceSlots > 0 ? "-1" : "0",
-          label: "from last month"
+          value: "-1",
+          isPositive: false,
+          comparedTo: "from last month"
         }}
       />
       <StatsCard
         title="Occupancy Rate"
         value={`${occupancyRate}%`}
-        icon={<TrendingUp className="h-4 w-4" />}
+        icon={TrendingUp}
         trend={{
-          value: occupancyRate > 0 ? "+5%" : "0%",
-          label: "from last month"
+          value: "+5%",
+          isPositive: true,
+          comparedTo: "from last month"
         }}
       />
     </div>
