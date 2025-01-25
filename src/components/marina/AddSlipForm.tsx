@@ -27,14 +27,14 @@ export function AddSlipForm({ onSuccess, onCancel }: AddSlipFormProps) {
     try {
       setIsLoading(true);
       const { error } = await supabase
-        .from('slots')
+        .from('sites')
         .insert([{
           name: data.name,
           dock: data.dock,
           length_ft: data.length_ft,
           width_ft: data.width_ft,
           status: 'available',
-          location_identifier: data.name // Using name as location identifier
+          location_identifier: data.name
         }]);
 
       if (error) throw error;

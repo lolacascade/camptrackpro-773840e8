@@ -1,7 +1,6 @@
-import { DashboardHeader } from "./DashboardHeader";
+import { PageContainer } from "@/components/layout/PageContainer";
 import { StatsGrid } from "./StatsGrid";
 import { RevenueBreakdown } from "./RevenueBreakdown";
-import { MarinaOverview } from "@/components/marina/MarinaOverview";
 import { RecentActivity } from "./RecentActivity";
 import { FooterStats } from "./FooterStats";
 import { BookingsToday } from "./BookingsToday";
@@ -43,9 +42,6 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       </ErrorBoundary>
       
       <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
-        <ErrorBoundary>
-          <MarinaOverview />
-        </ErrorBoundary>
         <ErrorBoundary>
           <RecentActivity />
         </ErrorBoundary>
