@@ -15,7 +15,7 @@ export function FinancialsOverview() {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const session = useSession();
   const { toast } = useToast();
-  const { expenses, isLoading, refetch } = useExpenseData();
+  const { data: expenses = [], isLoading, refetch } = useExpenseData();
   const { data: chartData = [] } = useChartData();
 
   const handleEdit = async (expense: Expense) => {
@@ -55,10 +55,7 @@ export function FinancialsOverview() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#133134]"></div>
         </div>
       ) : (
-        <ExpenseTable
-          expenses={expenses}
-          onEdit={handleEdit}
-        />
+        <ExpenseTable onEdit={handleEdit} />
       )}
 
       <AddExpenseDrawer

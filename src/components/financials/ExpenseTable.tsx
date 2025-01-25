@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { toast } from "sonner";
 import { Expense } from "@/types/expense";
+import { Column } from "@/components/common/DataTable/types";
 
 interface ExpenseTableProps {
   onEdit?: (expense: Expense) => void;
@@ -41,27 +42,27 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
     toast.error("Failed to load expenses. Please try again.");
   }
 
-  const columns = [
+  const columns: Column<Expense>[] = [
     {
-      accessorKey: "description",
-      header: "Description"
+      header: "Description",
+      accessorKey: "description"
     },
     {
-      accessorKey: "amount",
       header: "Amount",
-      cell: ({ row }: { row: any }) => (
-        <span>${row.original.amount?.toLocaleString()}</span>
+      accessorKey: "amount",
+      cell: (item: Expense) => (
+        <span>${item.amount?.toLocaleString()}</span>
       )
     },
     {
-      accessorKey: "category",
-      header: "Category"
+      header: "Category",
+      accessorKey: "category"
     },
     {
-      accessorKey: "date",
       header: "Date",
-      cell: ({ row }: { row: any }) => (
-        <span>{new Date(row.original.date).toLocaleDateString()}</span>
+      accessorKey: "date",
+      cell: (item: Expense) => (
+        <span>{new Date(item.date).toLocaleDateString()}</span>
       )
     }
   ];
@@ -74,6 +75,7 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
           columns={columns}
           isLoading={isLoading}
           onRowClick={onEdit}
+          tableName="expenses"
         />
       </div>
     </Card>

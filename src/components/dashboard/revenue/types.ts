@@ -7,6 +7,8 @@ export interface RevenueData {
   slipRenewals: number;
   newSlipRentals: number;
   maintenanceServices: number;
+  total?: number;
+  count?: number;
   isProjected?: boolean;
 }
 

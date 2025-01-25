@@ -53,7 +53,10 @@ function processInvoicesData(invoices: any[]) {
         date,
         amount: invoice.amount,
         month: date.toLocaleString('default', { month: 'short' }),
-        year: date.getFullYear()
+        year: date.getFullYear().toString(),
+        slipRenewals: 0,
+        newSlipRentals: 0,
+        maintenanceServices: 0
       });
     }
     return acc;
@@ -74,6 +77,12 @@ function getCurrentMonthData(invoices: any[]) {
   });
 
   return {
+    date: currentDate,
+    month: currentDate.toLocaleString('default', { month: 'short' }),
+    year: currentYear.toString(),
+    slipRenewals: 0,
+    newSlipRentals: 0,
+    maintenanceServices: 0,
     total: currentMonthInvoices.reduce((sum, invoice) => sum + invoice.amount, 0),
     count: currentMonthInvoices.length
   };
