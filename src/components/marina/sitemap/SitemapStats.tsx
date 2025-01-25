@@ -1,5 +1,5 @@
-import { Anchor, Ship, Wrench, DollarSign } from "lucide-react";
 import { StatsCard } from "@/components/common/StatsCard";
+import { Anchor, Boat, Tool, TrendingUp } from "lucide-react";
 
 interface SitemapStatsProps {
   totalSlots: number;
@@ -12,64 +12,45 @@ export function SitemapStats({
   totalSlots,
   occupiedSlots,
   maintenanceSlots,
-  occupancyRate
+  occupancyRate,
 }: SitemapStatsProps) {
   return (
-    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <StatsCard
-        title="Total Sites"
-        value={totalSlots.toString()}
-        icon={Anchor}
-        breakdown={[
-          { label: "Occupied", value: occupiedSlots.toString(), percentage: Math.round((occupiedSlots/totalSlots) * 100) },
-          { label: "Available", value: (totalSlots - occupiedSlots - maintenanceSlots).toString(), percentage: Math.round(((totalSlots - occupiedSlots - maintenanceSlots)/totalSlots) * 100) }
-        ]}
-      />
-      
-      <StatsCard
-        title="Site Utilization"
-        value={`${occupancyRate}%`}
-        icon={Ship}
+        title="Total Slots"
+        value={totalSlots}
+        icon={<Anchor className="h-4 w-4" />}
         trend={{
-          value: "5%",
-          isPositive: true,
-          comparedTo: "last month"
+          value: totalSlots > 0 ? "+1" : "0",
+          label: "from last month"
         }}
-        breakdown={[
-          { label: "Peak Hours", value: "95%", percentage: 95 },
-          { label: "Off Hours", value: "75%", percentage: 75 }
-        ]}
       />
-
       <StatsCard
-        title="Most Active Site"
-        value="Dock A-12"
-        icon={DollarSign}
-        breakdown={[
-          { label: "Monthly Bookings", value: "15", percentage: 100 },
-          { label: "Average Stay", value: "5 days" }
-        ]}
+        title="Occupied Slots"
+        value={occupiedSlots}
+        icon={<Boat className="h-4 w-4" />}
+        trend={{
+          value: occupiedSlots > 0 ? "+2" : "0",
+          label: "from last month"
+        }}
       />
-
       <StatsCard
         title="Maintenance"
-        value={maintenanceSlots.toString()}
-        icon={Wrench}
+        value={maintenanceSlots}
+        icon={<Tool className="h-4 w-4" />}
         trend={{
-          value: "2 sites",
-          isPositive: false,
-          comparedTo: "last week"
+          value: maintenanceSlots > 0 ? "-1" : "0",
+          label: "from last month"
         }}
-        breakdown={[
-          { label: "Urgent", value: "3", percentage: 60 },
-          { label: "Scheduled", value: "2", percentage: 40 }
-        ]}
-        recommendedActions={[
-          { 
-            label: "Schedule urgent site repairs",
-            impact: "Prevents potential revenue loss"
-          }
-        ]}
+      />
+      <StatsCard
+        title="Occupancy Rate"
+        value={`${occupancyRate}%`}
+        icon={<TrendingUp className="h-4 w-4" />}
+        trend={{
+          value: occupancyRate > 0 ? "+5%" : "0%",
+          label: "from last month"
+        }}
       />
     </div>
   );
