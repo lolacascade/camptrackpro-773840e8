@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { RevenueCategory, RevenueData } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
+import { RevenueCategory } from "./types";
 
 type ChartDataItem = {
   monthKey: string;
@@ -25,7 +25,7 @@ type MonthData = {
   count: number;
 };
 
-type QueryResult = {
+type RevenueData = {
   chartData: ChartDataItem[];
   currentMonth: MonthData;
 };
@@ -33,11 +33,11 @@ type QueryResult = {
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<QueryResult>({
+  return useQuery<RevenueData>({
     queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        throw new Error("Organization or account context not found");
+        throw new Error("Missing organization or account context");
       }
 
       const { data: invoices, error } = await supabase
@@ -47,7 +47,7 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
         .eq('account_id', accountId);
 
       if (error) {
-        console.error('Error fetching revenue data:', error);
+        console.error("Error fetching revenue data:", error);
         throw error;
       }
 
@@ -56,34 +56,38 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
 
       return {
         chartData,
-        currentMonth
+        currentMonth,
       };
     },
-    enabled: !!organizationId && !!accountId
+    enabled: !!organizationId && !!accountId,
   });
 }
 
 function processInvoicesData(invoices: any[]): ChartDataItem[] {
-  // Group invoices by month and calculate totals
   const groupedData = invoices.reduce((acc: ChartDataItem[], invoice) => {
     const date = new Date(invoice.created_at);
-    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
     const existingMonth = acc.find(item => item.monthKey === monthKey);
+    
     if (existingMonth) {
-      existingMonth.amount += invoice.amount;
+      existingMonth.amount += invoice.amount || 0;
+      if (invoice.type === 'slip_renewal') existingMonth.slipRenewals += 1;
+      if (invoice.type === 'new_slip') existingMonth.newSlipRentals += 1;
+      if (invoice.type === 'maintenance') existingMonth.maintenanceServices += 1;
     } else {
       acc.push({
         monthKey,
         date,
-        amount: invoice.amount,
         month: date.toLocaleString('default', { month: 'short' }),
         year: date.getFullYear().toString(),
-        slipRenewals: 0,
-        newSlipRentals: 0,
-        maintenanceServices: 0
+        amount: invoice.amount || 0,
+        slipRenewals: invoice.type === 'slip_renewal' ? 1 : 0,
+        newSlipRentals: invoice.type === 'new_slip' ? 1 : 0,
+        maintenanceServices: invoice.type === 'maintenance' ? 1 : 0,
       });
     }
+    
     return acc;
   }, []);
 
@@ -94,7 +98,7 @@ function getCurrentMonthData(invoices: any[]): MonthData {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
-
+  
   const currentMonthInvoices = invoices.filter(invoice => {
     const invoiceDate = new Date(invoice.created_at);
     return invoiceDate.getMonth() === currentMonth && 
@@ -103,11 +107,11 @@ function getCurrentMonthData(invoices: any[]): MonthData {
 
   return {
     date: currentDate,
-    month: currentDate.toLocaleString('default', { month: 'short' }),
+    month: currentDate.toLocaleString('default', { month: 'long' }),
     year: currentYear.toString(),
-    slipRenewals: 0,
-    newSlipRentals: 0,
-    maintenanceServices: 0,
+    slipRenewals: currentMonthInvoices.filter(i => i.type === 'slip_renewal').length,
+    newSlipRentals: currentMonthInvoices.filter(i => i.type === 'new_slip').length,
+    maintenanceServices: currentMonthInvoices.filter(i => i.type === 'maintenance').length,
     total: currentMonthInvoices.reduce((sum, invoice) => sum + invoice.amount, 0),
     count: currentMonthInvoices.length
   };
