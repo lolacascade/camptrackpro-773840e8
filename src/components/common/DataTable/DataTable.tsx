@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTableState } from "@/hooks/use-table-state";
 import { useDataTable } from "@/hooks/use-data-table";
 import { useDataSearch } from "@/hooks/use-data-search";
+import { useOrganization } from "@/hooks/use-organization";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTableContent } from "./DataTableContent";
 import { DataTablePagination } from "./DataTablePagination";
@@ -26,8 +28,11 @@ export function DataTable<T extends { id?: number | string }>({
   tableName,
   onRowClick,
 }: DataTableProps<T>) {
+  const { organizationId, accountId } = useOrganization();
   console.log('DataTable received data:', data);
   console.log('DataTable received tableName:', tableName);
+  console.log('Organization ID:', organizationId);
+  console.log('Account ID:', accountId);
 
   const {
     searchTerm,
@@ -60,9 +65,9 @@ export function DataTable<T extends { id?: number | string }>({
   const searchFilteredData = useDataSearch(localData, searchTerm);
   console.log('Filtered data length:', searchFilteredData.length);
 
-  // Real-time updates
+  // Real-time updates with organization and account filtering
   useEffect(() => {
-    if (!tableName) return;
+    if (!tableName || !organizationId || !accountId) return;
 
     console.log('Setting up real-time subscription for table:', tableName);
     const channel = supabase
@@ -72,20 +77,26 @@ export function DataTable<T extends { id?: number | string }>({
         {
           event: '*',
           schema: 'public',
-          table: tableName
+          table: tableName,
+          filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
-        (payload) => {
+        async (payload) => {
           console.log('Change received!', payload);
-          if (payload.eventType === 'INSERT') {
-            setLocalData(prev => [...(prev || []), payload.new as T]);
-          } else if (payload.eventType === 'DELETE') {
-            setLocalData(prev => (prev || []).filter(item => item.id !== payload.old.id));
-          } else if (payload.eventType === 'UPDATE') {
-            setLocalData(prev => 
-              (prev || []).map(item => 
-                item.id === payload.new.id ? { ...item, ...payload.new } : item
-              )
-            );
+          try {
+            if (payload.eventType === 'INSERT') {
+              setLocalData(prev => [...(prev || []), payload.new as T]);
+            } else if (payload.eventType === 'DELETE') {
+              setLocalData(prev => (prev || []).filter(item => item.id !== payload.old.id));
+            } else if (payload.eventType === 'UPDATE') {
+              setLocalData(prev => 
+                (prev || []).map(item => 
+                  item.id === payload.new.id ? { ...item, ...payload.new } : item
+                )
+              );
+            }
+          } catch (error) {
+            console.error('Error handling real-time update:', error);
+            toast.error('Error updating data. Please refresh the page.');
           }
         }
       )
@@ -95,7 +106,15 @@ export function DataTable<T extends { id?: number | string }>({
       console.log('Cleaning up subscription for table:', tableName);
       supabase.removeChannel(channel);
     };
-  }, [tableName, setLocalData]);
+  }, [tableName, organizationId, accountId, setLocalData]);
+
+  if (!organizationId || !accountId) {
+    return (
+      <div className="text-center py-4 text-gray-500">
+        Unable to load data. Please check your organization settings.
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
