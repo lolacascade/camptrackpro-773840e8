@@ -7,7 +7,6 @@ import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockS
 import { SitemapHeader } from "@/components/marina/sitemap/SitemapHeader";
 import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
 import { useSitemapData } from "@/components/marina/sitemap/useSitemapData";
-import type { Slot } from "@/types/slot";
 
 export default function Sitemap() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -28,7 +27,7 @@ export default function Sitemap() {
             />
           )}
 
-          <DataTable<Slot>
+          <DataTable
             columns={getSlotColumns()}
             data={slots || []}
             isLoading={slotsLoading}
