@@ -30,6 +30,13 @@ interface RevenueQueryResult {
   currentMonth: MonthData;
 }
 
+type Invoice = {
+  id: string;
+  amount: number;
+  type: string;
+  created_at: string;
+};
+
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
@@ -44,7 +51,7 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
         .from('invoices')
         .select('*')
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        .eq('account_id', accountId) as { data: Invoice[] | null; error: any };
 
       if (error) {
         console.error("Error fetching revenue data:", error);
@@ -63,8 +70,8 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
   });
 }
 
-function processInvoicesData(invoices: any[]): ChartDataItem[] {
-  const groupedData = invoices.reduce((acc: ChartDataItem[], invoice) => {
+function processInvoicesData(invoices: Invoice[]): ChartDataItem[] {
+  const groupedData = invoices.reduce<ChartDataItem[]>((acc, invoice) => {
     const date = new Date(invoice.created_at);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
@@ -94,7 +101,7 @@ function processInvoicesData(invoices: any[]): ChartDataItem[] {
   return groupedData.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-function getCurrentMonthData(invoices: any[]): MonthData {
+function getCurrentMonthData(invoices: Invoice[]): MonthData {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
