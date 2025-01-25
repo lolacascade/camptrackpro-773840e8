@@ -15,10 +15,10 @@ export function SitemapStats({
   occupancyRate,
 }: SitemapStatsProps) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <StatsCard
         title="Total Slots"
-        value={totalSlots}
+        value={totalSlots.toString()}
         icon={Anchor}
         trend={{
           value: "+1",
@@ -28,7 +28,7 @@ export function SitemapStats({
       />
       <StatsCard
         title="Occupied Slots"
-        value={occupiedSlots}
+        value={occupiedSlots.toString()}
         icon={Ship}
         trend={{
           value: "+2",
@@ -38,7 +38,7 @@ export function SitemapStats({
       />
       <StatsCard
         title="Maintenance"
-        value={maintenanceSlots}
+        value={maintenanceSlots.toString()}
         icon={Wrench}
         trend={{
           value: "-1",

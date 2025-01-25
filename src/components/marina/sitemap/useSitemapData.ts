@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Slot } from "@/types/slot";
 import { useToast } from "@/components/ui/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface MarinaStats {
   totalSlots: number;
@@ -12,26 +13,34 @@ interface MarinaStats {
 
 export function useSitemapData() {
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
 
   const { data: stats, isLoading: statsLoading } = useQuery<MarinaStats>({
-    queryKey: ['marina-stats'],
+    queryKey: ['marina-stats', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        toast({
+          title: "Error",
+          description: "Organization or account context not found",
+          variant: "destructive",
+        });
+        throw new Error("Missing organization or account context");
+      }
+
       const { data: slots, error } = await supabase
         .from('slots')
-        .select('*');
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) {
+        console.error("Error fetching marina stats:", error);
         toast({
           title: "Error fetching marina stats",
           description: error.message,
           variant: "destructive",
         });
-        return {
-          totalSlots: 0,
-          occupiedSlots: 0,
-          maintenanceSlots: 0,
-          occupancyRate: 0
-        };
+        throw error;
       }
 
       const totalSlots = slots?.length || 0;
@@ -45,27 +54,41 @@ export function useSitemapData() {
         maintenanceSlots,
         occupancyRate
       };
-    }
+    },
+    enabled: !!organizationId && !!accountId
   });
 
   const { data: slots = [], isLoading: slotsLoading } = useQuery<Slot[]>({
-    queryKey: ['slots'],
+    queryKey: ['slots', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        toast({
+          title: "Error",
+          description: "Organization or account context not found",
+          variant: "destructive",
+        });
+        throw new Error("Missing organization or account context");
+      }
+
       const { data, error } = await supabase
         .from('slots')
-        .select('*');
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) {
+        console.error("Error fetching slots:", error);
         toast({
           title: "Error fetching slots",
           description: error.message,
           variant: "destructive",
         });
-        return [];
+        throw error;
       }
 
-      return (data || []) as Slot[];
-    }
+      return data as Slot[];
+    },
+    enabled: !!organizationId && !!accountId
   });
 
   return {
