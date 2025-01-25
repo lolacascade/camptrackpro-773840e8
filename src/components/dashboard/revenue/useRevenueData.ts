@@ -51,8 +51,8 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
         throw error;
       }
 
-      const chartData = processInvoicesData(invoices);
-      const currentMonth = getCurrentMonthData(invoices);
+      const chartData = processInvoicesData(invoices || []);
+      const currentMonth = getCurrentMonthData(invoices || []);
 
       return {
         chartData,
@@ -112,7 +112,7 @@ function getCurrentMonthData(invoices: any[]): MonthData {
     slipRenewals: currentMonthInvoices.filter(i => i.type === 'slip_renewal').length,
     newSlipRentals: currentMonthInvoices.filter(i => i.type === 'new_slip').length,
     maintenanceServices: currentMonthInvoices.filter(i => i.type === 'maintenance').length,
-    total: currentMonthInvoices.reduce((sum, invoice) => sum + invoice.amount, 0),
+    total: currentMonthInvoices.reduce((sum, invoice) => sum + (invoice.amount || 0), 0),
     count: currentMonthInvoices.length
   };
 }

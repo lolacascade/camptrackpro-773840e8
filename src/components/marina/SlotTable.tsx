@@ -54,7 +54,6 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   };
 
   const handleViewDetails = (slot: Slot) => {
-    // This will be implemented in the future for the Spot Detail Page
     console.log('View details for slot:', slot);
     toast.info("Spot Detail Page coming soon!");
   };
@@ -105,7 +104,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable
+        <DataTable<Slot>
           data={slots}
           columns={getSlotColumns()}
           isLoading={isLoading}
