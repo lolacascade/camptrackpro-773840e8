@@ -85,7 +85,7 @@ export type Database = {
           id: string
           name: string
           organization_id: string | null
-          slip_id: number | null
+          site_id: number | null
           status: string
           type: string
           updated_at: string
@@ -102,7 +102,7 @@ export type Database = {
           id?: string
           name: string
           organization_id?: string | null
-          slip_id?: number | null
+          site_id?: number | null
           status?: string
           type: string
           updated_at?: string
@@ -119,7 +119,7 @@ export type Database = {
           id?: string
           name?: string
           organization_id?: string | null
-          slip_id?: number | null
+          site_id?: number | null
           status?: string
           type?: string
           updated_at?: string
@@ -148,10 +148,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "assets_slip_id_fkey"
-            columns: ["slip_id"]
+            foreignKeyName: "assets_site_id_fkey"
+            columns: ["site_id"]
             isOneToOne: false
-            referencedRelation: "slots"
+            referencedRelation: "sites"
             referencedColumns: ["id"]
           },
         ]
@@ -168,7 +168,7 @@ export type Database = {
           id: string
           organization_id: string | null
           reservation_code: string | null
-          slot_id: number | null
+          site_id: number | null
           special_requirements: string | null
           status: Database["public"]["Enums"]["booking_status"]
           total_amount: number | null
@@ -186,7 +186,7 @@ export type Database = {
           id?: string
           organization_id?: string | null
           reservation_code?: string | null
-          slot_id?: number | null
+          site_id?: number | null
           special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number | null
@@ -204,7 +204,7 @@ export type Database = {
           id?: string
           organization_id?: string | null
           reservation_code?: string | null
-          slot_id?: number | null
+          site_id?: number | null
           special_requirements?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_amount?: number | null
@@ -248,10 +248,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_slot_id_fkey"
-            columns: ["slot_id"]
+            foreignKeyName: "bookings_site_id_fkey"
+            columns: ["site_id"]
             isOneToOne: false
-            referencedRelation: "slots"
+            referencedRelation: "sites"
             referencedColumns: ["id"]
           },
         ]
@@ -582,7 +582,7 @@ export type Database = {
           id: number
           organization_id: string | null
           priority: string
-          slot_id: number | null
+          site_id: number | null
           status: string
           updated_at: string | null
           user_id: string | null
@@ -597,7 +597,7 @@ export type Database = {
           id?: number
           organization_id?: string | null
           priority?: string
-          slot_id?: number | null
+          site_id?: number | null
           status?: string
           updated_at?: string | null
           user_id?: string | null
@@ -612,7 +612,7 @@ export type Database = {
           id?: number
           organization_id?: string | null
           priority?: string
-          slot_id?: number | null
+          site_id?: number | null
           status?: string
           updated_at?: string | null
           user_id?: string | null
@@ -640,10 +640,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "maintenance_requests_slot_id_fkey"
-            columns: ["slot_id"]
+            foreignKeyName: "maintenance_requests_site_id_fkey"
+            columns: ["site_id"]
             isOneToOne: false
-            referencedRelation: "slots"
+            referencedRelation: "sites"
             referencedColumns: ["id"]
           },
         ]
@@ -901,7 +901,7 @@ export type Database = {
           },
         ]
       }
-      slots: {
+      sites: {
         Row: {
           account_id: string | null
           created_at: string | null
