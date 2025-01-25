@@ -348,38 +348,58 @@ export type Database = {
       }
       customer_notes: {
         Row: {
+          account_id: string | null
           created_at: string | null
           customer_id: string
           id: number
           note: string
+          organization_id: string | null
           tag: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string | null
           customer_id: string
           id?: number
           note: string
+          organization_id?: string | null
           tag?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string | null
           customer_id?: string
           id?: number
           note?: string
+          organization_id?: string | null
           tag?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "customer_notes_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "customer_notes_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -458,36 +478,57 @@ export type Database = {
       }
       expenses: {
         Row: {
+          account_id: string | null
           amount: number | null
           category: string
           created_at: string | null
           date: string
           description: string
           id: string
+          organization_id: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           amount?: number | null
           category: string
           created_at?: string | null
           date: string
           description: string
           id?: string
+          organization_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           amount?: number | null
           category?: string
           created_at?: string | null
           date?: string
           description?: string
           id?: string
+          organization_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "expenses_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoices: {
         Row: {
@@ -532,12 +573,14 @@ export type Database = {
       }
       maintenance_requests: {
         Row: {
+          account_id: string | null
           assigned_to: string | null
           completed_at: string | null
           created_at: string | null
           customer_id: string | null
           description: string
           id: number
+          organization_id: string | null
           priority: string
           slot_id: number | null
           status: string
@@ -545,12 +588,14 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           assigned_to?: string | null
           completed_at?: string | null
           created_at?: string | null
           customer_id?: string | null
           description: string
           id?: number
+          organization_id?: string | null
           priority?: string
           slot_id?: number | null
           status?: string
@@ -558,12 +603,14 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           assigned_to?: string | null
           completed_at?: string | null
           created_at?: string | null
           customer_id?: string | null
           description?: string
           id?: number
+          organization_id?: string | null
           priority?: string
           slot_id?: number | null
           status?: string
@@ -572,10 +619,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "maintenance_requests_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "maintenance_requests_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
@@ -649,33 +710,54 @@ export type Database = {
       }
       monthly_budgets: {
         Row: {
+          account_id: string | null
           amount: number | null
           category: string
           created_at: string | null
           id: string
           month: string
+          organization_id: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           amount?: number | null
           category: string
           created_at?: string | null
           id?: string
           month: string
+          organization_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           amount?: number | null
           category?: string
           created_at?: string | null
           id?: string
           month?: string
+          organization_id?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "monthly_budgets_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monthly_budgets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organization_invites: {
         Row: {

@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Anchor, Ship, Wrench, DollarSign } from "lucide-react";
+import { StatsCard } from "@/components/common/StatsCard";
 
 interface SitemapStatsProps {
   totalSlots: number;
@@ -15,53 +16,61 @@ export function SitemapStats({
 }: SitemapStatsProps) {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <Card>
-        <CardHeader>
-          <CardTitle>Total Sites</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalSlots}</div>
-          <p className="text-sm text-muted-foreground">
-            {occupiedSlots} occupied, {maintenanceSlots} in maintenance
-          </p>
-        </CardContent>
-      </Card>
+      <StatsCard
+        title="Total Sites"
+        value={totalSlots.toString()}
+        icon={Anchor}
+        breakdown={[
+          { label: "Occupied", value: occupiedSlots.toString(), percentage: Math.round((occupiedSlots/totalSlots) * 100) },
+          { label: "Available", value: (totalSlots - occupiedSlots - maintenanceSlots).toString(), percentage: Math.round(((totalSlots - occupiedSlots - maintenanceSlots)/totalSlots) * 100) }
+        ]}
+      />
+      
+      <StatsCard
+        title="Site Utilization"
+        value={`${occupancyRate}%`}
+        icon={Ship}
+        trend={{
+          value: "5%",
+          isPositive: true,
+          comparedTo: "last month"
+        }}
+        breakdown={[
+          { label: "Peak Hours", value: "95%", percentage: 95 },
+          { label: "Off Hours", value: "75%", percentage: 75 }
+        ]}
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Site Utilization</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">85%</div>
-          <p className="text-sm text-muted-foreground">
-            5% increase from last month
-          </p>
-        </CardContent>
-      </Card>
+      <StatsCard
+        title="Most Active Site"
+        value="Dock A-12"
+        icon={DollarSign}
+        breakdown={[
+          { label: "Monthly Bookings", value: "15", percentage: 100 },
+          { label: "Average Stay", value: "5 days" }
+        ]}
+      />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Most Booked Site</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">Dock A-12</div>
-          <p className="text-sm text-muted-foreground">
-            15 bookings this month
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Occupancy</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{occupancyRate}%</div>
-          <p className="text-sm text-muted-foreground">
-            8% increase from last month
-          </p>
-        </CardContent>
-      </Card>
+      <StatsCard
+        title="Maintenance"
+        value={maintenanceSlots.toString()}
+        icon={Wrench}
+        trend={{
+          value: "2 sites",
+          isPositive: false,
+          comparedTo: "last week"
+        }}
+        breakdown={[
+          { label: "Urgent", value: "3", percentage: 60 },
+          { label: "Scheduled", value: "2", percentage: 40 }
+        ]}
+        recommendedActions={[
+          { 
+            label: "Schedule urgent site repairs",
+            impact: "Prevents potential revenue loss"
+          }
+        ]}
+      />
     </div>
   );
 }
