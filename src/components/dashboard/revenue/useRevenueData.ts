@@ -4,10 +4,35 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { toast } from "sonner";
 
+interface ChartDataItem {
+  monthKey: string;
+  date: Date;
+  amount: number;
+  month: string;
+  year: string;
+  slipRenewals: number;
+  newSlipRentals: number;
+  maintenanceServices: number;
+}
+
+interface RevenueData {
+  chartData: ChartDataItem[];
+  currentMonth: {
+    date: Date;
+    month: string;
+    year: string;
+    slipRenewals: number;
+    newSlipRentals: number;
+    maintenanceServices: number;
+    total: number;
+    count: number;
+  };
+}
+
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery({
+  return useQuery<RevenueData>({
     queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
@@ -38,9 +63,9 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
   });
 }
 
-function processInvoicesData(invoices: any[]) {
+function processInvoicesData(invoices: any[]): ChartDataItem[] {
   // Group invoices by month and calculate totals
-  const groupedData = invoices.reduce((acc: any[], invoice) => {
+  const groupedData = invoices.reduce((acc: ChartDataItem[], invoice) => {
     const date = new Date(invoice.created_at);
     const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
     
@@ -62,7 +87,7 @@ function processInvoicesData(invoices: any[]) {
     return acc;
   }, []);
 
-  return groupedData.sort((a, b) => a.date - b.date);
+  return groupedData.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 function getCurrentMonthData(invoices: any[]) {
