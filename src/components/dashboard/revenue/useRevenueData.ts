@@ -3,7 +3,7 @@ import { RevenueCategory, RevenueData } from "./types";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 
-interface ChartDataItem {
+type ChartDataItem = {
   monthKey: string;
   date: Date;
   amount: number;
@@ -12,26 +12,28 @@ interface ChartDataItem {
   slipRenewals: number;
   newSlipRentals: number;
   maintenanceServices: number;
-}
+};
 
-interface RevenueQueryData {
+type MonthData = {
+  date: Date;
+  month: string;
+  year: string;
+  slipRenewals: number;
+  newSlipRentals: number;
+  maintenanceServices: number;
+  total: number;
+  count: number;
+};
+
+type QueryResult = {
   chartData: ChartDataItem[];
-  currentMonth: {
-    date: Date;
-    month: string;
-    year: string;
-    slipRenewals: number;
-    newSlipRentals: number;
-    maintenanceServices: number;
-    total: number;
-    count: number;
-  };
-}
+  currentMonth: MonthData;
+};
 
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<RevenueQueryData>({
+  return useQuery<QueryResult>({
     queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
@@ -49,7 +51,6 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
         throw error;
       }
 
-      // Process invoices into chart data
       const chartData = processInvoicesData(invoices);
       const currentMonth = getCurrentMonthData(invoices);
 
@@ -89,7 +90,7 @@ function processInvoicesData(invoices: any[]): ChartDataItem[] {
   return groupedData.sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-function getCurrentMonthData(invoices: any[]) {
+function getCurrentMonthData(invoices: any[]): MonthData {
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
