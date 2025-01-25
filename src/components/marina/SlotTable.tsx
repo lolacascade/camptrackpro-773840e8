@@ -54,8 +54,9 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   };
 
   const handleViewDetails = (slot: Slot) => {
-    setSelectedSlot(slot);
-    setIsDrawerOpen(true);
+    // This will be implemented in the future for the Spot Detail Page
+    console.log('View details for slot:', slot);
+    toast.info("Spot Detail Page coming soon!");
   };
 
   const statusOptions = [
