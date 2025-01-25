@@ -1,61 +1,61 @@
 import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
-import { Slot } from "@/types/slot";
+import { Site } from "@/types/site";
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
-import { getSlotColumns } from "./table/SlotTableColumns";
+import { getSiteColumns } from "./table/SiteTableColumns";
 
-interface SlotTableProps {
-  onEdit?: (slot: Slot) => void;
+interface SiteTableProps {
+  onEdit?: (site: Site) => void;
 }
 
-export function SlotTable({ onEdit }: SlotTableProps) {
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+export function SiteTable({ onEdit }: SiteTableProps) {
+  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data: slots = [], isLoading, refetch } = useQuery({
-    queryKey: ['slots'],
+  const { data: sites = [], isLoading, refetch } = useQuery({
+    queryKey: ['sites'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('slots')
+        .from('sites')
         .select('*');
 
       if (error) {
-        toast.error("Failed to fetch slots");
+        toast.error("Failed to fetch sites");
         return [];
       }
 
-      return data as Slot[];
+      return data as Site[];
     }
   });
 
-  const handleDelete = async (slot: Slot) => {
+  const handleDelete = async (site: Site) => {
     try {
       const { error } = await supabase
-        .from('slots')
+        .from('sites')
         .delete()
-        .eq('id', slot.id);
+        .eq('id', site.id);
 
       if (error) throw error;
 
-      toast.success("Slot deleted successfully");
+      toast.success("Site deleted successfully");
       refetch();
     } catch (error) {
-      toast.error("Failed to delete slot");
+      toast.error("Failed to delete site");
     }
   };
 
-  const handleEdit = (slot: Slot) => {
-    setSelectedSlot(slot);
+  const handleEdit = (site: Site) => {
+    setSelectedSite(site);
     setIsDrawerOpen(true);
   };
 
-  const handleViewDetails = (slot: Slot) => {
-    console.log('View details for slot:', slot);
-    toast.info("Spot Detail Page coming soon!");
+  const handleViewDetails = (site: Site) => {
+    console.log('View details for site:', site);
+    toast.info("Site Detail Page coming soon!");
   };
 
   const statusOptions = [
@@ -65,7 +65,7 @@ export function SlotTable({ onEdit }: SlotTableProps) {
     { label: "Maintenance", value: "maintenance" }
   ];
 
-  const slotFields = [
+  const siteFields = [
     { name: 'name', label: 'Name', type: 'text' as const, required: true },
     { 
       name: 'status', 
@@ -104,11 +104,11 @@ export function SlotTable({ onEdit }: SlotTableProps) {
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
-        <DataTable<Slot>
-          data={slots}
-          columns={getSlotColumns()}
+        <DataTable<Site>
+          data={sites}
+          columns={getSiteColumns()}
           isLoading={isLoading}
-          tableName="slots"
+          tableName="sites"
           onViewDetails={handleViewDetails}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -123,20 +123,20 @@ export function SlotTable({ onEdit }: SlotTableProps) {
         />
 
         <EntityDrawer
-          entity={selectedSlot}
+          entity={selectedSite}
           open={isDrawerOpen}
           onClose={() => {
             setIsDrawerOpen(false);
-            setSelectedSlot(null);
+            setSelectedSite(null);
           }}
           onEntityUpdated={() => {
             refetch();
             setIsDrawerOpen(false);
-            setSelectedSlot(null);
+            setSelectedSite(null);
           }}
-          title="Slot"
-          fields={slotFields}
-          tableName="slots"
+          title="Site"
+          fields={siteFields}
+          tableName="sites"
         />
       </div>
     </Card>

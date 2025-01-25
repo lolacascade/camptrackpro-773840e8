@@ -10,13 +10,13 @@ interface SlotSelectProps {
 }
 
 export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
-  const { data: slots = [] } = useQuery({
-    queryKey: ['available-slots', dateRange],
+  const { data: sites = [] } = useQuery({
+    queryKey: ['available-sites', dateRange],
     queryFn: async () => {
       if (!dateRange?.from || !dateRange?.to) return [];
 
       const { data, error } = await supabase
-        .from('slots')
+        .from('sites')
         .select('*')
         .eq('status', 'available');
 
@@ -26,9 +26,9 @@ export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
     enabled: !!dateRange?.from && !!dateRange?.to
   });
 
-  const options = slots.map(slot => ({
-    value: slot.id.toString(),
-    label: `${slot.name} (${slot.length_ft}' x ${slot.width_ft}')`
+  const options = sites.map(site => ({
+    value: site.id.toString(),
+    label: `${site.name} (${site.length_ft}' x ${site.width_ft}')`
   }));
 
   return (

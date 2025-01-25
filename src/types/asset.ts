@@ -1,17 +1,22 @@
-import { BaseEntity } from "./common/base";
-import { PersonName } from "./common/person";
-import { Slot } from "./slot";
+import { Site } from "./site";
+import { Customer } from "./customer";
 
-export interface Asset extends BaseEntity {
+export interface Asset {
+  id: string;
+  name: string;
+  type: string;
+  status: 'available' | 'occupied' | 'maintenance';
+  daily_rate: number;
   asset_name: string | null;
   asset_size: string | null;
   asset_type: string | null;
+  site_id: number | null;
   customer_id: string | null;
-  slip_id: number | null;
-  name: string;
-  type: string;
-  status: string;
-  daily_rate: number;
-  customers?: (PersonName & { id: string }) | null;
-  slots?: Slot | null;
+  user_id: string | null;
+  organization_id: string | null;
+  account_id: string | null;
+  created_at: string;
+  updated_at: string;
+  customer?: Customer;
+  site?: Site;
 }
