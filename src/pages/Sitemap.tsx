@@ -7,7 +7,7 @@ import { AddDockSpotDialog } from "@/components/marina/dock-spot-dialog/AddDockS
 import { SitemapHeader } from "@/components/marina/sitemap/SitemapHeader";
 import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
 import { useSitemapData } from "@/components/marina/sitemap/useSitemapData";
-import { Slot } from "@/types/slot";
+import type { Slot } from "@/types/slot";
 
 export default function Sitemap() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
