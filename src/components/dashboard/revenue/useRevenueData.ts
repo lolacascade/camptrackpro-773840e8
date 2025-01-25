@@ -1,25 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
-
-export type RevenueCategory = "all" | "dockage" | "storage" | "maintenance";
-
-interface ChartDataItem {
-  date: Date;
-  value: number;
-  month: string;
-  year: string;
-}
-
-interface MonthData {
-  total: number;
-  percentageChange: number;
-}
-
-interface RevenueData {
-  chartData: ChartDataItem[];
-  currentMonth: MonthData;
-}
+import { RevenueCategory, RevenueData, MonthData, ChartDataItem } from "./types";
 
 interface Invoice {
   id: string;
@@ -28,10 +10,15 @@ interface Invoice {
   created_at: string;
 }
 
+interface QueryResult {
+  chartData: ChartDataItem[];
+  currentMonth: MonthData;
+}
+
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<RevenueData>({
+  return useQuery<QueryResult>({
     queryKey: ['revenue', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
@@ -50,7 +37,7 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
       }
 
       const invoices = data as Invoice[];
-      const chartData = processInvoicesData(invoices);
+      const chartData = processInvoicesData(invoices, selectedCategory);
       const currentMonth = getCurrentMonthData(invoices);
 
       return {
@@ -62,8 +49,12 @@ export function useRevenueData(selectedCategory: RevenueCategory) {
   });
 }
 
-function processInvoicesData(invoices: Invoice[]): ChartDataItem[] {
-  const groupedData = invoices.reduce<ChartDataItem[]>((acc, invoice) => {
+function processInvoicesData(invoices: Invoice[], category: RevenueCategory): ChartDataItem[] {
+  return invoices.reduce<ChartDataItem[]>((acc, invoice) => {
+    if (category !== 'all' && invoice.type !== category) {
+      return acc;
+    }
+
     const date = new Date(invoice.created_at);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     
@@ -84,9 +75,7 @@ function processInvoicesData(invoices: Invoice[]): ChartDataItem[] {
     }
 
     return acc;
-  }, []);
-
-  return groupedData.sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, []).sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
 function getCurrentMonthData(invoices: Invoice[]): MonthData {
@@ -96,13 +85,32 @@ function getCurrentMonthData(invoices: Invoice[]): MonthData {
   const lastMonth = currentMonth === 0 ? 11 : currentMonth - 1;
   const lastMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
-  const currentMonthTotal = invoices
-    .filter(invoice => {
-      const date = new Date(invoice.created_at);
-      return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-    })
-    .reduce((sum, invoice) => sum + (Number(invoice.amount) || 0), 0);
+  const currentMonthData = {
+    slipRenewals: 0,
+    newSlipRentals: 0,
+    maintenanceServices: 0,
+    percentageChange: 0
+  };
 
+  // Calculate totals for current month
+  invoices.forEach(invoice => {
+    const date = new Date(invoice.created_at);
+    if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+      switch (invoice.type) {
+        case 'dockage':
+          currentMonthData.slipRenewals += Number(invoice.amount) || 0;
+          break;
+        case 'storage':
+          currentMonthData.newSlipRentals += Number(invoice.amount) || 0;
+          break;
+        case 'maintenance':
+          currentMonthData.maintenanceServices += Number(invoice.amount) || 0;
+          break;
+      }
+    }
+  });
+
+  // Calculate percentage change
   const lastMonthTotal = invoices
     .filter(invoice => {
       const date = new Date(invoice.created_at);
@@ -110,12 +118,13 @@ function getCurrentMonthData(invoices: Invoice[]): MonthData {
     })
     .reduce((sum, invoice) => sum + (Number(invoice.amount) || 0), 0);
 
-  const percentageChange = lastMonthTotal === 0 
+  const currentMonthTotal = currentMonthData.slipRenewals + 
+                          currentMonthData.newSlipRentals + 
+                          currentMonthData.maintenanceServices;
+
+  currentMonthData.percentageChange = lastMonthTotal === 0 
     ? 100 
     : ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
 
-  return {
-    total: currentMonthTotal,
-    percentageChange,
-  };
+  return currentMonthData;
 }
