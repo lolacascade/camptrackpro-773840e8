@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { RevenueCategory } from "./types";
 
-type ChartDataItem = {
+interface ChartDataItem {
   monthKey: string;
   date: Date;
   amount: number;
@@ -12,9 +12,9 @@ type ChartDataItem = {
   slipRenewals: number;
   newSlipRentals: number;
   maintenanceServices: number;
-};
+}
 
-type MonthData = {
+interface MonthData {
   date: Date;
   month: string;
   year: string;
@@ -23,17 +23,17 @@ type MonthData = {
   maintenanceServices: number;
   total: number;
   count: number;
-};
+}
 
-type RevenueData = {
+interface RevenueQueryResult {
   chartData: ChartDataItem[];
   currentMonth: MonthData;
-};
+}
 
 export function useRevenueData(selectedCategory: RevenueCategory) {
   const { organizationId, accountId } = useOrganization();
 
-  return useQuery<RevenueData>({
+  return useQuery<RevenueQueryResult>({
     queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
