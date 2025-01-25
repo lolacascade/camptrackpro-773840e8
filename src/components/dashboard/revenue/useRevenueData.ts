@@ -1,42 +1,80 @@
 import { useQuery } from "@tanstack/react-query";
-import { RevenueCategory, RevenueData } from "./types";
-import { format, subMonths, addMonths } from "date-fns";
+import { RevenueCategory } from "./types";
+import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
+import { toast } from "sonner";
 
 export function useRevenueData(selectedCategory: RevenueCategory) {
-  const { data, isLoading } = useQuery({
-    queryKey: ['revenue-breakdown', selectedCategory],
+  const { organizationId, accountId } = useOrganization();
+
+  return useQuery({
+    queryKey: ['revenue-breakdown', selectedCategory, organizationId, accountId],
     queryFn: async () => {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return generateMonthlyData();
-    }
+      if (!organizationId || !accountId) {
+        throw new Error("Organization or account context not found");
+      }
+
+      const { data: invoices, error } = await supabase
+        .from('invoices')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
+
+      if (error) {
+        console.error('Error fetching revenue data:', error);
+        throw error;
+      }
+
+      // Process invoices into chart data
+      const chartData = processInvoicesData(invoices);
+      const currentMonth = getCurrentMonthData(invoices);
+
+      return {
+        chartData,
+        currentMonth
+      };
+    },
+    enabled: !!organizationId && !!accountId
   });
-
-  const currentDate = new Date();
-  const currentMonthData = data?.find(item => 
-    format(item.date, 'MMM yyyy') === format(currentDate, 'MMM yyyy')
-  );
-
-  return { data, isLoading, currentMonthData };
 }
 
-function generateMonthlyData() {
+function processInvoicesData(invoices: any[]) {
+  // Group invoices by month and calculate totals
+  const groupedData = invoices.reduce((acc: any[], invoice) => {
+    const date = new Date(invoice.created_at);
+    const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    
+    const existingMonth = acc.find(item => item.monthKey === monthKey);
+    if (existingMonth) {
+      existingMonth.amount += invoice.amount;
+    } else {
+      acc.push({
+        monthKey,
+        date,
+        amount: invoice.amount,
+        month: date.toLocaleString('default', { month: 'short' }),
+        year: date.getFullYear()
+      });
+    }
+    return acc;
+  }, []);
+
+  return groupedData.sort((a, b) => a.date - b.date);
+}
+
+function getCurrentMonthData(invoices: any[]) {
   const currentDate = new Date();
-  const data = [];
-  
-  for (let i = -12; i <= 11; i++) {
-    const date = i === 0 ? currentDate : (i < 0 ? subMonths(currentDate, Math.abs(i)) : addMonths(currentDate, i));
-    const monthData = {
-      date: date,
-      month: format(date, 'MMM'),
-      year: format(date, 'yyyy'),
-      slipRenewals: Math.random() * 8000 + 2000,
-      newSlipRentals: Math.random() * 8000 + 2000,
-      maintenanceServices: Math.random() * 3000 + 1000,
-      isProjected: i > 0
-    };
-    data.push(monthData);
-  }
-  
-  return data;
+  const currentMonth = currentDate.getMonth();
+  const currentYear = currentDate.getFullYear();
+
+  const currentMonthInvoices = invoices.filter(invoice => {
+    const invoiceDate = new Date(invoice.created_at);
+    return invoiceDate.getMonth() === currentMonth && 
+           invoiceDate.getFullYear() === currentYear;
+  });
+
+  return {
+    total: currentMonthInvoices.reduce((sum, invoice) => sum + invoice.amount, 0),
+    count: currentMonthInvoices.length
+  };
 }

@@ -1,20 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useSession } from '@supabase/auth-helpers-react';
+import { useOrganization } from "@/hooks/use-organization";
 import type { Expense } from "@/types/expense";
 
 export function useExpenseData() {
-  const session = useSession();
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
 
   const { data: expenses = [], isLoading, refetch } = useQuery({
-    queryKey: ['expenses', session?.user.id],
+    queryKey: ['expenses', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        toast({
+          title: "Error",
+          description: "Organization or account context not found",
+          variant: "destructive",
+        });
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
-        .eq('user_id', session?.user.id)
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId)
         .order('date', { ascending: false });
 
       if (error) {
@@ -27,9 +37,9 @@ export function useExpenseData() {
         return [];
       }
 
-      return data;
+      return data as Expense[];
     },
-    enabled: !!session?.user.id,
+    enabled: !!organizationId && !!accountId,
   });
 
   return { expenses, isLoading, refetch };

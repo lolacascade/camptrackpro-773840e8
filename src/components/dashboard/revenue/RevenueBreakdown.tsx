@@ -7,10 +7,16 @@ import { useState } from "react";
 import { useRevenueData } from "./useRevenueData";
 import { RevenueCategory } from "./types";
 import { RevenueBreakdownSkeleton } from "./RevenueBreakdownSkeleton";
+import { toast } from "sonner";
 
 export function RevenueBreakdown() {
   const [selectedCategory, setSelectedCategory] = useState<RevenueCategory>("all");
-  const { data, isLoading, currentMonthData } = useRevenueData(selectedCategory);
+  const { data, isLoading, error } = useRevenueData(selectedCategory);
+
+  if (error) {
+    toast.error("Failed to load revenue data. Please try again.");
+    return null;
+  }
 
   if (isLoading) {
     return <RevenueBreakdownSkeleton />;
@@ -23,10 +29,10 @@ export function RevenueBreakdown() {
         <RevenueFilter value={selectedCategory} onChange={setSelectedCategory} />
       </CardHeader>
       <CardContent>
-        <RevenueStats currentMonthData={currentMonthData} />
+        <RevenueStats currentMonthData={data?.currentMonth} />
         <div className="space-y-4">
           <RevenueAnnotations />
-          <RevenueChart data={data} selectedCategory={selectedCategory} />
+          <RevenueChart data={data?.chartData || []} selectedCategory={selectedCategory} />
         </div>
       </CardContent>
     </Card>

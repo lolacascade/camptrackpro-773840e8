@@ -1,92 +1,81 @@
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { format } from "date-fns";
-import type { Expense } from "@/types/expense";
+import { Card } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
+import { toast } from "sonner";
+import { Expense } from "@/types/expense";
 
 interface ExpenseTableProps {
-  expenses: Expense[];
-  onEdit: (expense: Expense) => void;
-  onDelete?: (expense: Expense) => void;
-  onViewDetails?: (expense: Expense) => void;
+  onEdit?: (expense: Expense) => void;
 }
 
-export function ExpenseTable({ expenses, onEdit, onDelete, onViewDetails }: ExpenseTableProps) {
+export function ExpenseTable({ onEdit }: ExpenseTableProps) {
+  const { organizationId, accountId } = useOrganization();
+
+  const { data: expenses = [], isLoading, error } = useQuery({
+    queryKey: ['expenses', organizationId, accountId],
+    queryFn: async () => {
+      if (!organizationId || !accountId) {
+        throw new Error("Organization or account context not found");
+      }
+
+      const { data, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId)
+        .order('date', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching expenses:', error);
+        throw error;
+      }
+
+      return data as Expense[];
+    },
+    enabled: !!organizationId && !!accountId
+  });
+
+  if (error) {
+    toast.error("Failed to load expenses. Please try again.");
+  }
+
   const columns = [
     {
-      header: "Description",
       accessorKey: "description",
-      cell: (item: Expense) => item.description,
+      header: "Description"
     },
     {
-      header: "Type",
-      accessorKey: "category",
-      cell: (item: Expense) => item.category,
-    },
-    {
-      header: "Amount",
       accessorKey: "amount",
-      cell: (item: Expense) => `$${Number(item.amount).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })}`,
+      header: "Amount",
+      cell: ({ row }: { row: any }) => (
+        <span>${row.original.amount?.toLocaleString()}</span>
+      )
     },
     {
-      header: "Date",
+      accessorKey: "category",
+      header: "Category"
+    },
+    {
       accessorKey: "date",
-      cell: (item: Expense) => format(new Date(item.date), 'MMM dd, yyyy'),
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      cell: (item: Expense) => (
-        <span className={`capitalize ${
-          item.status === 'completed' ? 'text-green-600' : 
-          item.status === 'pending' ? 'text-yellow-600' : 'text-gray-600'
-        }`}>
-          {item.status}
-        </span>
-      ),
-    },
-  ];
-
-  const typeOptions = [
-    { label: "All Types", value: "all" },
-    { label: "Maintenance", value: "Maintenance" },
-    { label: "Utilities", value: "Utilities" },
-    { label: "Supplies", value: "Supplies" },
-    { label: "Administrative Costs", value: "Administrative Costs" },
-    { label: "Taxes", value: "Taxes" },
-    { label: "Capital Expenditures", value: "Capital Expenditures" },
-  ];
-
-  const statusOptions = [
-    { label: "All Statuses", value: "all" },
-    { label: "Completed", value: "completed" },
-    { label: "Pending", value: "pending" },
+      header: "Date",
+      cell: ({ row }: { row: any }) => (
+        <span>{new Date(row.original.date).toLocaleDateString()}</span>
+      )
+    }
   ];
 
   return (
-    <DataTable
-      data={expenses}
-      columns={columns}
-      onEdit={onEdit}
-      onDelete={onDelete}
-      onViewDetails={onViewDetails}
-      title="Expenses"
-      filters={[
-        {
-          name: "type",
-          options: typeOptions,
-          value: "all",
-          onChange: () => {},
-        },
-        {
-          name: "status",
-          options: statusOptions,
-          value: "all",
-          onChange: () => {},
-        },
-      ]}
-      tableName="expenses"
-    />
+    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+      <div className="p-4">
+        <DataTable
+          data={expenses}
+          columns={columns}
+          isLoading={isLoading}
+          onRowClick={onEdit}
+        />
+      </div>
+    </Card>
   );
 }
