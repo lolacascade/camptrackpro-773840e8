@@ -60,10 +60,35 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     addExampleBooking();
   }, []);
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, error } = useQuery({
     queryKey: ['bookings'],
     queryFn: async () => {
       console.log('Fetching bookings...');
+      
+      // First get the user's organization and account context
+      const { data: orgRoles, error: orgError } = await supabase
+        .from('organization_roles')
+        .select('organization_id')
+        .single();
+
+      if (orgError) {
+        console.error('Error fetching organization:', orgError);
+        toast.error("Failed to fetch organization context");
+        throw orgError;
+      }
+
+      const { data: accRoles, error: accError } = await supabase
+        .from('account_roles')
+        .select('account_id')
+        .single();
+
+      if (accError) {
+        console.error('Error fetching account:', accError);
+        toast.error("Failed to fetch account context");
+        throw accError;
+      }
+
+      // Then fetch bookings with organization and account filters
       const { data, error } = await supabase
         .from('bookings')
         .select(`
@@ -76,7 +101,9 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
           ),
           customer:customers(*),
           asset:assets(*)
-        `);
+        `)
+        .eq('organization_id', orgRoles.organization_id)
+        .eq('account_id', accRoles.account_id);
       
       if (error) {
         console.error('Error fetching bookings:', error);
@@ -121,6 +148,11 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
   };
+
+  // Handle query error
+  if (error) {
+    toast.error("Failed to load bookings. Please try again.");
+  }
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
