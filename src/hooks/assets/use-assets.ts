@@ -2,12 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
-import { useProfile } from "@/hooks/use-profile";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
   const session = useSession();
-  const { data: profile } = useProfile();
   const { organizationId, accountId } = useOrganization();
 
   return useQuery({
@@ -17,13 +15,11 @@ export function useAssets() {
         throw new Error("No authenticated user");
       }
 
-      if (!profile) {
-        throw new Error("No user profile found");
-      }
-
       if (!organizationId || !accountId) {
         throw new Error("No organization or account context found");
       }
+
+      console.log('Fetching assets with org:', organizationId, 'account:', accountId);
 
       const query = supabase
         .from("assets")

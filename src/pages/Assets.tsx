@@ -7,7 +7,6 @@ import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { PageWithChat } from "@/components/layout/PageWithChat";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Assets() {
@@ -39,9 +38,7 @@ export default function Assets() {
     setSelectedAsset(null);
   };
 
-  // Handle error outside of render
   if (error) {
-    // Use setTimeout to avoid state updates during render
     setTimeout(() => {
       toast({
         title: "Error",
@@ -56,17 +53,13 @@ export default function Assets() {
       <PageContainer>
         <div className="space-y-6">
           <AssetsHeader onAddAsset={handleAddAsset} />
-          <Card className="p-6">
-            <AssetStatsCards />
-            <div className="mt-6">
-              <AssetTable
-                assets={assets}
-                onEdit={handleEditClick}
-                onViewDetails={handleViewDetails}
-                isLoading={isLoading}
-              />
-            </div>
-          </Card>
+          <AssetStatsCards />
+          <AssetTable
+            assets={assets}
+            onEdit={handleEditClick}
+            onViewDetails={handleViewDetails}
+            isLoading={isLoading}
+          />
           <AssetDrawer
             open={isDrawerOpen}
             onClose={handleCloseDrawer}
