@@ -1,40 +1,46 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function useOrganization() {
-  const [organizationId, setOrganizationId] = useState<string | null>(null);
-  const [accountId, setAccountId] = useState<string | null>(null);
-
-  useEffect(() => {
-    async function fetchUserContext() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      // Get user's organization role
-      const { data: orgRole } = await supabase
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['organization-context'],
+    queryFn: async () => {
+      // Get organization role
+      const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id')
-        .eq('user_id', user.id)
         .single();
 
-      if (orgRole) {
-        setOrganizationId(orgRole.organization_id);
-        
-        // Get user's account role
-        const { data: accRole } = await supabase
-          .from('account_roles')
-          .select('account_id')
-          .eq('user_id', user.id)
-          .single();
-        
-        if (accRole) {
-          setAccountId(accRole.account_id);
-        }
+      if (orgError) {
+        console.error('Error fetching organization:', orgError);
+        toast.error("Failed to fetch organization context");
+        return { organizationId: undefined, accountId: undefined };
       }
+
+      // Get account role
+      const { data: accRoles, error: accError } = await supabase
+        .from('account_roles')
+        .select('account_id')
+        .single();
+
+      if (accError) {
+        console.error('Error fetching account:', accError);
+        toast.error("Failed to fetch account context");
+        return { organizationId: orgRoles?.organization_id, accountId: undefined };
+      }
+
+      return {
+        organizationId: orgRoles?.organization_id,
+        accountId: accRoles?.account_id
+      };
     }
+  });
 
-    fetchUserContext();
-  }, []);
-
-  return { organizationId, accountId };
+  return {
+    organizationId: data?.organizationId,
+    accountId: data?.accountId,
+    isLoading,
+    error
+  };
 }

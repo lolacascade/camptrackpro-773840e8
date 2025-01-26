@@ -78,7 +78,9 @@ export function DataTable<T extends { id?: number | string }>({
           event: '*',
           schema: 'public',
           table: tableName,
-          filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
+          filter: organizationId && accountId 
+            ? `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
+            : undefined
         },
         async (payload) => {
           console.log('Change received!', payload);
