@@ -48,35 +48,35 @@ export default function Sitemap() {
 
   return (
     <PageWithChat>
-      <PageContainer className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-semibold text-[#133134]">Sitemap</h1>
-          <Button onClick={() => setIsDrawerOpen(true)}>
-            <Plus className="h-4 w-4" />
-            Add Site
-          </Button>
-        </div>
+      <PageContainer>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold text-[#133134]">Sitemap</h1>
+            <Button onClick={() => setIsDrawerOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Site
+            </Button>
+          </div>
 
-        {stats && (
-          <SitemapStats
+          {stats && <SitemapStats
             totalSlots={stats.totalSlots}
             occupiedSlots={stats.occupiedSlots}
             maintenanceSlots={stats.maintenanceSlots}
             occupancyRate={stats.occupancyRate}
+          />}
+
+          <SiteTable />
+
+          <EntityDrawer
+            entity={null}
+            open={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            onEntityUpdated={() => setIsDrawerOpen(false)}
+            title="Site"
+            fields={siteFields}
+            tableName="sites"
           />
-        )}
-
-        <SiteTable />
-
-        <EntityDrawer
-          entity={null}
-          open={isDrawerOpen}
-          onClose={() => setIsDrawerOpen(false)}
-          onEntityUpdated={() => setIsDrawerOpen(false)}
-          title="Site"
-          fields={siteFields}
-          tableName="sites"
-        />
+        </div>
       </PageContainer>
     </PageWithChat>
   );

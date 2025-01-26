@@ -17,7 +17,7 @@ export function PageContainer({ children, className }: PageContainerProps) {
         "h-full px-1 sm:px-2 md:px-3 py-2",
         className
       )}>
-        <div className="h-full rounded-lg sm:rounded-[24px] bg-white p-3 sm:p-4 md:p-6 lg:p-8 relative">
+        <div className="h-full rounded-lg sm:rounded-[24px] bg-white p-6 relative">
           {isSettingsPage && <LogoutButton />}
           {children}
         </div>
