@@ -17,6 +17,11 @@ export interface Field {
   options?: { value: string; label: string }[];
 }
 
+export interface FormField extends Field {
+  value: any;
+  onChange: (value: any) => void;
+}
+
 export interface EntityDrawerProps {
   entity: any;
   open: boolean;
@@ -25,4 +30,13 @@ export interface EntityDrawerProps {
   title: string;
   fields: Field[];
   tableName: TableName;
+}
+
+export interface UseEntityFormReturn {
+  formData: any;
+  setFormData: (value: any) => void;
+  isDeleting: boolean;
+  isSaving: boolean;
+  handleSave: () => Promise<void>;
+  handleDelete: () => Promise<void>;
 }

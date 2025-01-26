@@ -36,7 +36,7 @@ export function EntityDrawer({
             field={{
               ...field,
               value: formData[field.name],
-              onChange: (value) => setFormData(prev => ({ ...prev, [field.name]: value }))
+              onChange: (value) => setFormData((prev: any) => ({ ...prev, [field.name]: value }))
             }}
           />
         ))}

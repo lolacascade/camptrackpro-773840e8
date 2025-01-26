@@ -3,38 +3,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useOrganization } from "@/hooks/use-organization";
+import type { Field, TableName, UseEntityFormReturn } from "./types";
 
-type TableName = "sites" | "customers" | "assets" | "bookings" | "maintenance_requests";
-
-interface EntityField {
-  name: string;
-  label: string;
-  type: "text" | "number" | "select" | "boolean";
-  required?: boolean;
-  options?: Array<{ value: string; label: string }>;
-}
-
-interface UseEntityFormProps {
-  entity: any;
-  tableName: TableName;
-  fields: EntityField[];
-  onEntityUpdated: () => void;
-}
-
-export function useEntityForm({ entity, tableName, fields, onEntityUpdated }: UseEntityFormProps) {
+export function useEntityForm(
+  entity: any,
+  fields: Field[],
+  tableName: TableName,
+  onEntityUpdated: () => void,
+  onClose: () => void
+): UseEntityFormReturn {
   const { toast } = useToast();
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const [formData, setFormData] = useState(
     entity || fields.reduce((acc: any, field) => ({ ...acc, [field.name]: "" }), {})
   );
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleFieldChange = (name: string, value: any) => {
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     try {
+      setIsSaving(true);
       if (!session?.user?.id) {
         toast({
           title: "Error",
@@ -91,19 +80,54 @@ export function useEntityForm({ entity, tableName, fields, onEntityUpdated }: Us
       }
 
       onEntityUpdated();
-    } catch (error) {
+      onClose();
+    } catch (error: any) {
       console.error("Error saving entity:", error);
       toast({
         title: "Error",
-        description: "Failed to save entity. Please try again.",
+        description: error.message || "Failed to save entity. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      setIsDeleting(true);
+      const { error } = await supabase
+        .from(tableName)
+        .delete()
+        .eq("id", entity.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Entity deleted successfully",
+      });
+
+      onEntityUpdated();
+      onClose();
+    } catch (error: any) {
+      console.error("Error deleting entity:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete entity. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   return {
     formData,
-    handleFieldChange,
-    handleSubmit,
+    setFormData,
+    isDeleting,
+    isSaving,
+    handleSave,
+    handleDelete,
   };
 }
