@@ -6,12 +6,12 @@ import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { SiteTable } from "@/components/sites/SiteTable";
 import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
 import { useState } from "react";
-import { useMarina } from "@/hooks/use-marina-summary";
+import { useMarinaSummary } from "@/hooks/use-marina-summary";
 import type { Field } from "@/components/common/EntityDrawer/types";
 
 export default function Sitemap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { stats } = useMarina();
+  const { data: stats } = useMarinaSummary();
 
   const siteFields: Field[] = [
     {
