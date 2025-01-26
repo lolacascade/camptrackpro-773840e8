@@ -2,9 +2,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FormSelect } from "@/components/common/FormSelect"
 import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Button } from "@/components/ui/button"
-import { CalendarIcon } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import type { FormField } from "./types"
@@ -32,28 +29,14 @@ export function EntityField({ field }: { field: FormField }) {
         )
       case 'date':
         return (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                className={cn(
-                  "w-full justify-start text-left font-normal bg-white",
-                  !field.value && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {field.value ? format(new Date(field.value), "PPP") : "Pick a date"}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-white" align="start">
-              <Calendar
-                mode="single"
-                selected={field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => field.onChange(date?.toISOString())}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
+          <div className="relative">
+            <Input
+              type="date"
+              value={field.value ? format(new Date(field.value), "yyyy-MM-dd") : ''}
+              onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value).toISOString() : null)}
+              className="bg-white"
+            />
+          </div>
         )
       default:
         return (
