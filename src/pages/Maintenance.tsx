@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { useOrganization } from "@/hooks/use-organization";
 
 export default function Maintenance() {
   const { toast } = useToast();
@@ -17,10 +18,15 @@ export default function Maintenance() {
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const { organizationId, accountId } = useOrganization();
 
   const { data: maintenanceRequests = [], isLoading, refetch } = useQuery({
-    queryKey: ['maintenance_requests', statusFilter],
+    queryKey: ['maintenance_requests', statusFilter, organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        return [];
+      }
+
       try {
         let query = supabase
           .from('maintenance_requests')
@@ -34,9 +40,11 @@ export default function Maintenance() {
             updated_at,
             completed_at,
             customer_id,
-            slot_id,
+            site_id,
             user_id
-          `);
+          `)
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId);
 
         if (statusFilter !== 'all') {
           query = query.eq('status', statusFilter);
@@ -49,7 +57,7 @@ export default function Maintenance() {
           throw error;
         }
 
-        return data || [];
+        return data as Maintenance[];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
         toast({
@@ -60,6 +68,7 @@ export default function Maintenance() {
         return [];
       }
     },
+    enabled: !!organizationId && !!accountId
   });
 
   const handleEdit = (maintenance: Maintenance) => {
