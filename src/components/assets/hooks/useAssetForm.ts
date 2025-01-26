@@ -3,6 +3,7 @@ import { Asset } from "@/types/asset";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface UseAssetFormProps {
   onClose: () => void;
@@ -13,6 +14,7 @@ interface UseAssetFormProps {
 export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetFormProps) {
   const { toast } = useToast();
   const session = useSession();
+  const { organizationId, accountId } = useOrganization();
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
   const [newAsset, setNewAsset] = useState<Partial<Asset>>({
     asset_name: '',
@@ -24,16 +26,25 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     type: '',
     status: 'available',
     daily_rate: 0,
-    user_id: session?.user?.id || null
+    user_id: session?.user?.id || null,
+    organization_id: organizationId || null,
+    account_id: accountId || null
   });
 
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       try {
+        if (!organizationId || !accountId) {
+          console.error('No organization or account context found');
+          return;
+        }
+
         const { data, error } = await supabase
           .from('sites')
           .select('id, name')
-          .eq('status', 'available');
+          .eq('status', 'available')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId);
 
         if (error) throw error;
         setAvailableSlots(data || []);
@@ -48,13 +59,22 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     };
 
     fetchAvailableSlots();
-  }, [toast]);
+  }, [toast, organizationId, accountId]);
 
   const handleSubmit = async () => {
     if (!session?.user?.id) {
       toast({
         title: "Error",
         description: "You must be signed in to add assets.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!organizationId || !accountId) {
+      toast({
+        title: "Error",
+        description: "No organization or account context found.",
         variant: "destructive",
       });
       return;
@@ -82,6 +102,8 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         status: 'available',
         daily_rate: newAsset.daily_rate || 0,
         user_id: session.user.id,
+        organization_id: organizationId,
+        account_id: accountId
       };
 
       const { error } = await supabase
@@ -108,7 +130,9 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         type: '',
         status: 'available',
         daily_rate: 0,
-        user_id: session?.user?.id || null
+        user_id: session?.user?.id || null,
+        organization_id: organizationId || null,
+        account_id: accountId || null
       });
       
       onAssetAdded();
