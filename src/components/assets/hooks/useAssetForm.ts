@@ -60,10 +60,11 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
       return;
     }
 
-    if (!newAsset.asset_name || !newAsset.asset_size || !newAsset.asset_type || !newAsset.site_id) {
+    // Only check for required fields
+    if (!newAsset.asset_name || !newAsset.site_id) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields.",
+        description: "Please fill in RV Name/Identifier and select a Site.",
         variant: "destructive",
       });
       return;
@@ -72,12 +73,12 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     try {
       const assetData = {
         asset_name: newAsset.asset_name,
-        asset_size: newAsset.asset_size,
-        asset_type: newAsset.asset_type,
+        asset_size: newAsset.asset_size || null,
+        asset_type: newAsset.asset_type || null,
         site_id: newAsset.site_id,
         customer_id: newAsset.customer_id,
         name: newAsset.asset_name,
-        type: newAsset.asset_type,
+        type: newAsset.asset_type || null,
         status: 'available',
         daily_rate: newAsset.daily_rate || 0,
         user_id: session.user.id,

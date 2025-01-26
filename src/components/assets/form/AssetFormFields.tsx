@@ -41,7 +41,7 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_size">Size *</Label>
+        <Label htmlFor="asset_size">Size</Label>
         <Input
           id="asset_size"
           value={newAsset.asset_size || ''}
@@ -50,7 +50,7 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_type">RV Type *</Label>
+        <Label htmlFor="asset_type">RV Type</Label>
         <SelectField
           value={newAsset.asset_type || ''}
           onChange={(value) => setNewAsset({ ...newAsset, asset_type: value })}
