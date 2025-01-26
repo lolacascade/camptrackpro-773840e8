@@ -16,7 +16,10 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   const { organizationId, accountId } = useOrganization();
 
   const fetchCustomers = async () => {
-    if (!organizationId || !accountId) return;
+    if (!organizationId || !accountId) {
+      setIsLoading(false);
+      return;
+    }
     
     try {
       const { data, error } = await supabase
@@ -29,11 +32,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       setCustomers(data || []);
     } catch (error) {
       console.error('Error fetching customers:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load customers",
-        variant: "destructive",
-      });
+      toast.error("Failed to load customers");
     } finally {
       setIsLoading(false);
     }
@@ -54,18 +53,11 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Customer deleted successfully",
-      });
+      toast.success("Customer deleted successfully");
       fetchCustomers();
     } catch (error) {
       console.error('Error deleting customer:', error);
-      toast({
-        title: "Error",
-        description: "Failed to delete customer",
-        variant: "destructive",
-      });
+      toast.error("Failed to delete customer");
     }
   };
 
