@@ -10,17 +10,26 @@ export function useMarinaSummary() {
     queryFn: async () => {
       if (!session?.user?.id) return null;
 
-      const { data, error } = await supabase
-        .from('marina_details')
+      // Get all sites for the user
+      const { data: sites, error: sitesError } = await supabase
+        .from('sites')
         .select('*')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
+        .eq('user_id', session.user.id);
 
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
+      if (sitesError) throw sitesError;
 
-      return data;
+      // Calculate summary statistics
+      const totalSlots = sites?.length || 0;
+      const occupiedSlots = sites?.filter(site => site.status === 'occupied').length || 0;
+      const maintenanceSlots = sites?.filter(site => site.status === 'maintenance').length || 0;
+      const occupancyRate = totalSlots ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+
+      return {
+        totalSlots,
+        occupiedSlots,
+        maintenanceSlots,
+        occupancyRate
+      };
     },
     enabled: !!session?.user?.id
   });
