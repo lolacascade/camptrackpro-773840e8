@@ -1,19 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Site } from "@/types/site";
-import { useState } from "react";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { EntityDrawer } from "@/components/common/EntityDrawer";
-import { getSiteColumns } from "./table/SiteTableColumns";
 import { useOrganization } from "@/hooks/use-organization";
+import { toast } from "sonner";
 
 export function SiteTable() {
-  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { organizationId, accountId } = useOrganization();
 
-  const { data: sites = [], isLoading, refetch } = useQuery({
+  const { data: sites = [], isLoading } = useQuery({
     queryKey: ['sites', organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) return [];
@@ -26,100 +20,59 @@ export function SiteTable() {
 
       if (error) {
         console.error('Error fetching sites:', error);
-        toast.error("Failed to fetch sites");
+        toast.error('Failed to load sites');
         return [];
       }
 
-      return data as Site[];
+      return data || [];
     },
     enabled: !!organizationId && !!accountId
   });
 
-  const handleDelete = async (site: Site) => {
-    try {
-      const { error } = await supabase
-        .from('sites')
-        .delete()
-        .eq('id', site.id);
-
-      if (error) throw error;
-
-      toast.success("Site deleted successfully");
-      refetch();
-    } catch (error) {
-      console.error('Error deleting site:', error);
-      toast.error("Failed to delete site");
-    }
-  };
-
-  const siteFields = [
-    { name: 'name', label: 'Name', type: 'text' as const, required: true },
-    { 
-      name: 'status', 
-      label: 'Status', 
-      type: 'select' as const,
-      options: [
-        { value: 'available', label: 'Available' },
-        { value: 'occupied', label: 'Occupied' },
-        { value: 'maintenance', label: 'Maintenance' }
-      ]
+  const columns = [
+    {
+      header: "Name",
+      accessorKey: "name",
     },
-    { name: 'location_identifier', label: 'Location', type: 'text' as const },
-    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
-    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
-    { 
-      name: 'is_covered', 
-      label: 'Is Covered', 
-      type: 'select' as const,
-      options: [
-        { value: 'true', label: 'Yes' },
-        { value: 'false', label: 'No' }
-      ]
+    {
+      header: "Status",
+      accessorKey: "status",
     },
-    { 
-      name: 'has_water', 
-      label: 'Has Water', 
-      type: 'select' as const,
-      options: [
-        { value: 'true', label: 'Yes' },
-        { value: 'false', label: 'No' }
-      ]
+    {
+      header: "Location",
+      accessorKey: "location_identifier",
     },
-    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
+    {
+      header: "Length (ft)",
+      accessorKey: "length_ft",
+    },
+    {
+      header: "Width (ft)",
+      accessorKey: "width_ft",
+    },
+    {
+      header: "Covered",
+      accessorKey: "is_covered",
+      cell: (row: any) => row.is_covered ? "Yes" : "No",
+    },
+    {
+      header: "Water",
+      accessorKey: "has_water",
+      cell: (row: any) => row.has_water ? "Yes" : "No",
+    },
+    {
+      header: "Electricity",
+      accessorKey: "electricity_voltage",
+    },
   ];
 
   return (
-    <div className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <div className="p-4">
-        <DataTable
-          data={sites}
-          columns={getSiteColumns()}
-          isLoading={isLoading}
-          tableName="sites"
-          onEdit={(site) => {
-            setSelectedSite(site);
-            setIsDrawerOpen(true);
-          }}
-          onDelete={handleDelete}
-        />
-
-        <EntityDrawer
-          entity={selectedSite}
-          open={isDrawerOpen}
-          onClose={() => {
-            setIsDrawerOpen(false);
-            setSelectedSite(null);
-          }}
-          onEntityUpdated={() => {
-            refetch();
-            setIsDrawerOpen(false);
-            setSelectedSite(null);
-          }}
-          title="Site"
-          fields={siteFields}
-          tableName="sites"
-        />
-      </div>
-    </div>
+    <DataTable
+      data={sites}
+      columns={columns}
+      isLoading={isLoading}
+      title="Sitemap"
+      tableName="sites"
+    />
   );
 }
