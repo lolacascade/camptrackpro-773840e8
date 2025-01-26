@@ -5,9 +5,37 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
 
 export default function Sitemap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { organizationId, accountId } = useOrganization();
+
+  const { data: stats } = useQuery({
+    queryKey: ['site-stats', organizationId, accountId],
+    queryFn: async () => {
+      const { data: sites } = await supabase
+        .from('sites')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
+
+      const totalSlots = sites?.length || 0;
+      const occupiedSlots = sites?.filter(site => site.status === 'occupied').length || 0;
+      const maintenanceSlots = sites?.filter(site => site.status === 'maintenance').length || 0;
+      const occupancyRate = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+
+      return {
+        totalSlots,
+        occupiedSlots,
+        maintenanceSlots,
+        occupancyRate
+      };
+    },
+    enabled: !!organizationId && !!accountId
+  });
 
   return (
     <PageWithChat>
@@ -21,10 +49,10 @@ export default function Sitemap() {
           </div>
 
           <SitemapStats
-            totalSlots={100}
-            occupiedSlots={75}
-            maintenanceSlots={5}
-            occupancyRate={75}
+            totalSlots={stats?.totalSlots || 0}
+            occupiedSlots={stats?.occupiedSlots || 0}
+            maintenanceSlots={stats?.maintenanceSlots || 0}
+            occupancyRate={stats?.occupancyRate || 0}
           />
 
           <SiteTable />
