@@ -49,15 +49,21 @@ export function useEntityForm(
         return;
       }
 
-      // Clean up form data to handle empty strings for optional fields
+      // Clean up form data to handle empty strings and type conversions for optional fields
       const cleanedData = Object.entries(formData).reduce((acc: any, [key, value]) => {
-        // Convert empty strings to null for optional fields
         const field = fields.find(f => f.name === key);
-        if (!field?.required && value === "") {
+        
+        // Handle empty strings and type conversions
+        if (!field?.required && (value === "" || value === null || value === undefined)) {
           acc[key] = null;
+        } else if (field?.type === 'number' && value === "") {
+          acc[key] = null;
+        } else if (field?.type === 'checkbox' && value === "") {
+          acc[key] = false;
         } else {
           acc[key] = value;
         }
+        
         return acc;
       }, {});
 
