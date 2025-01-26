@@ -8,8 +8,10 @@ export interface Maintenance {
   updated_at: string | null;
   completed_at: string | null;
   customer_id: string | null;
-  slot_id: number | null;
+  site_id: number | null;
   user_id: string | null;
+  organization_id?: string | null;
+  account_id?: string | null;
 }
 
 export type MaintenanceStatus = 'pending' | 'in_progress' | 'completed';

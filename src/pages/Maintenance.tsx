@@ -24,6 +24,7 @@ export default function Maintenance() {
     queryKey: ['maintenance_requests', statusFilter, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
+        console.log('Missing organization or account ID');
         return [];
       }
 
@@ -41,7 +42,9 @@ export default function Maintenance() {
             completed_at,
             customer_id,
             site_id,
-            user_id
+            user_id,
+            organization_id,
+            account_id
           `)
           .eq('organization_id', organizationId)
           .eq('account_id', accountId);
@@ -80,6 +83,14 @@ export default function Maintenance() {
     setSelectedMaintenance(maintenance);
     setIsDrawerOpen(true);
   };
+
+  if (!organizationId || !accountId) {
+    return (
+      <div className="text-center p-4">
+        <p className="text-gray-500">Unable to load maintenance requests. Please ensure you're properly logged in.</p>
+      </div>
+    );
+  }
 
   return (
     <PageWithChat>
