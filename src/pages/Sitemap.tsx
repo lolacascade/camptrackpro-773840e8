@@ -83,7 +83,7 @@ export default function Sitemap() {
       <PageContainer>
         <div className="space-y-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold text-[#133134]">Sites</h1>
+            <h1 className="text-3xl font-semibold text-[#133134]">Sitemap</h1>
             <Button onClick={() => setIsDrawerOpen(true)}>
               <Plus className="h-4 w-4" />
               Add Site
