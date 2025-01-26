@@ -43,39 +43,7 @@ export default function Sitemap() {
   });
 
   const siteFields = [
-    { name: 'name', label: 'Name', type: 'text' as const, required: true },
-    { 
-      name: 'status', 
-      label: 'Status', 
-      type: 'select' as const,
-      options: [
-        { value: 'available', label: 'Available' },
-        { value: 'occupied', label: 'Occupied' },
-        { value: 'maintenance', label: 'Maintenance' }
-      ]
-    },
-    { name: 'location_identifier', label: 'Location', type: 'text' as const },
-    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
-    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
-    { 
-      name: 'is_covered', 
-      label: 'Is Covered', 
-      type: 'select' as const,
-      options: [
-        { value: 'true', label: 'Yes' },
-        { value: 'false', label: 'No' }
-      ]
-    },
-    { 
-      name: 'has_water', 
-      label: 'Has Water', 
-      type: 'select' as const,
-      options: [
-        { value: 'true', label: 'Yes' },
-        { value: 'false', label: 'No' }
-      ]
-    },
-    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
+    { name: 'name', label: 'Name', type: 'text' as const, required: true }
   ];
 
   return (
