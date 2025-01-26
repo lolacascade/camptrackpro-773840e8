@@ -2,18 +2,24 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
 import { useToast } from "@/components/ui/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { organizationId, accountId } = useOrganization();
 
   useEffect(() => {
     const fetchCustomers = async () => {
+      if (!organizationId || !accountId) return;
+
       try {
         const { data, error } = await supabase
           .from('customers')
           .select('*')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .order('first_name');
         
         if (error) throw error;
@@ -44,7 +50,7 @@ export function useCustomers() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [toast, organizationId, accountId]);
 
   return { customers, isLoading };
 }

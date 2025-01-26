@@ -1,12 +1,11 @@
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Booking } from "@/types/booking";
 import { useQuery } from "@tanstack/react-query";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { supabase } from "@/integrations/supabase/client";
-import { Site } from "@/types/site";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
@@ -22,25 +21,23 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     queryKey: ['bookings', organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        throw new Error("No organization or account context found");
+        console.error("No organization or account context found");
+        return [];
       }
+
+      console.log('Fetching bookings with:', { organizationId, accountId });
 
       const { data, error } = await supabase
         .from('bookings')
         .select(`
           *,
-          site:sites(
-            id, name, status, location_identifier, length_ft, width_ft, 
-            is_covered, has_water, electricity_voltage, utility_connection_type,
-            location_coordinates, customer_id, maintenance_id, created_at, updated_at,
-            last_activity_at, user_id
-          ),
           customer:customers(*),
-          asset:assets(*)
+          asset:assets(*),
+          site:sites(*)
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
-      
+
       if (error) {
         console.error('Error fetching bookings:', error);
         toast.error("Failed to fetch bookings");
@@ -48,7 +45,6 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
       }
 
       console.log('Bookings data received:', data);
-      
       return data as Booking[];
     },
     enabled: !!organizationId && !!accountId
@@ -58,16 +54,16 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     setSelectedStatus(value);
   };
 
-  // Handle query error
-  if (error) {
-    toast.error("Failed to load bookings. Please try again.");
-  }
+  // Filter bookings based on selected status
+  const filteredBookings = selectedStatus === "all" 
+    ? bookings 
+    : bookings.filter(booking => booking.status === selectedStatus);
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
         <DataTable
-          data={bookings}
+          data={filteredBookings}
           columns={getBookingColumns()}
           isLoading={isLoading}
           filters={[

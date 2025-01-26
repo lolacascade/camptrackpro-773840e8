@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { DateRange } from "react-day-picker";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface SlotSelectProps {
   value: string;
@@ -10,20 +11,24 @@ interface SlotSelectProps {
 }
 
 export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
+  const { organizationId, accountId } = useOrganization();
+
   const { data: sites = [] } = useQuery({
-    queryKey: ['available-sites', dateRange],
+    queryKey: ['available-sites', dateRange, organizationId, accountId],
     queryFn: async () => {
-      if (!dateRange?.from || !dateRange?.to) return [];
+      if (!dateRange?.from || !dateRange?.to || !organizationId || !accountId) return [];
 
       const { data, error } = await supabase
         .from('sites')
         .select('*')
-        .eq('status', 'available');
+        .eq('status', 'available')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) throw error;
       return data;
     },
-    enabled: !!dateRange?.from && !!dateRange?.to
+    enabled: !!dateRange?.from && !!dateRange?.to && !!organizationId && !!accountId
   });
 
   const options = sites.map(site => ({

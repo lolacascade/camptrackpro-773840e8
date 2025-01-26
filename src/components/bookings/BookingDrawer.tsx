@@ -14,6 +14,7 @@ import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
 import { useCustomers } from "./form/useCustomers";
 import { useQuery } from "@tanstack/react-query";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -33,6 +34,7 @@ type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const session = useSession();
+  const { organizationId, accountId } = useOrganization();
   const { customers } = useCustomers();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: new Date(),
@@ -70,8 +72,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
   const onSubmit = async (data: BookingFormData) => {
     try {
-      if (!session?.user?.id) {
-        toast.error("User not authenticated");
+      if (!session?.user?.id || !organizationId || !accountId) {
+        toast.error("Missing required context");
         return;
       }
 
@@ -85,8 +87,10 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending' as BookingStatus,
-        created_by: profile?.id, // This can now be null
+        created_by: profile?.id,
         user_id: session.user.id,
+        organization_id: organizationId,
+        account_id: accountId,
         total_amount: 0 // This will be calculated by the database function
       };
 
