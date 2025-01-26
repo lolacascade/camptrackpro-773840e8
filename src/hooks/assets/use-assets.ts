@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useProfile } from "@/hooks/use-profile";
-import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
@@ -41,7 +40,6 @@ export function useAssets() {
             state,
             country,
             postal_code,
-            lifetime_value,
             created_at,
             updated_at,
             user_id,
@@ -101,7 +99,6 @@ export function useAssets() {
           state: asset.customer.state,
           country: asset.customer.country,
           postal_code: asset.customer.postal_code,
-          lifetime_value: asset.customer.lifetime_value,
           user_id: asset.customer.user_id,
           created_at: new Date(asset.customer.created_at).toISOString(),
           updated_at: new Date(asset.customer.updated_at).toISOString()

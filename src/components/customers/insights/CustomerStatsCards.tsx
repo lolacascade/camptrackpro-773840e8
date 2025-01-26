@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useProfile } from "@/hooks/use-profile";
 import { StatsCard } from "@/components/common/StatsCard";
-import { Ship, DollarSign, Star, Calendar } from "lucide-react";
+import { Ship, Calendar, Star } from "lucide-react";
 
 interface CustomerStatsCardsProps {
   customer: Customer | null;
@@ -15,7 +15,7 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
   if (!customer) return null;
 
   return (
-    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       <StatsCard
         title="Active Assets"
         value="2"
@@ -28,20 +28,6 @@ export function CustomerStatsCards({ customer }: CustomerStatsCardsProps) {
         breakdown={[
           { label: "Long-term", value: "1" },
           { label: "Short-term", value: "1" }
-        ]}
-      />
-      <StatsCard
-        title="Lifetime Value"
-        value={`$${customer.lifetime_value?.toLocaleString() || '0'}`}
-        icon={DollarSign}
-        trend={{
-          value: "12%",
-          isPositive: true,
-          comparedTo: "than last year"
-        }}
-        breakdown={[
-          { label: "This Year", value: "$12,000" },
-          { label: "Last Year", value: "$10,000" }
         ]}
       />
       <StatsCard

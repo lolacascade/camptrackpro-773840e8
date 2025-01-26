@@ -12,8 +12,7 @@ export const getDefaultValues = (customer: Customer | null): CustomerFormData =>
       city: customer.city || '',
       state: customer.state || '',
       country: customer.country || '',
-      postal_code: customer.postal_code || '',
-      lifetime_value: customer.lifetime_value || ''
+      postal_code: customer.postal_code || ''
     };
   }
 
@@ -26,7 +25,6 @@ export const getDefaultValues = (customer: Customer | null): CustomerFormData =>
     city: '',
     state: '',
     country: '',
-    postal_code: '',
-    lifetime_value: ''
+    postal_code: ''
   };
 };

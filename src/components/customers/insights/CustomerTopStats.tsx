@@ -1,4 +1,4 @@
-import { Users, DollarSign, CalendarDays, Star } from "lucide-react";
+import { Users, CalendarDays, Star } from "lucide-react";
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Customer } from "@/types/customer";
 import { useCustomerStats } from "@/hooks/customers/useCustomerStats";
@@ -11,10 +11,9 @@ export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
   const { data: stats } = useCustomerStats(customer?.id.toString());
   const totalBookings = stats?.totalBookings || 0;
   const activeBookings = stats?.activeBookings || 0;
-  const lifetimeValue = customer.lifetime_value ? parseFloat(customer.lifetime_value) : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <EnhancedStatCard
         title="Total Bookings"
         value={String(totalBookings)}
@@ -27,21 +26,6 @@ export function CustomerTopStats({ customer }: CustomerTopStatsProps) {
         breakdown={[
           { label: "Active", value: String(activeBookings), percentage: 60 },
           { label: "Completed", value: String(totalBookings - activeBookings), percentage: 40 }
-        ]}
-      />
-
-      <EnhancedStatCard
-        title="Total Spent"
-        value={`$${lifetimeValue.toFixed(2)}`}
-        icon={DollarSign}
-        trend={{
-          value: "+12%",
-          isPositive: true,
-          comparedTo: "last month"
-        }}
-        breakdown={[
-          { label: "RV Rentals", value: "70%", percentage: 70 },
-          { label: "Services", value: "30%", percentage: 30 }
         ]}
       />
 
