@@ -52,12 +52,13 @@ export function AssetStatsCards() {
     queryFn: async (): Promise<AssetStats> => {
       if (!session?.user?.id) throw new Error("No authenticated user");
 
-      // Fetch assets with their booking status
+      // Fetch assets with their status and type
       const { data: assets } = await supabase
         .from('assets')
         .select(`
           id,
           asset_type,
+          status,
           bookings_assets (
             booking_id,
             bookings (
@@ -67,35 +68,30 @@ export function AssetStatsCards() {
         `)
         .eq('user_id', session.user.id);
 
-      // Fetch maintenance requests
+      if (!assets) return defaultStats;
+
+      // Calculate motorhomes and trailers based on asset_type
+      const motorhomes = assets.filter(a => 
+        ['Class A', 'Class B', 'Class C'].includes(a.asset_type || '')
+      ).length;
+      
+      const trailers = assets.filter(a => 
+        ['Travel Trailer', 'Fifth Wheel', 'Pop-up Camper'].includes(a.asset_type || '')
+      ).length;
+
+      // Calculate utilization based on asset status
+      const totalAssets = assets.length;
+      const occupiedAssets = assets.filter(a => a.status === 'occupied').length;
+      const utilizationPercentage = totalAssets > 0 
+        ? Math.round((occupiedAssets / totalAssets) * 100)
+        : 0;
+
+      // Keep existing maintenance and bookings calculations
       const { data: maintenance } = await supabase
         .from('maintenance_requests')
         .select('status, id')
         .eq('user_id', session.user.id);
 
-      // Calculate utilization
-      const totalAssets = assets?.length || 0;
-      const activeBookings = assets?.filter(asset => 
-        asset.bookings_assets?.some(ba => 
-          ba.bookings?.status === 'confirmed'
-        )
-      ).length || 0;
-
-      const utilizationPercentage = totalAssets > 0 
-        ? Math.round((activeBookings / totalAssets) * 100)
-        : 0;
-
-      const motorhomes = assets?.filter(a => 
-        ['Class A', 'Class B', 'Class C'].includes(a.asset_type || '')
-      ).length || 0;
-      
-      const trailers = assets?.filter(a => 
-        ['Travel Trailer', 'Fifth Wheel', 'Pop-up Camper'].includes(a.asset_type || '')
-      ).length || 0;
-      
-      const underMaintenance = maintenance?.length || 0;
-
-      // Fetch active and upcoming bookings
       const { data: bookings } = await supabase
         .from('bookings')
         .select('status')
@@ -105,7 +101,7 @@ export function AssetStatsCards() {
         totalAssets: {
           motorhomes,
           trailers,
-          underMaintenance
+          underMaintenance: assets.filter(a => a.status === 'maintenance').length
         },
         utilization: {
           utilized: utilizationPercentage,
