@@ -49,16 +49,7 @@ export function useEntityForm(
         return;
       }
 
-      // Set default values for required fields
-      const defaultData = {
-        status: 'available',
-        is_covered: false,
-        has_water: false,
-        electricity_voltage: '',
-      };
-
       const data = {
-        ...defaultData,
         ...formData,
         user_id: session.user.id,
         organization_id: organizationId,
