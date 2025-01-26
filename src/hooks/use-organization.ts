@@ -6,6 +6,8 @@ export function useOrganization() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context'],
     queryFn: async () => {
+      console.log('Fetching organization context...');
+      
       // Get organization role
       const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
@@ -18,6 +20,8 @@ export function useOrganization() {
         return { organizationId: undefined, accountId: undefined };
       }
 
+      console.log('Found organization:', orgRoles);
+
       // Get account role
       const { data: accRoles, error: accError } = await supabase
         .from('account_roles')
@@ -29,6 +33,8 @@ export function useOrganization() {
         toast.error("Failed to fetch account context");
         return { organizationId: orgRoles?.organization_id, accountId: undefined };
       }
+
+      console.log('Found account:', accRoles);
 
       return {
         organizationId: orgRoles?.organization_id,

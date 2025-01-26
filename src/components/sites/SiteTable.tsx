@@ -6,11 +6,19 @@ import { toast } from "sonner";
 
 export function SiteTable() {
   const { organizationId, accountId } = useOrganization();
+  
+  console.log('SiteTable - Organization ID:', organizationId);
+  console.log('SiteTable - Account ID:', accountId);
 
   const { data: sites = [], isLoading } = useQuery({
     queryKey: ['sites', organizationId, accountId],
     queryFn: async () => {
-      if (!organizationId || !accountId) return [];
+      console.log('Fetching sites with:', { organizationId, accountId });
+      
+      if (!organizationId || !accountId) {
+        console.log('Missing organization or account ID');
+        return [];
+      }
 
       const { data, error } = await supabase
         .from('sites')
@@ -24,6 +32,7 @@ export function SiteTable() {
         return [];
       }
 
+      console.log('Fetched sites:', data);
       return data || [];
     },
     enabled: !!organizationId && !!accountId
