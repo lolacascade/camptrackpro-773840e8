@@ -1,140 +1,109 @@
-import { useState } from "react"
-import { useSession } from '@supabase/auth-helpers-react'
-import { useToast } from "@/hooks/use-toast"
-import { supabase } from "@/integrations/supabase/client"
-import type { Field, TableName } from "./types"
-import { useQuery } from "@tanstack/react-query"
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "@supabase/auth-helpers-react";
+import { useOrganization } from "@/hooks/use-organization";
 
-export function useEntityForm(
-  entity: any,
-  fields: Field[],
-  tableName: TableName,
-  onEntityUpdated: () => void,
-  onClose: () => void
-) {
-  const { toast } = useToast()
-  const [formData, setFormData] = useState(entity || {})
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
-  const session = useSession()
+type TableName = "sites" | "customers" | "assets" | "bookings" | "maintenance_requests";
 
-  const { data: userProfile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: async () => {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session?.user?.id)
-        .single();
-      return profile;
-    },
-    enabled: !!session?.user?.id
-  });
+interface EntityField {
+  name: string;
+  label: string;
+  type: "text" | "number" | "select" | "boolean";
+  required?: boolean;
+  options?: Array<{ value: string; label: string }>;
+}
 
-  const handleSave = async () => {
-    if (!session?.user?.id || !userProfile?.organization_id || !userProfile?.account_id) {
-      toast({
-        title: "Error",
-        description: "You must be logged in and have an organization/account to perform this action.",
-        variant: "destructive",
-      })
-      return
-    }
+interface UseEntityFormProps {
+  entity: any;
+  tableName: TableName;
+  fields: EntityField[];
+  onEntityUpdated: () => void;
+}
 
-    const missingFields = fields
-      .filter(field => field.required && !formData[field.name])
-      .map(field => field.label)
+export function useEntityForm({ entity, tableName, fields, onEntityUpdated }: UseEntityFormProps) {
+  const { toast } = useToast();
+  const session = useSession();
+  const { organizationId, accountId } = useOrganization();
+  const [formData, setFormData] = useState(
+    entity || fields.reduce((acc: any, field) => ({ ...acc, [field.name]: "" }), {})
+  );
 
-    if (missingFields.length > 0) {
-      toast({
-        title: "Error",
-        description: `Required fields missing: ${missingFields.join(', ')}`,
-        variant: "destructive",
-      })
-      return
-    }
+  const handleFieldChange = (name: string, value: any) => {
+    setFormData((prev: any) => ({ ...prev, [name]: value }));
+  };
 
-    setIsSaving(true)
+  const handleSubmit = async () => {
     try {
-      const dataToSave = {
+      if (!session?.user?.id) {
+        toast({
+          title: "Error",
+          description: "You must be signed in to perform this action.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate required fields
+      const missingFields = fields
+        .filter((field) => field.required && !formData[field.name])
+        .map((field) => field.label);
+
+      if (missingFields.length > 0) {
+        toast({
+          title: "Error",
+          description: `Please fill in the following required fields: ${missingFields.join(
+            ", "
+          )}`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const data = {
         ...formData,
-        organization_id: userProfile.organization_id,
-        account_id: userProfile.account_id,
         user_id: session.user.id,
-        updated_at: new Date().toISOString(),
-      }
+        organization_id: organizationId,
+        account_id: accountId,
+      };
 
-      if (entity) {
+      if (entity?.id) {
         const { error } = await supabase
           .from(tableName)
-          .update(dataToSave)
-          .eq('id', entity.id)
+          .update(data)
+          .eq("id", entity.id);
 
-        if (error) throw error
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Entity updated successfully",
+        });
       } else {
-        const { error } = await supabase
-          .from(tableName)
-          .insert([{
-            ...dataToSave,
-            created_at: new Date().toISOString()
-          }])
+        const { error } = await supabase.from(tableName).insert([data]);
 
-        if (error) throw error
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Entity created successfully",
+        });
       }
 
-      toast({
-        title: "Success",
-        description: `Item ${entity ? 'updated' : 'added'} successfully.`,
-      })
-      onEntityUpdated()
-      onClose()
+      onEntityUpdated();
     } catch (error) {
-      console.error('Error saving:', error)
+      console.error("Error saving entity:", error);
       toast({
         title: "Error",
-        description: `Failed to ${entity ? 'update' : 'add'} item.`,
+        description: "Failed to save entity. Please try again.",
         variant: "destructive",
-      })
-    } finally {
-      setIsSaving(false)
+      });
     }
-  }
-
-  const handleDelete = async () => {
-    if (!entity || !session?.user?.id) return
-    setIsDeleting(true)
-    try {
-      const { error } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('id', entity.id)
-
-      if (error) throw error
-
-      toast({
-        title: "Success",
-        description: "Item deleted successfully.",
-      })
-      onEntityUpdated()
-      onClose()
-    } catch (error) {
-      console.error('Error deleting:', error)
-      toast({
-        title: "Error",
-        description: "Failed to delete item.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsDeleting(false)
-    }
-  }
+  };
 
   return {
     formData,
-    setFormData,
-    isDeleting,
-    isSaving,
-    handleSave,
-    handleDelete
-  }
+    handleFieldChange,
+    handleSubmit,
+  };
 }

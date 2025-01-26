@@ -1,58 +1,41 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@supabase/auth-helpers-react";
-import type { MaintenanceStats } from "../types/maintenance-stats";
-import { calculateRequestsByStatus } from "./calculations/requestStats";
-import { calculateResolutionTime } from "./calculations/resolutionStats";
-import { calculateCriticalIssues } from "./calculations/criticalStats";
-import { calculateEquipmentStatus } from "./calculations/equipmentStats";
-import type { Maintenance } from "@/types/maintenance";
+import { useOrganization } from "@/hooks/use-organization";
+import { Maintenance } from "@/types/maintenance";
 
 export function useMaintenanceStats() {
-  const session = useSession();
+  const { organizationId, accountId } = useOrganization();
 
   return useQuery({
-    queryKey: ['maintenance-stats'],
-    queryFn: async (): Promise<MaintenanceStats> => {
-      if (!session?.user?.id) throw new Error("No authenticated user");
-
-      // Fetch maintenance requests
-      const { data: requests, error: requestsError } = await supabase
-        .from('maintenance_requests')
+    queryKey: ["maintenance-stats", organizationId, accountId],
+    queryFn: async () => {
+      const { data: maintenanceRequests, error: maintenanceError } = await supabase
+        .from("maintenance_requests")
         .select(`
-          id,
-          description,
-          status,
-          priority,
-          created_at,
-          completed_at,
-          updated_at,
-          assigned_to,
-          customer_id,
-          slot_id,
-          user_id
+          *,
+          site:sites(*)
         `)
-        .eq('user_id', session.user.id);
+        .eq("organization_id", organizationId)
+        .eq("account_id", accountId);
 
-      if (requestsError) throw requestsError;
+      if (maintenanceError) throw maintenanceError;
 
-      // Get total slots count
-      const { count: totalSlots, error: slotsError } = await supabase
-        .from('slots')
-        .select('id', { count: 'exact', head: true })
-        .eq('user_id', session.user.id);
+      const { data: sites } = await supabase
+        .from("sites")
+        .select("*")
+        .eq("organization_id", organizationId)
+        .eq("account_id", accountId);
 
-      if (slotsError) throw slotsError;
+      const processedStats = maintenanceRequests.map(request => {
+        const site = sites.find(site => site.id === request.site_id);
+        return {
+          ...request,
+          site_name: site ? site.name : "Unknown"
+        };
+      });
 
-      const maintenanceRequests = requests as Maintenance[] || [];
-      
-      return {
-        totalRequests: calculateRequestsByStatus(maintenanceRequests),
-        resolutionTime: calculateResolutionTime(maintenanceRequests),
-        criticalIssues: calculateCriticalIssues(maintenanceRequests),
-        equipmentStatus: calculateEquipmentStatus(maintenanceRequests, totalSlots || 0)
-      };
+      return processedStats as Maintenance[];
     },
-    enabled: !!session?.user?.id,
+    enabled: !!organizationId && !!accountId,
   });
 }
