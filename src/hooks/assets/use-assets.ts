@@ -24,12 +24,12 @@ export function useAssets() {
         .from("assets")
         .select(`
           *,
-          customers (
+          customer:customers (
             id,
             first_name,
             last_name
           ),
-          slots:slip_id (
+          site:sites (
             id,
             name,
             status,
@@ -59,25 +59,46 @@ export function useAssets() {
       }
       
       return (data || []).map((asset): Asset => ({
-        ...asset,
         id: String(asset.id),
-        user_id: asset.user_id || null,
-        customers: asset.customers ? {
-          ...asset.customers,
-          id: String(asset.customers.id)
+        name: asset.name,
+        type: asset.type,
+        status: asset.status,
+        daily_rate: asset.daily_rate,
+        asset_name: asset.asset_name,
+        asset_size: asset.asset_size,
+        asset_type: asset.asset_type,
+        site_id: asset.site_id,
+        customer_id: asset.customer_id,
+        customer: asset.customer ? {
+          id: String(asset.customer.id),
+          first_name: asset.customer.first_name,
+          last_name: asset.customer.last_name,
+          email: '', // Required by Customer type but not needed here
+          created_at: new Date().toISOString(), // Required by Customer type but not needed here
+          updated_at: new Date().toISOString(), // Required by Customer type but not needed here
         } : null,
-        slots: asset.slots ? {
-          ...asset.slots,
-          id: Number(asset.slots.id),
-          status: asset.slots.status as 'available' | 'occupied' | 'maintenance',
-          length_ft: asset.slots.length_ft ? Number(asset.slots.length_ft) : null,
-          width_ft: asset.slots.width_ft ? Number(asset.slots.width_ft) : null,
-          maintenance_id: asset.slots.maintenance_id ? Number(asset.slots.maintenance_id) : null,
-          user_id: asset.slots.user_id || null,
-          created_at: new Date(asset.slots.created_at).toISOString(),
-          updated_at: new Date(asset.slots.updated_at).toISOString(),
-          last_activity_at: asset.slots.last_activity_at ? new Date(asset.slots.last_activity_at).toISOString() : null
+        site: asset.site ? {
+          id: Number(asset.site.id),
+          name: asset.site.name,
+          status: asset.site.status,
+          location_identifier: asset.site.location_identifier,
+          length_ft: asset.site.length_ft,
+          width_ft: asset.site.width_ft,
+          is_covered: asset.site.is_covered,
+          has_water: asset.site.has_water,
+          electricity_voltage: asset.site.electricity_voltage,
+          utility_connection_type: asset.site.utility_connection_type,
+          location_coordinates: asset.site.location_coordinates,
+          customer_id: asset.site.customer_id,
+          maintenance_id: asset.site.maintenance_id,
+          user_id: asset.site.user_id,
+          created_at: new Date(asset.site.created_at).toISOString(),
+          updated_at: new Date(asset.site.updated_at).toISOString(),
+          last_activity_at: asset.site.last_activity_at ? new Date(asset.site.last_activity_at).toISOString() : null,
         } : null,
+        user_id: asset.user_id,
+        organization_id: asset.organization_id,
+        account_id: asset.account_id,
         created_at: new Date(asset.created_at).toISOString(),
         updated_at: new Date(asset.updated_at).toISOString()
       }));
