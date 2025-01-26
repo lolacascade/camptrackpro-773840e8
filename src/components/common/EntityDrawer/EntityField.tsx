@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FormSelect } from "@/components/common/FormSelect"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
@@ -14,29 +14,12 @@ export function EntityField({ field }: { field: FormField }) {
     switch (field.type) {
       case 'select':
         return (
-          <Select
+          <FormSelect
             value={field.value?.toString() || ''}
             onValueChange={field.onChange}
-          >
-            <SelectTrigger className="w-full bg-white border-input">
-              <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
-            </SelectTrigger>
-            <SelectContent 
-              className="bg-white border shadow-md" 
-              position="popper"
-              sideOffset={5}
-            >
-              {field.options?.map(option => (
-                <SelectItem 
-                  key={option.value} 
-                  value={option.value}
-                  className="cursor-pointer hover:bg-gray-100"
-                >
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            options={field.options || []}
+            placeholder={`Select ${field.label.toLowerCase()}`}
+          />
         )
       case 'number':
         return (
