@@ -3,6 +3,7 @@ import { Caravan, Activity, Wrench, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface AssetStats {
   totalAssets: {
@@ -46,11 +47,13 @@ const defaultStats: AssetStats = {
 
 export function AssetStatsCards() {
   const session = useSession();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   const { data: stats = defaultStats } = useQuery({
-    queryKey: ['asset-stats'],
+    queryKey: ['asset-stats', organizationId, accountId],
     queryFn: async (): Promise<AssetStats> => {
       if (!session?.user?.id) throw new Error("No authenticated user");
+      if (!organizationId || !accountId) throw new Error("No organization or account context");
 
       // Fetch assets with their status and type
       const { data: assets } = await supabase
@@ -66,7 +69,8 @@ export function AssetStatsCards() {
             )
           )
         `)
-        .eq('user_id', session.user.id);
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (!assets) return defaultStats;
 
@@ -90,12 +94,14 @@ export function AssetStatsCards() {
       const { data: maintenance } = await supabase
         .from('maintenance_requests')
         .select('status, id')
-        .eq('user_id', session.user.id);
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       const { data: bookings } = await supabase
         .from('bookings')
         .select('status')
-        .eq('user_id', session.user.id);
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       return {
         totalAssets: {
@@ -117,7 +123,7 @@ export function AssetStatsCards() {
         }
       };
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,
   });
 
   return (
