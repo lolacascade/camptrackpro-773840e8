@@ -8,11 +8,13 @@ import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { useToast } from "@/hooks/use-toast";
+import { useOrganization } from "@/hooks/use-organization";
 
 export default function Assets() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const { data: assets = [], isLoading, error } = useAssets();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
+  const { data: assets = [], isLoading: isLoadingAssets, error } = useAssets();
   const { toast } = useToast();
 
   const handleAddAsset = () => {
@@ -38,15 +40,17 @@ export default function Assets() {
     setSelectedAsset(null);
   };
 
-  if (error) {
+  if (error || (!organizationId && !isLoadingOrg)) {
     setTimeout(() => {
       toast({
         title: "Error",
-        description: "Failed to load assets. Please try again.",
+        description: error ? "Failed to load assets. Please try again." : "No organization found. Please set up your organization first.",
         variant: "destructive",
       });
     }, 0);
   }
+
+  const isLoading = isLoadingOrg || isLoadingAssets;
 
   return (
     <PageWithChat>

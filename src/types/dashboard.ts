@@ -1,5 +1,5 @@
 export interface MarinaSummary {
-  totalSlips: number;
+  totalSlots: number;
   occupiedSlips: number;
   activeRVs: number;
   occupancyRate: number;

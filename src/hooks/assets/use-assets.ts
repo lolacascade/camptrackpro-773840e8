@@ -6,7 +6,7 @@ import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
   const session = useSession();
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   return useQuery({
     queryKey: ["assets", session?.user?.id, organizationId, accountId],
@@ -73,58 +73,8 @@ export function useAssets() {
         throw error;
       }
       
-      return (data || []).map((asset): Asset => ({
-        id: String(asset.id),
-        name: asset.name,
-        type: asset.type,
-        status: asset.status as 'available' | 'occupied' | 'maintenance',
-        daily_rate: asset.daily_rate,
-        asset_name: asset.asset_name,
-        asset_size: asset.asset_size,
-        asset_type: asset.asset_type,
-        site_id: asset.site_id,
-        customer_id: asset.customer_id,
-        customer: asset.customer ? {
-          id: String(asset.customer.id),
-          first_name: asset.customer.first_name,
-          last_name: asset.customer.last_name,
-          email: asset.customer.email,
-          phone: asset.customer.phone,
-          address: asset.customer.address,
-          city: asset.customer.city,
-          state: asset.customer.state,
-          country: asset.customer.country,
-          postal_code: asset.customer.postal_code,
-          user_id: asset.customer.user_id,
-          created_at: new Date(asset.customer.created_at).toISOString(),
-          updated_at: new Date(asset.customer.updated_at).toISOString()
-        } : null,
-        site: asset.site ? {
-          id: Number(asset.site.id),
-          name: asset.site.name,
-          status: asset.site.status as 'available' | 'occupied' | 'maintenance',
-          location_identifier: asset.site.location_identifier,
-          length_ft: asset.site.length_ft,
-          width_ft: asset.site.width_ft,
-          is_covered: asset.site.is_covered,
-          has_water: asset.site.has_water,
-          electricity_voltage: asset.site.electricity_voltage,
-          utility_connection_type: asset.site.utility_connection_type,
-          location_coordinates: asset.site.location_coordinates,
-          customer_id: asset.site.customer_id,
-          maintenance_id: asset.site.maintenance_id,
-          user_id: asset.site.user_id,
-          created_at: new Date(asset.site.created_at).toISOString(),
-          updated_at: new Date(asset.site.updated_at).toISOString(),
-          last_activity_at: asset.site.last_activity_at ? new Date(asset.site.last_activity_at).toISOString() : null
-        } : null,
-        user_id: asset.user_id,
-        organization_id: asset.organization_id,
-        account_id: asset.account_id,
-        created_at: new Date(asset.created_at).toISOString(),
-        updated_at: new Date(asset.updated_at).toISOString()
-      }));
+      return (data || []);
     },
-    enabled: !!session?.user?.id && !!organizationId && !!accountId,
+    enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,
   });
 }

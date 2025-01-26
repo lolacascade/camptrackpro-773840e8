@@ -17,7 +17,11 @@ export function useOrganization() {
       if (orgError) {
         console.error('Error fetching organization:', orgError);
         toast.error("Failed to fetch organization context");
-        return { organizationId: undefined, accountId: undefined };
+        throw orgError;
+      }
+
+      if (!orgRoles?.organization_id) {
+        throw new Error('No organization found');
       }
 
       console.log('Found organization:', orgRoles);
@@ -31,16 +35,21 @@ export function useOrganization() {
       if (accError) {
         console.error('Error fetching account:', accError);
         toast.error("Failed to fetch account context");
-        return { organizationId: orgRoles?.organization_id, accountId: undefined };
+        throw accError;
+      }
+
+      if (!accRoles?.account_id) {
+        throw new Error('No account found');
       }
 
       console.log('Found account:', accRoles);
 
       return {
-        organizationId: orgRoles?.organization_id,
-        accountId: accRoles?.account_id
+        organizationId: orgRoles.organization_id,
+        accountId: accRoles.account_id
       };
-    }
+    },
+    retry: false
   });
 
   return {
