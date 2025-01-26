@@ -49,7 +49,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       const { error } = await supabase
         .from('customers')
         .delete()
-        .eq('id', customer.id);
+        .eq('id', customer.id?.toString()); // Convert id to string explicitly
 
       if (error) throw error;
 
