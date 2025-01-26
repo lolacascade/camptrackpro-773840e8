@@ -5,6 +5,7 @@ export interface MarinaSummary {
   occupancyRate: number;
   monthlyRevenue?: number;
   pendingMaintenance?: number;
+  maintenanceSlots?: number;
 }
 
 export interface DashboardProps {

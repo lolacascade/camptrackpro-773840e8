@@ -15,11 +15,13 @@ export interface Booking {
   check_out_date: string;
   status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
   total_amount: number;
-  slot_id?: number;
+  site_id?: number;
   slot?: Slot;
   special_requirements?: string;
   reservation_code?: string;
   created_at: string;
   updated_at: string;
   user_id?: string;
+  organization_id?: string;
+  account_id?: string;
 }

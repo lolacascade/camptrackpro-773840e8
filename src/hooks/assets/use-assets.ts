@@ -73,7 +73,11 @@ export function useAssets() {
         throw error;
       }
       
-      return (data || []);
+      // Ensure the status is one of the allowed values
+      return (data || []).map(asset => ({
+        ...asset,
+        status: asset.status as 'available' | 'occupied' | 'maintenance'
+      }));
     },
     enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,
   });
