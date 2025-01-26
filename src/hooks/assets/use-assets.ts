@@ -59,7 +59,9 @@ export function useAssets() {
             created_at,
             updated_at,
             last_activity_at,
-            user_id
+            user_id,
+            organization_id,
+            account_id
           )
         `)
         .eq('organization_id', organizationId)
@@ -73,10 +75,14 @@ export function useAssets() {
         throw error;
       }
       
-      // Ensure the status is one of the allowed values
+      // Ensure the status is one of the allowed values and handle site status
       return (data || []).map(asset => ({
         ...asset,
-        status: asset.status as 'available' | 'occupied' | 'maintenance'
+        status: asset.status as 'available' | 'occupied' | 'maintenance',
+        site: asset.site ? {
+          ...asset.site,
+          status: asset.site.status as 'available' | 'occupied' | 'maintenance'
+        } : null
       }));
     },
     enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,

@@ -17,4 +17,6 @@ export interface Site extends BaseEntity {
   maintenance_id: number | null;
   last_activity_at: string | null;
   user_id: string | null;
+  organization_id: string | null;
+  account_id: string | null;
 }
