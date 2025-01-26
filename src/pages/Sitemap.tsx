@@ -8,6 +8,7 @@ import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
+import { Plus } from "lucide-react";
 
 export default function Sitemap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -84,6 +85,7 @@ export default function Sitemap() {
           <div className="flex items-center justify-between">
             <h1 className="text-3xl font-semibold text-[#133134]">Sites</h1>
             <Button onClick={() => setIsDrawerOpen(true)}>
+              <Plus className="h-4 w-4" />
               Add Site
             </Button>
           </div>
