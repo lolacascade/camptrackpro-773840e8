@@ -3,7 +3,7 @@ import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { getCustomerColumns } from "./table/CustomerTableColumns";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
 interface CustomerTableProps {
@@ -13,7 +13,6 @@ interface CustomerTableProps {
 export function CustomerTable({ onEdit }: CustomerTableProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
   const { organizationId, accountId } = useOrganization();
 
   const fetchCustomers = async () => {
