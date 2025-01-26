@@ -33,7 +33,7 @@ export function useEntityForm(
         return;
       }
 
-      // Validate required fields
+      // Only validate required fields
       const missingFields = fields
         .filter((field) => field.required && !formData[field.name])
         .map((field) => field.label);
@@ -49,8 +49,20 @@ export function useEntityForm(
         return;
       }
 
+      // Clean up form data to handle empty strings for optional fields
+      const cleanedData = Object.entries(formData).reduce((acc: any, [key, value]) => {
+        // Convert empty strings to null for optional fields
+        const field = fields.find(f => f.name === key);
+        if (!field?.required && value === "") {
+          acc[key] = null;
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
       const data = {
-        ...formData,
+        ...cleanedData,
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
