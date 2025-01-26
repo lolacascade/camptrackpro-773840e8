@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { getSiteColumns } from "./table/SiteTableColumns";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface SiteTableProps {
   onEdit?: (site: Site) => void;
@@ -14,35 +15,54 @@ interface SiteTableProps {
 export function SiteTable({ onEdit }: SiteTableProps) {
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { organizationId, accountId } = useOrganization();
 
   const { data: sites = [], isLoading, refetch } = useQuery({
-    queryKey: ['sites'],
+    queryKey: ['sites', organizationId, accountId],
     queryFn: async () => {
+      // Only fetch if we have both IDs
+      if (!organizationId || !accountId) {
+        console.log('Missing organization or account ID');
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('sites')
-        .select('*');
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) {
+        console.error('Error fetching sites:', error);
         toast.error("Failed to fetch sites");
         return [];
       }
 
       return data as Site[];
-    }
+    },
+    enabled: !!organizationId && !!accountId // Only run query if we have both IDs
   });
 
   const handleDelete = async (site: Site) => {
+    if (!organizationId || !accountId) {
+      toast.error("Missing organization or account ID");
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('sites')
         .delete()
-        .eq('id', site.id);
+        .eq('id', site.id)
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) throw error;
 
       toast.success("Site deleted successfully");
       refetch();
     } catch (error) {
+      console.error('Error deleting site:', error);
       toast.error("Failed to delete site");
     }
   };
@@ -99,6 +119,14 @@ export function SiteTable({ onEdit }: SiteTableProps) {
     },
     { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
   ];
+
+  if (!organizationId || !accountId) {
+    return (
+      <div className="text-center p-4">
+        <p className="text-gray-500">Unable to load sites. Please ensure you're properly logged in.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="border border-[#E8EBEB] rounded-xl bg-transparent">
