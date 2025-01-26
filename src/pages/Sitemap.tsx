@@ -16,15 +16,19 @@ export default function Sitemap() {
   const { data: stats } = useQuery({
     queryKey: ['site-stats', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) return null;
+
       const { data: sites } = await supabase
         .from('sites')
         .select('*')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
-      const totalSlots = sites?.length || 0;
-      const occupiedSlots = sites?.filter(site => site.status === 'occupied').length || 0;
-      const maintenanceSlots = sites?.filter(site => site.status === 'maintenance').length || 0;
+      if (!sites) return null;
+
+      const totalSlots = sites.length;
+      const occupiedSlots = sites.filter(site => site.status === 'occupied').length;
+      const maintenanceSlots = sites.filter(site => site.status === 'maintenance').length;
       const occupancyRate = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
 
       return {
@@ -37,6 +41,42 @@ export default function Sitemap() {
     enabled: !!organizationId && !!accountId
   });
 
+  const siteFields = [
+    { name: 'name', label: 'Name', type: 'text' as const, required: true },
+    { 
+      name: 'status', 
+      label: 'Status', 
+      type: 'select' as const,
+      options: [
+        { value: 'available', label: 'Available' },
+        { value: 'occupied', label: 'Occupied' },
+        { value: 'maintenance', label: 'Maintenance' }
+      ]
+    },
+    { name: 'location_identifier', label: 'Location', type: 'text' as const },
+    { name: 'length_ft', label: 'Length (ft)', type: 'number' as const },
+    { name: 'width_ft', label: 'Width (ft)', type: 'number' as const },
+    { 
+      name: 'is_covered', 
+      label: 'Is Covered', 
+      type: 'select' as const,
+      options: [
+        { value: 'true', label: 'Yes' },
+        { value: 'false', label: 'No' }
+      ]
+    },
+    { 
+      name: 'has_water', 
+      label: 'Has Water', 
+      type: 'select' as const,
+      options: [
+        { value: 'true', label: 'Yes' },
+        { value: 'false', label: 'No' }
+      ]
+    },
+    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' as const },
+  ];
+
   return (
     <PageWithChat>
       <PageContainer>
@@ -48,12 +88,14 @@ export default function Sitemap() {
             </Button>
           </div>
 
-          <SitemapStats
-            totalSlots={stats?.totalSlots || 0}
-            occupiedSlots={stats?.occupiedSlots || 0}
-            maintenanceSlots={stats?.maintenanceSlots || 0}
-            occupancyRate={stats?.occupancyRate || 0}
-          />
+          {stats && (
+            <SitemapStats
+              totalSlots={stats.totalSlots}
+              occupiedSlots={stats.occupiedSlots}
+              maintenanceSlots={stats.maintenanceSlots}
+              occupancyRate={stats.occupancyRate}
+            />
+          )}
 
           <SiteTable />
 
@@ -63,41 +105,7 @@ export default function Sitemap() {
             onClose={() => setIsDrawerOpen(false)}
             onEntityUpdated={() => setIsDrawerOpen(false)}
             title="Site"
-            fields={[
-              { name: 'name', label: 'Name', type: 'text', required: true },
-              { 
-                name: 'status', 
-                label: 'Status', 
-                type: 'select',
-                options: [
-                  { value: 'available', label: 'Available' },
-                  { value: 'occupied', label: 'Occupied' },
-                  { value: 'maintenance', label: 'Maintenance' }
-                ]
-              },
-              { name: 'location_identifier', label: 'Location', type: 'text' },
-              { name: 'length_ft', label: 'Length (ft)', type: 'number' },
-              { name: 'width_ft', label: 'Width (ft)', type: 'number' },
-              { 
-                name: 'is_covered', 
-                label: 'Is Covered', 
-                type: 'select',
-                options: [
-                  { value: 'true', label: 'Yes' },
-                  { value: 'false', label: 'No' }
-                ]
-              },
-              { 
-                name: 'has_water', 
-                label: 'Has Water', 
-                type: 'select',
-                options: [
-                  { value: 'true', label: 'Yes' },
-                  { value: 'false', label: 'No' }
-                ]
-              },
-              { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' },
-            ]}
+            fields={siteFields}
             tableName="sites"
           />
         </div>

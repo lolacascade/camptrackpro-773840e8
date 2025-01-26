@@ -20,41 +20,21 @@ export function SitemapStats({
         title="Total Slots"
         value={totalSlots.toString()}
         icon={Anchor}
-        trend={{
-          value: "+1",
-          isPositive: true,
-          comparedTo: "from last month"
-        }}
       />
       <StatsCard
         title="Occupied Slots"
         value={occupiedSlots.toString()}
         icon={Ship}
-        trend={{
-          value: "+2",
-          isPositive: true,
-          comparedTo: "from last month"
-        }}
       />
       <StatsCard
         title="Maintenance"
         value={maintenanceSlots.toString()}
         icon={Wrench}
-        trend={{
-          value: "-1",
-          isPositive: false,
-          comparedTo: "from last month"
-        }}
       />
       <StatsCard
         title="Occupancy Rate"
         value={`${occupancyRate}%`}
         icon={TrendingUp}
-        trend={{
-          value: "+5%",
-          isPositive: true,
-          comparedTo: "from last month"
-        }}
       />
     </div>
   );

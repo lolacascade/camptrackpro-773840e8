@@ -25,6 +25,7 @@ export function SiteTable() {
         .eq('account_id', accountId);
 
       if (error) {
+        console.error('Error fetching sites:', error);
         toast.error("Failed to fetch sites");
         return [];
       }
@@ -46,6 +47,7 @@ export function SiteTable() {
       toast.success("Site deleted successfully");
       refetch();
     } catch (error) {
+      console.error('Error deleting site:', error);
       toast.error("Failed to delete site");
     }
   };
