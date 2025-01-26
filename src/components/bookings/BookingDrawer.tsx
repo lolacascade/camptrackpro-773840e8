@@ -26,7 +26,7 @@ interface BookingDrawerProps {
 type BookingFormData = {
   customer_id: string;
   asset_id: string;
-  slot_id: number;
+  site_id: number;
   special_requirements?: string;
 };
 
@@ -65,7 +65,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
-      slot_id: booking.slot_id,
+      site_id: booking.site_id,
       special_requirements: booking.special_requirements
     } : {}
   });
@@ -93,6 +93,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         account_id: accountId,
         total_amount: 0 // This will be calculated by the database function
       };
+
+      console.log('Submitting booking data:', submitData);
 
       if (booking?.id) {
         const { error } = await supabase
@@ -143,8 +145,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         />
 
         <SlotSelect
-          value={watch('slot_id')?.toString() || ''}
-          onSelect={(value) => setValue('slot_id', parseInt(value))}
+          value={watch('site_id')?.toString() || ''}
+          onSelect={(value) => setValue('site_id', parseInt(value))}
           dateRange={dateRange}
         />
 
