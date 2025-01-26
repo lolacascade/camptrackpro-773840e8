@@ -1,4 +1,4 @@
-import { Bell, Menu, Search, Settings } from "lucide-react";
+import { Bell, Menu, Plus, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -77,6 +77,14 @@ export function Header() {
           onClick={() => navigate('/app/settings')}
         >
           <Settings className="h-5 w-5" />
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-white hover:text-primary hover:bg-transparent"
+        >
+          <Plus className="h-5 w-5" />
         </Button>
       </div>
 
