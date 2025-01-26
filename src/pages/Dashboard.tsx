@@ -9,8 +9,8 @@ export default function Dashboard() {
   
   // Transform marina data to match MarinaSummary type
   const marinaSummary: MarinaSummary = {
-    totalSlips: marinaData?.totalSlots || 0,
-    occupiedSlips: marinaData?.occupiedSlots || 0,
+    totalSlots: marinaData?.totalSlots || 0,
+    occupiedSlots: marinaData?.occupiedSlots || 0,
     activeRVs: marinaData?.activeRVs || 0,
     occupancyRate: marinaData?.occupancyRate || 0,
     monthlyRevenue: 0,

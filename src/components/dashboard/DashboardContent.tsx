@@ -17,8 +17,8 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       <ErrorBoundary>
         <StatsGrid 
           occupancyRate={marinaSummary?.occupancyRate ?? 0}
-          occupiedSlips={marinaSummary?.occupiedSlips ?? 0}
-          totalSlips={marinaSummary?.totalSlips ?? 0}
+          occupiedSlips={marinaSummary?.occupiedSlots ?? 0}
+          totalSlips={marinaSummary?.totalSlots ?? 0}
           activeRVs={marinaSummary?.activeRVs ?? 0}
           monthlyRevenue={marinaSummary?.monthlyRevenue}
           pendingMaintenance={marinaSummary?.pendingMaintenance}
@@ -48,7 +48,7 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       </div>
       
       <ErrorBoundary>
-        <FooterStats totalSlips={marinaSummary?.totalSlips ?? 0} />
+        <FooterStats totalSlips={marinaSummary?.totalSlots ?? 0} />
       </ErrorBoundary>
     </div>
   );
