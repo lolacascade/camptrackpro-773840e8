@@ -1,5 +1,4 @@
 import { Customer } from "@/types/customer";
-import { Badge } from "@/components/ui/badge";
 import { Column } from "@/components/common/DataTable/types";
 
 export const getCustomerColumns = (): Column<Customer>[] => [
@@ -8,18 +7,7 @@ export const getCustomerColumns = (): Column<Customer>[] => [
     accessorKey: "first_name",
     cell: (item: Customer) => {
       const fullName = `${item.first_name} ${item.last_name}`;
-      const isVip = item.lifetime_value && parseFloat(item.lifetime_value) >= 10000;
-      
-      return (
-        <div className="flex items-center gap-2">
-          <span>{fullName}</span>
-          {isVip && (
-            <Badge variant="secondary" className="bg-purple-100 text-purple-800">
-              VIP
-            </Badge>
-          )}
-        </div>
-      );
+      return <span>{fullName}</span>;
     },
     sortable: true
   },
