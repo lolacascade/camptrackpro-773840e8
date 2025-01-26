@@ -9,10 +9,10 @@ export default function Dashboard() {
   
   // Transform marina data to match MarinaSummary type
   const marinaSummary: MarinaSummary = {
-    totalSlips: marinaData?.total_slips || 0,
-    occupiedSlips: 0, // You might want to calculate this from your data
-    activeRVs: 0, // You might want to calculate this from your data
-    occupancyRate: 0, // Calculate: (occupiedSlips / totalSlips) * 100
+    totalSlips: marinaData?.totalSlots || 0,
+    occupiedSlips: marinaData?.occupiedSlots || 0,
+    activeRVs: marinaData?.activeRVs || 0,
+    occupancyRate: marinaData?.occupancyRate || 0,
     monthlyRevenue: 0,
     pendingMaintenance: 0
   };
