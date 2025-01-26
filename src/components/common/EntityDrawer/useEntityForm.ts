@@ -49,7 +49,16 @@ export function useEntityForm(
         return;
       }
 
+      // Set default values for required fields
+      const defaultData = {
+        status: 'available',
+        is_covered: false,
+        has_water: false,
+        electricity_voltage: '',
+      };
+
       const data = {
+        ...defaultData,
         ...formData,
         user_id: session.user.id,
         organization_id: organizationId,
@@ -66,7 +75,7 @@ export function useEntityForm(
 
         toast({
           title: "Success",
-          description: "Entity updated successfully",
+          description: "Site updated successfully",
         });
       } else {
         const { error } = await supabase.from(tableName).insert([data]);
@@ -75,7 +84,7 @@ export function useEntityForm(
 
         toast({
           title: "Success",
-          description: "Entity created successfully",
+          description: "Site created successfully",
         });
       }
 
@@ -85,7 +94,7 @@ export function useEntityForm(
       console.error("Error saving entity:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to save entity. Please try again.",
+        description: error.message || "Failed to save site. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -105,7 +114,7 @@ export function useEntityForm(
 
       toast({
         title: "Success",
-        description: "Entity deleted successfully",
+        description: "Site deleted successfully",
       });
 
       onEntityUpdated();
@@ -114,7 +123,7 @@ export function useEntityForm(
       console.error("Error deleting entity:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to delete entity. Please try again.",
+        description: error.message || "Failed to delete site. Please try again.",
         variant: "destructive",
       });
     } finally {
