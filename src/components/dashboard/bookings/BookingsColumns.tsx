@@ -9,7 +9,7 @@ export const getBookingsColumns = (): Column<Booking>[] => [
     accessorKey: "customer",
     cell: (booking: Booking) => {
       const customer = booking.customer;
-      if (!customer) return null;
+      if (!customer) return "N/A";
       
       return (
         <div className="flex items-center space-x-4">
@@ -20,7 +20,9 @@ export const getBookingsColumns = (): Column<Booking>[] => [
           </Avatar>
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-medium text-[#133134]">{`${customer.first_name} ${customer.last_name}`}</p>
+              <p className="font-medium text-[#133134]">
+                {`${customer.first_name} ${customer.last_name}`}
+              </p>
             </div>
             <p className="text-sm text-[#3E4238]">{customer.email}</p>
           </div>
@@ -32,7 +34,9 @@ export const getBookingsColumns = (): Column<Booking>[] => [
     header: "Asset",
     accessorKey: "asset",
     cell: (booking: Booking) => (
-      <span className="text-[#3E4238]">{booking.asset?.asset_name || booking.asset?.name || 'Unassigned'}</span>
+      <span className="text-[#3E4238]">
+        {booking.asset?.asset_name || booking.asset?.name || 'Unassigned'}
+      </span>
     ),
   },
   {

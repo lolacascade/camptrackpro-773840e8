@@ -3,8 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { BookingsPriorityFilter } from "./bookings/BookingsPriorityFilter";
 import { getBookingsColumns } from "./bookings/BookingsColumns";
 import { Booking } from "@/types/booking";
 import { useOrganization } from "@/hooks/use-organization";
@@ -12,8 +10,7 @@ import { toast } from "sonner";
 
 export function BookingsToday() {
   const navigate = useNavigate();
-  const [priorityFilter, setPriorityFilter] = useState<string>("all");
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: isLoadingContext } = useOrganization();
   
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['bookings-today', organizationId, accountId],
@@ -30,9 +27,17 @@ export function BookingsToday() {
         .from('bookings')
         .select(`
           *,
-          customer:customers(*),
-          asset:assets(*),
-          site:sites(*)
+          customer:customers(
+            id,
+            first_name,
+            last_name,
+            email
+          ),
+          asset:assets(
+            id,
+            asset_name,
+            name
+          )
         `)
         .eq('check_in_date', today)
         .eq('organization_id', organizationId)
@@ -47,21 +52,21 @@ export function BookingsToday() {
       console.log('Bookings data received:', data);
       return data as Booking[];
     },
-    enabled: !!organizationId && !!accountId
+    enabled: !!organizationId && !!accountId && !isLoadingContext
   });
 
   const handleViewDetails = (booking: Booking) => {
     navigate(`/app/bookings/${booking.id}`);
   };
 
+  if (isLoadingContext) {
+    return null;
+  }
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader>
         <CardTitle className="text-[#133134] text-2xl">Today's Check-ins</CardTitle>
-        <BookingsPriorityFilter 
-          value={priorityFilter} 
-          onChange={setPriorityFilter} 
-        />
       </CardHeader>
       <CardContent>
         <DataTable
