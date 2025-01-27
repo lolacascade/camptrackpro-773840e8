@@ -6,48 +6,49 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { BookingsPriorityFilter } from "./bookings/BookingsPriorityFilter";
 import { getBookingsColumns } from "./bookings/BookingsColumns";
-import { Booking } from "./bookings/types";
+import { Booking } from "@/types/booking";
+import { useOrganization } from "@/hooks/use-organization";
+import { toast } from "sonner";
 
 export function BookingsToday() {
   const navigate = useNavigate();
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const { organizationId, accountId } = useOrganization();
   
-  const { data: bookings, isLoading } = useQuery({
-    queryKey: ['bookings-today'],
+  const { data: bookings = [], isLoading } = useQuery({
+    queryKey: ['bookings-today', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        console.log('No organization or account context found:', { organizationId, accountId });
+        return [];
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      console.log('Fetching bookings for date:', today);
+
       const { data, error } = await supabase
         .from('bookings')
         .select(`
-          id,
-          check_in_date,
-          check_out_date,
-          customer:customers(first_name, last_name, email),
-          slot:slots(name)
+          *,
+          customer:customers(*),
+          asset:assets(*),
+          site:sites(*)
         `)
-        .eq('check_in_date', new Date().toISOString().split('T')[0]);
+        .eq('check_in_date', today)
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (error) {
         console.error('Error fetching bookings:', error);
+        toast.error("Failed to fetch today's bookings");
         throw error;
       }
 
-      // Add mock priority and status for demonstration
-      return data.map((booking: any) => ({
-        ...booking,
-        status: Math.random() > 0.5 ? 'checked_in' : 'pending',
-        priority: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
-        customer: {
-          ...booking.customer,
-          name: `${booking.customer.first_name} ${booking.customer.last_name}`,
-          isVIP: Math.random() > 0.8
-        }
-      })) as Booking[];
+      console.log('Bookings data received:', data);
+      return data as Booking[];
     },
+    enabled: !!organizationId && !!accountId
   });
-
-  const filteredBookings = bookings?.filter(booking => 
-    priorityFilter === "all" || booking.priority === priorityFilter
-  ) || [];
 
   const handleViewDetails = (booking: Booking) => {
     navigate(`/app/bookings/${booking.id}`);
@@ -64,11 +65,12 @@ export function BookingsToday() {
       </CardHeader>
       <CardContent>
         <DataTable
-          data={filteredBookings}
+          data={bookings}
           columns={getBookingsColumns()}
           onViewDetails={handleViewDetails}
           itemsPerPage={5}
           isLoading={isLoading}
+          tableName="bookings"
         />
       </CardContent>
     </Card>
