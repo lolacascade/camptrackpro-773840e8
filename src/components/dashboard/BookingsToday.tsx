@@ -31,7 +31,10 @@ export function BookingsToday() {
             id,
             first_name,
             last_name,
-            email
+            email,
+            created_at,
+            updated_at,
+            user_id
           ),
           asset:assets(
             id,
@@ -50,7 +53,7 @@ export function BookingsToday() {
       }
 
       console.log('Bookings data received:', data);
-      return data as Booking[];
+      return data as unknown as Booking[];
     },
     enabled: !!organizationId && !!accountId && !isLoadingContext
   });
