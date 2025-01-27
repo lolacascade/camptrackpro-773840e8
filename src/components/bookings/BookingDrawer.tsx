@@ -9,7 +9,7 @@ import { CustomerSelect } from "./form/CustomerSelect";
 import { BookingDateRange } from "./form/BookingDateRange";
 import { AssetSelect } from "./form/AssetSelect";
 import { SlotSelect } from "./form/SlotSelect";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
 import { useCustomers } from "./form/useCustomers";
@@ -41,6 +41,21 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     to: addDays(new Date(), 7)
   });
   
+  // Initialize date range when editing
+  useEffect(() => {
+    if (booking) {
+      setDateRange({
+        from: new Date(booking.check_in_date),
+        to: new Date(booking.check_out_date)
+      });
+    } else {
+      setDateRange({
+        from: new Date(),
+        to: addDays(new Date(), 7)
+      });
+    }
+  }, [booking]);
+
   // Fetch the user's profile to get the correct ID for created_by
   const { data: profile } = useQuery({
     queryKey: ['profile', session?.user?.id],
