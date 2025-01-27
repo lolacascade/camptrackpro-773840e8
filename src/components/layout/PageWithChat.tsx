@@ -45,10 +45,10 @@ export function PageWithChat({ children }: PageWithChatProps) {
 
   return (
     <div className="flex min-h-[calc(100vh-4rem)]">
-      <div className="w-[300px] fixed top-16 bottom-0 left-0 overflow-hidden">
+      <div className="w-[300px] fixed top-16 bottom-0 left-0 overflow-hidden border-r border-border">
         <ChatAssistant />
       </div>
-      <div className="ml-[300px] flex-1 overflow-y-auto">
+      <div className="ml-[300px] flex-1 overflow-y-auto p-4">
         {children}
       </div>
     </div>
