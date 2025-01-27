@@ -13,6 +13,7 @@ export default function Dashboard() {
     occupiedSlots: marinaData?.occupiedSlots || 0,
     activeRVs: marinaData?.activeRVs || 0,
     occupancyRate: marinaData?.occupancyRate || 0,
+    maintenanceSlots: marinaData?.maintenanceSlots || 0,
     monthlyRevenue: 0,
     pendingMaintenance: 0
   };
