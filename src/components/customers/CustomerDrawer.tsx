@@ -37,8 +37,15 @@ export function CustomerDrawer({
           <SheetTitle>{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
         </SheetHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
-          <CustomerBasicInfo register={register} errors={errors} />
-          <CustomerAddress register={register} />
+          <CustomerBasicInfo 
+            register={register} 
+            errors={errors} 
+            defaultValues={customer || undefined}
+          />
+          <CustomerAddress 
+            register={register} 
+            defaultValues={customer || undefined}
+          />
           <Button 
             type="submit" 
             disabled={isSubmitting}

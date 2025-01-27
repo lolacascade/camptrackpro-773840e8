@@ -1,12 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Customer } from "@/types/customer";
 
 interface CustomerBasicInfoProps {
   register: any;
   errors: any;
+  defaultValues?: Customer;
 }
 
-export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) {
+export function CustomerBasicInfo({ register, errors, defaultValues }: CustomerBasicInfoProps) {
   return (
     <div className="space-y-4">
       <div>
@@ -18,6 +20,7 @@ export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) 
           {...register('first_name', { 
             required: 'First name is required' 
           })} 
+          defaultValue={defaultValues?.first_name}
           className="mt-1" 
         />
         {errors.first_name && (
@@ -34,6 +37,7 @@ export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) 
           {...register('last_name', { 
             required: 'Last name is required' 
           })} 
+          defaultValue={defaultValues?.last_name}
           className="mt-1" 
         />
         {errors.last_name && (
@@ -55,6 +59,7 @@ export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) 
               message: "Invalid email address"
             }
           })} 
+          defaultValue={defaultValues?.email}
           className="mt-1" 
         />
         {errors.email && (
@@ -67,6 +72,7 @@ export function CustomerBasicInfo({ register, errors }: CustomerBasicInfoProps) 
         <Input 
           id="phone" 
           {...register('phone')} 
+          defaultValue={defaultValues?.phone}
           className="mt-1" 
         />
       </div>
