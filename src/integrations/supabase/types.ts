@@ -914,7 +914,7 @@ export type Database = {
           maintenance_id: number | null
           name: string
           organization_id: string | null
-          status: string
+          status: Database["public"]["Enums"]["site_status"]
           updated_at: string | null
           user_id: string | null
           utility_connection_type: string | null
@@ -935,7 +935,7 @@ export type Database = {
           maintenance_id?: number | null
           name: string
           organization_id?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["site_status"]
           updated_at?: string | null
           user_id?: string | null
           utility_connection_type?: string | null
@@ -956,7 +956,7 @@ export type Database = {
           maintenance_id?: number | null
           name?: string
           organization_id?: string | null
-          status?: string
+          status?: Database["public"]["Enums"]["site_status"]
           updated_at?: string | null
           user_id?: string | null
           utility_connection_type?: string | null
@@ -1023,6 +1023,7 @@ export type Database = {
     }
     Enums: {
       booking_status: "pending" | "confirmed" | "cancelled" | "completed"
+      site_status: "available" | "occupied" | "maintenance"
       user_role: "admin" | "manager" | "staff" | "customer"
     }
     CompositeTypes: {

@@ -23,6 +23,19 @@ export function MaintenanceDrawer({
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState(maintenance?.status || 'pending');
 
+  const statusOptions = [
+    { value: 'pending', label: 'Pending' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
+  ];
+
+  const priorityOptions = [
+    { value: 'high', label: 'High' },
+    { value: 'medium', label: 'Medium' },
+    { value: 'low', label: 'Low' }
+  ];
+
   const handleStatusChange = async (newStatus: string) => {
     if (!maintenance) return;
     
@@ -30,7 +43,11 @@ export function MaintenanceDrawer({
     try {
       const { error } = await supabase
         .from('maintenance_requests')
-        .update({ status: newStatus })
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString(),
+          completed_at: newStatus === 'completed' ? new Date().toISOString() : null
+        })
         .eq('id', maintenance.id);
 
       if (error) throw error;
@@ -56,23 +73,29 @@ export function MaintenanceDrawer({
 
   if (!maintenance) return null;
 
-  const statusOptions = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'completed', label: 'Completed' }
-  ];
-
   return (
     <BaseDrawer 
       open={open} 
       onClose={onClose}
       title="Maintenance Request Details"
     >
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
           <h4 className="font-medium mb-2">Description</h4>
           <p className="text-sm text-muted-foreground">{maintenance.description}</p>
         </div>
+
+        <div>
+          <h4 className="font-medium mb-2">Priority</h4>
+          <Badge variant={
+            maintenance.priority === 'high' ? 'destructive' :
+            maintenance.priority === 'medium' ? 'secondary' :
+            'outline'
+          }>
+            {maintenance.priority}
+          </Badge>
+        </div>
+
         <div>
           <h4 className="font-medium mb-2">Status</h4>
           <FormSelect
@@ -82,6 +105,21 @@ export function MaintenanceDrawer({
             placeholder="Select status"
             disabled={isLoading}
           />
+        </div>
+
+        {maintenance.site_id && (
+          <div>
+            <h4 className="font-medium mb-2">Site</h4>
+            <p className="text-sm text-muted-foreground">
+              {maintenance.site?.name || `Site #${maintenance.site_id}`}
+            </p>
+          </div>
+        )}
+
+        <div className="flex justify-end gap-2 pt-4">
+          <Button variant="outline" onClick={onClose}>
+            Close
+          </Button>
         </div>
       </div>
     </BaseDrawer>

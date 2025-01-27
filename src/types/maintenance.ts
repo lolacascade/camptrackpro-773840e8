@@ -1,8 +1,8 @@
 export interface Maintenance {
   id: number;
   description: string;
-  status: string;
-  priority: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  priority: 'low' | 'medium' | 'high';
   assigned_to: string | null;
   created_at: string;
   updated_at: string | null;
@@ -12,7 +12,12 @@ export interface Maintenance {
   user_id: string | null;
   organization_id?: string | null;
   account_id?: string | null;
+  site?: {
+    id: number;
+    name: string;
+    status: 'available' | 'occupied' | 'maintenance';
+  };
 }
 
-export type MaintenanceStatus = 'pending' | 'in_progress' | 'completed';
+export type MaintenanceStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
 export type MaintenancePriority = 'low' | 'medium' | 'high';

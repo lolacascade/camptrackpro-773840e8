@@ -23,6 +23,26 @@ export const maintenanceColumns: Column<Maintenance>[] = [
     sortable: true,
   },
   {
+    header: "Priority",
+    accessorKey: "priority",
+    cell: (maintenance) => (
+      <Badge variant={
+        maintenance.priority === 'high' ? 'destructive' :
+        maintenance.priority === 'medium' ? 'secondary' :
+        'outline'
+      }>
+        {maintenance.priority}
+      </Badge>
+    ),
+    sortable: true,
+  },
+  {
+    header: "Site",
+    accessorKey: "site_id",
+    cell: (maintenance) => maintenance.site?.name || '-',
+    sortable: true,
+  },
+  {
     header: "Created",
     accessorKey: "created_at",
     cell: (maintenance) => new Date(maintenance.created_at).toLocaleDateString(),
