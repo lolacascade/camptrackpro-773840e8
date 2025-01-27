@@ -21,7 +21,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     queryKey: ['bookings', organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        console.error("No organization or account context found");
+        console.log('No organization or account context found:', { organizationId, accountId });
         return [];
       }
 
@@ -49,6 +49,16 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     },
     enabled: !!organizationId && !!accountId
   });
+
+  if (!organizationId || !accountId) {
+    return (
+      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+        <div className="p-4 text-center text-gray-500">
+          Please ensure you have an organization and account selected
+        </div>
+      </Card>
+    );
+  }
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);

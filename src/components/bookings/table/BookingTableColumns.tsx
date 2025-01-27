@@ -49,7 +49,9 @@ export const getBookingColumns = (): Column<Booking>[] => [
   {
     header: "Total Amount",
     accessorKey: "total_amount",
-    cell: (booking: Booking) => `$${booking.total_amount.toFixed(2)}`,
+    cell: (booking: Booking) => {
+      return booking.total_amount ? `$${booking.total_amount.toFixed(2)}` : '$0.00';
+    },
     sortable: true
   },
   {
