@@ -1,11 +1,11 @@
 export interface MarinaSummary {
   totalSlots: number;
   occupiedSlots: number;
-  activeRVs: number;
+  maintenanceSlots: number;
   occupancyRate: number;
+  activeRVs?: number; // Making it optional since it might not always be available
   monthlyRevenue?: number;
   pendingMaintenance?: number;
-  maintenanceSlots?: number;
 }
 
 export interface DashboardProps {

@@ -1,36 +1,55 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@supabase/auth-helpers-react";
+import { MarinaSummary } from "@/types/dashboard";
+import { useOrganization } from "./use-organization";
 
 export function useMarinaSummary() {
-  const session = useSession();
+  const { organizationId, accountId } = useOrganization();
 
   return useQuery({
-    queryKey: ['marina-summary', session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) return null;
+    queryKey: ['marina-summary', organizationId, accountId],
+    queryFn: async (): Promise<MarinaSummary> => {
+      if (!organizationId || !accountId) {
+        throw new Error('Organization or account context not available');
+      }
 
-      // Get all sites for the user
-      const { data: sites, error: sitesError } = await supabase
+      const { data: sites, error } = await supabase
         .from('sites')
         .select('*')
-        .eq('user_id', session.user.id);
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
-      if (sitesError) throw sitesError;
+      if (error) {
+        console.error('Error fetching marina summary:', error);
+        throw error;
+      }
 
-      // Calculate summary statistics
       const totalSlots = sites?.length || 0;
-      const occupiedSlots = sites?.filter(site => site.status === 'occupied').length || 0;
-      const maintenanceSlots = sites?.filter(site => site.status === 'maintenance').length || 0;
-      const occupancyRate = totalSlots ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+      const occupiedSlots = sites?.filter(slot => slot.status === 'occupied').length || 0;
+      const maintenanceSlots = sites?.filter(slot => slot.status === 'maintenance').length || 0;
+      const occupancyRate = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+
+      // Count active RVs (occupied slots with assets)
+      const { data: activeRVs, error: rvsError } = await supabase
+        .from('assets')
+        .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId)
+        .eq('status', 'occupied');
+
+      if (rvsError) {
+        console.error('Error fetching active RVs:', rvsError);
+        throw rvsError;
+      }
 
       return {
         totalSlots,
         occupiedSlots,
         maintenanceSlots,
-        occupancyRate
+        occupancyRate,
+        activeRVs: activeRVs?.length || 0
       };
     },
-    enabled: !!session?.user?.id
+    enabled: !!organizationId && !!accountId
   });
 }
