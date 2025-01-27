@@ -9,23 +9,24 @@ interface UseAssetFormProps {
   onClose: () => void;
   onAssetAdded: () => void;
   customerId: string | null;
+  asset?: Asset;
 }
 
-export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetFormProps) {
+export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAssetFormProps) {
   const { toast } = useToast();
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
   const [newAsset, setNewAsset] = useState<Partial<Asset>>({
-    asset_name: '',
-    asset_size: '',
-    customer_id: customerId,
-    site_id: null,
-    asset_type: '',
-    name: '',
-    type: '',
-    status: 'available',
-    daily_rate: 0,
+    asset_name: asset?.asset_name || '',
+    asset_size: asset?.asset_size || '',
+    customer_id: customerId || asset?.customer_id || null,
+    site_id: asset?.site_id || null,
+    asset_type: asset?.asset_type || '',
+    name: asset?.name || '',
+    type: asset?.type || '',
+    status: asset?.status || 'available',
+    daily_rate: asset?.daily_rate || 0,
     user_id: session?.user?.id || null,
     organization_id: organizationId || null,
     account_id: accountId || null
@@ -39,12 +40,20 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
           return;
         }
 
-        const { data, error } = await supabase
+        const query = supabase
           .from('sites')
           .select('id, name')
-          .eq('status', 'available')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId);
+
+        // If editing, include the current site even if occupied
+        if (asset?.site_id) {
+          query.or(`status.eq.available,id.eq.${asset.site_id}`);
+        } else {
+          query.eq('status', 'available');
+        }
+
+        const { data, error } = await query;
 
         if (error) throw error;
         setAvailableSlots(data || []);
@@ -59,7 +68,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
     };
 
     fetchAvailableSlots();
-  }, [toast, organizationId, accountId]);
+  }, [toast, organizationId, accountId, asset]);
 
   const handleSubmit = async () => {
     if (!session?.user?.id) {
@@ -80,7 +89,6 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
       return;
     }
 
-    // Only check for required fields
     if (!newAsset.asset_name || !newAsset.site_id) {
       toast({
         title: "Error",
@@ -106,18 +114,34 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
         account_id: accountId
       };
 
-      const { error } = await supabase
-        .from('assets')
-        .insert([assetData])
-        .select()
-        .single();
+      if (asset?.id) {
+        const { error } = await supabase
+          .from('assets')
+          .update(assetData)
+          .eq('id', asset.id)
+          .select()
+          .single();
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Asset added successfully.",
-      });
+        toast({
+          title: "Success",
+          description: "Asset updated successfully.",
+        });
+      } else {
+        const { error } = await supabase
+          .from('assets')
+          .insert([assetData])
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Asset added successfully.",
+        });
+      }
 
       onClose();
       setNewAsset({
@@ -137,10 +161,10 @@ export function useAssetForm({ onClose, onAssetAdded, customerId }: UseAssetForm
       
       onAssetAdded();
     } catch (error) {
-      console.error('Error adding asset:', error);
+      console.error('Error saving asset:', error);
       toast({
         title: "Error",
-        description: "Failed to add asset. Please try again.",
+        description: "Failed to save asset. Please try again.",
         variant: "destructive",
       });
     }

@@ -2,26 +2,29 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { AssetFormFields } from "./form/AssetFormFields"
 import { useAssetForm } from "./hooks/useAssetForm"
+import { Asset } from "@/types/asset"
 
 interface AssetDrawerProps {
   open: boolean
   onClose: () => void
   onAssetAdded: () => void
   customerId: string | null
+  asset?: Asset
 }
 
-export function AssetDrawer({ open, onClose, onAssetAdded, customerId }: AssetDrawerProps) {
+export function AssetDrawer({ open, onClose, onAssetAdded, customerId, asset }: AssetDrawerProps) {
   const { newAsset, setNewAsset, availableSlots, handleSubmit } = useAssetForm({ 
     onClose, 
     onAssetAdded,
-    customerId
+    customerId,
+    asset
   })
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Add New RV</SheetTitle>
+          <SheetTitle>{asset ? 'Edit RV' : 'Add New RV'}</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-4">
           <AssetFormFields
@@ -33,7 +36,7 @@ export function AssetDrawer({ open, onClose, onAssetAdded, customerId }: AssetDr
             onClick={handleSubmit}
             className="w-full bg-[#133134] text-white hover:bg-[#133134]/90"
           >
-            Add RV
+            {asset ? 'Save Changes' : 'Add RV'}
           </Button>
         </div>
       </SheetContent>
