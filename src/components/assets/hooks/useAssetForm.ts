@@ -15,7 +15,7 @@ interface UseAssetFormProps {
 export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAssetFormProps) {
   const { toast } = useToast();
   const session = useSession();
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
   const [newAsset, setNewAsset] = useState<Partial<Asset>>({
     asset_name: asset?.asset_name || '',
@@ -35,10 +35,13 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       try {
-        if (!organizationId || !accountId) {
-          console.error('No organization or account context found');
+        // Only proceed if we have both IDs and organization context is loaded
+        if (!organizationId || !accountId || isLoadingOrg) {
+          console.log('Waiting for organization context...', { organizationId, accountId, isLoadingOrg });
           return;
         }
+
+        console.log('Fetching sites with:', { organizationId, accountId });
 
         const query = supabase
           .from('sites')
@@ -55,7 +58,12 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
 
         const { data, error } = await query;
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching sites:', error);
+          throw error;
+        }
+        
+        console.log('Fetched sites:', data);
         setAvailableSlots(data || []);
       } catch (error) {
         console.error('Error fetching sites:', error);
@@ -68,7 +76,7 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
     };
 
     fetchAvailableSlots();
-  }, [toast, organizationId, accountId, asset]);
+  }, [toast, organizationId, accountId, asset, isLoadingOrg]);
 
   const handleSubmit = async () => {
     if (!session?.user?.id) {
