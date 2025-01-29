@@ -6,6 +6,8 @@ import { AssetTableHeader } from "./table/AssetTableHeader";
 import { AssetTableBody } from "./table/AssetTableBody";
 import { Card } from "@/components/ui/card";
 import { SelectField } from "@/components/common/FormFields/SelectField";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -67,7 +69,16 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   return (
     <Card className="p-6">
       <div className="space-y-4">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex items-center gap-4">
+          <div className="relative w-[200px]">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
+            <Input
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9"
+            />
+          </div>
           <SelectField
             value={typeFilter}
             onChange={setTypeFilter}
