@@ -32,8 +32,7 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
         .select(`
           *,
           customer:customers(*),
-          asset:assets(*),
-          site:sites(*)
+          asset:assets(*)
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);

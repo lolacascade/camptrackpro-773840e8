@@ -15,8 +15,8 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
-    header: "Asset Name",
-    accessorKey: "asset_id",
+    header: "Asset",
+    accessorKey: "asset",
     cell: (booking: Booking) => {
       return booking.asset?.asset_name || booking.asset?.name || '-';
     },
@@ -25,25 +25,36 @@ export const getBookingColumns = (): Column<Booking>[] => [
   {
     header: "Check-in Date",
     accessorKey: "check_in_date",
-    cell: (booking: Booking) => new Date(booking.check_in_date).toLocaleDateString(),
+    cell: (booking: Booking) => {
+      return booking.check_in_date ? new Date(booking.check_in_date).toLocaleDateString() : '-';
+    },
     sortable: true
   },
   {
     header: "Check-out Date",
     accessorKey: "check_out_date",
-    cell: (booking: Booking) => new Date(booking.check_out_date).toLocaleDateString(),
+    cell: (booking: Booking) => {
+      return booking.check_out_date ? new Date(booking.check_out_date).toLocaleDateString() : '-';
+    },
     sortable: true
   },
   {
     header: "Status",
     accessorKey: "status",
-    cell: (booking: Booking) => booking.status,
-    sortable: true
-  },
-  {
-    header: "Reserved Spot",
-    accessorKey: "slot",
-    cell: (booking: Booking) => booking.slot?.name || 'Unassigned',
+    cell: (booking: Booking) => {
+      const statusClasses = {
+        pending: "text-yellow-600",
+        confirmed: "text-blue-600",
+        checked_in: "text-green-600",
+        completed: "text-gray-600",
+        cancelled: "text-red-600"
+      };
+      return (
+        <span className={statusClasses[booking.status] || ""}>
+          {booking.status?.charAt(0).toUpperCase() + booking.status?.slice(1)}
+        </span>
+      );
+    },
     sortable: true
   },
   {
@@ -76,8 +87,6 @@ export const getBookingColumns = (): Column<Booking>[] => [
       return (
         <DataTableRowActions 
           row={booking}
-          onViewDetails={(row) => console.log('View details', row)}
-          onEdit={(row) => console.log('Edit', row)}
           onDelete={handleCancel}
         />
       );
