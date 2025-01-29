@@ -71,6 +71,16 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     );
   }
 
+  if (error) {
+    return (
+      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+        <div className="p-4 text-center text-red-500">
+          Error loading bookings. Please try again.
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
       <div className="p-4">
