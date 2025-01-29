@@ -50,6 +50,17 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
     enabled: !!organizationId && !!accountId
   });
 
+  // Filter bookings based on selected status
+  const filteredBookings = selectedStatus === "all" 
+    ? bookings 
+    : bookings?.filter(booking => booking.status === selectedStatus) || [];
+
+  console.log('Filtered bookings:', filteredBookings);
+
+  const handleStatusChange = (value: string) => {
+    setSelectedStatus(value);
+  };
+
   if (!organizationId || !accountId) {
     return (
       <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
@@ -59,15 +70,6 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
       </Card>
     );
   }
-
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
-  };
-
-  // Filter bookings based on selected status
-  const filteredBookings = selectedStatus === "all" 
-    ? bookings 
-    : bookings.filter(booking => booking.status === selectedStatus);
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
