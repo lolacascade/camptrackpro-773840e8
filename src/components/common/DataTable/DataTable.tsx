@@ -12,7 +12,6 @@ import { DataTableProps } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
 import { useDataTableState } from "./hooks/useDataTableState";
-import { Badge } from "@/components/ui/badge";
 
 export function DataTable<T extends { id?: number | string }>({
   data = [],
@@ -108,6 +107,11 @@ export function DataTable<T extends { id?: number | string }>({
       supabase.removeChannel(channel);
     };
   }, [tableName, organizationId, accountId, setLocalData]);
+
+  // Update localData when data prop changes
+  useEffect(() => {
+    setLocalData(data);
+  }, [data, setLocalData]);
 
   if (!organizationId || !accountId) {
     return (
