@@ -12,9 +12,14 @@ export function useCustomers() {
 
   useEffect(() => {
     const fetchCustomers = async () => {
-      if (!organizationId || !accountId) return;
+      if (!organizationId || !accountId) {
+        console.log('No organization or account context found:', { organizationId, accountId });
+        setIsLoading(false);
+        return;
+      }
 
       try {
+        console.log('Fetching customers with:', { organizationId, accountId });
         const { data, error } = await supabase
           .from('customers')
           .select('*')
@@ -23,6 +28,7 @@ export function useCustomers() {
           .order('first_name');
         
         if (error) throw error;
+        console.log('Customers data received:', data);
         setCustomers(data || []);
       } catch (error) {
         console.error('Error in useCustomers:', error);
@@ -42,7 +48,12 @@ export function useCustomers() {
       .channel('customers_changes')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'customers' },
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'customers',
+          filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
+        },
         fetchCustomers
       )
       .subscribe();
