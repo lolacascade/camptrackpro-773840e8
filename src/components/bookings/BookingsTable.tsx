@@ -2,12 +2,9 @@ import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Booking } from "@/types/booking";
-import { useQuery } from "@tanstack/react-query";
+import { useBookings } from "./hooks/useBookings";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { useOrganization } from "@/hooks/use-organization";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -15,39 +12,7 @@ interface BookingsTableProps {
 
 export function BookingsTable({ onEdit }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const { organizationId, accountId } = useOrganization();
-
-  const { data: bookings = [], isLoading, error } = useQuery({
-    queryKey: ['bookings', organizationId, accountId],
-    queryFn: async () => {
-      if (!organizationId || !accountId) {
-        console.log('No organization or account context found:', { organizationId, accountId });
-        return [];
-      }
-
-      console.log('Fetching bookings with:', { organizationId, accountId });
-
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          *,
-          customer:customers(*),
-          asset:assets(*)
-        `)
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
-
-      if (error) {
-        console.error('Error fetching bookings:', error);
-        toast.error("Failed to fetch bookings");
-        throw error;
-      }
-
-      console.log('Bookings data received:', data);
-      return data as Booking[];
-    },
-    enabled: !!organizationId && !!accountId
-  });
+  const { bookings, isLoading, error } = useBookings();
 
   // Filter bookings based on selected status
   const filteredBookings = selectedStatus === "all" 
@@ -59,16 +24,6 @@ export function BookingsTable({ onEdit }: BookingsTableProps) {
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
   };
-
-  if (!organizationId || !accountId) {
-    return (
-      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-        <div className="p-4 text-center text-gray-500">
-          Please ensure you have an organization and account selected
-        </div>
-      </Card>
-    );
-  }
 
   if (error) {
     return (
