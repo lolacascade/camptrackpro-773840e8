@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { BaseDrawer } from "@/components/common/BaseDrawer";
 import { FormSelect } from "@/components/common/FormSelect";
+import { Badge } from "@/components/ui/badge";
 
 interface MaintenanceDrawerProps {
   maintenance: Maintenance | null;
