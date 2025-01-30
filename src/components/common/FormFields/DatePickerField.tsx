@@ -1,14 +1,6 @@
 import * as React from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 interface DatePickerFieldProps {
   value?: Date;
@@ -24,32 +16,18 @@ export function DatePickerField({
   className,
 }: DatePickerFieldProps) {
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            "w-[180px] h-11 justify-start text-left font-normal bg-white border-[#E8EBEB] text-[#133134]",
-            !value && "text-muted-foreground",
-            className
-          )}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "PPP") : placeholder}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent 
-        className="w-auto p-0 bg-white border border-[#E8EBEB] shadow-lg" 
-        align="start"
-        sideOffset={5}
-      >
-        <Calendar
-          mode="single"
-          selected={value}
-          onSelect={onChange}
-          initialFocus
-        />
-      </PopoverContent>
-    </Popover>
+    <input
+      type="date"
+      value={value ? format(value, "yyyy-MM-dd") : ""}
+      onChange={(e) => {
+        const date = e.target.value ? new Date(e.target.value) : undefined;
+        onChange(date);
+      }}
+      className={cn(
+        "flex h-11 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      placeholder={placeholder}
+    />
   );
 }
