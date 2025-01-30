@@ -1,11 +1,20 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export function Logo() {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const handleLogoClick = () => {
+    if (location.pathname.startsWith('/app')) {
+      navigate('/app/dashboard');
+    } else {
+      navigate('/');
+    }
+  };
   
   return (
     <div 
-      onClick={() => navigate('/')}
+      onClick={handleLogoClick}
       className="cursor-pointer hover:opacity-90 transition-colors"
     >
       <span className="text-xl font-semibold">

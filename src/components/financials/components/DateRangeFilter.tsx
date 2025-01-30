@@ -5,6 +5,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Check } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type DatePreset = 'this-month' | 'last-30-days' | 'previous-month' | '2024' | 'ytd' | 'all' | 'custom';
 
@@ -24,11 +25,12 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
   });
   const [isOpen, setIsOpen] = useState(false);
   const [activePreset, setActivePreset] = useState<DatePreset>('this-month');
+  const isMobile = useIsMobile();
 
   const presets = [
     {
       id: 'this-month' as DatePreset,
-      label: 'This Mo',
+      label: isMobile ? 'This Mo' : 'This Month',
       getRange: () => ({
         from: startOfMonth(new Date()),
         to: new Date(),
@@ -36,7 +38,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     },
     {
       id: 'last-30-days' as DatePreset,
-      label: 'Last 30D',
+      label: isMobile ? 'Last 30D' : 'Last 30 Days',
       getRange: () => ({
         from: subDays(new Date(), 30),
         to: new Date(),
@@ -44,7 +46,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     },
     {
       id: 'previous-month' as DatePreset,
-      label: 'Prev Mo',
+      label: isMobile ? 'Prev Mo' : 'Previous Month',
       getRange: () => {
         const today = new Date();
         const firstDayPrevMonth = startOfMonth(subDays(today, today.getDate()));
@@ -57,13 +59,10 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     {
       id: '2024' as DatePreset,
       label: '2024',
-      getRange: () => {
-        const year2024 = new Date(2024, 0, 1); // January 1, 2024
-        return {
-          from: startOfYear(year2024),
-          to: endOfMonth(new Date(2024, 11, 31)), // December 31, 2024
-        };
-      },
+      getRange: () => ({
+        from: startOfYear(new Date(2024, 0, 1)),
+        to: endOfMonth(new Date(2024, 11, 31)),
+      }),
     },
     {
       id: 'ytd' as DatePreset,
@@ -77,8 +76,8 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
       id: 'all' as DatePreset,
       label: 'ALL',
       getRange: () => ({
-        from: new Date(2020, 0, 1), // Start from 2020
-        to: new Date(2024, 11, 31), // End of 2024
+        from: new Date(2020, 0, 1),
+        to: new Date(2024, 11, 31),
       }),
     },
   ];
@@ -102,23 +101,22 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     }
   };
 
-  // Initialize with "This Month" on component mount
   useEffect(() => {
     handlePresetClick('this-month');
   }, []);
 
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+      <div className="flex flex-wrap gap-2">
         {presets.map((preset) => (
           <Button
             key={preset.id}
             variant={activePreset === preset.id ? "default" : "outline"}
-            className="h-9"
+            className="h-9 px-2 sm:px-4"
             onClick={() => handlePresetClick(preset.id)}
           >
             {activePreset === preset.id && (
-              <Check className="mr-2 h-4 w-4" />
+              <Check className="mr-1 h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
             )}
             {preset.label}
           </Button>
@@ -158,7 +156,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
             onSelect={(range: DateRange | undefined) => {
               if (range) handleCustomDateSelect(range);
             }}
-            numberOfMonths={2}
+            numberOfMonths={isMobile ? 1 : 2}
           />
         </PopoverContent>
       </Popover>

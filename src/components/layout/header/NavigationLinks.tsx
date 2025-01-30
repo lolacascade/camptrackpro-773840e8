@@ -21,12 +21,12 @@ export function NavigationLinks({ onItemClick, className }: NavigationLinksProps
 
   const navItems = [
     { path: 'dashboard', label: 'Dashboard' },
+    { path: 'bookings', label: 'Bookings' },
+    { path: 'financials', label: 'Financials' },
+    { path: 'maintenance', label: 'Maintenance' },
     { path: 'customers', label: 'Customers' },
     { path: 'assets', label: 'RVs' },
-    { path: 'bookings', label: 'Bookings' },
     { path: 'sitemap', label: 'Sitemap' },
-    { path: 'maintenance', label: 'Maintenance' },
-    { path: 'financials', label: 'Financials' },
   ];
 
   return (

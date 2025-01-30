@@ -1,7 +1,7 @@
 import { Bell, Menu, Plus, Search, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { NotificationDrawer } from "@/components/notifications/NotificationDrawer";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -37,7 +37,10 @@ export function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] bg-[#0D1D1F] p-6 z-[200]">
+            <SheetContent 
+              side="left" 
+              className="w-[300px] bg-[#0D1D1F] p-6 z-[200] border-r border-[rgba(255,255,255,0.1)]"
+            >
               <div className="flex flex-col gap-8">
                 <Logo />
                 <NavigationLinks 
