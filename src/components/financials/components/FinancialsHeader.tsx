@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { DateRangeFilter } from "./DateRangeFilter";
+import { DateRangeFilter } from "@/components/financials/components/DateRangeFilter";
 
 interface FinancialsHeaderProps {
   onAdd: () => void;
