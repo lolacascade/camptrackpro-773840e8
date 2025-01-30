@@ -6,6 +6,7 @@ export interface MonthlyFinancials {
   income: number;
   expenses: number;
   netProfit: number;
+  date: Date;
 }
 
 export interface RevenueChartProps {

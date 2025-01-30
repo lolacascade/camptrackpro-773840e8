@@ -69,7 +69,7 @@ function processDailyData(incomeData: any[], expensesData: any[], dateRange: { f
       income: 0,
       expenses: 0,
       netProfit: 0,
-      date: new Date(currentDate), // Store full date for sorting
+      date: new Date(currentDate),
     };
     currentDate.setDate(currentDate.getDate() + 1);
   }
@@ -118,7 +118,7 @@ function processMonthlyData(incomeData: any[], expensesData: any[]) {
         income: 0,
         expenses: 0,
         netProfit: 0,
-        date: date, // Store full date for sorting
+        date: date,
       };
     }
     monthlyData[key].income += Number(invoice.amount);
@@ -135,7 +135,7 @@ function processMonthlyData(incomeData: any[], expensesData: any[]) {
         income: 0,
         expenses: 0,
         netProfit: 0,
-        date: date, // Store full date for sorting
+        date: date,
       };
     }
     monthlyData[key].expenses += Number(expense.amount);
