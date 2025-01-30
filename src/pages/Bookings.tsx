@@ -45,7 +45,7 @@ export default function Bookings() {
             onAdd={handleAddBooking} 
             onDateRangeChange={handleDateRangeChange}
           />
-          <BookingsInsights />
+          <BookingsInsights dateRange={dateRange} />
           <BookingTrendsChart />
           <BookingsTable onEdit={handleEditBooking} dateRange={dateRange} />
 
