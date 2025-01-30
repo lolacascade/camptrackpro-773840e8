@@ -33,7 +33,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
-        .in('status', ['confirmed', 'checked_in']); // Only active bookings
+        .in('status', ['confirmed', 'checked_in'] as const); // Type assertion to match the database enum
 
       // Apply date range filter if provided
       if (dateRange?.from && dateRange?.to) {
