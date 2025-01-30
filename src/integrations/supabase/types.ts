@@ -1304,6 +1304,10 @@ export type Database = {
             }
             Returns: boolean
           }
+      populate_booking_trends: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       user_belongs_to_organization: {
         Args: {
           org_id: string
