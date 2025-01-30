@@ -34,10 +34,8 @@ export function RevenueChart({ dateRange }: RevenueChartProps) {
               <XAxis
                 dataKey="month"
                 tick={{ fontSize: 12, fill: '#133134' }}
-                tickFormatter={(value, index) => {
-                  const item = financialData?.[index];
-                  return showDailyData ? item?.month : `${item?.month} ${item?.year}`;
-                }}
+                tickFormatter={(value) => value}
+                interval={0}
               />
               <YAxis
                 tick={{ fontSize: 12, fill: '#133134' }}

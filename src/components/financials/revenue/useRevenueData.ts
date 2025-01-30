@@ -38,84 +38,49 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
       if (incomeResponse.error) throw incomeResponse.error;
       if (expensesResponse.error) throw expensesResponse.error;
 
-      if (showDailyData) {
-        const dailyData: { [key: string]: MonthlyFinancials } = {};
+      const data: { [key: string]: MonthlyFinancials } = {};
+      
+      // Initialize all dates in the range
+      eachDayOfInterval({ start: dateRange.from, end: dateRange.to }).forEach(date => {
+        const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
+        const displayFormat = showDailyData ? 'MMM dd' : 'MMM yyyy';
         
-        eachDayOfInterval({ start: dateRange.from, end: dateRange.to }).forEach(date => {
-          const key = format(date, 'yyyy-MM-dd');
-          dailyData[key] = {
-            month: format(date, 'MMM dd'),
+        if (!data[key]) {
+          data[key] = {
+            month: format(date, displayFormat),
             year: format(date, 'yyyy'),
             income: 0,
             expenses: 0,
             netProfit: 0
           };
-        });
+        }
+      });
 
-        incomeResponse.data?.forEach((invoice) => {
-          const date = new Date(invoice.created_at);
-          const key = format(date, 'yyyy-MM-dd');
-          if (dailyData[key]) {
-            dailyData[key].income += Number(invoice.amount);
-          }
-        });
-
-        expensesResponse.data?.forEach((expense) => {
-          const date = new Date(expense.date);
-          const key = format(date, 'yyyy-MM-dd');
-          if (dailyData[key]) {
-            dailyData[key].expenses += Number(expense.amount);
-          }
-        });
-
-        return Object.values(dailyData).map(data => ({
-          ...data,
-          netProfit: data.income - data.expenses
-        }));
-      }
-
-      const monthlyData: { [key: string]: MonthlyFinancials } = {};
-
-      incomeResponse.data?.forEach((invoice) => {
+      // Aggregate income
+      incomeResponse.data?.forEach(invoice => {
         const date = new Date(invoice.created_at);
-        const key = format(date, 'yyyy-MM');
-        if (!monthlyData[key]) {
-          monthlyData[key] = {
-            month: format(date, 'MMM'),
-            year: format(date, 'yyyy'),
-            income: 0,
-            expenses: 0,
-            netProfit: 0
-          };
+        const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
+        if (data[key]) {
+          data[key].income += Number(invoice.amount);
         }
-        monthlyData[key].income += Number(invoice.amount);
       });
 
-      expensesResponse.data?.forEach((expense) => {
+      // Aggregate expenses
+      expensesResponse.data?.forEach(expense => {
         const date = new Date(expense.date);
-        const key = format(date, 'yyyy-MM');
-        if (!monthlyData[key]) {
-          monthlyData[key] = {
-            month: format(date, 'MMM'),
-            year: format(date, 'yyyy'),
-            income: 0,
-            expenses: 0,
-            netProfit: 0
-          };
+        const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
+        if (data[key]) {
+          data[key].expenses += Number(expense.amount);
         }
-        monthlyData[key].expenses += Number(expense.amount);
       });
 
-      return Object.values(monthlyData)
-        .map(data => ({
-          ...data,
-          netProfit: data.income - data.expenses
-        }))
-        .sort((a, b) => {
-          const dateA = new Date(`${a.year} ${a.month}`);
-          const dateB = new Date(`${b.year} ${b.month}`);
-          return dateA.getTime() - dateB.getTime();
-        });
+      // Calculate net profit and convert to array
+      return Object.entries(data)
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+        .map(([_, value]) => ({
+          ...value,
+          netProfit: value.income - value.expenses
+        }));
     },
     enabled: !!organizationId && !!accountId,
   });
