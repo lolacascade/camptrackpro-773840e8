@@ -2,22 +2,38 @@ import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { ChartBar, Clock, MapPin, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
 
 export function BookingsInsights() {
+  const { organizationId, accountId } = useOrganization();
+  
   const { data: insights } = useQuery({
-    queryKey: ['bookings-insights'],
+    queryKey: ['bookings-insights', organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) {
+        throw new Error("Organization or account context not found");
+      }
+
       const today = new Date().toISOString().split('T')[0];
       const [totalBookings, activeBookings, todayCheckIns, revenue] = await Promise.all([
-        supabase.from('bookings').select('*', { count: 'exact' }),
         supabase.from('bookings')
           .select('*', { count: 'exact' })
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId),
+        supabase.from('bookings')
+          .select('*', { count: 'exact' })
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .gte('check_out_date', today),
         supabase.from('bookings')
           .select('*', { count: 'exact' })
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .eq('check_in_date', today),
         supabase.from('invoices')
           .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .eq('status', 'paid')
       ]);
 
@@ -30,6 +46,7 @@ export function BookingsInsights() {
         totalRevenue
       };
     },
+    enabled: !!organizationId && !!accountId,
   });
 
   const stats = [

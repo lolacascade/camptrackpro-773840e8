@@ -593,30 +593,36 @@ export type Database = {
       }
       invoices: {
         Row: {
+          account_id: string | null
           amount: number | null
           booking_id: string | null
           created_at: string | null
           id: string
+          organization_id: string | null
           status: string
           type: string
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          account_id?: string | null
           amount?: number | null
           booking_id?: string | null
           created_at?: string | null
           id?: string
+          organization_id?: string | null
           status?: string
           type: string
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          account_id?: string | null
           amount?: number | null
           booking_id?: string | null
           created_at?: string | null
           id?: string
+          organization_id?: string | null
           status?: string
           type?: string
           updated_at?: string | null
@@ -624,10 +630,24 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "invoices_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "invoices_booking_id_fkey"
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
