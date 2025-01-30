@@ -25,42 +25,16 @@ interface BookingDrawerProps {
   onBookingUpdated: () => void;
 }
 
-type BookingFormData = {
-  customer_id: string;
-  asset_id: string;
-  site_id: number;
-  special_requirements?: string;
-  total_amount?: number;
-};
-
-type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
-
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const { customers } = useCustomers();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 7)
+    from: booking ? new Date(booking.check_in_date) : new Date(),
+    to: booking ? new Date(booking.check_out_date) : addDays(new Date(), 7)
   });
   const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
-  const [manualAmount, setManualAmount] = useState<string>('');
-  
-  useEffect(() => {
-    if (booking) {
-      setDateRange({
-        from: new Date(booking.check_in_date),
-        to: new Date(booking.check_out_date)
-      });
-      setManualAmount(booking.total_amount?.toString() || '');
-    } else {
-      setDateRange({
-        from: new Date(),
-        to: addDays(new Date(), 7)
-      });
-      setManualAmount('');
-    }
-  }, [booking]);
+  const [manualAmount, setManualAmount] = useState<string>(booking?.total_amount?.toString() || '');
 
   const { data: profile } = useQuery({
     queryKey: ['profile', session?.user?.id],
@@ -81,7 +55,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     enabled: !!session?.user?.id
   });
 
-  const { register, handleSubmit, setValue, watch } = useForm<BookingFormData>({
+  const { register, handleSubmit, setValue, watch } = useForm({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
@@ -124,7 +98,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     calculateTotal();
   }, [watch('asset_id'), dateRange]);
 
-  const onSubmit = async (data: BookingFormData) => {
+  const onSubmit = async (data: any) => {
     try {
       if (!session?.user?.id || !organizationId || !accountId) {
         toast.error("Missing required context");
@@ -140,7 +114,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         ...data,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending' as BookingStatus,
+        status: 'pending' as const,
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
