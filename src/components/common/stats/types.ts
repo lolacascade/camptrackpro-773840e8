@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export interface StatsBreakdownItem {
   label: string;
   value: string | number;
