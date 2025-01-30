@@ -13,7 +13,7 @@ export function FinancialsHeader({ onAdd, onDateRangeChange }: FinancialsHeaderP
       <h1 className="text-2xl font-semibold text-[#133134]">Financials</h1>
       <div className="flex items-center gap-4">
         <DateRangeFilter onDateRangeChange={onDateRangeChange} />
-        <Button onClick={onAdd} className="bg-[#133134] hover:bg-[#0D2426]">
+        <Button onClick={onAdd} className="bg-[#133134] hover:bg-[#0D2426] text-white">
           <Plus className="w-4 h-4 mr-2" />
           Add Expense
         </Button>

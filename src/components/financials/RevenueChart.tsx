@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { format, differenceInDays, isWithinInterval, eachDayOfInterval } from "date-fns";
 import { useOrganization } from "@/hooks/use-organization";
 
 interface MonthlyFinancials {
@@ -60,9 +60,11 @@ interface RevenueChartProps {
 
 export function RevenueChart({ dateRange }: RevenueChartProps) {
   const { organizationId, accountId } = useOrganization();
+  const daysDifference = differenceInDays(dateRange.to, dateRange.from);
+  const showDailyData = daysDifference <= 31; // Show daily data for ranges up to 31 days
 
   const { data: financialData } = useQuery({
-    queryKey: ['financial-data', organizationId, accountId, dateRange.from, dateRange.to],
+    queryKey: ['financial-data', organizationId, accountId, dateRange.from, dateRange.to, showDailyData],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         throw new Error("Organization or account context not found");
@@ -95,48 +97,93 @@ export function RevenueChart({ dateRange }: RevenueChartProps) {
         return [];
       }
 
-      // Process and aggregate data by month
-      const monthlyData: { [key: string]: MonthlyFinancials } = {};
+      if (showDailyData) {
+        // Process daily data
+        const dailyData: { [key: string]: MonthlyFinancials } = {};
+        
+        // Initialize all days in the range
+        eachDayOfInterval({ start: dateRange.from, end: dateRange.to }).forEach(date => {
+          const key = format(date, 'yyyy-MM-dd');
+          dailyData[key] = {
+            month: format(date, 'MMM dd'),
+            year: format(date, 'yyyy'),
+            income: 0,
+            expenses: 0,
+            netProfit: 0,
+          };
+        });
 
-      // Initialize months within the date range
-      let currentDate = new Date(dateRange.from);
-      while (currentDate <= dateRange.to) {
-        const key = format(currentDate, 'yyyy-MM');
-        monthlyData[key] = {
-          month: format(currentDate, 'MMM'),
-          year: format(currentDate, 'yyyy'),
-          income: 0,
-          expenses: 0,
-          netProfit: 0,
-        };
-        currentDate.setMonth(currentDate.getMonth() + 1);
-      }
+        // Aggregate income by day
+        incomeData?.forEach((invoice) => {
+          const date = new Date(invoice.created_at);
+          const key = format(date, 'yyyy-MM-dd');
+          if (dailyData[key]) {
+            dailyData[key].income += Number(invoice.amount);
+          }
+        });
 
-      // Aggregate income
-      incomeData?.forEach((invoice) => {
-        const date = new Date(invoice.created_at);
-        const key = format(date, 'yyyy-MM');
-        if (monthlyData[key]) {
-          monthlyData[key].income += Number(invoice.amount);
-        }
-      });
+        // Aggregate expenses by day
+        expensesData?.forEach((expense) => {
+          const date = new Date(expense.date);
+          const key = format(date, 'yyyy-MM-dd');
+          if (dailyData[key]) {
+            dailyData[key].expenses += Number(expense.amount);
+          }
+        });
 
-      // Aggregate expenses
-      expensesData?.forEach((expense) => {
-        const date = new Date(expense.date);
-        const key = format(date, 'yyyy-MM');
-        if (monthlyData[key]) {
-          monthlyData[key].expenses += Number(expense.amount);
-        }
-      });
-
-      // Calculate net profit and convert to array
-      return Object.values(monthlyData)
-        .map(data => ({
+        // Calculate net profit and convert to array
+        return Object.values(dailyData).map(data => ({
           ...data,
           netProfit: data.income - data.expenses
-        }))
-        .reverse();
+        }));
+      } else {
+        // Process monthly data (existing logic)
+        const monthlyData: { [key: string]: MonthlyFinancials } = {};
+
+        // Aggregate income by month
+        incomeData?.forEach((invoice) => {
+          const date = new Date(invoice.created_at);
+          const key = format(date, 'yyyy-MM');
+          if (!monthlyData[key]) {
+            monthlyData[key] = {
+              month: format(date, 'MMM'),
+              year: format(date, 'yyyy'),
+              income: 0,
+              expenses: 0,
+              netProfit: 0,
+            };
+          }
+          monthlyData[key].income += Number(invoice.amount);
+        });
+
+        // Aggregate expenses by month
+        expensesData?.forEach((expense) => {
+          const date = new Date(expense.date);
+          const key = format(date, 'yyyy-MM');
+          if (!monthlyData[key]) {
+            monthlyData[key] = {
+              month: format(date, 'MMM'),
+              year: format(date, 'yyyy'),
+              income: 0,
+              expenses: 0,
+              netProfit: 0,
+            };
+          }
+          monthlyData[key].expenses += Number(expense.amount);
+        });
+
+        // Calculate net profit and convert to array
+        return Object.values(monthlyData)
+          .map(data => ({
+            ...data,
+            netProfit: data.income - data.expenses
+          }))
+          .sort((a, b) => {
+            const dateA = new Date(`${a.year} ${a.month}`);
+            const dateB = new Date(`${b.year} ${b.month}`);
+            return dateA.getTime() - dateB.getTime();
+          });
+      }
     },
     enabled: !!organizationId && !!accountId,
   });
@@ -159,7 +206,7 @@ export function RevenueChart({ dateRange }: RevenueChartProps) {
                 tick={{ fontSize: 12, fill: '#133134' }}
                 tickFormatter={(value, index) => {
                   const item = financialData?.[index];
-                  return `${item?.month} ${item?.year}`;
+                  return showDailyData ? item?.month : `${item?.month} ${item?.year}`;
                 }}
               />
               <YAxis

@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { format, startOfMonth, endOfMonth, subDays, startOfYear } from "date-fns";
+import { format, startOfMonth, endOfMonth, subDays, startOfYear, subYears } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Check } from "lucide-react";
 
-export type DatePreset = 'this-month' | 'last-30-days' | 'previous-month' | 'ytd' | 'full-year' | 'custom';
+export type DatePreset = 'this-month' | 'last-30-days' | 'previous-month' | 'ytd' | 'previous-year' | 'custom';
 
 interface DateRange {
   from: Date;
@@ -28,7 +28,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
   const presets = [
     {
       id: 'this-month' as DatePreset,
-      label: 'This Month',
+      label: 'This Mo',
       getRange: () => ({
         from: startOfMonth(new Date()),
         to: new Date(),
@@ -36,7 +36,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     },
     {
       id: 'last-30-days' as DatePreset,
-      label: 'Last 30 Days',
+      label: 'Last 30D',
       getRange: () => ({
         from: subDays(new Date(), 30),
         to: new Date(),
@@ -44,7 +44,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     },
     {
       id: 'previous-month' as DatePreset,
-      label: 'Previous Month',
+      label: 'Prev Mo',
       getRange: () => {
         const today = new Date();
         const firstDayPrevMonth = startOfMonth(subDays(today, today.getDate()));
@@ -56,19 +56,22 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     },
     {
       id: 'ytd' as DatePreset,
-      label: 'Year to Date',
+      label: 'YTD',
       getRange: () => ({
         from: startOfYear(new Date()),
         to: new Date(),
       }),
     },
     {
-      id: 'full-year' as DatePreset,
-      label: 'Full Year',
-      getRange: () => ({
-        from: startOfYear(new Date()),
-        to: endOfMonth(new Date()),
-      }),
+      id: 'previous-year' as DatePreset,
+      label: 'Full Yr',
+      getRange: () => {
+        const prevYear = subYears(new Date(), 1);
+        return {
+          from: startOfYear(prevYear),
+          to: endOfMonth(prevYear),
+        };
+      },
     },
   ];
 
