@@ -62,7 +62,7 @@ export function DataTableHeader({
         </div>
         
         {dateRange && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border">
             <DatePickerField
               value={dateRange.startDate}
               onChange={(date) => dateRange.onDateRangeChange(date, dateRange.endDate)}
