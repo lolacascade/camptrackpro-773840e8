@@ -3,7 +3,7 @@ import { ExpenseTable } from "./ExpenseTable";
 import { FinancialsStatsCards } from "./FinancialsStatsCards";
 import { AddExpenseDrawer } from "./AddExpenseDrawer";
 import { useExpenseData } from "./hooks/useExpenseData";
-import { RevenueChart } from "./RevenueChart";
+import { RevenueChart } from "./revenue/RevenueChart";
 import { ExpenseBreakdownChart } from "./expense-breakdown/ExpenseBreakdownChart";
 import type { Expense } from "@/types/expense";
 
