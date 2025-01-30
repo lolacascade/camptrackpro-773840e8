@@ -6,7 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { CalendarIcon, Check } from "lucide-react";
 
-export type DatePreset = 'this-month' | 'last-30-days' | 'previous-month' | '2024' | 'ytd' | 'custom';
+export type DatePreset = 'this-month' | 'last-30-days' | 'previous-month' | '2024' | 'ytd' | 'all' | 'custom';
 
 interface DateRange {
   from: Date;
@@ -71,6 +71,14 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
       getRange: () => ({
         from: startOfYear(new Date()),
         to: new Date(),
+      }),
+    },
+    {
+      id: 'all' as DatePreset,
+      label: 'ALL',
+      getRange: () => ({
+        from: new Date(2020, 0, 1), // Start from 2020
+        to: new Date(2024, 11, 31), // End of 2024
       }),
     },
   ];
