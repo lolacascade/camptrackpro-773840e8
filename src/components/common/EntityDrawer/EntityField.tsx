@@ -1,9 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { FormSelect } from "@/components/common/FormSelect"
-import { Calendar } from "@/components/ui/calendar"
-import { format } from "date-fns"
-import { cn } from "@/lib/utils"
+import { SelectField } from "@/components/common/FormFields/SelectField"
+import { DatePickerField } from "@/components/common/FormFields/DatePickerField"
 import type { FormField } from "./types"
 
 export function EntityField({ field }: { field: FormField }) {
@@ -11,9 +9,9 @@ export function EntityField({ field }: { field: FormField }) {
     switch (field.type) {
       case 'select':
         return (
-          <FormSelect
+          <SelectField
             value={field.value?.toString() || ''}
-            onValueChange={field.onChange}
+            onChange={field.onChange}
             options={field.options || []}
             placeholder={`Select ${field.label.toLowerCase()}`}
           />
@@ -29,14 +27,12 @@ export function EntityField({ field }: { field: FormField }) {
         )
       case 'date':
         return (
-          <div className="relative">
-            <Input
-              type="date"
-              value={field.value ? format(new Date(field.value), "yyyy-MM-dd") : ''}
-              onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value).toISOString() : null)}
-              className="bg-white"
-            />
-          </div>
+          <DatePickerField
+            value={field.value ? new Date(field.value) : undefined}
+            onChange={(date) => field.onChange(date?.toISOString())}
+            placeholder={`Select ${field.label.toLowerCase()}`}
+            className="w-full"
+          />
         )
       default:
         return (
