@@ -21,7 +21,14 @@ export function useBookingsInsights(dateRange?: DateRange) {
   return useQuery({
     queryKey: ['bookings-insights', organizationId, accountId, dateRange?.from, dateRange?.to],
     queryFn: async (): Promise<BookingInsight> => {
+      console.log('Fetching insights with:', {
+        organizationId,
+        accountId,
+        dateRange
+      });
+
       if (!organizationId || !accountId) {
+        console.error("Organization or account context not found");
         throw new Error("Organization or account context not found");
       }
 
@@ -40,6 +47,11 @@ export function useBookingsInsights(dateRange?: DateRange) {
 
       // Apply date range filter
       if (dateRange?.from && dateRange?.to) {
+        console.log('Applying date range filter:', {
+          from: format(dateRange.from, 'yyyy-MM-dd'),
+          to: format(dateRange.to, 'yyyy-MM-dd')
+        });
+        
         query = query
           .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
@@ -64,6 +76,12 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .gte('check_out_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
           .lte('check_out_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
       ]);
+
+      console.log('Query results:', {
+        bookings: bookings.data,
+        checkIns: checkIns.data,
+        checkOuts: checkOuts.data
+      });
 
       if (bookings.error) {
         console.error('Error fetching bookings:', bookings.error);
