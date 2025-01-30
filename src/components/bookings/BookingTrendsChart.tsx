@@ -13,6 +13,7 @@ import {
   ResponsiveContainer
 } from "recharts";
 import { format } from "date-fns";
+import { DateRange } from "react-day-picker";
 
 interface BookingTrend {
   month: string;
@@ -21,20 +22,33 @@ interface BookingTrend {
   cancellations: number;
 }
 
-export function BookingTrendsChart() {
+interface BookingTrendsChartProps {
+  dateRange?: DateRange;
+}
+
+export function BookingTrendsChart({ dateRange }: BookingTrendsChartProps) {
   const { organizationId, accountId } = useOrganization();
 
   const { data: trends, isLoading, error } = useQuery({
-    queryKey: ['booking-trends', organizationId, accountId],
+    queryKey: ['booking-trends', organizationId, accountId, dateRange],
     queryFn: async () => {
-      console.log('Fetching booking trends with context:', { organizationId, accountId });
+      console.log('Fetching booking trends with context:', { organizationId, accountId, dateRange });
       
-      const { data, error } = await supabase
+      let query = supabase
         .from('booking_trends_data')
         .select('*')
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .order('month', { ascending: true });
+        .eq('account_id', accountId);
+
+      // Apply date range filter if provided
+      if (dateRange?.from) {
+        query = query.gte('month', dateRange.from.toISOString().split('T')[0]);
+      }
+      if (dateRange?.to) {
+        query = query.lte('month', dateRange.to.toISOString().split('T')[0]);
+      }
+
+      const { data, error } = await query.order('month', { ascending: true });
 
       if (error) {
         console.error('Error fetching booking trends:', error);
