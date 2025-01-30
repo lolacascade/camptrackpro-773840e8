@@ -1,16 +1,10 @@
-import { useEffect } from "react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useTableState } from "@/hooks/use-table-state";
-import { useDataTable } from "@/hooks/use-data-table";
-import { useDataSearch } from "@/hooks/use-data-search";
-import { useOrganization } from "@/hooks/use-organization";
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTableContent } from "./DataTableContent";
 import { DataTablePagination } from "./DataTablePagination";
 import { DataTableProps } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
+import { useDataTableCore } from "./hooks/useDataTableCore";
 
 export function DataTable<T extends { id?: number | string }>({
   data = [],
@@ -29,88 +23,28 @@ export function DataTable<T extends { id?: number | string }>({
   tableName,
   onRowClick,
 }: DataTableProps<T>) {
-  const { organizationId, accountId } = useOrganization();
-  
   const {
-    localData,
-    setLocalData,
+    organizationId,
+    accountId,
     sortConfig,
     handleSort,
     currentPage,
     setCurrentPage,
     searchTerm,
     setSearchTerm,
-  } = useTableState<T>(data);
-
-  // Calculate pagination indices
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-
-  const {
     visibleColumns,
     setVisibleColumns,
     visibleColumnsData,
-    handleFilterChange
-  } = useDataTable({ 
-    data: localData || [], 
-    columns: columns || [], 
-    filters: filters || [] 
+    handleFilterChange,
+    paginatedData,
+    totalPages,
+  } = useDataTableCore({
+    data,
+    columns,
+    filters,
+    itemsPerPage,
+    tableName,
   });
-
-  // Apply search filter to sorted data
-  const searchFilteredData = useDataSearch(localData || [], searchTerm);
-
-  // Update localData when data prop changes
-  useEffect(() => {
-    console.log('Data prop changed:', data);
-    if (data && data.length > 0) {
-      setLocalData(data);
-    }
-  }, [data, setLocalData]);
-
-  // Real-time updates
-  useEffect(() => {
-    if (!tableName || !organizationId || !accountId) return;
-
-    console.log('Setting up real-time subscription for:', tableName);
-    const channel = supabase
-      .channel('table_db_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: tableName,
-          filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
-        },
-        (payload) => {
-          console.log('Received real-time update:', payload);
-          
-          setLocalData(currentData => {
-            if (!currentData) return data;
-
-            switch (payload.eventType) {
-              case 'INSERT':
-                return [...currentData, payload.new as T];
-              case 'DELETE':
-                return currentData.filter(item => item.id !== payload.old.id);
-              case 'UPDATE':
-                return currentData.map(item => 
-                  item.id === payload.new.id ? { ...item, ...payload.new } : item
-                );
-              default:
-                return currentData;
-            }
-          });
-        }
-      )
-      .subscribe();
-
-    return () => {
-      console.log('Cleaning up real-time subscription');
-      supabase.removeChannel(channel);
-    };
-  }, [tableName, organizationId, accountId, setLocalData, data]);
 
   if (!organizationId || !accountId) {
     return (
@@ -134,9 +68,6 @@ export function DataTable<T extends { id?: number | string }>({
       />
     );
   }
-
-  const paginatedData = searchFilteredData.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(searchFilteredData.length / itemsPerPage);
 
   return (
     <DataTableContainer>
