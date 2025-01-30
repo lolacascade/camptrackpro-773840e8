@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { differenceInDays } from "date-fns";
-import { CustomTooltip } from "./CustomTooltip";
+import { ChartTooltip } from "./ChartTooltip";
 import { useRevenueData } from "./useRevenueData";
 import { RevenueChartProps } from "./types";
 
@@ -49,7 +49,7 @@ export function RevenueChart({ dateRange }: RevenueChartProps) {
                   style: { textAnchor: 'middle' }
                 }}
               />
-              <Tooltip content={<CustomTooltip />} />
+              <Tooltip content={<ChartTooltip />} />
               <Bar dataKey="income" name="Income" fill="#10B981" stackId="a" />
               <Bar dataKey="expenses" name="Expenses" fill="#EF4444" stackId="a" />
             </BarChart>
