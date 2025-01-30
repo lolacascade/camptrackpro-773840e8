@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export interface BookingInsight {
   totalBookings: number;
   activeBookings: number;
@@ -9,7 +11,7 @@ export interface BookingStat {
   title: string;
   value: string | number;
   description: string;
-  icon: React.ComponentType;
+  icon: LucideIcon;
   trend?: {
     value: string;
     direction: 'up' | 'down';

@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LucideIcon } from "lucide-react";
 import { BookingStat } from "./types";
 
 export function BookingStatCard({ title, value, description, icon: Icon, trend }: BookingStat) {
