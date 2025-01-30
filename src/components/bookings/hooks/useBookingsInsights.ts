@@ -25,8 +25,6 @@ export function useBookingsInsights(dateRange?: DateRange) {
         throw new Error("Organization or account context not found");
       }
 
-      const today = format(new Date(), 'yyyy-MM-dd');
-      
       // Base query for active bookings within date range
       let query = supabase
         .from('bookings')
@@ -38,21 +36,14 @@ export function useBookingsInsights(dateRange?: DateRange) {
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
-        .in('status', ['pending', 'confirmed', 'checked_in']); // Include pending bookings as they are also active
+        .in('status', ['pending', 'confirmed', 'checked_in']);
 
-      // Apply date range filter if provided
+      // Apply date range filter
       if (dateRange?.from && dateRange?.to) {
         query = query
           .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
-      } else {
-        // If no date range provided, show current active bookings
-        query = query
-          .lte('check_in_date', today)
-          .gte('check_out_date', today);
       }
-
-      console.log('Fetching bookings with query:', query); // Debug log
 
       const [bookings, checkIns, checkOuts] = await Promise.all([
         query,
@@ -61,15 +52,17 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
-          .eq('check_in_date', today)
-          .in('status', ['pending', 'confirmed']), // Only count upcoming check-ins
+          .in('status', ['pending', 'confirmed'])
+          .gte('check_in_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
+          .lte('check_in_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd')),
         supabase
           .from('bookings')
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
-          .eq('check_out_date', today)
-          .in('status', ['checked_in', 'confirmed']) // Only count active checkouts
+          .in('status', ['checked_in', 'confirmed'])
+          .gte('check_out_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
+          .lte('check_out_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
       ]);
 
       if (bookings.error) {
@@ -78,8 +71,6 @@ export function useBookingsInsights(dateRange?: DateRange) {
       }
       if (checkIns.error) throw checkIns.error;
       if (checkOuts.error) throw checkOuts.error;
-
-      console.log('Active bookings data:', bookings.data); // Debug log
 
       // Calculate RV type distribution
       const rvTypeDistribution = bookings.data?.reduce((acc: Record<string, number>, booking) => {

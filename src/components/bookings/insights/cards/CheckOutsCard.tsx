@@ -8,13 +8,13 @@ interface CheckOutsCardProps {
 export function CheckOutsCard({ value }: CheckOutsCardProps) {
   return (
     <EnhancedStatCard
-      title="Today's Check-outs"
+      title="Check-outs"
       value={String(value)}
       icon={LogOut}
       trend={{
-        value: "On schedule",
+        value: "Within range",
         isPositive: true,
-        comparedTo: "today"
+        comparedTo: "selected period"
       }}
       breakdown={[
         { label: "Morning", value: String(Math.ceil(value * 0.7)), percentage: 70 },
