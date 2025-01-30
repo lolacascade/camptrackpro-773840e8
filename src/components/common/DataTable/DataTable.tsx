@@ -11,7 +11,6 @@ import { DataTablePagination } from "./DataTablePagination";
 import { DataTableProps } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
-import { useDataTableState } from "./hooks/useDataTableState";
 
 export function DataTable<T extends { id?: number | string }>({
   data = [],
@@ -31,22 +30,22 @@ export function DataTable<T extends { id?: number | string }>({
   onRowClick,
 }: DataTableProps<T>) {
   const { organizationId, accountId } = useOrganization();
+  
+  // Initialize table state with the provided data
   const {
     localData,
     setLocalData,
+    sortConfig: localSortConfig,
+    handleSort,
     currentPage,
     setCurrentPage,
     searchTerm,
     setSearchTerm,
-    startIndex,
-    endIndex
-  } = useDataTableState({ 
-    data, 
-    itemsPerPage, 
-    tableName, 
-    organizationId, 
-    accountId 
-  });
+  } = useTableState<T>(data);
+
+  // Calculate pagination indices
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
 
   const {
     visibleColumns,
@@ -59,19 +58,15 @@ export function DataTable<T extends { id?: number | string }>({
     filters: filters || [] 
   });
 
-  const {
-    localData: sortedData,
-    sortConfig: localSortConfig,
-    handleSort
-  } = useTableState<T>(localData || []);
-
-  // Apply search filter
-  const searchFilteredData = useDataSearch(sortedData, searchTerm);
+  // Apply search filter to sorted data
+  const searchFilteredData = useDataSearch(localData || [], searchTerm);
 
   // Update localData when data prop changes
   useEffect(() => {
     console.log('Data prop changed:', data);
-    setLocalData(data);
+    if (data && data.length > 0) {
+      setLocalData(data);
+    }
   }, [data, setLocalData]);
 
   // Real-time updates
@@ -89,27 +84,25 @@ export function DataTable<T extends { id?: number | string }>({
           table: tableName,
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
-        async (payload) => {
+        (payload) => {
           console.log('Received real-time update:', payload);
-          try {
-            setLocalData(currentData => {
-              if (!currentData) return data;
+          
+          setLocalData(currentData => {
+            if (!currentData) return data;
 
-              if (payload.eventType === 'INSERT') {
+            switch (payload.eventType) {
+              case 'INSERT':
                 return [...currentData, payload.new as T];
-              } else if (payload.eventType === 'DELETE') {
+              case 'DELETE':
                 return currentData.filter(item => item.id !== payload.old.id);
-              } else if (payload.eventType === 'UPDATE') {
+              case 'UPDATE':
                 return currentData.map(item => 
                   item.id === payload.new.id ? { ...item, ...payload.new } : item
                 );
-              }
-              return currentData;
-            });
-          } catch (error) {
-            console.error('Error handling real-time update:', error);
-            toast.error('Error updating data. Please refresh the page.');
-          }
+              default:
+                return currentData;
+            }
+          });
         }
       )
       .subscribe();
