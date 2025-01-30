@@ -51,22 +51,30 @@ const CustomTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-export function RevenueChart() {
+interface RevenueChartProps {
+  dateRange: {
+    from: Date;
+    to: Date;
+  };
+}
+
+export function RevenueChart({ dateRange }: RevenueChartProps) {
   const { organizationId, accountId } = useOrganization();
   const monthsToShow = 12;
 
   const { data: financialData } = useQuery({
-    queryKey: ['financial-data', organizationId, accountId],
+    queryKey: ['financial-data', organizationId, accountId, dateRange.from, dateRange.to],
     queryFn: async () => {
-      const endDate = endOfMonth(new Date());
-      const startDate = startOfMonth(subMonths(new Date(), monthsToShow - 1));
+      if (!organizationId || !accountId) {
+        throw new Error("Organization or account context not found");
+      }
 
       // Fetch income (invoices)
       const { data: incomeData, error: incomeError } = await supabase
         .from('invoices')
         .select('amount, created_at')
-        .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString())
+        .gte('created_at', dateRange.from.toISOString())
+        .lte('created_at', dateRange.to.toISOString())
         .eq('status', 'paid');
 
       if (incomeError) {
@@ -78,8 +86,8 @@ export function RevenueChart() {
       const { data: expensesData, error: expensesError } = await supabase
         .from('expenses')
         .select('amount, date')
-        .gte('date', startDate.toISOString())
-        .lte('date', endDate.toISOString())
+        .gte('date', dateRange.from.toISOString())
+        .lte('date', dateRange.to.toISOString())
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 

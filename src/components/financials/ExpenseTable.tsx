@@ -24,12 +24,16 @@ const expenseCategories = [
 
 interface ExpenseTableProps {
   onEdit?: (expense: Expense) => void;
+  dateRange?: {
+    from: Date;
+    to: Date;
+  };
 }
 
-export function ExpenseTable({ onEdit }: ExpenseTableProps) {
+export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   const { organizationId, accountId } = useOrganization();
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [startDate, setStartDate] = useState<Date | null>(dateRange?.from || null);
+  const [endDate, setEndDate] = useState<Date | null>(dateRange?.to || null);
 
   const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['expenses', organizationId, accountId, startDate, endDate],

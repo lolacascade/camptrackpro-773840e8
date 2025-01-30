@@ -17,7 +17,7 @@ interface FinancialsOverviewProps {
 export function FinancialsOverview({ dateRange }: FinancialsOverviewProps) {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-  const { expenses, isLoading, refetch } = useExpenseData(dateRange);
+  const { expenses, isLoading, refetch } = useExpenseData();
 
   const handleEditExpense = async (expense: Expense) => {
     setSelectedExpense(expense);
