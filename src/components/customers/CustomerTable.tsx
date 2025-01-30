@@ -14,13 +14,22 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
   console.log('CustomerTable rendered with:', { customersCount: customers.length, isLoading });
 
   const handleDelete = async (customer: Customer) => {
+    if (!customer.id) {
+      console.error('No customer ID provided for deletion');
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('customers')
         .delete()
-        .eq('id', customer.id?.toString()); // Convert id to string explicitly
+        .eq('id', customer.id.toString());
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting customer:', error);
+        throw error;
+      }
+
       toast.success("Customer deleted successfully");
     } catch (error) {
       console.error('Error deleting customer:', error);
