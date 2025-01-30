@@ -1,89 +1,24 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { ChartBar, Activity, Calendar, LogOut } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useOrganization } from "@/hooks/use-organization";
 import { DateRange } from "react-day-picker";
-import { format } from "date-fns";
+import { useBookingsInsights } from "./hooks/useBookingsInsights";
 
 interface BookingsInsightsProps {
   dateRange?: DateRange;
 }
 
 export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
-  const { organizationId, accountId } = useOrganization();
+  const { data: insights, isLoading } = useBookingsInsights(dateRange);
   
-  const { data: insights } = useQuery({
-    queryKey: ['bookings-insights', organizationId, accountId, dateRange?.from, dateRange?.to],
-    queryFn: async () => {
-      if (!organizationId || !accountId) {
-        throw new Error("Organization or account context not found");
-      }
-
-      const today = format(new Date(), 'yyyy-MM-dd');
-      
-      // Base query for active bookings within date range
-      let query = supabase
-        .from('bookings')
-        .select(`
-          *,
-          asset:assets(
-            asset_type
-          )
-        `)
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .in('status', ['confirmed', 'checked_in']);
-
-      // Apply date range filter if provided
-      if (dateRange?.from && dateRange?.to) {
-        query = query
-          .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
-      }
-
-      const [bookings, checkIns, checkOuts] = await Promise.all([
-        query,
-        supabase
-          .from('bookings')
-          .select('*')
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-          .eq('check_in_date', today),
-        supabase
-          .from('bookings')
-          .select('*')
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-          .eq('check_out_date', today)
-      ]);
-
-      // Calculate RV type distribution
-      const rvTypeDistribution = bookings.data?.reduce((acc: Record<string, number>, booking) => {
-        const rvType = booking.asset?.asset_type || 'Unknown';
-        acc[rvType] = (acc[rvType] || 0) + 1;
-        return acc;
-      }, {});
-
-      // Get the top 2 RV types for the breakdown
-      const topRvTypes = Object.entries(rvTypeDistribution || {})
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 2)
-        .map(([type, count]) => ({
-          label: type,
-          value: String(count),
-          percentage: Math.round((count / (bookings.data?.length || 1)) * 100)
-        }));
-
-      return {
-        activeBookings: bookings.data?.length || 0,
-        rvTypeDistribution: topRvTypes,
-        checkIns: checkIns.data?.length || 0,
-        checkOuts: checkOuts.data?.length || 0
-      };
-    },
-    enabled: !!organizationId && !!accountId,
-  });
+  if (isLoading) {
+    return (
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {Array(4).fill(0).map((_, i) => (
+          <div key={i} className="h-[160px] bg-gray-100 animate-pulse rounded-lg" />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
