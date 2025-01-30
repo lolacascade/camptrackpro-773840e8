@@ -26,12 +26,8 @@ export function FinancialsOverview() {
   return (
     <div className="space-y-8">
       <FinancialsStatsCards />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <RevenueChart />
-        <ExpenseBreakdownChart />
-      </div>
-      
+      <RevenueChart />
+      <ExpenseBreakdownChart />
       <ExpenseTable
         onEdit={handleEditExpense}
       />

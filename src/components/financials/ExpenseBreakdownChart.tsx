@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
 
@@ -14,6 +15,7 @@ interface ExpenseData {
 
 export function ExpenseBreakdownChart() {
   const { organizationId, accountId } = useOrganization();
+  const isMobile = useIsMobile();
 
   const { data: expenseData } = useQuery({
     queryKey: ['expense-breakdown', organizationId, accountId],
@@ -48,23 +50,9 @@ export function ExpenseBreakdownChart() {
     enabled: !!organizationId && !!accountId,
   });
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const data = payload[0].payload;
-      return (
-        <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-          <p className="font-semibold">{data.category}</p>
-          <p className="text-sm text-gray-600">
-            Amount: ${data.amount.toLocaleString()}
-          </p>
-          <p className="text-sm text-gray-600">
-            Percentage: {data.percentage}%
-          </p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const chartSize = isMobile ? 200 : 300;
+  const outerRadius = isMobile ? 100 : 150;
+  const innerRadius = outerRadius * 0.7;
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
@@ -72,30 +60,47 @@ export function ExpenseBreakdownChart() {
         <CardTitle className="text-[#133134] text-2xl">Expense Breakdown</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={expenseData}
-                dataKey="amount"
-                nameKey="category"
-                cx="50%"
-                cy="50%"
-                outerRadius={150}
-                innerRadius={100}
-                label={({ category, percentage }) => `${category} (${percentage}%)`}
-              >
-                {expenseData?.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-1/2 flex items-center justify-center" style={{ height: `${chartSize}px` }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={expenseData}
+                  dataKey="amount"
+                  nameKey="category"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={outerRadius}
+                  innerRadius={innerRadius}
+                >
+                  {expenseData?.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="w-full md:w-1/2 space-y-4">
+            {expenseData?.map((entry, index) => (
+              <div key={entry.category} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
                   />
-                ))}
-              </Pie>
-              <Tooltip content={CustomTooltip} />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
+                  <span className="text-sm font-medium">{entry.category}</span>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-sm text-gray-600">${entry.amount.toLocaleString()}</span>
+                  <span className="text-sm text-gray-500">{entry.percentage}%</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>
