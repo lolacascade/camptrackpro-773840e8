@@ -5,21 +5,34 @@ import { Booking } from "@/types/booking";
 import { useBookings } from "./hooks/useBookings";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
+import { DateRange } from "react-day-picker";
+import { isWithinInterval } from "date-fns";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
+  dateRange?: DateRange;
 }
 
-export function BookingsTable({ onEdit }: BookingsTableProps) {
+export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const { bookings, isLoading, error } = useBookings();
 
-  // Filter bookings based on selected status
-  const filteredBookings = selectedStatus === "all" 
-    ? bookings 
-    : bookings?.filter(booking => booking.status === selectedStatus) || [];
-
-  console.log('Filtered bookings:', filteredBookings);
+  // Filter bookings based on selected status and date range
+  const filteredBookings = bookings?.filter(booking => {
+    const matchesStatus = selectedStatus === "all" || booking.status === selectedStatus;
+    
+    if (!matchesStatus) return false;
+    
+    if (dateRange?.from && dateRange?.to) {
+      const bookingDate = new Date(booking.check_in_date);
+      return isWithinInterval(bookingDate, { 
+        start: dateRange.from, 
+        end: dateRange.to 
+      });
+    }
+    
+    return true;
+  }) || [];
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
