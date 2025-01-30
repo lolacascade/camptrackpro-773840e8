@@ -5,11 +5,12 @@ import { FinancialsOverview } from "@/components/financials/FinancialsOverview";
 import { FinancialsHeader } from "@/components/financials/components/FinancialsHeader";
 import { AddExpenseDrawer } from "@/components/financials/AddExpenseDrawer";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { startOfMonth } from "date-fns";
 
 export default function Financials() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
-    from: new Date(),
+    from: startOfMonth(new Date()),
     to: new Date(),
   });
 
