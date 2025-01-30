@@ -1,11 +1,4 @@
-import { TooltipProps } from 'recharts';
-import { Card } from "@/components/ui/card";
-
-interface CustomTooltipProps extends TooltipProps<number, string> {
-  active?: boolean;
-  payload?: any[];
-  label?: string;
-}
+import { CustomTooltipProps } from './types';
 
 export function ChartTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload) return null;

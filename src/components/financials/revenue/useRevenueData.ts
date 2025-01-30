@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
-import { format, differenceInDays, isWithinInterval, eachDayOfInterval } from "date-fns";
+import { format, differenceInDays, eachDayOfInterval } from "date-fns";
 import { MonthlyFinancials } from "./types";
 
 export function useRevenueData(dateRange: { from: Date; to: Date }) {
