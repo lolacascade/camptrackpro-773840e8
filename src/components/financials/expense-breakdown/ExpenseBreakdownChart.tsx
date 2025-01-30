@@ -1,31 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DonutChart } from "./DonutChart";
+import { ExpenseLegendItem } from "./ExpenseLegendItem";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658', '#ff7300'];
-
-interface ExpenseData {
-  category: string;
-  amount: number;
-  percentage: number;
-}
-
-const CustomTooltip = ({ active, payload }: any) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <div className="bg-white p-2 shadow-lg rounded-lg border">
-        <p className="font-medium">{data.category}</p>
-        <p className="text-gray-600">${data.amount.toLocaleString()}</p>
-        <p className="text-gray-500">{data.percentage}%</p>
-      </div>
-    );
-  }
-  return null;
-};
 
 interface ExpenseBreakdownChartProps {
   dateRange: {
@@ -84,63 +65,23 @@ export function ExpenseBreakdownChart({ dateRange }: ExpenseBreakdownChartProps)
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row gap-8">
-          <div className="w-full md:w-1/2 flex items-center justify-center" style={{ height: `${chartSize}px` }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={expenseData}
-                  dataKey="amount"
-                  nameKey="category"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={outerRadius}
-                  innerRadius={innerRadius}
-                  activeShape={(props) => {
-                    const RADIAN = Math.PI / 180;
-                    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
-                    const sin = Math.sin(-RADIAN * midAngle);
-                    const cos = Math.cos(-RADIAN * midAngle);
-                    const mx = cx + (outerRadius + 30) * cos;
-                    const my = cy + (outerRadius + 30) * sin;
-                    return (
-                      <g>
-                        <text x={cx} y={cy} dy={8} textAnchor="middle" fill="#133134">
-                          {payload.category}
-                        </text>
-                        <text x={mx} y={my} textAnchor={cos >= 0 ? 'start' : 'end'} fill="#133134">
-                          {`${(percent * 100).toFixed(0)}%`}
-                        </text>
-                      </g>
-                    );
-                  }}
-                >
-                  {expenseData?.map((entry, index) => (
-                    <Cell 
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<CustomTooltip />} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
+          <DonutChart 
+            data={expenseData || []}
+            chartSize={chartSize}
+            outerRadius={outerRadius}
+            innerRadius={innerRadius}
+            colors={COLORS}
+          />
           
           <div className="w-full md:w-1/2 space-y-4">
             {expenseData?.map((entry, index) => (
-              <div key={entry.category} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="text-sm font-medium">{entry.category}</span>
-                </div>
-                <div className="flex gap-4">
-                  <span className="text-sm text-gray-600">${entry.amount.toLocaleString()}</span>
-                  <span className="text-sm text-gray-500">{entry.percentage}%</span>
-                </div>
-              </div>
+              <ExpenseLegendItem
+                key={entry.category}
+                category={entry.category}
+                amount={entry.amount}
+                percentage={entry.percentage}
+                color={COLORS[index % COLORS.length]}
+              />
             ))}
           </div>
         </div>

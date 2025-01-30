@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format, subMonths, startOfMonth, endOfMonth } from "date-fns";
+import { format } from "date-fns";
 import { useOrganization } from "@/hooks/use-organization";
 
 interface MonthlyFinancials {
@@ -60,7 +60,6 @@ interface RevenueChartProps {
 
 export function RevenueChart({ dateRange }: RevenueChartProps) {
   const { organizationId, accountId } = useOrganization();
-  const monthsToShow = 12;
 
   const { data: financialData } = useQuery({
     queryKey: ['financial-data', organizationId, accountId, dateRange.from, dateRange.to],
@@ -99,17 +98,18 @@ export function RevenueChart({ dateRange }: RevenueChartProps) {
       // Process and aggregate data by month
       const monthlyData: { [key: string]: MonthlyFinancials } = {};
 
-      // Initialize months
-      for (let i = 0; i < monthsToShow; i++) {
-        const date = subMonths(new Date(), i);
-        const key = format(date, 'yyyy-MM');
+      // Initialize months within the date range
+      let currentDate = new Date(dateRange.from);
+      while (currentDate <= dateRange.to) {
+        const key = format(currentDate, 'yyyy-MM');
         monthlyData[key] = {
-          month: format(date, 'MMM'),
-          year: format(date, 'yyyy'),
+          month: format(currentDate, 'MMM'),
+          year: format(currentDate, 'yyyy'),
           income: 0,
           expenses: 0,
           netProfit: 0,
         };
+        currentDate.setMonth(currentDate.getMonth() + 1);
       }
 
       // Aggregate income
