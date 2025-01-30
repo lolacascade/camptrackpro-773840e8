@@ -404,6 +404,58 @@ export type Database = {
           },
         ]
       }
+      customer_status_history: {
+        Row: {
+          account_id: string
+          created_at: string
+          customer_id: string
+          id: string
+          organization_id: string
+          recorded_at: string
+          status: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          organization_id: string
+          recorded_at?: string
+          status: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          organization_id?: string
+          recorded_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_status_history_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_status_history_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "customer_status_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           account_id: string | null

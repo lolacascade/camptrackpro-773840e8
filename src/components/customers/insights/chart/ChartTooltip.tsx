@@ -1,34 +1,29 @@
 import { ChartData } from "../types";
 
-interface ChartTooltipProps {
+interface TooltipProps {
   active?: boolean;
   payload?: any[];
   label?: string;
 }
 
-export function ChartTooltip({ active, payload, label }: ChartTooltipProps) {
-  if (!active || !payload || !payload.length) return null;
-
-  const item = payload[0].payload as ChartData;
+export function ChartTooltip({ active, payload, label }: TooltipProps) {
+  if (!active || !payload) return null;
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
-      <p className="font-semibold text-gray-900 mb-2">
-        {`${label} ${item.year}`}
-        {item.isProjected && " (Projected)"}
-      </p>
-      <div className="space-y-2">
-        <div className="flex items-center justify-between gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#0EA5E9]" />
-            <span>New Customers: {payload[0].value}</span>
-          </div>
+    <div className="bg-white p-4 border border-[#E8EBEB] rounded-lg shadow-lg">
+      <h4 className="font-medium text-[#133134] mb-2">{label}</h4>
+      {payload.map((entry, index) => (
+        <div key={index} className="flex items-center justify-between gap-4">
+          <span style={{ color: entry.color }}>{entry.name}:</span>
+          <span className="font-medium">{entry.value}</span>
         </div>
-        <div className="flex items-center justify-between gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#8B5CF6]" />
-            <span>Existing Customers: {payload[1].value}</span>
-          </div>
+      ))}
+      <div className="mt-2 pt-2 border-t border-[#E8EBEB]">
+        <div className="flex items-center justify-between gap-4">
+          <span className="text-[#133134]">Total:</span>
+          <span className="font-medium">
+            {payload.reduce((sum, entry) => sum + entry.value, 0)}
+          </span>
         </div>
       </div>
     </div>
