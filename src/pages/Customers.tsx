@@ -36,12 +36,12 @@ export default function Customers() {
   return (
     <PageWithChat>
       <PageContainer>
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold text-[#133134]">Customers</h1>
+        <div className="space-y-4 sm:space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-[#133134]">Customers</h1>
             <Button 
               onClick={handleAdd}
-              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
+              className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90 w-full sm:w-auto"
             >
               <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>

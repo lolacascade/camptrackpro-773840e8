@@ -30,14 +30,14 @@ export function StatsCard({
 }: StatsCardProps) {
   return (
     <div className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <div className="flex flex-row items-center justify-between space-y-0 pb-2 p-6">
+      <div className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
         <h3 className="text-sm font-medium text-[#3E4238]">{title}</h3>
         <Icon className="h-4 w-4 text-[#3E4238]" />
       </div>
-      <div className="px-6 pb-6">
-        <div className="space-y-6">
+      <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+        <div className="space-y-4 sm:space-y-6">
           <div className="space-y-2">
-            <div className="text-2xl font-bold text-[#133134]">{value}</div>
+            <div className="text-xl sm:text-2xl font-bold text-[#133134]">{value}</div>
             {trend && (
               <div className={`text-sm ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
                 {trend.isPositive ? '↑' : '↓'} {trend.value} {trend.comparedTo}
