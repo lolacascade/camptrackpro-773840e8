@@ -76,29 +76,39 @@
   }
 }
 
+/* Z-index hierarchy */
+:root {
+  --z-header: 100;
+  --z-modal: 150;
+  --z-drawer: 200;
+  --z-dialog: 200;
+  --z-popover: 300;
+  --z-tooltip: 400;
+}
+
 /* Modal and Dialog styles */
 @layer components {
   .modal-overlay {
-    @apply fixed inset-0 bg-dialog-overlay backdrop-blur-sm z-overlay;
+    @apply fixed inset-0 bg-dialog-overlay backdrop-blur-sm z-[var(--z-modal)];
   }
 
   .modal-content {
-    @apply fixed left-[50%] top-[50%] z-modal -translate-x-1/2 -translate-y-1/2 bg-dialog-content shadow-lg rounded-lg border p-6;
+    @apply fixed left-[50%] top-[50%] z-[var(--z-modal)] -translate-x-1/2 -translate-y-1/2 bg-dialog-content shadow-lg rounded-lg border p-6;
   }
 
   .popover-content {
-    @apply z-popover bg-popover shadow-lg rounded-lg border p-2;
+    @apply z-[var(--z-popover)] bg-popover shadow-lg rounded-lg border p-2;
   }
 
   .tooltip {
-    @apply z-tooltip;
+    @apply z-[var(--z-tooltip)];
   }
 }
 
 /* Sheet styles */
 @layer components {
   [data-radix-sheet-content] {
-    @apply !w-full sm:!max-w-[640px] !right-0 !z-[100];
+    @apply !w-full sm:!max-w-[640px] !right-0 !z-[var(--z-drawer)];
   }
 }
 

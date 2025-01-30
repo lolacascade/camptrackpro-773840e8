@@ -1,7 +1,12 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
+interface NavigationLinksProps {
+  onItemClick?: () => void;
+  className?: string;
+}
+
+export function NavigationLinks({ onItemClick, className }: NavigationLinksProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -25,13 +30,16 @@ export function NavigationLinks({ onItemClick }: { onItemClick?: () => void }) {
   ];
 
   return (
-    <nav className="hidden md:flex items-center gap-6">
+    <nav className={cn(
+      "md:flex items-center gap-6",
+      className
+    )}>
       {navItems.map(({ path, label }) => (
         <button
           key={path}
           onClick={() => handleNavigation(path)}
           className={cn(
-            "text-white transition-colors",
+            "text-white transition-colors w-full text-left md:w-auto",
             isCurrentRoute(path) 
               ? "text-primary font-medium" 
               : "hover:text-primary"

@@ -28,7 +28,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 left-0 right-0 z-[100] flex h-16 items-center justify-between px-3 sm:px-4 bg-[#0D1D1F]">
+    <header className="sticky top-0 left-0 right-0 z-[100] flex h-16 items-center justify-between px-3 sm:px-4 bg-[#0D1D1F] border-b border-[rgba(255,255,255,0.1)]">
       <div className="flex items-center gap-4">
         {isMobile && (
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
@@ -37,10 +37,13 @@ export function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] bg-[#0D1D1F] p-6">
+            <SheetContent side="left" className="w-[300px] bg-[#0D1D1F] p-6 z-[200]">
               <div className="flex flex-col gap-8">
                 <Logo />
-                <NavigationLinks onItemClick={() => setMobileMenuOpen(false)} />
+                <NavigationLinks 
+                  className="flex flex-col gap-4" 
+                  onItemClick={() => setMobileMenuOpen(false)} 
+                />
               </div>
             </SheetContent>
           </Sheet>
