@@ -95,10 +95,10 @@ export function ExpenseBreakdownChart() {
                     const my = cy + (outerRadius + 30) * sin;
                     return (
                       <g>
-                        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+                        <text x={cx} y={cy} dy={8} textAnchor="middle" fill="#133134">
                           {payload.category}
                         </text>
-                        <text x={mx} y={my} textAnchor={cos >= 0 ? 'start' : 'end'} fill="#333">
+                        <text x={mx} y={my} textAnchor={cos >= 0 ? 'start' : 'end'} fill="#133134">
                           {`${(percent * 100).toFixed(0)}%`}
                         </text>
                       </g>
