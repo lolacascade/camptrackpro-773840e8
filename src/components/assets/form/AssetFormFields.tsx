@@ -1,6 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Asset } from "@/types/asset";
+import { Asset, RV_TYPE_TO_CATEGORY } from "@/types/asset";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface AssetFormFieldsProps {
@@ -23,11 +23,28 @@ export const ASSET_TYPES = [
   { value: 'Other', label: 'Other' }
 ] as const;
 
+export const PRICING_CATEGORIES = [
+  { value: 'up_to_15', label: 'Up to 15\'' },
+  { value: 'up_to_20', label: 'Up to 20\'' },
+  { value: 'up_to_30', label: 'Up to 30\'' },
+  { value: 'up_to_35', label: 'Up to 35\'' },
+  { value: 'up_to_40', label: 'Up to 40\'' },
+];
+
 export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: AssetFormFieldsProps) {
   const slotOptions = availableSlots.map(slot => ({
     value: slot.id.toString(),
     label: slot.name
   }));
+
+  const handleAssetTypeChange = (value: string) => {
+    const pricing_category = RV_TYPE_TO_CATEGORY[value];
+    setNewAsset({ 
+      ...newAsset, 
+      asset_type: value,
+      pricing_category: pricing_category // Auto-set pricing category based on RV type
+    });
+  };
 
   return (
     <div className="grid gap-4 py-4">
@@ -53,11 +70,22 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         <Label htmlFor="asset_type">RV Type</Label>
         <SelectField
           value={newAsset.asset_type || ''}
-          onChange={(value) => setNewAsset({ ...newAsset, asset_type: value })}
+          onChange={handleAssetTypeChange}
           options={ASSET_TYPES.map(({ value, label }) => ({ value, label }))}
           placeholder="Select RV type"
         />
       </div>
+      {newAsset.asset_type === 'Other' && (
+        <div className="grid gap-2">
+          <Label htmlFor="pricing_category">Pricing Category *</Label>
+          <SelectField
+            value={newAsset.pricing_category || ''}
+            onChange={(value) => setNewAsset({ ...newAsset, pricing_category: value as any })}
+            options={PRICING_CATEGORIES}
+            placeholder="Select pricing category"
+          />
+        </div>
+      )}
       <div className="grid gap-2">
         <Label htmlFor="site_id">Site *</Label>
         <SelectField

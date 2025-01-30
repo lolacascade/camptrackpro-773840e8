@@ -85,6 +85,9 @@ export type Database = {
           id: string
           name: string
           organization_id: string | null
+          pricing_category:
+            | Database["public"]["Enums"]["rv_pricing_category"]
+            | null
           site_id: number | null
           status: string
           type: string
@@ -102,6 +105,9 @@ export type Database = {
           id?: string
           name: string
           organization_id?: string | null
+          pricing_category?:
+            | Database["public"]["Enums"]["rv_pricing_category"]
+            | null
           site_id?: number | null
           status?: string
           type: string
@@ -119,6 +125,9 @@ export type Database = {
           id?: string
           name?: string
           organization_id?: string | null
+          pricing_category?:
+            | Database["public"]["Enums"]["rv_pricing_category"]
+            | null
           site_id?: number | null
           status?: string
           type?: string
@@ -982,6 +991,54 @@ export type Database = {
           },
         ]
       }
+      rv_pricing: {
+        Row: {
+          account_id: string | null
+          category: Database["public"]["Enums"]["rv_pricing_category"]
+          created_at: string | null
+          duration_months: number
+          id: string
+          monthly_rate: number
+          organization_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          category: Database["public"]["Enums"]["rv_pricing_category"]
+          created_at?: string | null
+          duration_months: number
+          id?: string
+          monthly_rate: number
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          category?: Database["public"]["Enums"]["rv_pricing_category"]
+          created_at?: string | null
+          duration_months?: number
+          id?: string
+          monthly_rate?: number
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rv_pricing_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rv_pricing_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sites: {
         Row: {
           account_id: string | null
@@ -1108,6 +1165,14 @@ export type Database = {
         }
         Returns: number
       }
+      calculate_rv_booking_total: {
+        Args: {
+          p_asset_id: string
+          p_start_date: string
+          p_end_date: string
+        }
+        Returns: number
+      }
       check_user_role:
         | {
             Args: {
@@ -1137,6 +1202,12 @@ export type Database = {
         | "cancelled"
         | "completed"
         | "checked_in"
+      rv_pricing_category:
+        | "up_to_15"
+        | "up_to_20"
+        | "up_to_30"
+        | "up_to_35"
+        | "up_to_40"
       site_status: "available" | "occupied" | "maintenance"
       user_role: "admin" | "manager" | "staff" | "customer"
     }
