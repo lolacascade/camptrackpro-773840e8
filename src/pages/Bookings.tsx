@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { BookingsInsights } from "@/components/bookings/BookingsInsights";
 import { BookingsTable } from "@/components/bookings/BookingsTable";
 import { BookingDrawer } from "@/components/bookings/BookingDrawer";
+import { BookingTrendsChart } from "@/components/bookings/BookingTrendsChart";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Booking } from "@/types/booking";
@@ -42,6 +43,7 @@ export default function Bookings() {
           </div>
 
           <BookingsInsights />
+          <BookingTrendsChart />
           <BookingsTable onEdit={handleEditBooking} />
 
           <BookingDrawer

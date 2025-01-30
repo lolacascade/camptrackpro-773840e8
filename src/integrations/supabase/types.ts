@@ -165,6 +165,7 @@ export type Database = {
           created_at: string
           created_by: string | null
           customer_id: string
+          duration_type: string | null
           id: string
           organization_id: string | null
           reservation_code: string | null
@@ -183,6 +184,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           customer_id: string
+          duration_type?: string | null
           id?: string
           organization_id?: string | null
           reservation_code?: string | null
@@ -201,6 +203,7 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           customer_id?: string
+          duration_type?: string | null
           id?: string
           organization_id?: string | null
           reservation_code?: string | null
@@ -1040,7 +1043,32 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      booking_trends: {
+        Row: {
+          account_id: string | null
+          cancellations: number | null
+          long_term_bookings: number | null
+          month: string | null
+          organization_id: string | null
+          short_term_bookings: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       calculate_booking_total: {
