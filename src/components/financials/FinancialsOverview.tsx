@@ -3,6 +3,7 @@ import { ExpenseTable } from "./ExpenseTable";
 import { FinancialsStatsCards } from "./FinancialsStatsCards";
 import { AddExpenseDrawer } from "./AddExpenseDrawer";
 import { useExpenseData } from "./hooks/useExpenseData";
+import { RevenueChart } from "./RevenueChart";
 import type { Expense } from "@/types/expense";
 
 export function FinancialsOverview() {
@@ -24,6 +25,8 @@ export function FinancialsOverview() {
   return (
     <div className="space-y-8">
       <FinancialsStatsCards />
+      
+      <RevenueChart />
       
       <ExpenseTable
         onEdit={handleEditExpense}
