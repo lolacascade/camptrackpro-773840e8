@@ -40,7 +40,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
 
   if (error) {
     return (
-      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+      <Card className="bg-transparent">
         <div className="p-4 text-center text-red-500">
           Error loading bookings. Please try again.
         </div>
@@ -49,7 +49,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   }
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+    <Card className="bg-transparent">
       <div className="p-4">
         <DataTable
           data={filteredBookings}

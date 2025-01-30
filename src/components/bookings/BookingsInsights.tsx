@@ -22,7 +22,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
 
       const today = format(new Date(), 'yyyy-MM-dd');
       
-      // Base query for bookings within date range
+      // Base query for active bookings within date range
       let query = supabase
         .from('bookings')
         .select(`
@@ -32,13 +32,14 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
           )
         `)
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        .eq('account_id', accountId)
+        .in('status', ['confirmed', 'checked_in']); // Only active bookings
 
       // Apply date range filter if provided
       if (dateRange?.from && dateRange?.to) {
         query = query
           .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('check_in_date', format(dateRange.to, 'yyyy-MM-dd'));
+          .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
       }
 
       const [bookings, checkIns, checkOuts] = await Promise.all([
@@ -75,7 +76,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
         }));
 
       return {
-        totalBookings: bookings.data?.length || 0,
+        activeBookings: bookings.data?.length || 0,
         rvTypeDistribution: topRvTypes,
         checkIns: checkIns.data?.length || 0,
         checkOuts: checkOuts.data?.length || 0
@@ -87,8 +88,8 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
       <EnhancedStatCard
-        title="Total Bookings"
-        value={String(insights?.totalBookings || 0)}
+        title="Active Bookings"
+        value={String(insights?.activeBookings || 0)}
         icon={ChartBar}
         trend={{
           value: "+12%",
@@ -96,8 +97,8 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
           comparedTo: "previous period"
         }}
         breakdown={[
-          { label: "New", value: "45", percentage: 60 },
-          { label: "Returning", value: "30", percentage: 40 }
+          { label: "Short-term", value: "45", percentage: 60 },
+          { label: "Long-term", value: "30", percentage: 40 }
         ]}
       />
       <EnhancedStatCard
