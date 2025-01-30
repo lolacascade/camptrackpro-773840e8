@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
 import {
   BarChart,
   Bar,
@@ -21,13 +22,18 @@ interface BookingTrend {
 }
 
 export function BookingTrendsChart() {
+  const { organizationId, accountId } = useOrganization();
+
   const { data: trends, isLoading, error } = useQuery({
-    queryKey: ['booking-trends'],
+    queryKey: ['booking-trends', organizationId, accountId],
     queryFn: async () => {
-      console.log('Fetching booking trends data...');
+      console.log('Fetching booking trends with context:', { organizationId, accountId });
+      
       const { data, error } = await supabase
         .from('booking_trends_data')
         .select('*')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId)
         .order('month', { ascending: true });
 
       if (error) {
@@ -35,12 +41,25 @@ export function BookingTrendsChart() {
         throw error;
       }
 
-      console.log('Received booking trends data:', data);
-      return data.map((trend: BookingTrend) => ({
+      console.log('Raw booking trends data:', data);
+
+      if (!data || data.length === 0) {
+        console.log('No booking trends data found');
+        return [];
+      }
+
+      const formattedData = data.map((trend: BookingTrend) => ({
         ...trend,
-        month: format(new Date(trend.month), 'MMM yyyy')
+        month: format(new Date(trend.month), 'MMM yyyy'),
+        short_term_bookings: Number(trend.short_term_bookings) || 0,
+        long_term_bookings: Number(trend.long_term_bookings) || 0,
+        cancellations: Number(trend.cancellations) || 0
       }));
-    }
+
+      console.log('Formatted booking trends data:', formattedData);
+      return formattedData;
+    },
+    enabled: !!organizationId && !!accountId,
   });
 
   if (isLoading) {
@@ -67,6 +86,21 @@ export function BookingTrendsChart() {
         <CardContent>
           <div className="h-[400px] w-full flex items-center justify-center text-red-500">
             Error loading booking trends data
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!trends || trends.length === 0) {
+    return (
+      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+        <CardHeader>
+          <CardTitle className="text-[#133134] text-xl">Booking Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] w-full flex items-center justify-center text-gray-500">
+            No booking trends data available
           </div>
         </CardContent>
       </Card>
