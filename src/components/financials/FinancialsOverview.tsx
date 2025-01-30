@@ -4,6 +4,7 @@ import { FinancialsStatsCards } from "./FinancialsStatsCards";
 import { AddExpenseDrawer } from "./AddExpenseDrawer";
 import { useExpenseData } from "./hooks/useExpenseData";
 import { RevenueChart } from "./RevenueChart";
+import { ExpenseBreakdownChart } from "./ExpenseBreakdownChart";
 import type { Expense } from "@/types/expense";
 
 export function FinancialsOverview() {
@@ -26,7 +27,10 @@ export function FinancialsOverview() {
     <div className="space-y-8">
       <FinancialsStatsCards />
       
-      <RevenueChart />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <RevenueChart />
+        <ExpenseBreakdownChart />
+      </div>
       
       <ExpenseTable
         onEdit={handleEditExpense}
