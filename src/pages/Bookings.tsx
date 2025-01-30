@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { BookingsInsights } from "@/components/bookings/BookingsInsights";
 import { BookingsTable } from "@/components/bookings/BookingsTable";
 import { BookingDrawer } from "@/components/bookings/drawer/BookingDrawer";
 import { BookingTrendsChart } from "@/components/bookings/BookingTrendsChart";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { DateRangeFilter } from "@/components/financials/components/DateRangeFilter";
+import { BookingsHeader } from "@/components/bookings/components/BookingsHeader";
 import { Booking } from "@/types/booking";
 import { DateRange } from "react-day-picker";
 import { startOfMonth } from "date-fns";
@@ -43,20 +41,10 @@ export default function Bookings() {
     <PageWithChat>
       <PageContainer>
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold text-[#133134]">Bookings</h1>
-            <Button 
-              onClick={handleAddBooking}
-              className="bg-[#228B22] hover:bg-[#228B22]/90 text-white"
-            >
-              <Plus className="mr-2 h-4 w-4" /> New Booking
-            </Button>
-          </div>
-
-          <div className="w-full">
-            <DateRangeFilter onDateRangeChange={handleDateRangeChange} />
-          </div>
-
+          <BookingsHeader 
+            onAdd={handleAddBooking} 
+            onDateRangeChange={handleDateRangeChange}
+          />
           <BookingsInsights />
           <BookingTrendsChart />
           <BookingsTable onEdit={handleEditBooking} dateRange={dateRange} />
