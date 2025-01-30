@@ -39,7 +39,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent 
               side="left" 
-              className="w-[300px] bg-[#0D1D1F] p-6 z-[200] border-r border-[rgba(255,255,255,0.1)]"
+              className="w-[300px] bg-[#0D1D1F] p-6 border-r border-[rgba(255,255,255,0.1)]"
             >
               <div className="flex flex-col gap-8">
                 <Logo />
