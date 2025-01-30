@@ -45,17 +45,12 @@ export function useBookingsInsights(dateRange?: DateRange) {
         .eq('account_id', accountId)
         .in('status', ['pending', 'confirmed', 'checked_in']);
 
-      // Apply date range filter
-      if (dateRange?.from && dateRange?.to) {
-        console.log('Applying date range filter:', {
-          from: format(dateRange.from, 'yyyy-MM-dd'),
-          to: format(dateRange.to, 'yyyy-MM-dd')
-        });
-        
-        query = query
-          .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
-      }
+      // Apply date range filter to all queries
+      const startDate = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
+      const endDate = dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
+
+      query = query
+        .or(`check_in_date.gte.${startDate},check_out_date.lte.${endDate}`);
 
       const [bookings, checkIns, checkOuts] = await Promise.all([
         query,
@@ -65,16 +60,16 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
           .in('status', ['pending', 'confirmed'])
-          .gte('check_in_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
-          .lte('check_in_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd')),
+          .gte('check_in_date', startDate)
+          .lte('check_in_date', endDate),
         supabase
           .from('bookings')
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
           .in('status', ['checked_in', 'confirmed'])
-          .gte('check_out_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
-          .lte('check_out_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'))
+          .gte('check_out_date', startDate)
+          .lte('check_out_date', endDate)
       ]);
 
       console.log('Query results:', {
