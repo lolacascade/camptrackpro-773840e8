@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { DateRange } from "react-day-picker";
-import { format, isWithinInterval } from "date-fns";
+import { format } from "date-fns";
 
 interface BookingsInsightsProps {
   dateRange?: DateRange;
@@ -33,7 +33,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
-        .in('status', ['confirmed', 'checked_in'] as const); // Type assertion to match the database enum
+        .in('status', ['confirmed', 'checked_in']);
 
       // Apply date range filter if provided
       if (dateRange?.from && dateRange?.to) {

@@ -1131,7 +1131,12 @@ export type Database = {
       }
     }
     Enums: {
-      booking_status: "pending" | "confirmed" | "cancelled" | "completed"
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "completed"
+        | "checked_in"
       site_status: "available" | "occupied" | "maintenance"
       user_role: "admin" | "manager" | "staff" | "customer"
     }
