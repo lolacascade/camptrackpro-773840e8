@@ -68,10 +68,17 @@ export function DataTable<T extends { id?: number | string }>({
   // Apply search filter
   const searchFilteredData = useDataSearch(sortedData, searchTerm);
 
+  // Update localData when data prop changes
+  useEffect(() => {
+    console.log('Data prop changed:', data);
+    setLocalData(data);
+  }, [data, setLocalData]);
+
   // Real-time updates
   useEffect(() => {
     if (!tableName || !organizationId || !accountId) return;
 
+    console.log('Setting up real-time subscription for:', tableName);
     const channel = supabase
       .channel('table_db_changes')
       .on(
@@ -83,18 +90,22 @@ export function DataTable<T extends { id?: number | string }>({
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
         async (payload) => {
+          console.log('Received real-time update:', payload);
           try {
-            if (payload.eventType === 'INSERT') {
-              setLocalData(prev => [...(prev || []), payload.new as T]);
-            } else if (payload.eventType === 'DELETE') {
-              setLocalData(prev => (prev || []).filter(item => item.id !== payload.old.id));
-            } else if (payload.eventType === 'UPDATE') {
-              setLocalData(prev => 
-                (prev || []).map(item => 
+            setLocalData(currentData => {
+              if (!currentData) return data;
+
+              if (payload.eventType === 'INSERT') {
+                return [...currentData, payload.new as T];
+              } else if (payload.eventType === 'DELETE') {
+                return currentData.filter(item => item.id !== payload.old.id);
+              } else if (payload.eventType === 'UPDATE') {
+                return currentData.map(item => 
                   item.id === payload.new.id ? { ...item, ...payload.new } : item
-                )
-              );
-            }
+                );
+              }
+              return currentData;
+            });
           } catch (error) {
             console.error('Error handling real-time update:', error);
             toast.error('Error updating data. Please refresh the page.');
@@ -104,14 +115,10 @@ export function DataTable<T extends { id?: number | string }>({
       .subscribe();
 
     return () => {
+      console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
-  }, [tableName, organizationId, accountId, setLocalData]);
-
-  // Update localData when data prop changes
-  useEffect(() => {
-    setLocalData(data);
-  }, [data, setLocalData]);
+  }, [tableName, organizationId, accountId, setLocalData, data]);
 
   if (!organizationId || !accountId) {
     return (
