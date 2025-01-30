@@ -530,7 +530,7 @@ export type Database = {
       }
       expenses: {
         Row: {
-          account_id: string | null
+          account_id: string
           amount: number | null
           category: string
           created_at: string | null
@@ -538,14 +538,14 @@ export type Database = {
           description: string
           id: string
           notes: string | null
-          organization_id: string | null
+          organization_id: string
           payment_method: string | null
           status: string | null
           updated_at: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          account_id?: string | null
+          account_id: string
           amount?: number | null
           category: string
           created_at?: string | null
@@ -553,14 +553,14 @@ export type Database = {
           description: string
           id?: string
           notes?: string | null
-          organization_id?: string | null
+          organization_id: string
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          account_id?: string | null
+          account_id?: string
           amount?: number | null
           category?: string
           created_at?: string | null
@@ -568,11 +568,11 @@ export type Database = {
           description?: string
           id?: string
           notes?: string | null
-          organization_id?: string | null
+          organization_id?: string
           payment_method?: string | null
           status?: string | null
           updated_at?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
