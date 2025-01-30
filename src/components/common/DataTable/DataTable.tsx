@@ -22,8 +22,8 @@ export function DataTable<T extends { id?: number | string }>({
   itemsPerPage = 10,
   isLoading = false,
   filters = [],
-  sortConfig,
-  onSort,
+  sortConfig: externalSortConfig,
+  onSort: externalOnSort,
   showTodayOnly,
   onShowTodayChange,
   tableName,
@@ -31,11 +31,10 @@ export function DataTable<T extends { id?: number | string }>({
 }: DataTableProps<T>) {
   const { organizationId, accountId } = useOrganization();
   
-  // Initialize table state with the provided data
   const {
     localData,
     setLocalData,
-    sortConfig: localSortConfig,
+    sortConfig,
     handleSort,
     currentPage,
     setCurrentPage,
@@ -159,7 +158,7 @@ export function DataTable<T extends { id?: number | string }>({
         <DataTableContent
           data={paginatedData}
           columns={visibleColumnsData}
-          sortConfig={localSortConfig}
+          sortConfig={sortConfig}
           onSort={handleSort}
           onViewDetails={onViewDetails}
           onEdit={onEdit}

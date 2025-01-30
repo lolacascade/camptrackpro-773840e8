@@ -11,22 +11,35 @@ export function useTableState<T>(initialData: T[]) {
   const [sortConfig, setSortConfig] = useState<SortConfig | null>(null);
   const [localData, setLocalData] = useState<T[]>(initialData);
 
+  const handleSort = (key: string) => {
+    setSortConfig(current => {
+      if (current?.key === key) {
+        if (current.direction === 'asc') {
+          return { key, direction: 'desc' };
+        }
+        return null;
+      }
+      return { key, direction: 'asc' };
+    });
+
+    setLocalData(current => {
+      const sorted = [...current].sort((a, b) => {
+        const aValue = getNestedValue(a, key);
+        const bValue = getNestedValue(b, key);
+        
+        if (sortConfig?.direction === 'asc') {
+          return compareValues(bValue, aValue);
+        }
+        return compareValues(aValue, bValue);
+      });
+      return sorted;
+    });
+  };
+
   const getNestedValue = (obj: any, path: string) => {
-    // Handle nested paths like 'customer.name' or 'slot.name'
     return path.split('.').reduce((acc, part) => {
       if (acc === null || acc === undefined) return '';
-      
-      // Handle array access
-      if (Array.isArray(acc)) {
-        return acc.map(item => item[part]).join(', ');
-      }
-      
-      // Handle object access
-      if (typeof acc === 'object' && part in acc) {
-        return acc[part];
-      }
-      
-      return '';
+      return acc[part];
     }, obj);
   };
 
@@ -36,18 +49,11 @@ export function useTableState<T>(initialData: T[]) {
     if (b === null || b === undefined) return -1;
     if (a === b) return 0;
 
-    // Convert dates to timestamps for comparison
-    if (a instanceof Date && b instanceof Date) {
-      return a.getTime() - b.getTime();
-    }
-
-    // Try to parse dates from strings
-    if (typeof a === 'string' && typeof b === 'string') {
-      const dateA = new Date(a);
-      const dateB = new Date(b);
-      if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
-        return dateA.getTime() - dateB.getTime();
-      }
+    // Handle dates
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    if (!isNaN(dateA.getTime()) && !isNaN(dateB.getTime())) {
+      return dateA.getTime() - dateB.getTime();
     }
 
     // Handle numbers
@@ -59,45 +65,6 @@ export function useTableState<T>(initialData: T[]) {
     return String(a).localeCompare(String(b));
   };
 
-  const handleSort = (key: string) => {
-    setSortConfig(current => {
-      if (current?.key === key) {
-        if (current.direction === 'asc') {
-          return { key, direction: 'desc' };
-        }
-        return null;
-      }
-      return { key, direction: 'asc' };
-    });
-  };
-
-  const filteredAndSortedData = useMemo(() => {
-    let result = [...localData];
-
-    // Filter based on search term
-    if (searchTerm) {
-      result = result.filter((item) => {
-        return Object.entries(item).some(([key, value]) => {
-          const stringValue = getNestedValue(item, key);
-          return String(stringValue).toLowerCase().includes(searchTerm.toLowerCase());
-        });
-      });
-    }
-
-    // Sort if sortConfig is set
-    if (sortConfig) {
-      result.sort((a, b) => {
-        const aValue = getNestedValue(a, sortConfig.key);
-        const bValue = getNestedValue(b, sortConfig.key);
-        
-        const comparison = compareValues(aValue, bValue);
-        return sortConfig.direction === "asc" ? comparison : -comparison;
-      });
-    }
-
-    return result;
-  }, [localData, searchTerm, sortConfig]);
-
   return {
     searchTerm,
     setSearchTerm,
@@ -108,6 +75,5 @@ export function useTableState<T>(initialData: T[]) {
     handleSort,
     localData,
     setLocalData,
-    filteredAndSortedData
   };
 }
