@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
@@ -12,6 +12,20 @@ interface ExpenseData {
   amount: number;
   percentage: number;
 }
+
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-white p-2 shadow-lg rounded-lg border">
+        <p className="font-medium">{data.category}</p>
+        <p className="text-gray-600">${data.amount.toLocaleString()}</p>
+        <p className="text-gray-500">{data.percentage}%</p>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function ExpenseBreakdownChart() {
   const { organizationId, accountId } = useOrganization();
@@ -72,6 +86,24 @@ export function ExpenseBreakdownChart() {
                   cy="50%"
                   outerRadius={outerRadius}
                   innerRadius={innerRadius}
+                  activeShape={(props) => {
+                    const RADIAN = Math.PI / 180;
+                    const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
+                    const sin = Math.sin(-RADIAN * midAngle);
+                    const cos = Math.cos(-RADIAN * midAngle);
+                    const mx = cx + (outerRadius + 30) * cos;
+                    const my = cy + (outerRadius + 30) * sin;
+                    return (
+                      <g>
+                        <text x={cx} y={cy} dy={8} textAnchor="middle" fill={fill}>
+                          {payload.category}
+                        </text>
+                        <text x={mx} y={my} textAnchor={cos >= 0 ? 'start' : 'end'} fill="#333">
+                          {`${(percent * 100).toFixed(0)}%`}
+                        </text>
+                      </g>
+                    );
+                  }}
                 >
                   {expenseData?.map((entry, index) => (
                     <Cell 
@@ -80,6 +112,7 @@ export function ExpenseBreakdownChart() {
                     />
                   ))}
                 </Pie>
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
             </ResponsiveContainer>
           </div>
