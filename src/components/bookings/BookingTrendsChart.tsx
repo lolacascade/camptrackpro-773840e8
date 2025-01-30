@@ -21,9 +21,10 @@ interface BookingTrend {
 }
 
 export function BookingTrendsChart() {
-  const { data: trends } = useQuery({
+  const { data: trends, isLoading, error } = useQuery({
     queryKey: ['booking-trends'],
     queryFn: async () => {
+      console.log('Fetching booking trends data...');
       const { data, error } = await supabase
         .from('booking_trends_secure')
         .select('*')
@@ -34,12 +35,43 @@ export function BookingTrendsChart() {
         throw error;
       }
 
+      console.log('Received booking trends data:', data);
       return data.map((trend: BookingTrend) => ({
         ...trend,
         month: format(new Date(trend.month), 'MMM yyyy')
       }));
     }
   });
+
+  if (isLoading) {
+    return (
+      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+        <CardHeader>
+          <CardTitle className="text-[#133134] text-xl">Booking Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] w-full flex items-center justify-center">
+            Loading...
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
+        <CardHeader>
+          <CardTitle className="text-[#133134] text-xl">Booking Distribution</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-[400px] w-full flex items-center justify-center text-red-500">
+            Error loading booking trends data
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">

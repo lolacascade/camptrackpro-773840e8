@@ -165,6 +165,57 @@ export type Database = {
           },
         ]
       }
+      booking_trends_data: {
+        Row: {
+          account_id: string | null
+          cancellations: number | null
+          created_at: string | null
+          id: string
+          long_term_bookings: number | null
+          month: string | null
+          organization_id: string | null
+          short_term_bookings: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          cancellations?: number | null
+          created_at?: string | null
+          id?: string
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          cancellations?: number | null
+          created_at?: string | null
+          id?: string
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_trends_data_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_trends_data_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           account_id: string | null
@@ -1138,16 +1189,32 @@ export type Database = {
           organization_id: string | null
           short_term_bookings: number | null
         }
+        Insert: {
+          account_id?: string | null
+          cancellations?: number | null
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+        }
+        Update: {
+          account_id?: string | null
+          cancellations?: number | null
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+        }
         Relationships: [
           {
-            foreignKeyName: "bookings_account_id_fkey"
+            foreignKeyName: "booking_trends_data_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_organization_id_fkey"
+            foreignKeyName: "booking_trends_data_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -1164,16 +1231,32 @@ export type Database = {
           organization_id: string | null
           short_term_bookings: number | null
         }
+        Insert: {
+          account_id?: string | null
+          cancellations?: number | null
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+        }
+        Update: {
+          account_id?: string | null
+          cancellations?: number | null
+          long_term_bookings?: number | null
+          month?: string | null
+          organization_id?: string | null
+          short_term_bookings?: number | null
+        }
         Relationships: [
           {
-            foreignKeyName: "bookings_account_id_fkey"
+            foreignKeyName: "booking_trends_data_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_organization_id_fkey"
+            foreignKeyName: "booking_trends_data_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
