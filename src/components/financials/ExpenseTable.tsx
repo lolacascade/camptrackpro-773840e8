@@ -1,5 +1,4 @@
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Card } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
@@ -7,6 +6,7 @@ import { toast } from "sonner";
 import { Expense } from "@/types/expense";
 import { Column } from "@/components/common/DataTable/types";
 import { format } from "date-fns";
+import { useState } from "react";
 
 const expenseCategories = [
   { label: "All Categories", value: "all" },
@@ -28,20 +28,31 @@ interface ExpenseTableProps {
 
 export function ExpenseTable({ onEdit }: ExpenseTableProps) {
   const { organizationId, accountId } = useOrganization();
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const { data: expenses = [], isLoading, error } = useQuery({
-    queryKey: ['expenses', organizationId, accountId],
+    queryKey: ['expenses', organizationId, accountId, startDate, endDate],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         throw new Error("Organization or account context not found");
       }
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('expenses')
         .select('*')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
         .order('date', { ascending: false });
+
+      if (startDate) {
+        query = query.gte('date', format(startDate, 'yyyy-MM-dd'));
+      }
+      if (endDate) {
+        query = query.lte('date', format(endDate, 'yyyy-MM-dd'));
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching expenses:', error);
@@ -73,22 +84,26 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
   const columns: Column<Expense>[] = [
     {
       header: "Description",
-      accessorKey: "description"
+      accessorKey: "description",
+      sortable: true
     },
     {
       header: "Amount",
       accessorKey: "amount",
+      sortable: true,
       cell: (item: Expense) => (
         <span>${item.amount?.toLocaleString()}</span>
       )
     },
     {
       header: "Category",
-      accessorKey: "category"
+      accessorKey: "category",
+      sortable: true
     },
     {
       header: "Date",
       accessorKey: "date",
+      sortable: true,
       cell: (item: Expense) => (
         <span>{format(new Date(item.date), 'MMM dd, yyyy')}</span>
       )
@@ -96,6 +111,7 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
     {
       header: "Status",
       accessorKey: "status",
+      sortable: true,
       cell: (item: Expense) => (
         <span className="capitalize">{item.status || 'pending'}</span>
       )
@@ -103,6 +119,7 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
     {
       header: "Payment Method",
       accessorKey: "payment_method",
+      sortable: true,
       cell: (item: Expense) => (
         <span className="capitalize">{item.payment_method || 'N/A'}</span>
       )
@@ -114,30 +131,29 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
   }
 
   return (
-    <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
-      <div className="p-4">
-        <DataTable
-          data={expenses}
-          columns={columns}
-          isLoading={isLoading}
-          onEdit={onEdit}
-          onDelete={handleDelete}
-          tableName="expenses"
-          filters={[
-            {
-              name: "category",
-              options: expenseCategories,
-              value: "all",
-              onChange: () => {}
-            }
-          ]}
-          dateRange={{
-            startDate: null,
-            endDate: null,
-            onDateRangeChange: () => {}
-          }}
-        />
-      </div>
-    </Card>
+    <DataTable
+      data={expenses}
+      columns={columns}
+      isLoading={isLoading}
+      onEdit={onEdit}
+      onDelete={handleDelete}
+      tableName="expenses"
+      filters={[
+        {
+          name: "category",
+          options: expenseCategories,
+          value: "all",
+          onChange: () => {}
+        }
+      ]}
+      dateRange={{
+        startDate,
+        endDate,
+        onDateRangeChange: (start, end) => {
+          setStartDate(start);
+          setEndDate(end);
+        }
+      }}
+    />
   );
 }
