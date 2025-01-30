@@ -25,7 +25,7 @@ export function BookingTrendsChart() {
     queryKey: ['booking-trends'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('booking_trends')
+        .from('booking_trends_secure')
         .select('*')
         .order('month', { ascending: true });
 

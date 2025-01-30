@@ -1155,6 +1155,32 @@ export type Database = {
           },
         ]
       }
+      booking_trends_secure: {
+        Row: {
+          account_id: string | null
+          cancellations: number | null
+          long_term_bookings: number | null
+          month: string | null
+          organization_id: string | null
+          short_term_bookings: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       calculate_booking_total: {
@@ -1172,6 +1198,13 @@ export type Database = {
           p_end_date: string
         }
         Returns: number
+      }
+      check_booking_trends_access: {
+        Args: {
+          org_id: string
+          acc_id: string
+        }
+        Returns: boolean
       }
       check_user_role:
         | {
