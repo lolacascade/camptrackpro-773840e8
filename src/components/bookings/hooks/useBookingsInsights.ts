@@ -38,14 +38,21 @@ export function useBookingsInsights(dateRange?: DateRange) {
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
-        .in('status', ['confirmed', 'checked_in']);
+        .in('status', ['pending', 'confirmed', 'checked_in']); // Include pending bookings as they are also active
 
       // Apply date range filter if provided
       if (dateRange?.from && dateRange?.to) {
         query = query
           .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('check_out_date', format(dateRange.to, 'yyyy-MM-dd'));
+      } else {
+        // If no date range provided, show current active bookings
+        query = query
+          .lte('check_in_date', today)
+          .gte('check_out_date', today);
       }
+
+      console.log('Fetching bookings with query:', query); // Debug log
 
       const [bookings, checkIns, checkOuts] = await Promise.all([
         query,
@@ -54,18 +61,25 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
-          .eq('check_in_date', today),
+          .eq('check_in_date', today)
+          .in('status', ['pending', 'confirmed']), // Only count upcoming check-ins
         supabase
           .from('bookings')
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
           .eq('check_out_date', today)
+          .in('status', ['checked_in', 'confirmed']) // Only count active checkouts
       ]);
 
-      if (bookings.error) throw bookings.error;
+      if (bookings.error) {
+        console.error('Error fetching bookings:', bookings.error);
+        throw bookings.error;
+      }
       if (checkIns.error) throw checkIns.error;
       if (checkOuts.error) throw checkOuts.error;
+
+      console.log('Active bookings data:', bookings.data); // Debug log
 
       // Calculate RV type distribution
       const rvTypeDistribution = bookings.data?.reduce((acc: Record<string, number>, booking) => {

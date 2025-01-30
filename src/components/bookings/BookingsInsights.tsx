@@ -10,8 +10,12 @@ interface BookingsInsightsProps {
 }
 
 export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
-  const { data: insights, isLoading } = useBookingsInsights(dateRange);
+  const { data: insights, isLoading, error } = useBookingsInsights(dateRange);
   
+  if (error) {
+    console.error('Error loading insights:', error);
+  }
+
   if (isLoading) {
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -27,8 +31,8 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
       <ActiveBookingsCard value={insights?.activeBookings || 0} />
       <RVTypesCard 
         rvTypes={insights?.rvTypeDistribution || [
-          { label: "Loading...", value: "0", percentage: 0 },
-          { label: "Loading...", value: "0", percentage: 0 }
+          { label: "No data", value: "0", percentage: 0 },
+          { label: "No data", value: "0", percentage: 0 }
         ]} 
       />
       <CheckInsCard value={insights?.checkIns || 0} />
