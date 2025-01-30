@@ -1,5 +1,5 @@
 import { EntityDrawer } from "@/components/common/EntityDrawer"
-import type { Expense, ExpenseType, ExpenseStatus } from "@/types/expense"
+import type { Expense } from "@/types/expense"
 
 interface AddExpenseDrawerProps {
   expense: Expense | null
@@ -71,7 +71,7 @@ const EXPENSE_FIELDS = [
   {
     name: "notes",
     label: "Notes",
-    type: "text" as const
+    type: "textarea" as const
   }
 ]
 

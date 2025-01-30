@@ -1,8 +1,9 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { SelectField } from "@/components/common/FormFields/SelectField"
-import { DatePickerField } from "@/components/common/FormFields/DatePickerField"
-import type { FormField } from "./types"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { SelectField } from "@/components/common/FormFields/SelectField";
+import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
+import type { FormField } from "./types";
 
 export function EntityField({ field }: { field: FormField }) {
   const renderField = () => {
@@ -28,10 +29,18 @@ export function EntityField({ field }: { field: FormField }) {
       case 'date':
         return (
           <DatePickerField
-            value={field.value ? new Date(field.value) : undefined}
+            value={field.value ? new Date(field.value) : new Date()}
             onChange={(date) => field.onChange(date?.toISOString())}
             placeholder={`Select ${field.label.toLowerCase()}`}
             className="w-full"
+          />
+        )
+      case 'textarea':
+        return (
+          <Textarea
+            value={field.value?.toString() || ''}
+            onChange={(e) => field.onChange(e.target.value)}
+            className="bg-white min-h-[100px]"
           />
         )
       default:

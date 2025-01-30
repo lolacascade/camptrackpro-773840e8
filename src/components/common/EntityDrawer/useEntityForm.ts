@@ -15,8 +15,23 @@ export function useEntityForm(
   const { toast } = useToast();
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
+  
+  // Set default values, including today's date for date fields
+  const defaultValues = fields.reduce((acc: any, field) => {
+    if (field.type === 'date') {
+      acc[field.name] = new Date().toISOString();
+    } else if (field.type === 'text' || field.type === 'textarea') {
+      acc[field.name] = "";
+    } else if (field.type === 'number') {
+      acc[field.name] = null;
+    } else if (field.type === 'select') {
+      acc[field.name] = field.options?.[0]?.value || "";
+    }
+    return acc;
+  }, {});
+
   const [formData, setFormData] = useState(
-    entity || fields.reduce((acc: any, field) => ({ ...acc, [field.name]: "" }), {})
+    entity || defaultValues
   );
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
