@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
-import { format, differenceInDays } from "date-fns";
+import { format, differenceInDays, parseISO, compareAsc } from "date-fns";
 import { ChartDataProcessorProps } from "./types";
 
 export function useRevenueData(dateRange: { from: Date; to: Date }) {
@@ -22,7 +22,9 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
           .select('amount, created_at')
           .gte('created_at', dateRange.from.toISOString())
           .lte('created_at', dateRange.to.toISOString())
-          .eq('status', 'paid'),
+          .eq('status', 'paid')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId),
         
         supabase
           .from('expenses')
@@ -67,6 +69,7 @@ function processDailyData(incomeData: any[], expensesData: any[], dateRange: { f
       income: 0,
       expenses: 0,
       netProfit: 0,
+      date: new Date(currentDate), // Store full date for sorting
     };
     currentDate.setDate(currentDate.getDate() + 1);
   }
@@ -89,19 +92,25 @@ function processDailyData(incomeData: any[], expensesData: any[], dateRange: { f
     }
   });
 
-  return Object.values(dailyData).map(data => ({
-    ...data,
-    netProfit: data.income - data.expenses
-  }));
+  // Convert to array and sort by date
+  return Object.values(dailyData)
+    .map(data => ({
+      ...data,
+      netProfit: data.income - data.expenses
+    }))
+    .sort((a, b) => compareAsc(a.date, b.date));
 }
 
 function processMonthlyData(incomeData: any[], expensesData: any[]) {
   const monthlyData: { [key: string]: any } = {};
 
-  // Aggregate income
+  // Helper function to create month key for sorting
+  const createMonthKey = (date: Date) => format(date, 'yyyy-MM');
+  
+  // Process income data
   incomeData.forEach((invoice) => {
-    const date = new Date(invoice.created_at);
-    const key = format(date, 'yyyy-MM');
+    const date = parseISO(invoice.created_at);
+    const key = createMonthKey(date);
     if (!monthlyData[key]) {
       monthlyData[key] = {
         month: format(date, 'MMM'),
@@ -109,15 +118,16 @@ function processMonthlyData(incomeData: any[], expensesData: any[]) {
         income: 0,
         expenses: 0,
         netProfit: 0,
+        date: date, // Store full date for sorting
       };
     }
     monthlyData[key].income += Number(invoice.amount);
   });
 
-  // Aggregate expenses
+  // Process expense data
   expensesData.forEach((expense) => {
-    const date = new Date(expense.date);
-    const key = format(date, 'yyyy-MM');
+    const date = parseISO(expense.date);
+    const key = createMonthKey(date);
     if (!monthlyData[key]) {
       monthlyData[key] = {
         month: format(date, 'MMM'),
@@ -125,19 +135,17 @@ function processMonthlyData(incomeData: any[], expensesData: any[]) {
         income: 0,
         expenses: 0,
         netProfit: 0,
+        date: date, // Store full date for sorting
       };
     }
     monthlyData[key].expenses += Number(expense.amount);
   });
 
+  // Convert to array, calculate net profit, and sort by date
   return Object.values(monthlyData)
     .map(data => ({
       ...data,
       netProfit: data.income - data.expenses
     }))
-    .sort((a, b) => {
-      const dateA = new Date(`${a.year} ${a.month}`);
-      const dateB = new Date(`${b.year} ${b.month}`);
-      return dateA.getTime() - dateB.getTime();
-    });
+    .sort((a, b) => compareAsc(a.date, b.date));
 }

@@ -2,7 +2,8 @@ import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
+import { format, subDays, isWithinInterval } from "date-fns";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface FinancialsStatsCardsProps {
   dateRange: {
@@ -12,45 +13,76 @@ interface FinancialsStatsCardsProps {
 }
 
 export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
+  const { organizationId, accountId } = useOrganization();
+
   const { data: stats } = useQuery({
-    queryKey: ['expense-stats', dateRange.from, dateRange.to],
+    queryKey: ['expense-stats', dateRange.from, dateRange.to, organizationId, accountId],
     queryFn: async () => {
-      // Get current period's expenses
-      const { data: currentExpenses } = await supabase
-        .from('expenses')
-        .select('amount, category')
-        .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
-        .lte('date', format(dateRange.to, 'yyyy-MM-dd'));
+      if (!organizationId || !accountId) return null;
 
-      // Get previous period's expenses (same duration, previous period)
-      const previousPeriodStart = new Date(dateRange.from);
-      previousPeriodStart.setDate(previousPeriodStart.getDate() - (dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
-      const previousPeriodEnd = new Date(dateRange.from);
-      previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
+      // Calculate previous period
+      const periodLength = dateRange.to.getTime() - dateRange.from.getTime();
+      const previousFrom = new Date(dateRange.from.getTime() - periodLength);
+      const previousTo = new Date(dateRange.to.getTime() - periodLength);
 
-      const { data: previousExpenses } = await supabase
-        .from('expenses')
-        .select('amount')
-        .gte('date', format(previousPeriodStart, 'yyyy-MM-dd'))
-        .lte('date', format(previousPeriodEnd, 'yyyy-MM-dd'));
+      // Get current period's data
+      const [currentExpenses, currentInvoices, budgets] = await Promise.all([
+        supabase
+          .from('expenses')
+          .select('amount, category')
+          .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
+          .lte('date', format(dateRange.to, 'yyyy-MM-dd'))
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId),
+        supabase
+          .from('invoices')
+          .select('amount')
+          .gte('created_at', format(dateRange.from, 'yyyy-MM-dd'))
+          .lte('created_at', format(dateRange.to, 'yyyy-MM-dd'))
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .eq('status', 'paid'),
+        supabase
+          .from('monthly_budgets')
+          .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .gte('month', format(dateRange.from, 'yyyy-MM-01'))
+          .lte('month', format(dateRange.to, 'yyyy-MM-01'))
+      ]);
 
-      // Get monthly budget
-      const { data: budgets } = await supabase
-        .from('monthly_budgets')
-        .select('amount')
-        .eq('month', format(dateRange.from, 'yyyy-MM-01'));
+      // Get previous period's data
+      const [previousExpenses, previousInvoices] = await Promise.all([
+        supabase
+          .from('expenses')
+          .select('amount')
+          .gte('date', format(previousFrom, 'yyyy-MM-dd'))
+          .lte('date', format(previousTo, 'yyyy-MM-dd'))
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId),
+        supabase
+          .from('invoices')
+          .select('amount')
+          .gte('created_at', format(previousFrom, 'yyyy-MM-dd'))
+          .lte('created_at', format(previousTo, 'yyyy-MM-dd'))
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .eq('status', 'paid')
+      ]);
 
-      const currentTotal = currentExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const previousTotal = previousExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const monthlyBudget = budgets?.[0]?.amount || 0;
+      const currentTotal = currentExpenses.data?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+      const previousTotal = previousExpenses.data?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
+      const currentRevenue = currentInvoices.data?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
+      const previousRevenue = previousInvoices.data?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
+      const totalBudget = budgets.data?.reduce((sum, budget) => sum + budget.amount, 0) || 0;
 
       // Calculate category percentages
       const categoryTotals: { [key: string]: number } = {};
-      currentExpenses?.forEach(exp => {
+      currentExpenses.data?.forEach(exp => {
         categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
       });
 
-      const largestExpense = currentExpenses?.reduce((max, exp) => 
+      const largestExpense = currentExpenses.data?.reduce((max, exp) => 
         exp.amount > max.amount ? exp : max, 
         { amount: 0, category: 'None' }
       );
@@ -58,69 +90,81 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       return {
         currentTotal,
         previousTotal,
-        monthlyBudget,
+        currentRevenue,
+        previousRevenue,
+        totalBudget,
         categoryTotals,
         largestExpense
       };
-    }
+    },
+    enabled: !!organizationId && !!accountId
   });
 
-  const percentageChange = stats?.previousTotal 
+  if (!stats) return null;
+
+  const revenueChange = stats.previousRevenue 
+    ? ((stats.currentRevenue - stats.previousRevenue) / stats.previousRevenue) * 100 
+    : 0;
+
+  const expenseChange = stats.previousTotal 
     ? ((stats.currentTotal - stats.previousTotal) / stats.previousTotal) * 100 
     : 0;
 
-  const budgetStatus = stats?.monthlyBudget 
-    ? ((stats.currentTotal / stats.monthlyBudget) * 100)
-    : 0;
+  const periodLabel = isWithinInterval(new Date(), { start: dateRange.from, end: dateRange.to })
+    ? 'current period'
+    : format(dateRange.from, 'MMM dd') + ' - ' + format(dateRange.to, 'MMM dd');
 
-  const categoryBreakdown = stats?.categoryTotals 
-    ? Object.entries(stats.categoryTotals).map(([category, amount]) => ({
-        label: category,
-        value: `$${amount.toLocaleString()}`,
-        percentage: Math.round((amount / stats.currentTotal) * 100)
-      }))
-    : [];
+  const categoryBreakdown = Object.entries(stats.categoryTotals).map(([category, amount]) => ({
+    label: category,
+    value: `$${amount.toLocaleString()}`,
+    percentage: Math.round((amount / stats.currentTotal) * 100)
+  }));
 
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
-        title="Total Expenses"
-        value={`$${stats?.currentTotal.toLocaleString() || '0'}`}
+        title="Total Revenue"
+        value={`$${stats.currentRevenue.toLocaleString()}`}
         icon={DollarSign}
         trend={{
-          value: `${Math.abs(percentageChange).toFixed(1)}%`,
-          isPositive: percentageChange <= 0,
-          comparedTo: "last month"
+          value: `${Math.abs(revenueChange).toFixed(1)}%`,
+          isPositive: revenueChange >= 0,
+          comparedTo: "previous period"
+        }}
+        breakdown={[
+          { label: "Current", value: `$${stats.currentRevenue.toLocaleString()}` },
+          { label: "Previous", value: `$${stats.previousRevenue.toLocaleString()}` }
+        ]}
+      />
+      <EnhancedStatCard
+        title="Total Expenses"
+        value={`$${stats.currentTotal.toLocaleString()}`}
+        icon={TrendingUp}
+        trend={{
+          value: `${Math.abs(expenseChange).toFixed(1)}%`,
+          isPositive: expenseChange <= 0,
+          comparedTo: "previous period"
         }}
         breakdown={categoryBreakdown.slice(0, 2)}
       />
       <EnhancedStatCard
-        title="Largest Expense"
-        value={`$${stats?.largestExpense.amount.toLocaleString() || '0'}`}
-        icon={TrendingUp}
-        breakdown={[
-          { label: "Category", value: stats?.largestExpense.category || 'None' },
-          { label: "% of Total", value: `${Math.round((stats?.largestExpense.amount / (stats?.currentTotal || 1)) * 100)}%` }
-        ]}
-      />
-      <EnhancedStatCard
         title="Expense Categories"
-        value={`${categoryBreakdown.length || 0}`}
+        value={`${categoryBreakdown.length}`}
         icon={PieChart}
         breakdown={categoryBreakdown}
       />
       <EnhancedStatCard
         title="Budget Status"
-        value={`${budgetStatus.toFixed(1)}%`}
+        value={`${((stats.currentTotal / stats.totalBudget) * 100).toFixed(1)}%`}
         icon={AlertCircle}
         trend={{
-          value: `${Math.abs(100 - budgetStatus).toFixed(1)}%`,
-          isPositive: budgetStatus <= 100,
-          comparedTo: "monthly budget"
+          value: `${Math.abs(100 - ((stats.currentTotal / stats.totalBudget) * 100)).toFixed(1)}%`,
+          isPositive: stats.currentTotal <= stats.totalBudget,
+          comparedTo: periodLabel
         }}
         breakdown={[
-          { label: "Spent", value: `$${stats?.currentTotal.toLocaleString() || '0'}` },
-          { label: "Budget", value: `$${stats?.monthlyBudget.toLocaleString() || '0'}` }
+          { label: "Spent", value: `$${stats.currentTotal.toLocaleString()}` },
+          { label: "Budget", value: `$${stats.totalBudget.toLocaleString()}` }
         ]}
       />
     </div>
