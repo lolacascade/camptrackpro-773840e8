@@ -8,9 +8,17 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 export default function Financials() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<{ from: Date; to: Date }>({
+    from: new Date(),
+    to: new Date(),
+  });
 
   const handleAddExpense = () => {
     setIsAddExpenseOpen(true);
+  };
+
+  const handleDateRangeChange = (range: { from: Date; to: Date }) => {
+    setDateRange(range);
   };
 
   return (
@@ -18,8 +26,11 @@ export default function Financials() {
       <PageWithChat>
         <PageContainer>
           <div className="space-y-6">
-            <FinancialsHeader onAdd={handleAddExpense} />
-            <FinancialsOverview />
+            <FinancialsHeader 
+              onAdd={handleAddExpense} 
+              onDateRangeChange={handleDateRangeChange}
+            />
+            <FinancialsOverview dateRange={dateRange} />
           </div>
 
           <AddExpenseDrawer
