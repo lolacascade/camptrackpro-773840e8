@@ -24,10 +24,13 @@ export function useCustomers() {
           .from('customers')
           .select('*')
           .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-          .order('first_name');
+          .eq('account_id', accountId);
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching customers:', error);
+          throw error;
+        }
+
         console.log('Customers data received:', data);
         setCustomers(data || []);
       } catch (error) {
@@ -44,7 +47,8 @@ export function useCustomers() {
 
     fetchCustomers();
 
-    const subscription = supabase
+    // Set up real-time subscription
+    const channel = supabase
       .channel('customers_changes')
       .on(
         'postgres_changes',
@@ -54,12 +58,15 @@ export function useCustomers() {
           table: 'customers',
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
-        fetchCustomers
+        (payload) => {
+          console.log('Received real-time update:', payload);
+          fetchCustomers(); // Refresh the data when changes occur
+        }
       )
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      channel.unsubscribe();
     };
   }, [toast, organizationId, accountId]);
 

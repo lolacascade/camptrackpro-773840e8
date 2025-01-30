@@ -11,6 +11,7 @@ interface CustomerTableProps {
 
 export function CustomerTable({ onEdit }: CustomerTableProps) {
   const { customers, isLoading } = useCustomers();
+  console.log('CustomerTable rendered with:', { customersCount: customers.length, isLoading });
 
   const handleDelete = async (customer: Customer) => {
     try {
@@ -35,6 +36,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       onDelete={handleDelete}
       isLoading={isLoading}
       tableName="customers"
+      title="Customers"
     />
   );
 }
