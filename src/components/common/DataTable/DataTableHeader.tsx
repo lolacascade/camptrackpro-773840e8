@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { DataTableFiltersBar } from "./DataTableFiltersBar";
 import { DataTableColumns } from "./DataTableColumns";
+import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
 
 interface FilterOption {
   label: string;
@@ -24,6 +25,11 @@ interface DataTableHeaderProps {
   onShowTodayChange?: (checked: boolean) => void;
   columns: any[];
   onColumnVisibilityChange: (columns: string[]) => void;
+  dateRange?: {
+    startDate: Date | null;
+    endDate: Date | null;
+    onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
+  };
 }
 
 export function DataTableHeader({ 
@@ -34,7 +40,8 @@ export function DataTableHeader({
   showTodayOnly,
   onShowTodayChange,
   columns,
-  onColumnVisibilityChange
+  onColumnVisibilityChange,
+  dateRange
 }: DataTableHeaderProps) {
   const filteredFilters = filters.filter(filter => filter.name !== 'customer');
 
@@ -43,7 +50,7 @@ export function DataTableHeader({
       {title && (
         <h1 className="text-3xl font-semibold text-[#133134]">{title}</h1>
       )}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <div className="relative w-48">
           <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
           <Input
@@ -53,6 +60,25 @@ export function DataTableHeader({
             className="pl-9 bg-white h-11 text-base"
           />
         </div>
+        
+        {dateRange && (
+          <div className="flex items-center gap-2">
+            <DatePickerField
+              value={dateRange.startDate}
+              onChange={(date) => dateRange.onDateRangeChange(date, dateRange.endDate)}
+              placeholder="Start Date"
+              className="w-40"
+            />
+            <span className="text-gray-500">to</span>
+            <DatePickerField
+              value={dateRange.endDate}
+              onChange={(date) => dateRange.onDateRangeChange(dateRange.startDate, date)}
+              placeholder="End Date"
+              className="w-40"
+            />
+          </div>
+        )}
+        
         <DataTableFiltersBar filters={filteredFilters} />
         <DataTableColumns 
           columns={columns}

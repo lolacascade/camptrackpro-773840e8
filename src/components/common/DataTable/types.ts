@@ -12,9 +12,15 @@ export interface Filter {
   onChange: (value: string) => void;
 }
 
+export interface DateRange {
+  startDate: Date | null;
+  endDate: Date | null;
+  onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
+}
+
 export interface Column<T> {
   header: string;
-  accessorKey: string; // Allow nested paths like "customer.name"
+  accessorKey: string;
   cell?: (item: T) => ReactNode;
   sortable?: boolean;
 }
@@ -42,4 +48,5 @@ export interface DataTableProps<T> {
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
   onRowClick?: (row: T) => void;
+  dateRange?: DateRange;
 }

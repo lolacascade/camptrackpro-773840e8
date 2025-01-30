@@ -6,6 +6,21 @@ import { useOrganization } from "@/hooks/use-organization";
 import { toast } from "sonner";
 import { Expense } from "@/types/expense";
 import { Column } from "@/components/common/DataTable/types";
+import { format } from "date-fns";
+
+const expenseCategories = [
+  { label: "All Categories", value: "all" },
+  { label: "Maintenance", value: "Maintenance" },
+  { label: "Utilities", value: "Utilities" },
+  { label: "Supplies", value: "Supplies" },
+  { label: "Insurance", value: "Insurance" },
+  { label: "Staff", value: "Staff" },
+  { label: "Marketing", value: "Marketing" },
+  { label: "Administrative Costs", value: "Administrative Costs" },
+  { label: "Taxes", value: "Taxes" },
+  { label: "Capital Expenditures", value: "Capital Expenditures" },
+  { label: "Other", value: "Other" }
+];
 
 interface ExpenseTableProps {
   onEdit?: (expense: Expense) => void;
@@ -38,9 +53,22 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
     enabled: !!organizationId && !!accountId
   });
 
-  if (error) {
-    toast.error("Failed to load expenses. Please try again.");
-  }
+  const handleDelete = async (expense: Expense) => {
+    try {
+      const { error } = await supabase
+        .from('expenses')
+        .delete()
+        .eq('id', expense.id)
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
+
+      if (error) throw error;
+      toast.success("Expense deleted successfully");
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      toast.error("Failed to delete expense");
+    }
+  };
 
   const columns: Column<Expense>[] = [
     {
@@ -62,10 +90,28 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
       header: "Date",
       accessorKey: "date",
       cell: (item: Expense) => (
-        <span>{new Date(item.date).toLocaleDateString()}</span>
+        <span>{format(new Date(item.date), 'MMM dd, yyyy')}</span>
+      )
+    },
+    {
+      header: "Status",
+      accessorKey: "status",
+      cell: (item: Expense) => (
+        <span className="capitalize">{item.status || 'pending'}</span>
+      )
+    },
+    {
+      header: "Payment Method",
+      accessorKey: "payment_method",
+      cell: (item: Expense) => (
+        <span className="capitalize">{item.payment_method || 'N/A'}</span>
       )
     }
   ];
+
+  if (error) {
+    toast.error("Failed to load expenses. Please try again.");
+  }
 
   return (
     <Card className="border border-[#E8EBEB] rounded-xl bg-transparent">
@@ -74,8 +120,22 @@ export function ExpenseTable({ onEdit }: ExpenseTableProps) {
           data={expenses}
           columns={columns}
           isLoading={isLoading}
-          onRowClick={onEdit}
+          onEdit={onEdit}
+          onDelete={handleDelete}
           tableName="expenses"
+          filters={[
+            {
+              name: "category",
+              options: expenseCategories,
+              value: "all",
+              onChange: () => {}
+            }
+          ]}
+          dateRange={{
+            startDate: null,
+            endDate: null,
+            onDateRangeChange: () => {}
+          }}
         />
       </div>
     </Card>

@@ -537,7 +537,10 @@ export type Database = {
           date: string
           description: string
           id: string
+          notes: string | null
           organization_id: string | null
+          payment_method: string | null
+          status: string | null
           updated_at: string | null
           user_id: string | null
         }
@@ -549,7 +552,10 @@ export type Database = {
           date: string
           description: string
           id?: string
+          notes?: string | null
           organization_id?: string | null
+          payment_method?: string | null
+          status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
@@ -561,7 +567,10 @@ export type Database = {
           date?: string
           description?: string
           id?: string
+          notes?: string | null
           organization_id?: string | null
+          payment_method?: string | null
+          status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
