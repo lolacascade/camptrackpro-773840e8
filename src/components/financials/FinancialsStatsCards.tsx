@@ -2,38 +2,47 @@ import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
 
-export function FinancialsStatsCards() {
+interface FinancialsStatsCardsProps {
+  dateRange: {
+    from: Date;
+    to: Date;
+  };
+}
+
+export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
   const { data: stats } = useQuery({
-    queryKey: ['expense-stats'],
+    queryKey: ['expense-stats', dateRange.from, dateRange.to],
     queryFn: async () => {
-      const currentDate = new Date();
-      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-
-      // Get current month's expenses
+      // Get current period's expenses
       const { data: currentExpenses } = await supabase
         .from('expenses')
         .select('amount, category')
-        .gte('date', firstDayOfMonth.toISOString())
-        .lte('date', lastDayOfMonth.toISOString());
+        .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
+        .lte('date', format(dateRange.to, 'yyyy-MM-dd'));
 
-      // Get previous month's expenses
+      // Get previous period's expenses (same duration, previous period)
+      const previousPeriodStart = new Date(dateRange.from);
+      previousPeriodStart.setDate(previousPeriodStart.getDate() - (dateRange.to.getTime() - dateRange.from.getTime()) / (1000 * 60 * 60 * 24));
+      const previousPeriodEnd = new Date(dateRange.from);
+      previousPeriodEnd.setDate(previousPeriodEnd.getDate() - 1);
+
       const { data: previousExpenses } = await supabase
         .from('expenses')
         .select('amount')
-        .gte('date', new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1).toISOString())
-        .lte('date', new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).toISOString());
+        .gte('date', format(previousPeriodStart, 'yyyy-MM-dd'))
+        .lte('date', format(previousPeriodEnd, 'yyyy-MM-dd'));
 
-      // Get monthly budget - handle case where no budget exists
+      // Get monthly budget
       const { data: budgets } = await supabase
         .from('monthly_budgets')
         .select('amount')
-        .eq('month', firstDayOfMonth.toISOString().split('T')[0]);
+        .eq('month', format(dateRange.from, 'yyyy-MM-01'));
 
       const currentTotal = currentExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
       const previousTotal = previousExpenses?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const monthlyBudget = budgets?.[0]?.amount || 0; // Access first item if exists, otherwise default to 0
+      const monthlyBudget = budgets?.[0]?.amount || 0;
 
       // Calculate category percentages
       const categoryTotals: { [key: string]: number } = {};

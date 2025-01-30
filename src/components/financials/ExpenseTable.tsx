@@ -24,7 +24,7 @@ const expenseCategories = [
 
 interface ExpenseTableProps {
   onEdit?: (expense: Expense) => void;
-  dateRange?: {
+  dateRange: {
     from: Date;
     to: Date;
   };
@@ -32,11 +32,9 @@ interface ExpenseTableProps {
 
 export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   const { organizationId, accountId } = useOrganization();
-  const [startDate, setStartDate] = useState<Date | null>(dateRange?.from || null);
-  const [endDate, setEndDate] = useState<Date | null>(dateRange?.to || null);
 
   const { data: expenses = [], isLoading, error } = useQuery({
-    queryKey: ['expenses', organizationId, accountId, startDate, endDate],
+    queryKey: ['expenses', organizationId, accountId, dateRange.from, dateRange.to],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         throw new Error("Organization or account context not found");
@@ -47,14 +45,9 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         .select('*')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
+        .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
+        .lte('date', format(dateRange.to, 'yyyy-MM-dd'))
         .order('date', { ascending: false });
-
-      if (startDate) {
-        query = query.gte('date', format(startDate, 'yyyy-MM-dd'));
-      }
-      if (endDate) {
-        query = query.lte('date', format(endDate, 'yyyy-MM-dd'));
-      }
 
       const { data, error } = await query;
 
@@ -151,12 +144,9 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         }
       ]}
       dateRange={{
-        startDate,
-        endDate,
-        onDateRangeChange: (start, end) => {
-          setStartDate(start);
-          setEndDate(end);
-        }
+        startDate: dateRange.from,
+        endDate: dateRange.to,
+        onDateRangeChange: () => {} // We'll handle date changes at the page level
       }}
     />
   );
