@@ -2,6 +2,8 @@ import { Customer } from "@/types/customer";
 import { CustomerFormData } from "./types";
 
 export const getDefaultValues = (customer: Customer | null): CustomerFormData => {
+  console.log('Getting default values for customer:', customer); // Debug log
+  
   if (customer) {
     return {
       first_name: customer.first_name || '',

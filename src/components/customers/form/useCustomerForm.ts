@@ -13,12 +13,16 @@ export function useCustomerForm({
   const { toast } = useToast();
   const { organizationId, accountId } = useOrganization();
   
+  const defaultValues = getDefaultValues(customer);
+  console.log('Form default values:', defaultValues); // Debug log
+  
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting }
   } = useForm<CustomerFormData>({
-    defaultValues: getDefaultValues(customer)
+    defaultValues,
+    values: defaultValues // Explicitly set current values
   });
 
   const onSubmit = async (formData: CustomerFormData) => {

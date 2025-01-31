@@ -18,6 +18,8 @@ export function CustomerDrawer({
   onClose, 
   onCustomerUpdated 
 }: CustomerDrawerProps) {
+  console.log('CustomerDrawer received customer:', customer); // Debug log
+  
   const {
     register,
     handleSubmit,
