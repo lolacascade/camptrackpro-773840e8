@@ -89,11 +89,11 @@
 /* Modal and Dialog styles */
 @layer components {
   .modal-overlay {
-    @apply fixed inset-0 bg-dialog-overlay backdrop-blur-sm z-[var(--z-modal)];
+    @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-[var(--z-modal)];
   }
 
   .modal-content {
-    @apply fixed left-[50%] top-[50%] z-[var(--z-modal)] -translate-x-1/2 -translate-y-1/2 bg-dialog-content shadow-lg rounded-lg border p-6;
+    @apply fixed left-[50%] top-[50%] z-[var(--z-modal)] -translate-x-1/2 -translate-y-1/2 bg-background shadow-lg rounded-lg border p-6;
   }
 
   .popover-content {
@@ -141,4 +141,25 @@ textarea:focus {
 
 [data-sonner-toaster][data-position="bottom-right"] {
   bottom: 60px;
+}
+
+/* Ensure proper stacking context for main content */
+main {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure sheet overlay is removed properly */
+[data-radix-sheet-overlay] {
+  animation: fadeOut 200ms ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    pointer-events: none;
+  }
 }

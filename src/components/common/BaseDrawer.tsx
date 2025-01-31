@@ -17,8 +17,26 @@ export function BaseDrawer({
   className 
 }: BaseDrawerProps) {
   return (
-    <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className={cn("w-full sm:max-w-[720px] overflow-y-auto", className)}>
+    <Sheet 
+      open={open} 
+      onOpenChange={onClose}
+      modal={true} // Ensure modal behavior
+    >
+      <SheetContent 
+        className={cn(
+          "w-full sm:max-w-[720px] overflow-y-auto",
+          "focus-visible:outline-none", // Remove focus outline that might cause z-index issues
+          className
+        )}
+        onInteractOutside={(e) => {
+          e.preventDefault() // Prevent any lingering events
+          onClose()
+        }}
+        onEscapeKeyDown={(e) => {
+          e.preventDefault() // Prevent any lingering events
+          onClose()
+        }}
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
         </SheetHeader>
