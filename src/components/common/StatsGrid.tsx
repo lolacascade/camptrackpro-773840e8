@@ -1,5 +1,5 @@
 import { Anchor, DollarSign, Ship, Wrench } from "lucide-react";
-import { StatsCard } from "./StatsCard";
+import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 
 interface StatsGridProps {
   occupancyRate: number;
@@ -19,8 +19,8 @@ export function StatsGrid({
   pendingMaintenance
 }: StatsGridProps) {
   return (
-    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <StatsCard
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+      <EnhancedStatCard
         title="Total Customers"
         value={totalSlips}
         icon={Anchor}
@@ -34,7 +34,7 @@ export function StatsGrid({
           { label: "Total", value: totalSlips }
         ]}
       />
-      <StatsCard
+      <EnhancedStatCard
         title="Monthly Revenue"
         value={`$${monthlyRevenue.toLocaleString()}`}
         icon={DollarSign}
@@ -49,7 +49,7 @@ export function StatsGrid({
           { label: "Services", value: "$10,231", percentage: 23 }
         ]}
       />
-      <StatsCard
+      <EnhancedStatCard
         title="New This Month"
         value={activeBoats}
         icon={Ship}
@@ -63,7 +63,7 @@ export function StatsGrid({
           { label: "Referral", value: "3", percentage: 20 }
         ]}
       />
-      <StatsCard
+      <EnhancedStatCard
         title="Pending Actions"
         value={pendingMaintenance}
         icon={Wrench}
