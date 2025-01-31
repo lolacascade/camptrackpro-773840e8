@@ -34,7 +34,7 @@ export function CustomerDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
-      <SheetContent className="overflow-y-auto">
+      <SheetContent className="sm:max-w-[500px] overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{customer ? 'Edit' : 'Add'} Customer</SheetTitle>
         </SheetHeader>
@@ -51,7 +51,7 @@ export function CustomerDrawer({
           <Button 
             type="submit" 
             disabled={isSubmitting}
-            className="w-full bg-[#133134] text-white hover:bg-[#133134]/90"
+            className="w-full"
           >
             {isSubmitting ? "Saving..." : `${customer ? 'Save Changes' : 'Add Customer'}`}
           </Button>
