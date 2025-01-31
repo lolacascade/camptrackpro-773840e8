@@ -16,7 +16,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
 
   if (isLoading) {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {Array(4).fill(0).map((_, i) => (
           <div key={i} className="h-[160px] bg-gray-100 animate-pulse rounded-lg" />
         ))}
@@ -25,7 +25,7 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
         title="Active Bookings"
         value={insights?.activeBookings || 0}
