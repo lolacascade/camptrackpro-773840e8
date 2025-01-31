@@ -40,11 +40,11 @@ export function CustomerDrawer({
           <CustomerBasicInfo 
             register={register} 
             errors={errors} 
-            defaultValues={customer || undefined}
+            defaultValues={customer}
           />
           <CustomerAddress 
             register={register} 
-            defaultValues={customer || undefined}
+            defaultValues={customer}
           />
           <Button 
             type="submit" 
