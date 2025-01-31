@@ -1,5 +1,5 @@
-import { Calendar } from "lucide-react";
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { StatsCard } from "@/components/common/StatsCard";
+import { LogIn } from "lucide-react";
 
 interface CheckInsCardProps {
   value: number;
@@ -7,18 +7,12 @@ interface CheckInsCardProps {
 
 export function CheckInsCard({ value }: CheckInsCardProps) {
   return (
-    <EnhancedStatCard
+    <StatsCard
       title="Check-ins"
-      value={String(value)}
-      icon={Calendar}
-      trend={{
-        value: "Within range",
-        isPositive: true,
-        comparedTo: "selected period"
-      }}
+      value={value}
+      icon={LogIn}
       breakdown={[
-        { label: "Morning", value: String(Math.ceil(value * 0.6)), percentage: 60 },
-        { label: "Afternoon", value: String(Math.floor(value * 0.4)), percentage: 40 }
+        { label: "Today", value: String(value) },
       ]}
     />
   );

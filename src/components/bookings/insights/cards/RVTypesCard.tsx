@@ -1,5 +1,5 @@
-import { Activity } from "lucide-react";
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { StatsCard } from "@/components/common/StatsCard";
+import { CaravanIcon } from "lucide-react";
 
 interface RVType {
   label: string;
@@ -13,11 +13,15 @@ interface RVTypesCardProps {
 
 export function RVTypesCard({ rvTypes }: RVTypesCardProps) {
   return (
-    <EnhancedStatCard
+    <StatsCard
       title="RV Types"
-      value={String(rvTypes.length)}
-      icon={Activity}
-      breakdown={rvTypes}
+      value={rvTypes[0]?.value || "0"}
+      icon={CaravanIcon}
+      breakdown={rvTypes.map(type => ({
+        label: type.label,
+        value: type.value,
+        percentage: type.percentage
+      }))}
     />
   );
 }

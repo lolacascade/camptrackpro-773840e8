@@ -1,5 +1,5 @@
-import { ChartBar } from "lucide-react";
-import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
+import { StatsCard } from "@/components/common/StatsCard";
+import { CalendarDays } from "lucide-react";
 
 interface ActiveBookingsCardProps {
   value: number;
@@ -7,18 +7,12 @@ interface ActiveBookingsCardProps {
 
 export function ActiveBookingsCard({ value }: ActiveBookingsCardProps) {
   return (
-    <EnhancedStatCard
+    <StatsCard
       title="Active Bookings"
-      value={String(value)}
-      icon={ChartBar}
-      trend={{
-        value: "+12%",
-        isPositive: true,
-        comparedTo: "previous period"
-      }}
+      value={value}
+      icon={CalendarDays}
       breakdown={[
-        { label: "Short-term", value: "45", percentage: 60 },
-        { label: "Long-term", value: "30", percentage: 40 }
+        { label: "Current", value: String(value) },
       ]}
     />
   );

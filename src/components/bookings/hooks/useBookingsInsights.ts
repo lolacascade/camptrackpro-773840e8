@@ -21,14 +21,7 @@ export function useBookingsInsights(dateRange?: DateRange) {
   return useQuery({
     queryKey: ['bookings-insights', organizationId, accountId, dateRange?.from, dateRange?.to],
     queryFn: async (): Promise<BookingInsight> => {
-      console.log('Fetching insights with:', {
-        organizationId,
-        accountId,
-        dateRange
-      });
-
       if (!organizationId || !accountId) {
-        console.error("Organization or account context not found");
         throw new Error("Organization or account context not found");
       }
 
@@ -72,16 +65,7 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .lte('check_out_date', endDate)
       ]);
 
-      console.log('Query results:', {
-        bookings: bookings.data,
-        checkIns: checkIns.data,
-        checkOuts: checkOuts.data
-      });
-
-      if (bookings.error) {
-        console.error('Error fetching bookings:', bookings.error);
-        throw bookings.error;
-      }
+      if (bookings.error) throw bookings.error;
       if (checkIns.error) throw checkIns.error;
       if (checkOuts.error) throw checkOuts.error;
 
