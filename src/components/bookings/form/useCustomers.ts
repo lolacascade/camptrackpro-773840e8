@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
@@ -13,25 +14,18 @@ export function useCustomers() {
   useEffect(() => {
     const fetchCustomers = async () => {
       if (!organizationId || !accountId) {
-        console.log('No organization or account context found:', { organizationId, accountId });
         setIsLoading(false);
         return;
       }
 
       try {
-        console.log('Fetching customers with:', { organizationId, accountId });
         const { data, error } = await supabase
           .from('customers')
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId);
         
-        if (error) {
-          console.error('Error fetching customers:', error);
-          throw error;
-        }
-
-        console.log('Customers data received:', data);
+        if (error) throw error;
         setCustomers(data || []);
       } catch (error) {
         console.error('Error in useCustomers:', error);
@@ -47,7 +41,6 @@ export function useCustomers() {
 
     fetchCustomers();
 
-    // Set up real-time subscription
     const channel = supabase
       .channel('customers_changes')
       .on(
@@ -58,9 +51,8 @@ export function useCustomers() {
           table: 'customers',
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
-        (payload) => {
-          console.log('Received real-time update:', payload);
-          fetchCustomers(); // Refresh the data when changes occur
+        () => {
+          fetchCustomers();
         }
       )
       .subscribe();

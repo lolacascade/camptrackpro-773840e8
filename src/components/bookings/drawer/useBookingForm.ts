@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { DateRange } from "react-day-picker";
 import { useQuery } from "@tanstack/react-query";
@@ -95,7 +96,7 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        total_amount: 0 // This will be calculated by the database function
+        total_amount: 0
       };
 
       if (booking?.id) {
