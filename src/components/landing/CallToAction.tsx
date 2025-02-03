@@ -3,10 +3,11 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export function CallToAction() {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,20 +23,8 @@ export function CallToAction() {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/app`,
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Check your email",
-        description: "We've sent you a magic link to sign in.",
-      });
-      
+      // Redirect to the full signup form with the email pre-filled
+      navigate(`/login?mode=signup&email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -70,10 +59,10 @@ export function CallToAction() {
                 className="bg-primary hover:bg-primary-light text-secondary font-medium whitespace-nowrap px-6 text-body-large lg:text-lg:body-large"
               >
                 {isLoading ? (
-                  "Sending..."
+                  "Loading..."
                 ) : (
                   <>
-                    Sign up for free
+                    Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </>
                 )}

@@ -25,20 +25,8 @@ export function HeroSection() {
     
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/app`,
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Check your email",
-        description: "We've sent you a magic link to sign in.",
-      });
-      
+      // Redirect to the full signup form with the email pre-filled
+      navigate(`/login?mode=signup&email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -78,10 +66,10 @@ export function HeroSection() {
             className="bg-primary hover:bg-primary-light text-secondary font-medium whitespace-nowrap px-6 text-body-large lg:text-lg:body-large"
           >
             {isLoading ? (
-              "Sending..."
+              "Loading..."
             ) : (
               <>
-                Sign up for free
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </>
             )}
