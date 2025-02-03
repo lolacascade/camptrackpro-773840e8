@@ -17,11 +17,11 @@ interface InputChangeEvent {
   };
 }
 
-export const useMarinaForm = ({ initialData, onSuccess }: UseMarinaFormProps) => {
+export const useMarinaForm = ({ initialData = {}, onSuccess }: UseMarinaFormProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
   
-  const [formData, setFormData] = useState<MarinaFormData>({
+  const defaultFormData: MarinaFormData = {
     name: '',
     address: '',
     contact_email: '',
@@ -56,7 +56,11 @@ export const useMarinaForm = ({ initialData, onSuccess }: UseMarinaFormProps) =>
       instagram: '',
       twitter: '',
     },
-    ...initialData,
+  };
+
+  const [formData, setFormData] = useState<MarinaFormData>({
+    ...defaultFormData,
+    ...initialData as MarinaFormData,
   });
 
   const handleInputChange = (e: InputChangeEvent) => {
