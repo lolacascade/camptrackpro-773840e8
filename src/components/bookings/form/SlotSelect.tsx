@@ -7,10 +7,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "react-day-picker";
 import { useOrganization } from "@/hooks/use-organization";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
+import { Field } from "@/components/common/EntityDrawer/types";
 
 interface SlotSelectProps {
   value: string;
-  onSelect: (slotId: number) => void;
+  onSelect: (slotId: string) => void;
   dateRange?: DateRange;
 }
 
@@ -39,7 +40,7 @@ export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
     label: `${site.name} (${site.length_ft}ft x ${site.width_ft}ft)`
   }));
 
-  const siteFields = [
+  const siteFields: Field[] = [
     { name: 'name', label: 'Name', type: 'text', required: true },
     { name: 'length_ft', label: 'Length (ft)', type: 'number', required: true },
     { name: 'width_ft', label: 'Width (ft)', type: 'number', required: true },
@@ -64,7 +65,7 @@ export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
       </div>
       <SelectField
         value={value}
-        onChange={(val) => onSelect(parseInt(val))}
+        onChange={onSelect}
         options={options}
         placeholder="Select site"
       />

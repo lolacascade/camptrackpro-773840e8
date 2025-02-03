@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
+import { Field } from "@/components/common/EntityDrawer/types";
 
 interface AssetSelectProps {
   value: string;
@@ -36,7 +37,7 @@ export function AssetSelect({ value, onSelect }: AssetSelectProps) {
     label: `${asset.name} (${asset.asset_size})`
   }));
 
-  const assetFields = [
+  const assetFields: Field[] = [
     { name: 'name', label: 'Name', type: 'text', required: true },
     { name: 'asset_name', label: 'Asset Name', type: 'text', required: true },
     { name: 'asset_size', label: 'Size', type: 'text', required: true },

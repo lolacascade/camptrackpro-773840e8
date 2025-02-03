@@ -26,7 +26,7 @@ interface BookingDrawerProps {
 type BookingFormData = {
   customer_id: string;
   asset_id: string;
-  site_id: number;
+  site_id: string;
   special_requirements?: string;
 };
 
@@ -56,7 +56,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     }
   }, [booking]);
 
-  // Fetch the user's profile to get the correct ID for created_by
   const { data: profile } = useQuery({
     queryKey: ['profile', session?.user?.id],
     queryFn: async () => {
@@ -80,7 +79,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
-      site_id: booking.site_id,
+      site_id: booking.site_id?.toString() || '',
       special_requirements: booking.special_requirements
     } : {}
   });
@@ -97,8 +96,24 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         return;
       }
 
+      if (!data.customer_id) {
+        toast.error("Please select a customer");
+        return;
+      }
+
+      if (!data.asset_id) {
+        toast.error("Please select an RV");
+        return;
+      }
+
+      if (!data.site_id) {
+        toast.error("Please select a site");
+        return;
+      }
+
       const submitData = {
         ...data,
+        site_id: parseInt(data.site_id),
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
         status: 'pending' as BookingStatus,
@@ -160,8 +175,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         />
 
         <SlotSelect
-          value={watch('site_id')?.toString() || ''}
-          onSelect={(value) => setValue('site_id', parseInt(value))}
+          value={watch('site_id') || ''}
+          onSelect={(value) => setValue('site_id', value.toString())}
           dateRange={dateRange}
         />
 
