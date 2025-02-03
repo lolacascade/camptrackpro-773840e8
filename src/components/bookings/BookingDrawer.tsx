@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { BaseDrawer } from "@/components/common/BaseDrawer";
@@ -41,7 +42,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     to: addDays(new Date(), 7)
   });
   
-  // Initialize date range when editing
   useEffect(() => {
     if (booking) {
       setDateRange({
@@ -67,7 +67,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         .maybeSingle();
       
       if (error) {
-        console.error('Error fetching profile:', error);
+        toast.error("Failed to fetch profile");
         return null;
       }
       return data;
@@ -121,10 +121,8 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        total_amount: 0 // This will be calculated by the database function
+        total_amount: 0
       };
-
-      console.log('Submitting booking data:', submitData);
 
       if (booking?.id) {
         const { error } = await supabase
@@ -187,3 +185,4 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     </BaseDrawer>
   );
 }
+
