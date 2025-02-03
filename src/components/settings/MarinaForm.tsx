@@ -91,6 +91,19 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
     }
   }, [initialData]);
 
+  const handleInputChange = (section: string, field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      [section]: section === 'coordinates' || section === 'approach_info' || section === 'social_media'
+        ? { ...prev[section], [field]: value }
+        : section === 'services_amenities' || section === 'other_features'
+          ? { ...prev[section], [field]: value }
+          : section === 'total_slips'
+            ? value === '' ? null : parseInt(value, 10)
+            : value
+    }));
+  };
+
   const handleSubmit = async () => {
     if (!session?.user?.id) {
       toast({
@@ -111,7 +124,6 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         updated_at: new Date().toISOString()
       };
 
-      // Use upsert with maybeSingle to handle both insert and update cases
       const { data, error } = await supabase
         .from('marina_details')
         .upsert([dataToSubmit])
