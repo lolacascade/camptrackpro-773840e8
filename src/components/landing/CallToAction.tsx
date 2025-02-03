@@ -1,41 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { EmailSignupForm } from "./EmailSignupForm";
 
 export function CallToAction() {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSignUp = async () => {
-    if (!email.trim() || !email.includes('@')) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    setIsLoading(true);
-    try {
-      // Redirect to the full signup form with the email pre-filled
-      navigate(`/login?mode=signup&email=${encodeURIComponent(email)}`);
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
     <section className="relative py-20 sm:py-24 md:py-28 lg:py-32 bg-[#0D1D1F] overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -45,29 +10,7 @@ export function CallToAction() {
           </h2>
           
           <div className="max-w-md mx-auto">
-            <div className="bg-foreground-light rounded-lg p-1 flex gap-2">
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 border-0 focus-visible:ring-0 text-body-large lg:text-lg:body-large placeholder:text-gray-400"
-              />
-              <Button 
-                onClick={handleSignUp}
-                disabled={isLoading}
-                className="bg-primary hover:bg-primary-light text-secondary font-medium whitespace-nowrap px-6 text-body-large lg:text-lg:body-large"
-              >
-                {isLoading ? (
-                  "Loading..."
-                ) : (
-                  <>
-                    Get Started
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </>
-                )}
-              </Button>
-            </div>
+            <EmailSignupForm />
           </div>
         </div>
       </div>
