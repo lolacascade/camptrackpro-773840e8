@@ -3,10 +3,10 @@ import { MarinaFormData } from '@/types/marina';
 import { InputChangeEvent, defaultMarinaFormData } from '@/types/marina/form';
 
 export const useFormState = (initialData: Partial<MarinaFormData> = {}) => {
-  const [formData, setFormData] = useState<MarinaFormData>({
+  const [formData, setFormData] = useState<MarinaFormData>(() => ({
     ...defaultMarinaFormData,
-    ...initialData as MarinaFormData,
-  });
+    ...(initialData as MarinaFormData),
+  }));
 
   const handleInputChange = (e: InputChangeEvent) => {
     const { name, value, type } = e.target;
