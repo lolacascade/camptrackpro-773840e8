@@ -5,8 +5,16 @@ import { BasicInfoSection } from "./marina/BasicInfoSection";
 import { LocationSection } from "./marina/LocationSection";
 import { ServicesSection } from "./marina/ServicesSection";
 
-export function MarinaForm({ initialData }: { initialData?: any }) {
-  const { formData, handleInputChange, handleSubmit } = useMarinaForm(initialData);
+interface MarinaFormProps {
+  initialData?: any;
+  onSuccess?: () => void;
+}
+
+export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
+  const { formData, handleInputChange, handleSubmit } = useMarinaForm({
+    initialData,
+    onSuccess,
+  });
 
   return (
     <form onSubmit={(e) => {

@@ -4,7 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { MarinaFormData } from '@/types/marina';
 
-export const useMarinaForm = (initialData?: any) => {
+interface UseMarinaFormProps {
+  initialData?: any;
+  onSuccess?: () => void;
+}
+
+export const useMarinaForm = ({ initialData, onSuccess }: UseMarinaFormProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
   const [formData, setFormData] = useState<MarinaFormData>({
@@ -92,6 +97,10 @@ export const useMarinaForm = (initialData?: any) => {
         title: "Success",
         description: "Marina details updated successfully"
       });
+
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error('Error updating marina details:', error);
       toast({
