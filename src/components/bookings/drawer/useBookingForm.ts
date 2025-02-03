@@ -9,6 +9,15 @@ import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
+type BookingFormData = {
+  customer_id: string;
+  asset_id: string;
+  site_id: string;
+  special_requirements?: string;
+};
+
+type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
 export function useBookingForm({ booking, onClose, onBookingUpdated }: {
   booking?: Booking;
   onClose: () => void;
@@ -20,8 +29,6 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
     from: booking ? new Date(booking.check_in_date) : new Date(),
     to: booking ? new Date(booking.check_out_date) : addDays(new Date(), 7)
   });
-  const [calculatedAmount, setCalculatedAmount] = useState<number | null>(null);
-  const [manualAmount, setManualAmount] = useState<string>(booking?.total_amount?.toString() || '');
 
   const { data: profile } = useQuery({
     queryKey: ['profile', session?.user?.id],
@@ -42,49 +49,16 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
     enabled: !!session?.user?.id
   });
 
-  const form = useForm({
+  const form = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
-      site_id: booking.site_id,
-      special_requirements: booking.special_requirements,
-      total_amount: booking.total_amount
+      site_id: booking.site_id?.toString() || '',
+      special_requirements: booking.special_requirements
     } : {}
   });
 
-  const calculateTotal = async () => {
-    const assetId = form.watch('asset_id');
-    if (!assetId || !dateRange?.from || !dateRange?.to) {
-      setCalculatedAmount(null);
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase.rpc(
-        'calculate_rv_booking_total',
-        { 
-          p_asset_id: assetId,
-          p_start_date: dateRange.from.toISOString(),
-          p_end_date: dateRange.to.toISOString()
-        }
-      );
-
-      if (error) throw error;
-      setCalculatedAmount(data);
-      if (!manualAmount) {
-        setManualAmount(data.toString());
-      }
-    } catch (error) {
-      console.error('Error calculating total:', error);
-      toast.error("Failed to calculate booking total");
-    }
-  };
-
-  useEffect(() => {
-    calculateTotal();
-  }, [form.watch('asset_id'), dateRange]);
-
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: BookingFormData) => {
     try {
       if (!session?.user?.id || !organizationId || !accountId) {
         toast.error("Missing required context");
@@ -96,16 +70,32 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
         return;
       }
 
+      if (!data.customer_id) {
+        toast.error("Please select a customer");
+        return;
+      }
+
+      if (!data.asset_id) {
+        toast.error("Please select an RV");
+        return;
+      }
+
+      if (!data.site_id) {
+        toast.error("Please select a site");
+        return;
+      }
+
       const submitData = {
         ...data,
+        site_id: parseInt(data.site_id),
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending' as const,
+        status: 'pending' as BookingStatus,
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        total_amount: parseFloat(manualAmount) || calculatedAmount
+        total_amount: 0 // This will be calculated by the database function
       };
 
       if (booking?.id) {
@@ -137,9 +127,6 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
     form,
     dateRange,
     setDateRange,
-    calculatedAmount,
-    manualAmount,
-    setManualAmount,
     onSubmit: form.handleSubmit(onSubmit)
   };
 }

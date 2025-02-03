@@ -17,9 +17,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     form,
     dateRange,
     setDateRange,
-    calculatedAmount,
-    manualAmount,
-    setManualAmount,
     onSubmit
   } = useBookingForm({ booking, onClose, onBookingUpdated });
 
@@ -33,9 +30,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         form={form}
         dateRange={dateRange}
         onDateRangeChange={setDateRange}
-        calculatedAmount={calculatedAmount}
-        manualAmount={manualAmount}
-        onManualAmountChange={setManualAmount}
         customers={customers}
         onSubmit={onSubmit}
         isEdit={!!booking}

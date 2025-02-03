@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { CustomerSelect } from "../form/CustomerSelect";
 import { BookingDateRange } from "../form/BookingDateRange";
 import { AssetSelect } from "../form/AssetSelect";
@@ -13,9 +11,6 @@ interface BookingFormProps {
   form: UseFormReturn<any>;
   dateRange: DateRange | undefined;
   onDateRangeChange: (range: DateRange | undefined) => void;
-  calculatedAmount: number | null;
-  manualAmount: string;
-  onManualAmountChange: (value: string) => void;
   customers: Customer[];
   onSubmit: () => void;
   isEdit?: boolean;
@@ -25,9 +20,6 @@ export function BookingForm({
   form,
   dateRange,
   onDateRangeChange,
-  calculatedAmount,
-  manualAmount,
-  onManualAmountChange,
   customers,
   onSubmit,
   isEdit
@@ -51,26 +43,10 @@ export function BookingForm({
       />
 
       <SlotSelect
-        value={form.watch('site_id')?.toString() || ''}
-        onSelect={(value) => form.setValue('site_id', parseInt(value))}
+        value={form.watch('site_id') || ''}
+        onSelect={(value) => form.setValue('site_id', value.toString())}
         dateRange={dateRange}
       />
-
-      <div className="space-y-2">
-        <Label>Pricing</Label>
-        {calculatedAmount !== null && (
-          <div className="text-sm text-muted-foreground mb-2">
-            Calculated amount: ${calculatedAmount}
-          </div>
-        )}
-        <Input
-          type="number"
-          step="0.01"
-          value={manualAmount}
-          onChange={(e) => onManualAmountChange(e.target.value)}
-          placeholder="Enter total amount"
-        />
-      </div>
 
       <Button type="submit" className="w-full">
         {isEdit ? "Update Booking" : "Create Booking"}
