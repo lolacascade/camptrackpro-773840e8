@@ -1,112 +1,119 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSessionContext } from '@supabase/auth-helpers-react';
-import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { MarinaFormData } from '@/types/marina';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UseMarinaFormProps {
-  initialData?: any;
+  initialData?: Partial<MarinaFormData>;
   onSuccess?: () => void;
+}
+
+interface InputChangeEvent {
+  target: {
+    name: string;
+    value: string | number | boolean;
+    type?: string;
+  };
 }
 
 export const useMarinaForm = ({ initialData, onSuccess }: UseMarinaFormProps) => {
   const { session } = useSessionContext();
   const { toast } = useToast();
+  
   const [formData, setFormData] = useState<MarinaFormData>({
     name: '',
     address: '',
     contact_email: '',
     contact_phone: '',
-    total_slips: null,
+    total_slips: 0,
     website: '',
     coordinates: {
-      latitude: '',
-      longitude: ''
+      latitude: 0,
+      longitude: 0,
     },
     approach_info: {
       depth: '',
+      width: '',
       obstacles: '',
-      current: ''
     },
     services_amenities: {
       fuel: false,
-      power: false,
+      electricity: false,
       water: false,
-      wifi: false,
-      showers: false,
-      laundry: false
+      pumpout: false,
+      maintenance: false,
     },
     other_features: {
-      restaurant: false,
-      shop: false,
-      repair: false,
-      storage: false
+      restrooms: false,
+      showers: false,
+      laundry: false,
+      parking: false,
+      wifi: false,
     },
     social_media: {
       facebook: '',
       instagram: '',
-      twitter: ''
-    }
+      twitter: '',
+    },
+    ...initialData,
   });
 
-  useEffect(() => {
-    if (initialData) {
-      setFormData(initialData);
-    }
-  }, [initialData]);
+  const handleInputChange = (e: InputChangeEvent) => {
+    const { name, value, type } = e.target;
+    const nameParts = name.split('.');
 
-  const handleInputChange = (section: string, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: section === 'coordinates' || section === 'approach_info' || section === 'social_media'
-        ? { ...prev[section], [field]: value }
-        : section === 'services_amenities' || section === 'other_features'
-          ? { ...prev[section], [field]: value }
-          : section === 'total_slips'
-            ? value === '' ? null : parseInt(value, 10)
-            : value
-    }));
+    if (nameParts.length === 1) {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'number' ? Number(value) : value,
+      }));
+    } else {
+      const [section, field] = nameParts;
+      setFormData(prev => ({
+        ...prev,
+        [section]: {
+          ...prev[section as keyof MarinaFormData],
+          [field]: type === 'checkbox' ? value : value,
+        },
+      }));
+    }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     if (!session?.user?.id) {
       toast({
         title: "Error",
         description: "You must be logged in to update marina details",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     try {
-      const dataToSubmit = {
-        ...formData,
-        user_id: session.user.id,
-        updated_at: new Date().toISOString()
-      };
-
       const { error } = await supabase
         .from('marina_details')
-        .upsert([dataToSubmit])
-        .select()
-        .maybeSingle();
+        .upsert({
+          ...formData,
+          user_id: session.user.id,
+        });
 
       if (error) throw error;
 
       toast({
         title: "Success",
-        description: "Marina details updated successfully"
+        description: "Marina details updated successfully",
       });
 
-      if (onSuccess) {
-        onSuccess();
-      }
-    } catch (error) {
+      onSuccess?.();
+    } catch (error: any) {
       console.error('Error updating marina details:', error);
       toast({
         title: "Error",
-        description: "Failed to update marina details",
-        variant: "destructive"
+        description: error.message || "Failed to update marina details",
+        variant: "destructive",
       });
     }
   };
@@ -114,6 +121,6 @@ export const useMarinaForm = ({ initialData, onSuccess }: UseMarinaFormProps) =>
   return {
     formData,
     handleInputChange,
-    handleSubmit
+    handleSubmit,
   };
 };

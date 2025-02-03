@@ -3,34 +3,39 @@ export interface MarinaFormData {
   address: string;
   contact_email: string;
   contact_phone: string;
-  total_slips: number | null;
+  total_slips: number;
   website: string;
   coordinates: {
-    latitude: string;
-    longitude: string;
+    latitude: number;
+    longitude: number;
   };
   approach_info: {
     depth: string;
+    width: string;
     obstacles: string;
-    current: string;
   };
   services_amenities: {
     fuel: boolean;
-    power: boolean;
+    electricity: boolean;
     water: boolean;
-    wifi: boolean;
-    showers: boolean;
-    laundry: boolean;
+    pumpout: boolean;
+    maintenance: boolean;
   };
   other_features: {
-    restaurant: boolean;
-    shop: boolean;
-    repair: boolean;
-    storage: boolean;
+    restrooms: boolean;
+    showers: boolean;
+    laundry: boolean;
+    parking: boolean;
+    wifi: boolean;
   };
   social_media: {
     facebook: string;
     instagram: string;
     twitter: string;
   };
+}
+
+export interface MarinaFormProps {
+  initialData?: Partial<MarinaFormData>;
+  onSuccess?: () => void;
 }
