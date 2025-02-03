@@ -42,7 +42,7 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
         .maybeSingle();
       
       if (error) {
-        console.error('Error fetching profile:', error);
+        toast.error("Failed to fetch profile");
         return null;
       }
       return data;
@@ -119,7 +119,6 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
       onBookingUpdated();
       onClose();
     } catch (error) {
-      console.error('Error saving booking:', error);
       toast.error("Failed to save booking");
     }
   };
