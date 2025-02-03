@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Accordion } from "@/components/ui/accordion";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useSession } from '@supabase/auth-helpers-react';
 import { BasicInfoSection } from "./sections/BasicInfoSection";
 import { LocationSection } from "./sections/LocationSection";
@@ -91,19 +91,6 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
     }
   }, [initialData]);
 
-  const handleInputChange = (section: string, field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [section]: section === 'coordinates' || section === 'approach_info' || section === 'social_media'
-        ? { ...prev[section], [field]: value }
-        : section === 'services_amenities' || section === 'other_features'
-          ? { ...prev[section], [field]: value }
-          : section === 'total_slips'
-            ? value === '' ? null : parseInt(value, 10)
-            : value
-    }));
-  };
-
   const handleSubmit = async () => {
     if (!session?.user?.id) {
       toast({
@@ -124,10 +111,12 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
         updated_at: new Date().toISOString()
       };
 
-      const { error } = await supabase
+      // Use upsert with maybeSingle to handle both insert and update cases
+      const { data, error } = await supabase
         .from('marina_details')
         .upsert([dataToSubmit])
-        .select();
+        .select()
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -137,12 +126,12 @@ export function MarinaForm({ initialData, onSuccess }: MarinaFormProps) {
       });
 
       onSuccess?.();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving marina details:', error);
       setError("Failed to save marina details. Please try again.");
       toast({
         title: "Error",
-        description: "Failed to save marina details. Please try again.",
+        description: error.message || "Failed to save marina details. Please try again.",
         variant: "destructive",
       });
     } finally {

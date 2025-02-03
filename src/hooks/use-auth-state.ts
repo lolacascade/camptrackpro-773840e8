@@ -9,8 +9,18 @@ export function useAuthState(fromPath: string = '/app') {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check for existing session on mount
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/login', { replace: true });
+      }
+    };
+    
+    checkSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, currentSession: Session | null) => {
-      console.log('Auth state changed:', event);
+      console.log('Auth state changed:', event, currentSession?.user?.id);
       
       if (event === 'SIGNED_IN' && currentSession) {
         navigate(fromPath, { replace: true });
@@ -20,12 +30,14 @@ export function useAuthState(fromPath: string = '/app') {
         });
       }
 
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
         navigate('/login', { replace: true });
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully.",
-        });
+        if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been signed out successfully.",
+          });
+        }
       }
     });
 

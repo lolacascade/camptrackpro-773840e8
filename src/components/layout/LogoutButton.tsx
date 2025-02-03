@@ -10,6 +10,15 @@ export function LogoutButton() {
 
   const handleLogout = async () => {
     try {
+      // First check if we have a session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        // If no session, just redirect to login
+        navigate('/login', { replace: true });
+        return;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
@@ -19,11 +28,14 @@ export function LogoutButton() {
         title: "Logged out successfully",
         description: "You have been logged out of your account.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error logging out:', error);
+      // Even if logout fails, redirect to login page
+      navigate('/login', { replace: true });
+      
       toast({
-        title: "Error logging out",
-        description: "There was a problem logging out. Please try again.",
+        title: "Error during logout",
+        description: "You have been redirected to the login page.",
         variant: "destructive",
       });
     }
