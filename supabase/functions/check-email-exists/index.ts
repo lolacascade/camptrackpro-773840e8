@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
 
   // Handle CORS
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -26,27 +26,26 @@ Deno.serve(async (req) => {
     }
 
     // Initialize the Supabase client with the service role key
-    const supabase = createClient(supabaseUrl, supabaseServiceRole, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false
-      }
-    })
+    const supabase = createClient(supabaseUrl, supabaseServiceRole)
     console.log('Supabase client initialized')
     
     try {
-      console.log('Attempting to look up user by email')
-      const { data: user, error: lookupError } = await supabase
+      console.log('Attempting to look up users by email filter')
+      const { data: { users }, error: lookupError } = await supabase
         .auth
         .admin
-        .getUserByEmail(email)
+        .listUsers({
+          filters: {
+            email: email
+          }
+        })
       
       if (lookupError) {
         console.error('Error during email lookup:', lookupError)
         throw lookupError
       }
 
-      const exists = !!user
+      const exists = users && users.length > 0
       console.log('Email lookup result - exists:', exists)
 
       return new Response(
@@ -69,4 +68,3 @@ Deno.serve(async (req) => {
     )
   }
 })
-
