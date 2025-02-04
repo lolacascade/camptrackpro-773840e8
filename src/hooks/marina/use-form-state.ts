@@ -4,8 +4,14 @@ import { InputChangeEvent, defaultMarinaFormData } from '@/types/marina/form';
 
 export const useFormState = (initialData?: Partial<MarinaFormData>) => {
   const [formData, setFormData] = useState<MarinaFormData>(() => {
-    const initial = initialData || {};
-    return Object.assign({}, defaultMarinaFormData, initial) as MarinaFormData;
+    if (!initialData) {
+      return defaultMarinaFormData;
+    }
+    
+    return {
+      ...defaultMarinaFormData,
+      ...initialData
+    };
   });
 
   const handleInputChange = (e: InputChangeEvent) => {
