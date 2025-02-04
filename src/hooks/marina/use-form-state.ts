@@ -8,10 +8,7 @@ export const useFormState = (initialData?: Partial<MarinaFormData>) => {
       return defaultMarinaFormData;
     }
     
-    return {
-      ...defaultMarinaFormData,
-      ...initialData
-    };
+    return Object.assign({}, defaultMarinaFormData, initialData) as MarinaFormData;
   });
 
   const handleInputChange = (e: InputChangeEvent) => {
