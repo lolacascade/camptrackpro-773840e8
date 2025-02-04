@@ -21,20 +21,18 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
-      // Try to sign in with magic link - this will fail with a specific error if user doesn't exist
-      const { error } = await supabase.auth.signInWithOtp({
+      // Try to sign in with password - we'll use a dummy password since we just want to check if user exists
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          shouldCreateUser: false // This ensures we only check if user exists
-        }
+        password: 'dummy-password-for-check'
       });
 
-      // User doesn't exist - redirect to signup
-      if (error?.message?.includes('Email not confirmed')) {
-        navigate(`/signup?email=${encodeURIComponent(email)}`);
-      } else {
-        // User exists - redirect to signin
+      // If error contains "Invalid login credentials", user exists but password was wrong
+      // If error contains "Email not found", user doesn't exist
+      if (error?.message?.includes('Invalid login credentials')) {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
+      } else {
+        navigate(`/signup?email=${encodeURIComponent(email)}`);
       }
       
     } catch (error: any) {
