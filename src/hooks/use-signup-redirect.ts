@@ -21,22 +21,14 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
-      // Call the Edge Function to check if email exists
-      const response = await fetch('https://vguogsuhkklwzoljwmjf.supabase.co/functions/v1/check-email-exists', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZndW9nc3Voa2tsd3pvbGp3bWpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcxNTQwNzgsImV4cCI6MjA1MjczMDA3OH0.bJAoqbOEi3434VTMJ73nA4IKFI5k43xoMiTsVGTemu0`
-        },
-        body: JSON.stringify({ email })
+      const { data, error } = await supabase.functions.invoke('check-email-exists', {
+        body: { email }
       });
 
-      const { exists, error } = await response.json();
-      
-      if (error) throw new Error(error);
+      if (error) throw error;
 
       // If email exists, redirect to sign in, otherwise to sign up
-      if (exists) {
+      if (data.exists) {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
       } else {
         navigate(`/signup?email=${encodeURIComponent(email)}`);
