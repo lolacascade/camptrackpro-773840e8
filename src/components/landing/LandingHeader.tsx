@@ -20,13 +20,13 @@ export function LandingHeader() {
           <div className="flex items-center gap-6">
             <Button 
               variant="ghost"
-              onClick={() => navigate('/login?mode=signin')}
+              onClick={() => navigate('/signin')}
               className="text-foreground-light hover:text-primary transition-colors"
             >
               Sign in
             </Button>
             <Button 
-              onClick={() => navigate('/login?mode=signup')}
+              onClick={() => navigate('/signup')}
               className="bg-primary text-secondary hover:bg-primary-light px-6"
             >
               Sign up
