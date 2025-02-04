@@ -21,17 +21,22 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
-      // Try to sign in with password - we'll use a dummy password since we just want to check if user exists
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password: 'dummy-password-for-check'
+      // Call the Edge Function to check if email exists
+      const response = await fetch(`${supabase.supabaseUrl}/functions/v1/check-email-exists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabase.supabaseKey}`
+        },
+        body: JSON.stringify({ email })
       });
 
-      console.log('Auth response error:', error); // Add logging to help debug
+      const { exists, error } = await response.json();
+      
+      if (error) throw new Error(error);
 
-      // "Invalid login credentials" means the password was wrong but email exists
-      // Any other error means the user doesn't exist (or another error occurred)
-      if (error?.message === 'Invalid login credentials') {
+      // If email exists, redirect to sign in, otherwise to sign up
+      if (exists) {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
       } else {
         navigate(`/signup?email=${encodeURIComponent(email)}`);
@@ -39,8 +44,11 @@ export function useSignupRedirect() {
       
     } catch (error: any) {
       console.error('Error checking email:', error);
-      // If we can't check (which is likely due to permissions), default to signup
-      navigate(`/signup?email=${encodeURIComponent(email)}`);
+      toast({
+        title: "Error",
+        description: "An error occurred while checking the email. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
