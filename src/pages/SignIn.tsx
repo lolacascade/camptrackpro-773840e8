@@ -75,7 +75,7 @@ export default function SignIn() {
 
           <Link 
             to="/forgot-password"
-            className="text-sm text-primary hover:underline block text-right"
+            className="text-sm text-[#0D1D1F] hover:underline block text-right"
           >
             Forgot your password?
           </Link>
@@ -92,7 +92,7 @@ export default function SignIn() {
             Don't have an account?{' '}
             <Link 
               to="/signup"
-              className="text-primary hover:underline"
+              className="text-[#0D1D1F] hover:underline"
             >
               Sign up
             </Link>
