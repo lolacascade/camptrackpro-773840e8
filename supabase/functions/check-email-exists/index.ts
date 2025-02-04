@@ -36,23 +36,17 @@ Deno.serve(async (req) => {
     
     try {
       console.log('Attempting to look up user by email')
-      // Use the auth.admin API correctly
-      const { data, error: lookupError } = await supabase
+      const { data: user, error: lookupError } = await supabase
         .auth
         .admin
-        .listUsers({
-          filters: {
-            email: email
-          }
-        })
+        .getUserByEmail(email)
       
       if (lookupError) {
         console.error('Error during email lookup:', lookupError)
         throw lookupError
       }
 
-      // Check if the user exists in the returned list
-      const exists = data?.users && data.users.length > 0
+      const exists = !!user
       console.log('Email lookup result - exists:', exists)
 
       return new Response(
@@ -75,3 +69,4 @@ Deno.serve(async (req) => {
     )
   }
 })
+
