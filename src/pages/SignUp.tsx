@@ -45,15 +45,20 @@ export default function SignUp() {
         throw new Error('Please enter a valid email address');
       }
 
+      // Company name validation (matching DB constraint)
+      if (companyName.trim().length < 2 || companyName.trim().length > 100) {
+        throw new Error('Company name must be between 2 and 100 characters');
+      }
+
       console.log('Starting signup process...', { email, companyName });
 
-      // Attempt signup
+      // Attempt signup with company metadata
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            company_name: companyName,
+            company_name: companyName.trim(),
           },
           emailRedirectTo: `${window.location.origin}/signin`,
         },
@@ -68,10 +73,10 @@ export default function SignUp() {
         console.log('Signup successful:', data.user);
         toast({
           title: "Success",
-          description: "Your account has been created successfully. Please check your email for verification.",
+          description: "Your account has been created. Please check your email to verify your account before signing in.",
         });
         
-        // Only navigate after successful signup
+        // Navigate to signin page
         navigate('/signin');
       } else {
         throw new Error('Signup failed - no user data returned');
@@ -92,12 +97,12 @@ export default function SignUp() {
     <AuthContainer>
       <AuthLogo />
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-center mb-6">Create an Account</h1>
+        <h1 className="text-2xl font-semibold text-center mb-6">Create Your Organization</h1>
         
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
             <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
-              Company Name
+              Organization Name <span className="text-red-500">*</span>
             </label>
             <Input
               id="companyName"
@@ -105,15 +110,17 @@ export default function SignUp() {
               value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               required
-              placeholder="Enter your company name"
+              placeholder="Enter your organization name"
               disabled={isLoading}
               className="w-full"
+              minLength={2}
+              maxLength={100}
             />
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email Address
+              Email Address <span className="text-red-500">*</span>
             </label>
             <Input
               id="email"
@@ -129,7 +136,7 @@ export default function SignUp() {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <Input
               id="password"
@@ -149,7 +156,7 @@ export default function SignUp() {
             className="w-full"
             disabled={isLoading}
           >
-            {isLoading ? "Creating Account..." : "Sign Up"}
+            {isLoading ? "Creating Account..." : "Create Organization"}
           </Button>
 
           <p className="text-center text-sm text-gray-600 mt-4">

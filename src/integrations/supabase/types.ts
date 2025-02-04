@@ -969,22 +969,34 @@ export type Database = {
       }
       organizations: {
         Row: {
+          contact_email: string | null
+          contact_phone: string | null
           created_at: string
+          description: string | null
           id: string
           name: string
           updated_at: string
+          website: string | null
         }
         Insert: {
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           name: string
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          contact_email?: string | null
+          contact_phone?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           name?: string
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
