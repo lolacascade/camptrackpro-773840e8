@@ -30,7 +30,13 @@ export default function SignUp() {
     setIsLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      // Basic validation
+      if (!email || !password || !companyName) {
+        throw new Error('Please fill in all required fields');
+      }
+
+      // Attempt signup
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -42,16 +48,23 @@ export default function SignUp() {
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Your account has been created successfully. Please check your email for verification.",
-      });
-      
-      navigate('/signin');
+      if (data?.user) {
+        console.log('Signup successful:', data.user);
+        toast({
+          title: "Success",
+          description: "Your account has been created successfully. Please check your email for verification.",
+        });
+        
+        // Only navigate after successful signup
+        navigate('/signin');
+      } else {
+        throw new Error('Signup failed - no user data returned');
+      }
     } catch (error: any) {
+      console.error('Signup error:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create account",
+        description: error.message || "Failed to create account. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -77,6 +90,7 @@ export default function SignUp() {
               onChange={(e) => setCompanyName(e.target.value)}
               required
               placeholder="Enter your company name"
+              disabled={isLoading}
             />
           </div>
 
@@ -91,6 +105,7 @@ export default function SignUp() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
+              disabled={isLoading}
             />
           </div>
 
@@ -105,6 +120,8 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Create a password"
+              disabled={isLoading}
+              minLength={6}
             />
           </div>
 
