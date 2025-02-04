@@ -35,6 +35,18 @@ export default function SignUp() {
         throw new Error('Please fill in all required fields');
       }
 
+      // Password validation
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters long');
+      }
+
+      // Email validation
+      if (!email.includes('@')) {
+        throw new Error('Please enter a valid email address');
+      }
+
+      console.log('Starting signup process...', { email, companyName });
+
       // Attempt signup
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -43,10 +55,14 @@ export default function SignUp() {
           data: {
             company_name: companyName,
           },
+          emailRedirectTo: `${window.location.origin}/signin`,
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Signup error:', error);
+        throw error;
+      }
 
       if (data?.user) {
         console.log('Signup successful:', data.user);
@@ -61,7 +77,7 @@ export default function SignUp() {
         throw new Error('Signup failed - no user data returned');
       }
     } catch (error: any) {
-      console.error('Signup error:', error);
+      console.error('Signup process error:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to create account. Please try again.",
@@ -91,6 +107,7 @@ export default function SignUp() {
               required
               placeholder="Enter your company name"
               disabled={isLoading}
+              className="w-full"
             />
           </div>
 
@@ -106,6 +123,7 @@ export default function SignUp() {
               required
               placeholder="Enter your email"
               disabled={isLoading}
+              className="w-full"
             />
           </div>
 
@@ -122,6 +140,7 @@ export default function SignUp() {
               placeholder="Create a password"
               disabled={isLoading}
               minLength={6}
+              className="w-full"
             />
           </div>
 
