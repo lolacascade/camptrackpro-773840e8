@@ -27,9 +27,11 @@ export function useSignupRedirect() {
         password: 'dummy-password-for-check'
       });
 
-      // If error contains "Invalid login credentials", user exists but password was wrong
-      // If error contains "Email not found", user doesn't exist
-      if (error?.message?.includes('Invalid login credentials')) {
+      console.log('Auth response error:', error); // Add logging to help debug
+
+      // "Invalid login credentials" means the password was wrong but email exists
+      // Any other error means the user doesn't exist (or another error occurred)
+      if (error?.message === 'Invalid login credentials') {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
       } else {
         navigate(`/signup?email=${encodeURIComponent(email)}`);
