@@ -8,7 +8,10 @@ export const useFormState = (initialData?: Partial<MarinaFormData>) => {
       return defaultMarinaFormData;
     }
     
-    return Object.assign({}, defaultMarinaFormData, initialData) as MarinaFormData;
+    return {
+      ...defaultMarinaFormData,
+      ...initialData
+    } as MarinaFormData;
   });
 
   const handleInputChange = (e: InputChangeEvent) => {
@@ -17,12 +20,12 @@ export const useFormState = (initialData?: Partial<MarinaFormData>) => {
     const [section, field] = name.split('.');
     
     if (field === undefined) {
-      setFormData(prev => ({
+      setFormData((prev: MarinaFormData) => ({
         ...prev,
         [section]: type === 'checkbox' ? value : value
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev: MarinaFormData) => ({
         ...prev,
         [section]: {
           ...prev[section as keyof MarinaFormData],
