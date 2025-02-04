@@ -3,10 +3,14 @@ import { MarinaFormData } from '@/types/marina';
 import { InputChangeEvent, defaultMarinaFormData } from '@/types/marina/form';
 
 export const useFormState = (initialData: Partial<MarinaFormData> = {}) => {
-  const [formData, setFormData] = useState<MarinaFormData>(() => ({
-    ...defaultMarinaFormData,
-    ...(initialData as MarinaFormData),
-  }));
+  const [formData, setFormData] = useState<MarinaFormData>(() => {
+    // Ensure initialData is treated as an object for spreading
+    const safeInitialData: Partial<MarinaFormData> = initialData || {};
+    return {
+      ...defaultMarinaFormData,
+      ...safeInitialData,
+    };
+  });
 
   const handleInputChange = (e: InputChangeEvent) => {
     const { name, value, type } = e.target;
