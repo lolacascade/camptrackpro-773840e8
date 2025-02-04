@@ -21,20 +21,21 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
-      // Check if user exists
-      const { data, error } = await supabase.auth.admin.listUsers({
-        filters: {
-          email: email
+      // Try to sign in with magic link - this will fail with a specific error if user doesn't exist
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false // This ensures we only check if user exists
         }
       });
 
-      if (error) {
-        throw error;
+      // User doesn't exist - redirect to signup
+      if (error?.message?.includes('Email not confirmed')) {
+        navigate(`/signup?email=${encodeURIComponent(email)}`);
+      } else {
+        // User exists - redirect to signin
+        navigate(`/signin?email=${encodeURIComponent(email)}`);
       }
-
-      // If user exists, redirect to signin, otherwise to signup
-      const route = data.users.length > 0 ? 'signin' : 'signup';
-      navigate(`/${route}?email=${encodeURIComponent(email)}`);
       
     } catch (error: any) {
       console.error('Error checking email:', error);
