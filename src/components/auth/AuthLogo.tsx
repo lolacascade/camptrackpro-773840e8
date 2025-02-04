@@ -10,7 +10,7 @@ export function AuthLogo() {
           <span className="text-[#C0CCAB]">Pro</span>
         </h1>
       </Link>
-      <p className="text-gray-400">Manage your RV park with ease</p>
+      <p className="text-gray-400">Manage your RV Storage with ease</p>
     </div>
   );
 }
