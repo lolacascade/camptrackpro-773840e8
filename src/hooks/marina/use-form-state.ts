@@ -10,9 +10,10 @@ import { InputChangeEvent, defaultMarinaFormData } from '@/types/marina/form';
 export const useFormState = (initialData?: Partial<MarinaFormData>) => {
   // Initialize form state with default values merged with any provided initial data
   const [formData, setFormData] = useState<MarinaFormData>(() => {
+    const safeInitialData: Partial<MarinaFormData> = initialData || {};
     return {
       ...defaultMarinaFormData,
-      ...(initialData || {}),
+      ...safeInitialData,
     };
   });
 
