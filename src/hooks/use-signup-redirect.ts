@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +20,7 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
-      navigate(`/login?mode=signup&email=${encodeURIComponent(email)}`);
+      navigate(`/signin?mode=signup&email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast({
         title: "Error",
