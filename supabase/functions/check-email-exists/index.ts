@@ -28,19 +28,15 @@ Deno.serve(async (req) => {
     // Initialize the Supabase client with the service role key
     const supabase = createClient(supabaseUrl, supabaseServiceRole)
     
-    console.log('Querying auth.users for email')
-    const { data: users, error } = await supabase.auth.admin.listUsers({
-      filter: {
-        email: email
-      }
-    })
+    console.log('Looking up user by email')
+    const { data: user, error } = await supabase.auth.admin.getUserByEmail(email)
 
     if (error) {
-      console.error('Error querying users:', error)
+      console.error('Error looking up user:', error)
       throw error
     }
 
-    const exists = users.users.length > 0
+    const exists = !!user
     console.log('Email exists:', exists)
 
     return new Response(
