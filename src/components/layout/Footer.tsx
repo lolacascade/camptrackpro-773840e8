@@ -8,7 +8,7 @@ export function Footer() {
           <div>
             <h3 className="font-semibold text-base sm:text-lg mb-3 sm:mb-4">About Us</h3>
             <p className="text-sm sm:text-base text-gray-400">
-              Streamlining RV park operations with powerful management tools.
+              Streamlining RV Storage operations with powerful management tools.
             </p>
           </div>
           
@@ -63,7 +63,7 @@ export function Footer() {
         
         <div className="mt-8 pt-8 border-t border-gray-800 text-center">
           <p className="text-sm sm:text-base text-gray-400">
-            &copy; {new Date().getFullYear()} CampTrackPro. All rights reserved.
+            &copy; {new Date().getFullYear()} CampTrackPro. RV Storage Management Tool. All rights reserved.
           </p>
         </div>
       </div>
