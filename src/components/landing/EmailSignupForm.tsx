@@ -28,8 +28,7 @@ export function EmailSignupForm({ className }: EmailSignupFormProps) {
     
     setIsLoading(true);
     try {
-      // Redirect to signup page with email in URL params
-      navigate(`/signup?email=${encodeURIComponent(email)}`);
+      navigate(`/login?mode=signup&email=${encodeURIComponent(email)}`);
     } catch (error: any) {
       toast({
         title: "Error",
