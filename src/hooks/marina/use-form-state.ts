@@ -10,7 +10,10 @@ import { InputChangeEvent, defaultMarinaFormData } from '@/types/marina/form';
 export const useFormState = (initialData?: Partial<MarinaFormData>) => {
   // Initialize form state with default values merged with any provided initial data
   const [formData, setFormData] = useState<MarinaFormData>(() => {
-    const safeInitialData: Partial<MarinaFormData> = initialData || {};
+    // Create a type-safe initial data object
+    const safeInitialData: Partial<MarinaFormData> = initialData ?? {};
+    
+    // Merge default data with provided initial data
     return {
       ...defaultMarinaFormData,
       ...safeInitialData,
@@ -19,24 +22,22 @@ export const useFormState = (initialData?: Partial<MarinaFormData>) => {
 
   /**
    * Handles form input changes, supporting nested object updates
-   * @param e - Input change event with name, value, and type
+   * @param section - The section of the form being updated
+   * @param field - The specific field within the section
+   * @param value - The new value for the field
    */
-  const handleInputChange = (e: InputChangeEvent) => {
-    const { name, value, type } = e.target;
-    const nameParts = name.split('.');
-
-    if (nameParts.length === 1) {
+  const handleInputChange = (section: string, field: string, value: any) => {
+    if (field === '') {
       setFormData(prev => ({
         ...prev,
-        [name]: type === 'number' ? Number(value) : value,
+        [section]: value,
       }));
     } else {
-      const [section, field] = nameParts;
       setFormData(prev => ({
         ...prev,
         [section]: {
           ...prev[section as keyof MarinaFormData],
-          [field]: type === 'checkbox' ? value : value,
+          [field]: value,
         },
       }));
     }
