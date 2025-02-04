@@ -27,28 +27,37 @@ Deno.serve(async (req) => {
 
     // Initialize the Supabase client with the service role key
     const supabase = createClient(supabaseUrl, supabaseServiceRole)
+    console.log('Supabase client initialized')
     
-    console.log('Looking up user by email')
-    const { data: user, error } = await supabase.auth.admin.getUserByEmail(email)
+    try {
+      console.log('Attempting to look up user by email')
+      const { data: user, error: lookupError } = await supabase.auth.admin.getUserByEmail(email)
+      
+      if (lookupError) {
+        console.error('Error during email lookup:', lookupError)
+        throw lookupError
+      }
 
-    if (error) {
-      console.error('Error looking up user:', error)
-      throw error
+      const exists = !!user
+      console.log('Email lookup result - exists:', exists)
+
+      return new Response(
+        JSON.stringify({ exists }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    } catch (lookupError) {
+      console.error('Email lookup failed:', lookupError)
+      throw lookupError
     }
-
-    const exists = !!user
-    console.log('Email exists:', exists)
-
-    return new Response(
-      JSON.stringify({ exists }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    )
 
   } catch (error) {
     console.error('Function error:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ 
+        error: 'Failed to check email existence',
+        details: error.message 
+      }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 })
