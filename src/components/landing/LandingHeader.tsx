@@ -10,11 +10,11 @@ export function LandingHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <a href="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
+            <Link to="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
               <span className="text-foreground-light">Camp</span>
               <span className="text-foreground-light">Track</span>
               <span className="text-primary">Pro</span>
-            </a>
+            </Link>
           </div>
           
           <div className="flex items-center gap-6">
