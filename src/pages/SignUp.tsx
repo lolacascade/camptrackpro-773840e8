@@ -52,15 +52,14 @@ export default function SignUp() {
 
       console.log('Starting signup process...', { email, companyName });
 
-      // Attempt signup with company metadata
+      // Attempt signup
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             company_name: companyName.trim(),
-          },
-          emailRedirectTo: `${window.location.origin}/signin`,
+          }
         },
       });
 
@@ -71,13 +70,24 @@ export default function SignUp() {
 
       if (data?.user) {
         console.log('Signup successful:', data.user);
+        
+        // Since email verification is disabled, we can sign in directly
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (signInError) {
+          throw signInError;
+        }
+
         toast({
           title: "Success",
-          description: "Your account has been created. Please check your email to verify your account before signing in.",
+          description: "Your account has been created successfully!",
         });
         
-        // Navigate to signin page
-        navigate('/signin');
+        // Navigate to main app
+        navigate('/app');
       } else {
         throw new Error('Signup failed - no user data returned');
       }
