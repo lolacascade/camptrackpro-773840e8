@@ -50,71 +50,68 @@ export default function SignUp() {
         throw new Error('Company name must be between 2 and 100 characters');
       }
 
-      console.log('Starting signup process...', { email, companyName });
-
-      // Attempt signup
-      const { data, error } = await supabase.auth.signUp({
+      // 1. Create user account
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          data: {
-            company_name: companyName.trim(),
-          }
-        },
       });
 
-      if (error) {
-        console.error('Signup error:', error);
-        throw error;
-      }
+      if (signUpError) throw signUpError;
+      if (!signUpData.user) throw new Error('Signup failed - no user data returned');
 
-      if (data?.user) {
-        console.log('Signup successful:', data.user);
-        
-        // Since email verification is disabled, we can sign in directly
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password
-        });
+      // 2. Create organization
+      const { data: orgData, error: orgError } = await supabase
+        .from('organizations')
+        .insert([
+          { name: companyName.trim() }
+        ])
+        .select('id')
+        .single();
 
-        if (signInError) {
-          throw signInError;
-        }
+      if (orgError) throw orgError;
+      if (!orgData) throw new Error('Failed to create organization');
 
-        // Get the organization ID
-        const { data: orgRoles, error: orgError } = await supabase
-          .from('organization_roles')
-          .select('organization_id')
-          .eq('user_id', data.user.id)
-          .limit(1);
-
-        if (orgError || !orgRoles?.length) {
-          throw new Error('Failed to get organization details');
-        }
-
-        // Create Stripe checkout session
-        const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
-          'create-checkout-session',
+      // 3. Create organization role for user
+      const { error: roleError } = await supabase
+        .from('organization_roles')
+        .insert([
           {
-            body: { organizationId: orgRoles[0].organization_id }
+            organization_id: orgData.id,
+            user_id: signUpData.user.id,
+            role: 'owner'
           }
-        );
+        ]);
 
-        if (checkoutError) {
-          console.error('Checkout error:', checkoutError);
-          throw checkoutError;
+      if (roleError) throw roleError;
+
+      // 4. Sign in the user
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (signInError) throw signInError;
+
+      // 5. Create Stripe checkout session
+      const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
+        'create-checkout-session',
+        {
+          body: { organizationId: orgData.id }
         }
+      );
 
-        if (checkoutData?.url) {
-          // Redirect to Stripe checkout
-          window.location.href = checkoutData.url;
-          return;
-        }
-
-        throw new Error('Failed to create checkout session');
-      } else {
-        throw new Error('Signup failed - no user data returned');
+      if (checkoutError) {
+        console.error('Checkout error:', checkoutError);
+        throw checkoutError;
       }
+
+      if (checkoutData?.url) {
+        // Redirect to Stripe checkout
+        window.location.href = checkoutData.url;
+        return;
+      }
+
+      throw new Error('Failed to create checkout session');
     } catch (error: any) {
       console.error('Signup process error:', error);
       toast({
