@@ -12,7 +12,7 @@ export default function SignUp() {
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [companyName, setCompanyName] = useState('');
+  const [organizationName, setOrganizationName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,7 +31,7 @@ export default function SignUp() {
 
     try {
       // Basic validation
-      if (!email || !password || !companyName) {
+      if (!email || !password || !organizationName) {
         throw new Error('Please fill in all required fields');
       }
 
@@ -45,46 +45,26 @@ export default function SignUp() {
         throw new Error('Please enter a valid email address');
       }
 
-      // Company name validation (matching DB constraint)
-      if (companyName.trim().length < 2 || companyName.trim().length > 100) {
-        throw new Error('Company name must be between 2 and 100 characters');
+      // Organization name validation (matching DB constraint)
+      if (organizationName.trim().length < 2 || organizationName.trim().length > 100) {
+        throw new Error('Organization name must be between 2 and 100 characters');
       }
 
-      // 1. Create user account
+      // Create user account with organization name in metadata
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            organization_name: organizationName.trim()
+          }
+        }
       });
 
       if (signUpError) throw signUpError;
       if (!signUpData.user) throw new Error('Signup failed - no user data returned');
 
-      // 2. Create organization
-      const { data: orgData, error: orgError } = await supabase
-        .from('organizations')
-        .insert([
-          { name: companyName.trim() }
-        ])
-        .select('id')
-        .single();
-
-      if (orgError) throw orgError;
-      if (!orgData) throw new Error('Failed to create organization');
-
-      // 3. Create organization role for user
-      const { error: roleError } = await supabase
-        .from('organization_roles')
-        .insert([
-          {
-            organization_id: orgData.id,
-            user_id: signUpData.user.id,
-            role: 'owner'
-          }
-        ]);
-
-      if (roleError) throw roleError;
-
-      // 4. Sign in the user
+      // Sign in the user
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -92,11 +72,11 @@ export default function SignUp() {
 
       if (signInError) throw signInError;
 
-      // 5. Create Stripe checkout session
+      // Create Stripe checkout session
       const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
         'create-checkout-session',
         {
-          body: { organizationId: orgData.id }
+          body: { email }
         }
       );
 
@@ -132,14 +112,14 @@ export default function SignUp() {
         
         <form onSubmit={handleSignUp} className="space-y-4">
           <div>
-            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-1">
               Organization Name <span className="text-red-500">*</span>
             </label>
             <Input
-              id="companyName"
+              id="organizationName"
               type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
+              value={organizationName}
+              onChange={(e) => setOrganizationName(e.target.value)}
               required
               placeholder="Enter your organization name"
               disabled={isLoading}
