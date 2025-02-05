@@ -1,21 +1,19 @@
 
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { supabase } from "@/integrations/supabase/client";
+import { Link, useSearchParams } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 import { AuthContainer } from "@/components/auth/AuthContainer";
 import { AuthLogo } from "@/components/auth/AuthLogo";
+import { useSignUp } from "@/hooks/use-signup";
+import type { SignUpFormData } from "@/types/auth";
 
 export default function SignUp() {
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [organizationName, setOrganizationName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const { isLoading, handleSignUp } = useSignUp();
 
   useEffect(() => {
     // Set email from URL parameter if present
@@ -25,83 +23,9 @@ export default function SignUp() {
     }
   }, [searchParams]);
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      // Basic validation
-      if (!email || !password || !organizationName) {
-        throw new Error('Please fill in all required fields');
-      }
-
-      // Password validation
-      if (password.length < 6) {
-        throw new Error('Password must be at least 6 characters long');
-      }
-
-      // Email validation
-      if (!email.includes('@')) {
-        throw new Error('Please enter a valid email address');
-      }
-
-      // Organization name validation (matching DB constraint)
-      if (organizationName.trim().length < 2 || organizationName.trim().length > 100) {
-        throw new Error('Organization name must be between 2 and 100 characters');
-      }
-
-      // Create user account with organization name in metadata
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            organization_name: organizationName.trim()
-          }
-        }
-      });
-
-      if (signUpError) throw signUpError;
-      if (!signUpData.user) throw new Error('Signup failed - no user data returned');
-
-      // Sign in the user
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (signInError) throw signInError;
-
-      // Create Stripe checkout session
-      const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
-        'create-checkout-session',
-        {
-          body: { email }
-        }
-      );
-
-      if (checkoutError) {
-        console.error('Checkout error:', checkoutError);
-        throw checkoutError;
-      }
-
-      if (checkoutData?.url) {
-        // Redirect to Stripe checkout
-        window.location.href = checkoutData.url;
-        return;
-      }
-
-      throw new Error('Failed to create checkout session');
-    } catch (error: any) {
-      console.error('Signup process error:', error);
-      toast({
-        title: "Error",
-        description: error.message || "Failed to create account. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await handleSignUp({ email, password, organizationName });
   };
 
   return (
@@ -110,7 +34,7 @@ export default function SignUp() {
       <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
         <h1 className="text-2xl font-semibold text-center mb-6">Create Your Organization</h1>
         
-        <form onSubmit={handleSignUp} className="space-y-4">
+        <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label htmlFor="organizationName" className="block text-sm font-medium text-gray-700 mb-1">
               Organization Name <span className="text-red-500">*</span>
