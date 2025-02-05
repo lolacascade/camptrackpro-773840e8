@@ -81,13 +81,37 @@ export default function SignUp() {
           throw signInError;
         }
 
-        toast({
-          title: "Success",
-          description: "Your account has been created successfully!",
-        });
-        
-        // Navigate to main app
-        navigate('/app');
+        // Get the organization ID
+        const { data: orgRoles, error: orgError } = await supabase
+          .from('organization_roles')
+          .select('organization_id')
+          .eq('user_id', data.user.id)
+          .limit(1);
+
+        if (orgError || !orgRoles?.length) {
+          throw new Error('Failed to get organization details');
+        }
+
+        // Create Stripe checkout session
+        const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
+          'create-checkout-session',
+          {
+            body: { organizationId: orgRoles[0].organization_id }
+          }
+        );
+
+        if (checkoutError) {
+          console.error('Checkout error:', checkoutError);
+          throw checkoutError;
+        }
+
+        if (checkoutData?.url) {
+          // Redirect to Stripe checkout
+          window.location.href = checkoutData.url;
+          return;
+        }
+
+        throw new Error('Failed to create checkout session');
       } else {
         throw new Error('Signup failed - no user data returned');
       }
