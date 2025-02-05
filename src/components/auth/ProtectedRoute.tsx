@@ -46,10 +46,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <div>Loading...</div>;
   }
 
-  // If user is authenticated but has no organization, redirect to organization setup
-  // unless they're already on the organization setup page
-  if (!hasOrganization && !location.pathname.includes('/organization-setup')) {
-    return <Navigate to="/app/organization-setup" replace />;
+  // If user has no organization, redirect to dashboard where they'll be prompted to create one
+  if (!hasOrganization) {
+    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;

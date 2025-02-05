@@ -1,3 +1,4 @@
+
 import { Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Layout } from "@/components/layout/Layout";
@@ -13,7 +14,6 @@ import Maintenance from "@/pages/Maintenance";
 import Settings from "@/pages/Settings";
 import Financials from "@/pages/Financials";
 import Sitemap from "@/pages/Sitemap";
-import OrganizationSetup from "@/pages/OrganizationSetup";
 
 export function AppRoutes() {
   return (
@@ -35,7 +35,6 @@ export function AppRoutes() {
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/financials" element={<Financials />} />
         <Route path="/app/sitemap" element={<Sitemap />} />
-        <Route path="/app/organization-setup" element={<OrganizationSetup />} />
       </Route>
     </Routes>
   );
