@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useSession } from "@supabase/auth-helpers-react";
@@ -16,12 +17,20 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   useEffect(() => {
     async function checkOrganization() {
       if (session?.user) {
-        const { data: orgRoles } = await supabase
+        // Using .select() instead of .single() to handle multiple results
+        const { data: orgRoles, error } = await supabase
           .from('organization_roles')
           .select('organization_id')
-          .single();
+          .eq('user_id', session.user.id)
+          .limit(1);
 
-        setHasOrganization(!!orgRoles);
+        if (error) {
+          console.error('Error checking organization:', error);
+          setHasOrganization(false);
+        } else {
+          // Check if we have at least one organization role
+          setHasOrganization(orgRoles && orgRoles.length > 0);
+        }
       }
       setIsLoading(false);
     }
@@ -30,7 +39,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   }, [session]);
 
   if (!session) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
   if (isLoading) {
