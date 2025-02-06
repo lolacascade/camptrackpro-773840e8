@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { keyFeatures } from "./constants/landing-data";
 
@@ -24,7 +25,7 @@ export function KeyFeatures() {
                 ${index % 2 === 1 ? 'md:border-l border-[rgba(255,255,255,0.1)]' : ''}
               `}
             >
-              <div className="p-8 md:p-12">
+              <div className="p-6 md:p-8">
                 <h3 className="text-2xl font-semibold text-white leading-[1.4] mb-6">
                   {feature.title}
                 </h3>
