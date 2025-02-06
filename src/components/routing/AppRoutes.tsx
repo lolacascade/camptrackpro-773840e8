@@ -26,6 +26,7 @@ export function AppRoutes() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/#/reset-password" element={<ResetPassword />} />
       
       {/* Protected routes with app layout */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -43,4 +44,3 @@ export function AppRoutes() {
     </Routes>
   );
 }
-
