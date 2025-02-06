@@ -17,7 +17,6 @@ export default function SignIn() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set email from URL parameter if present
     const emailParam = searchParams.get('email');
     if (emailParam) {
       setEmail(emailParam);
@@ -29,6 +28,22 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
+      // Record login attempt
+      const { error: rateLimitError } = await supabase
+        .from('login_attempts')
+        .insert([
+          {
+            email,
+            ip_address: 'client', // IP is captured by RLS
+            successful: false
+          }
+        ]);
+
+      if (rateLimitError) {
+        console.error('Rate limit check failed:', rateLimitError);
+        throw new Error('Too many login attempts. Please try again later.');
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -36,11 +51,29 @@ export default function SignIn() {
 
       if (error) throw error;
 
+      // Update attempt as successful
+      await supabase
+        .from('login_attempts')
+        .update({ successful: true })
+        .eq('email', email)
+        .order('attempt_time', { ascending: false })
+        .limit(1);
+
       navigate('/app');
     } catch (error: any) {
+      let errorMessage = 'Failed to sign in';
+      
+      if (error.message.includes('Too many login attempts')) {
+        errorMessage = 'Too many failed login attempts. Please try again in 15 minutes.';
+      } else if (error.message === 'Invalid login credentials') {
+        errorMessage = 'Invalid email or password';
+      } else {
+        errorMessage = error.message;
+      }
+
       toast({
         title: "Error",
-        description: error.message || "Failed to sign in",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -66,6 +99,8 @@ export default function SignIn() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
+              disabled={isLoading}
+              className="min-h-[44px]"
             />
           </div>
 
@@ -80,6 +115,8 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
+              disabled={isLoading}
+              className="min-h-[44px]"
             />
           </div>
 
@@ -92,7 +129,7 @@ export default function SignIn() {
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full min-h-[44px]"
             disabled={isLoading}
           >
             {isLoading ? "Signing in..." : "Sign In"}

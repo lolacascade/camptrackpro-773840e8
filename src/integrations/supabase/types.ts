@@ -712,6 +712,30 @@ export type Database = {
           },
         ]
       }
+      login_attempts: {
+        Row: {
+          attempt_time: string | null
+          email: string
+          id: string
+          ip_address: string
+          successful: boolean | null
+        }
+        Insert: {
+          attempt_time?: string | null
+          email: string
+          id?: string
+          ip_address: string
+          successful?: boolean | null
+        }
+        Update: {
+          attempt_time?: string | null
+          email?: string
+          id?: string
+          ip_address?: string
+          successful?: boolean | null
+        }
+        Relationships: []
+      }
       maintenance_requests: {
         Row: {
           account_id: string | null
@@ -1301,6 +1325,13 @@ export type Database = {
         Args: {
           org_id: string
           acc_id: string
+        }
+        Returns: boolean
+      }
+      check_login_rate_limit: {
+        Args: {
+          p_email: string
+          p_ip_address: string
         }
         Returns: boolean
       }

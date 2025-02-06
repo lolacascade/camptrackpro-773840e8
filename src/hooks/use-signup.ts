@@ -5,6 +5,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { SignUpFormData } from "@/types/auth";
 
+const validatePassword = (password: string) => {
+  const minLength = 8;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+  const errors = [];
+  if (password.length < minLength) errors.push(`Password must be at least ${minLength} characters long`);
+  if (!hasUpperCase) errors.push('Password must contain at least one uppercase letter');
+  if (!hasLowerCase) errors.push('Password must contain at least one lowercase letter');
+  if (!hasNumbers) errors.push('Password must contain at least one number');
+  if (!hasSpecialChar) errors.push('Password must contain at least one special character');
+
+  return errors;
+};
+
 export function useSignUp() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -15,8 +32,9 @@ export function useSignUp() {
       throw new Error('Please fill in all required fields');
     }
 
-    if (data.password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
+    const passwordErrors = validatePassword(data.password);
+    if (passwordErrors.length > 0) {
+      throw new Error(passwordErrors.join('\n'));
     }
 
     if (!data.email.includes('@')) {
