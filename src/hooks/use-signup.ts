@@ -64,21 +64,10 @@ export function useSignUp() {
       });
 
       if (signUpError) {
-        // Parse error body if it exists
-        let errorBody;
-        try {
-          errorBody = JSON.parse(signUpError.body as string);
-        } catch {
-          errorBody = null;
-        }
-        
-        // Check for user exists error in different formats
+        // Check for user exists error directly from the error message
         if (
           signUpError.message === "User already registered" || 
-          errorBody?.code === "user_already_exists" ||
-          (typeof signUpError === 'object' && 
-           'error' in signUpError && 
-           signUpError.error === 'user_already_exists')
+          signUpError.message?.includes('user_already_exists')
         ) {
           toast({
             title: "Account exists",
