@@ -39,15 +39,10 @@ export function AppRoutes() {
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/financials" element={<Financials />} />
         <Route path="/app/sitemap" element={<Sitemap />} />
+        
+        {/* Catch all route for protected area */}
+        <Route path="*" element={<Dashboard />} />
       </Route>
-
-      {/* Catch all route */}
-      <Route path="*" element={
-        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route path="*" element={<Dashboard />} />
-        </Route>
-      } />
     </Routes>
   );
 }
-
