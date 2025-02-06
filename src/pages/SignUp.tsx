@@ -16,7 +16,6 @@ export default function SignUp() {
   const { isLoading, handleSignUp } = useSignUp();
 
   useEffect(() => {
-    // Set email from URL parameter if present
     const emailParam = searchParams.get('email');
     if (emailParam) {
       setEmail(emailParam);
@@ -31,8 +30,8 @@ export default function SignUp() {
   return (
     <AuthContainer>
       <AuthLogo />
-      <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
-        <h1 className="text-2xl font-semibold text-center mb-6">Create Your Organization</h1>
+      <div className="bg-white rounded-lg shadow-xl p-4 sm:p-8 w-full max-w-md mx-auto">
+        <h1 className="text-xl sm:text-2xl font-semibold text-center mb-6">Create Your Organization</h1>
         
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
@@ -47,7 +46,7 @@ export default function SignUp() {
               required
               placeholder="Enter your organization name"
               disabled={isLoading}
-              className="w-full"
+              className="w-full min-h-[44px]"
               minLength={2}
               maxLength={100}
             />
@@ -65,7 +64,7 @@ export default function SignUp() {
               required
               placeholder="Enter your email"
               disabled={isLoading}
-              className="w-full"
+              className="w-full min-h-[44px]"
             />
           </div>
 
@@ -82,13 +81,13 @@ export default function SignUp() {
               placeholder="Create a password"
               disabled={isLoading}
               minLength={6}
-              className="w-full"
+              className="w-full min-h-[44px]"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full"
+            className="w-full min-h-[44px] mt-6"
             disabled={isLoading}
           >
             {isLoading ? "Creating Account..." : "Create Organization"}
