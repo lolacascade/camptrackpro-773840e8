@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -8,11 +9,20 @@ export function useOrganization() {
     queryFn: async () => {
       console.log('Fetching organization context...');
       
-      // Get organization role
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        console.log('No authenticated user found');
+        return null;
+      }
+
+      // Get organization role for current user
       const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id')
-        .single();
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (orgError) {
         console.error('Error fetching organization:', orgError);
@@ -27,11 +37,12 @@ export function useOrganization() {
 
       console.log('Found organization:', orgRoles);
 
-      // Get account role
+      // Get account role for current user
       const { data: accRoles, error: accError } = await supabase
         .from('account_roles')
         .select('account_id')
-        .single();
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (accError) {
         console.error('Error fetching account:', accError);
