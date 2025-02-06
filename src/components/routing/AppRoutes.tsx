@@ -40,6 +40,9 @@ export function AppRoutes() {
         <Route path="/app/financials" element={<Financials />} />
         <Route path="/app/sitemap" element={<Sitemap />} />
       </Route>
+
+      {/* Catch all route - redirect to dashboard if authenticated, otherwise to signin */}
+      <Route path="*" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
     </Routes>
   );
 }
