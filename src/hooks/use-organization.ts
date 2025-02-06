@@ -1,19 +1,23 @@
 
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export function useOrganization() {
+  const navigate = useNavigate();
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context'],
     queryFn: async () => {
       console.log('Fetching organization context...');
       
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
+      // Get current session and user
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (!user) {
-        console.log('No authenticated user found');
+      if (!session?.user) {
+        console.log('No active session found, redirecting to login');
+        navigate('/signin');
         return null;
       }
 
@@ -21,7 +25,7 @@ export function useOrganization() {
       const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id')
-        .eq('user_id', user.id)
+        .eq('user_id', session.user.id)
         .maybeSingle();
 
       if (orgError) {
@@ -41,7 +45,7 @@ export function useOrganization() {
       const { data: accRoles, error: accError } = await supabase
         .from('account_roles')
         .select('account_id')
-        .eq('user_id', user.id)
+        .eq('user_id', session.user.id)
         .maybeSingle();
 
       if (accError) {

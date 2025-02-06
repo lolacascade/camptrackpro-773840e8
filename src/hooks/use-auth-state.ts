@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
@@ -13,7 +14,7 @@ export function useAuthState(fromPath: string = '/app') {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate('/login', { replace: true });
+        navigate('/signin', { replace: true });
       }
     };
     
@@ -30,14 +31,20 @@ export function useAuthState(fromPath: string = '/app') {
         });
       }
 
-      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-        navigate('/login', { replace: true });
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        navigate('/signin', { replace: true });
         if (event === 'SIGNED_OUT') {
           toast({
             title: "Signed out",
             description: "You have been signed out successfully.",
           });
         }
+      }
+
+      // Handle token refresh errors
+      if (event === 'TOKEN_REFRESHED' && !currentSession) {
+        console.log('Token refresh failed, redirecting to signin');
+        navigate('/signin', { replace: true });
       }
     });
 
