@@ -46,8 +46,13 @@ export function useSignUp() {
       });
 
       if (signUpError) {
-        // Special handling for "user already registered" error
-        if (signUpError.message === "User already registered") {
+        // Check both the error code and message for user already exists cases
+        if (
+          signUpError.message === "User already registered" || 
+          (typeof signUpError === 'object' && 
+           'error' in signUpError && 
+           signUpError.error === 'user_already_exists')
+        ) {
           toast({
             title: "Account exists",
             description: "This email is already registered. Please sign in instead.",
