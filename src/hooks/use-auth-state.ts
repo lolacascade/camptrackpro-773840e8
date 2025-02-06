@@ -31,14 +31,12 @@ export function useAuthState(fromPath: string = '/app') {
         });
       }
 
-      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+      if (event === 'SIGNED_OUT') {
         navigate('/signin', { replace: true });
-        if (event === 'SIGNED_OUT') {
-          toast({
-            title: "Signed out",
-            description: "You have been signed out successfully.",
-          });
-        }
+        toast({
+          title: "Signed out",
+          description: "You have been signed out successfully.",
+        });
       }
 
       // Handle token refresh errors
