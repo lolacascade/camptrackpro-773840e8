@@ -34,7 +34,7 @@ export function useSignUp() {
     try {
       validateForm(data);
 
-      // Create user account with organization name in metadata
+      // Try to sign up the user
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -45,7 +45,20 @@ export function useSignUp() {
         }
       });
 
-      if (signUpError) throw signUpError;
+      if (signUpError) {
+        // Special handling for "user already registered" error
+        if (signUpError.message === "User already registered") {
+          toast({
+            title: "Account exists",
+            description: "This email is already registered. Please sign in instead.",
+            variant: "destructive",
+          });
+          navigate('/signin?email=' + encodeURIComponent(data.email));
+          return;
+        }
+        throw signUpError;
+      }
+
       if (!signUpData.user) throw new Error('Signup failed - no user data returned');
 
       // Sign in the user
