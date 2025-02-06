@@ -31,8 +31,9 @@ export default function ForgotPassword() {
         throw new Error('Too many password reset attempts. Please try again later.');
       }
 
+      // Use the hash-based URL for the redirect
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/#/reset-password`,
       });
 
       if (error) throw error;
@@ -106,3 +107,4 @@ export default function ForgotPassword() {
     </AuthContainer>
   );
 }
+
