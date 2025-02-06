@@ -43,12 +43,11 @@ export function AppRoutes() {
 
       {/* Catch all route */}
       <Route path="*" element={
-        <ProtectedRoute>
-          <Layout>
-            <Dashboard />
-          </Layout>
-        </ProtectedRoute>
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route path="*" element={<Dashboard />} />
+        </Route>
       } />
     </Routes>
   );
 }
+
