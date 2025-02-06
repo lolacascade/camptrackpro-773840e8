@@ -4,6 +4,7 @@ import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Layout } from "@/components/layout/Layout";
 import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
+import ForgotPassword from "@/pages/ForgotPassword";
 import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Customers from "@/pages/Customers";
@@ -22,6 +23,7 @@ export function AppRoutes() {
       <Route path="/" element={<Index />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
       
       {/* Protected routes with app layout */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

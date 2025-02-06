@@ -1,3 +1,4 @@
+
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,15 +15,15 @@ export function LogoutButton() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // If no session, just redirect to login
-        navigate('/login', { replace: true });
+        // If no session, just redirect to signin
+        navigate('/signin', { replace: true });
         return;
       }
 
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      navigate('/login', { replace: true });
+      navigate('/signin', { replace: true });
       
       toast({
         title: "Logged out successfully",
@@ -30,12 +31,12 @@ export function LogoutButton() {
       });
     } catch (error: any) {
       console.error('Error logging out:', error);
-      // Even if logout fails, redirect to login page
-      navigate('/login', { replace: true });
+      // Even if logout fails, redirect to signin page
+      navigate('/signin', { replace: true });
       
       toast({
         title: "Error during logout",
-        description: "You have been redirected to the login page.",
+        description: "You have been redirected to the sign in page.",
         variant: "destructive",
       });
     }

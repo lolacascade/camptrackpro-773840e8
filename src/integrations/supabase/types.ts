@@ -1024,6 +1024,30 @@ export type Database = {
         }
         Relationships: []
       }
+      password_reset_attempts: {
+        Row: {
+          attempt_time: string | null
+          email: string
+          id: string
+          ip_address: string
+          successful: boolean | null
+        }
+        Insert: {
+          attempt_time?: string | null
+          email: string
+          id?: string
+          ip_address: string
+          successful?: boolean | null
+        }
+        Update: {
+          attempt_time?: string | null
+          email?: string
+          id?: string
+          ip_address?: string
+          successful?: boolean | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           account_id: string | null
@@ -1332,6 +1356,12 @@ export type Database = {
         Args: {
           p_email: string
           p_ip_address: string
+        }
+        Returns: boolean
+      }
+      check_password_reset_rate_limit: {
+        Args: {
+          p_email: string
         }
         Returns: boolean
       }
