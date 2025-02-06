@@ -26,7 +26,6 @@ export function AppRoutes() {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/#/reset-password" element={<ResetPassword />} /> {/* Add this line to handle Supabase hash URL */}
       
       {/* Protected routes with app layout */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,23 @@ export default function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if we have a session when the component mounts
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Error",
+          description: "Invalid or expired reset link. Please request a new one.",
+          variant: "destructive",
+        });
+        navigate('/forgot-password');
+      }
+    };
+    
+    checkSession();
+  }, [navigate, toast]);
 
   const validatePassword = (password: string) => {
     const minLength = 8;
