@@ -34,26 +34,38 @@ export default function SignIn() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (isLoading) return;
+    
     setIsLoading(true);
 
     try {
       validateInput();
 
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password.trim(),
       });
 
-      if (signInError) {
-        toast({
-          title: "Unable to sign in",
-          description: "The email or password you entered is incorrect. Please try again.",
-          variant: "default",
-        });
+      if (error) {
+        console.log('Sign in error:', error);
+        if (error.message.includes('Invalid login credentials')) {
+          toast({
+            title: "Unable to sign in",
+            description: "The email or password you entered is incorrect. Please try again.",
+            variant: "default",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: "An unexpected error occurred. Please try again.",
+            variant: "destructive",
+          });
+        }
         return;
       }
 
-      if (signInData.user) {
+      if (data?.user) {
         navigate('/app');
       }
     } catch (error: any) {
