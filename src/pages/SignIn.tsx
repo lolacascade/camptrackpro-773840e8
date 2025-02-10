@@ -47,13 +47,18 @@ export default function SignIn() {
           {
             email,
             successful: false,
-            ip_address: 'system' // Providing a default value to satisfy the schema
+            ip_address: 'system'
           }
         ]);
 
       if (rateLimitError) {
         console.error('Rate limit check failed:', rateLimitError);
-        throw new Error('Too many login attempts. Please try again later.');
+        toast({
+          title: "Notice",
+          description: "Please try again in a few minutes.",
+          variant: "default",
+        });
+        return;
       }
 
       // Attempt to sign in
@@ -62,7 +67,19 @@ export default function SignIn() {
         password: password.trim(),
       });
 
-      if (signInError) throw signInError;
+      if (signInError) {
+        // Don't treat invalid credentials as an error, just show a friendly message
+        if (signInError.message === 'Invalid login credentials') {
+          toast({
+            title: "Unable to sign in",
+            description: "The email or password you entered is incorrect. Please try again.",
+            variant: "default",
+          });
+          return;
+        }
+        // Handle other errors
+        throw signInError;
+      }
 
       if (signInData.user) {
         // Only update attempt as successful if sign in worked
@@ -77,23 +94,21 @@ export default function SignIn() {
       }
     } catch (error: any) {
       console.error('Sign in error:', error);
-      let errorMessage = 'Failed to sign in';
+      let errorMessage = 'An unexpected error occurred';
       
       if (error.message === 'Please fill in all fields' || 
           error.message === 'Please enter a valid email address') {
         errorMessage = error.message;
       } else if (error.message.includes('Too many login attempts')) {
-        errorMessage = 'Too many failed login attempts. Please try again in 15 minutes.';
-      } else if (error.message === 'Invalid login credentials') {
-        errorMessage = 'Invalid email or password';
+        errorMessage = 'Please try again in 15 minutes.';
       } else {
-        errorMessage = 'An error occurred during sign in. Please try again.';
+        errorMessage = 'Something went wrong. Please try again.';
       }
 
       toast({
-        title: "Error",
+        title: "Notice",
         description: errorMessage,
-        variant: "destructive",
+        variant: "default",
       });
     } finally {
       setIsLoading(false);
