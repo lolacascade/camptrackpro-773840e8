@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -23,12 +23,14 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
     <div className="flex flex-col sm:flex-row gap-2">
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="outline"
+          <div
             className={cn(
-              "w-full sm:w-[280px] justify-start text-left font-normal bg-white",
+              "flex h-10 w-full sm:w-[280px] items-center justify-start rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground",
               !date && "text-muted-foreground"
             )}
+            role="combobox"
+            aria-expanded="false"
+            aria-haspopup="dialog"
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {date?.from ? (
@@ -43,7 +45,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
             ) : (
               <span>Pick a date range</span>
             )}
-          </Button>
+          </div>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
