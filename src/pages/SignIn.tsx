@@ -46,7 +46,8 @@ export default function SignIn() {
         .insert([
           {
             email,
-            successful: false
+            successful: false,
+            ip_address: 'system' // Providing a default value to satisfy the schema
           }
         ]);
 
