@@ -20,12 +20,12 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
   });
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2">
+    <div className="w-full sm:w-auto">
       <Popover>
         <PopoverTrigger asChild>
           <div
             className={cn(
-              "flex h-10 w-full sm:w-[280px] items-center justify-start rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground",
+              "flex h-10 w-full items-center justify-start rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground",
               !date && "text-muted-foreground"
             )}
             role="combobox"
@@ -47,7 +47,12 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
             )}
           </div>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent 
+          className="w-auto p-0" 
+          align="start"
+          side="bottom"
+          sideOffset={8}
+        >
           <Calendar
             initialFocus
             mode="range"
@@ -60,6 +65,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
               }
             }}
             numberOfMonths={1}
+            className="rounded-md border"
           />
         </PopoverContent>
       </Popover>

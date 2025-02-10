@@ -44,15 +44,15 @@ export function BookingsHeader({ onAdd, onDateRangeChange }: BookingsHeaderProps
   };
 
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
       <h1 className="text-2xl font-semibold text-[#133134]">Bookings</h1>
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+        <div className="flex flex-wrap gap-2">
           <Button 
             variant="outline" 
             size="sm"
             onClick={() => handleTimeFrameClick('1M')}
-            className="bg-white"
+            className="bg-white flex-1 sm:flex-none"
           >
             1M
           </Button>
@@ -60,7 +60,7 @@ export function BookingsHeader({ onAdd, onDateRangeChange }: BookingsHeaderProps
             variant="outline" 
             size="sm"
             onClick={() => handleTimeFrameClick('3M')}
-            className="bg-white"
+            className="bg-white flex-1 sm:flex-none"
           >
             3M
           </Button>
@@ -68,7 +68,7 @@ export function BookingsHeader({ onAdd, onDateRangeChange }: BookingsHeaderProps
             variant="outline" 
             size="sm"
             onClick={() => handleTimeFrameClick('6M')}
-            className="bg-white"
+            className="bg-white flex-1 sm:flex-none"
           >
             6M
           </Button>
@@ -76,7 +76,7 @@ export function BookingsHeader({ onAdd, onDateRangeChange }: BookingsHeaderProps
             variant="outline" 
             size="sm"
             onClick={() => handleTimeFrameClick('1Y')}
-            className="bg-white"
+            className="bg-white flex-1 sm:flex-none"
           >
             1Y
           </Button>
@@ -84,13 +84,16 @@ export function BookingsHeader({ onAdd, onDateRangeChange }: BookingsHeaderProps
             variant="outline" 
             size="sm"
             onClick={() => handleTimeFrameClick('ALL')}
-            className="bg-white"
+            className="bg-white flex-1 sm:flex-none"
           >
             ALL
           </Button>
         </div>
         <DateRangeFilter onDateRangeChange={onDateRangeChange} />
-        <Button onClick={onAdd} className="bg-[#133134] hover:bg-[#0D2426] text-white">
+        <Button 
+          onClick={onAdd} 
+          className="bg-[#133134] hover:bg-[#0D2426] text-white w-full sm:w-auto"
+        >
           <Plus className="w-4 h-4 mr-2" />
           New Booking
         </Button>
