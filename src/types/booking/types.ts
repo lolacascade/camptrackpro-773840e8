@@ -7,7 +7,7 @@ export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed'
 export interface BookingFormData {
   customer_id: string;
   asset_id: string;
-  site_id: string;
+  site_id: number;  // Changed from string to number to match Booking interface
   special_requirements?: string;
 }
 
@@ -43,4 +43,3 @@ export interface BookingInsight {
   cancelledBookings: number;
   avgBookingDuration: number;
 }
-
