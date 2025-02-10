@@ -1,3 +1,4 @@
+
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
@@ -64,7 +65,8 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
             }
           ]}
           tableName="bookings"
-          onRowClick={onEdit}
+          onEdit={onEdit}
+          onViewDetails={onEdit}
         />
       </div>
     </Card>

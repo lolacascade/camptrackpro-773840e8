@@ -1,3 +1,4 @@
+
 import { Column } from "@/components/common/DataTable/types";
 import { Booking } from "@/types/booking";
 import { DataTableRowActions } from "@/components/common/DataTable/DataTableRowActions";
