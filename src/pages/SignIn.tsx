@@ -23,11 +23,23 @@ export default function SignIn() {
     }
   }, [searchParams]);
 
+  const validateInput = () => {
+    if (!email.trim() || !password.trim()) {
+      throw new Error('Please fill in all fields');
+    }
+    if (!email.includes('@')) {
+      throw new Error('Please enter a valid email address');
+    }
+  };
+
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
+      // Validate input first
+      validateInput();
+
       // Record login attempt
       const { error: rateLimitError } = await supabase
         .from('login_attempts')
@@ -44,31 +56,38 @@ export default function SignIn() {
         throw new Error('Too many login attempts. Please try again later.');
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      // Attempt to sign in
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: password.trim(),
       });
 
-      if (error) throw error;
+      if (signInError) throw signInError;
 
-      // Update attempt as successful
-      await supabase
-        .from('login_attempts')
-        .update({ successful: true })
-        .eq('email', email)
-        .order('attempt_time', { ascending: false })
-        .limit(1);
+      if (signInData.user) {
+        // Only update attempt as successful if sign in worked
+        await supabase
+          .from('login_attempts')
+          .update({ successful: true })
+          .eq('email', email)
+          .order('attempt_time', { ascending: false })
+          .limit(1);
 
-      navigate('/app');
+        navigate('/app');
+      }
     } catch (error: any) {
+      console.error('Sign in error:', error);
       let errorMessage = 'Failed to sign in';
       
-      if (error.message.includes('Too many login attempts')) {
+      if (error.message === 'Please fill in all fields' || 
+          error.message === 'Please enter a valid email address') {
+        errorMessage = error.message;
+      } else if (error.message.includes('Too many login attempts')) {
         errorMessage = 'Too many failed login attempts. Please try again in 15 minutes.';
       } else if (error.message === 'Invalid login credentials') {
         errorMessage = 'Invalid email or password';
       } else {
-        errorMessage = error.message;
+        errorMessage = 'An error occurred during sign in. Please try again.';
       }
 
       toast({
