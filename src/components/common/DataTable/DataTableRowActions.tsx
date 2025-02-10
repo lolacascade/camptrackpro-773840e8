@@ -53,7 +53,7 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-[160px] bg-white shadow-md rounded-md border border-gray-200"
+        className="w-[160px] bg-white shadow-md rounded-md border border-gray-200 z-50"
       >
         {onViewDetails && (
           <DropdownMenuItem 

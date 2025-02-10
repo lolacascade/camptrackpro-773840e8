@@ -1,3 +1,4 @@
+
 import { Customer } from "@/types/customer";
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { getCustomerColumns } from "./table/CustomerTableColumns";
@@ -37,11 +38,16 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
     }
   };
 
+  const handleViewDetails = (customer: Customer) => {
+    onEdit(customer); // Using same handler for view/edit for now
+  };
+
   return (
     <DataTable
       data={customers}
       columns={getCustomerColumns()}
       onEdit={onEdit}
+      onViewDetails={handleViewDetails}
       onDelete={handleDelete}
       isLoading={isLoading}
       tableName="customers"

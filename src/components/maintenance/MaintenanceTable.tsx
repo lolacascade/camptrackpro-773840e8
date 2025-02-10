@@ -1,3 +1,4 @@
+
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { maintenanceColumns } from "./table/MaintenanceColumns";
 import type { Maintenance } from "@/types/maintenance";
@@ -38,6 +39,7 @@ export function MaintenanceTable({
       onEdit={onEdit}
       onViewDetails={onViewDetails}
       filters={filters}
+      tableName="maintenance"
     />
   );
 }
