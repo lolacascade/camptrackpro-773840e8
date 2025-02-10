@@ -46,7 +46,6 @@ export default function SignIn() {
         .insert([
           {
             email,
-            ip_address: 'client', // IP is captured by RLS
             successful: false
           }
         ]);
