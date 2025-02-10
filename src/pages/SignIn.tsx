@@ -37,59 +37,23 @@ export default function SignIn() {
     setIsLoading(true);
 
     try {
-      // Validate input first
       validateInput();
 
-      // Record login attempt
-      const { error: rateLimitError } = await supabase
-        .from('login_attempts')
-        .insert([
-          {
-            email,
-            successful: false,
-            ip_address: 'system'
-          }
-        ]);
-
-      if (rateLimitError) {
-        console.error('Rate limit check failed:', rateLimitError);
-        toast({
-          title: "Notice",
-          description: "Please try again in a few minutes.",
-          variant: "default",
-        });
-        return;
-      }
-
-      // Attempt to sign in
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password.trim(),
       });
 
       if (signInError) {
-        // Don't treat invalid credentials as an error, just show a friendly message
-        if (signInError.message === 'Invalid login credentials') {
-          toast({
-            title: "Unable to sign in",
-            description: "The email or password you entered is incorrect. Please try again.",
-            variant: "default",
-          });
-          return;
-        }
-        // Handle other errors
-        throw signInError;
+        toast({
+          title: "Unable to sign in",
+          description: "The email or password you entered is incorrect. Please try again.",
+          variant: "default",
+        });
+        return;
       }
 
       if (signInData.user) {
-        // Only update attempt as successful if sign in worked
-        await supabase
-          .from('login_attempts')
-          .update({ successful: true })
-          .eq('email', email)
-          .order('attempt_time', { ascending: false })
-          .limit(1);
-
         navigate('/app');
       }
     } catch (error: any) {
@@ -99,10 +63,6 @@ export default function SignIn() {
       if (error.message === 'Please fill in all fields' || 
           error.message === 'Please enter a valid email address') {
         errorMessage = error.message;
-      } else if (error.message.includes('Too many login attempts')) {
-        errorMessage = 'Please try again in 15 minutes.';
-      } else {
-        errorMessage = 'Something went wrong. Please try again.';
       }
 
       toast({
