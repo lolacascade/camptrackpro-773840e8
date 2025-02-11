@@ -40,6 +40,11 @@ export interface DataTableProps<T> {
   tableName?: string;
   onRowClick?: (row: T) => void;
   searchFields?: string[];
+  onEdit?: (row: T) => void;
+  onDelete?: (row: T) => Promise<void>;
+  onViewDetails?: (row: T) => void;
+  itemsPerPage?: number;
+  dateRange?: DateRange;
 }
 
 export interface DataTableHeaderProps {
@@ -52,4 +57,5 @@ export interface DataTableHeaderProps {
 export interface DataTableLoadingProps<T> {
   columns: Column<T>[];
   filters?: Filter[];
+  title?: string;
 }

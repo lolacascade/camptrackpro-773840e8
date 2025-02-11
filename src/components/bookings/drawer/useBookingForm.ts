@@ -10,12 +10,14 @@ import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
+type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
+
 type BookingFormData = {
   customer_id: string;
   asset_id: string;
   site_id: string;
   special_requirements?: string;
-  status?: string;
+  status?: BookingStatus;
   total_amount?: number;
 };
 
@@ -56,7 +58,7 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
       asset_id: booking.asset_id,
       site_id: booking.site_id?.toString() || '',
       special_requirements: booking.special_requirements,
-      status: booking.status,
+      status: booking.status as BookingStatus,
       total_amount: booking.total_amount
     } : {}
   });
@@ -89,11 +91,13 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
       }
 
       const submitData = {
-        ...data,
+        customer_id: data.customer_id,
+        asset_id: data.asset_id,
         site_id: parseInt(data.site_id),
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: data.status || 'pending',
+        status: (data.status || 'pending') as BookingStatus,
+        special_requirements: data.special_requirements,
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
