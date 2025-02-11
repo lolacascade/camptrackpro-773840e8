@@ -65,32 +65,5 @@ export const getBookingColumns = (): Column<Booking>[] => [
       return booking.total_amount ? `$${booking.total_amount.toFixed(2)}` : '$0.00';
     },
     sortable: true
-  },
-  {
-    header: "Actions",
-    accessorKey: "actions",
-    cell: (booking: Booking) => {
-      const handleCancel = async () => {
-        try {
-          const { error } = await supabase
-            .from('bookings')
-            .update({ status: 'cancelled' })
-            .eq('id', booking.id);
-
-          if (error) throw error;
-          toast.success("Booking cancelled successfully");
-        } catch (error) {
-          console.error('Error cancelling booking:', error);
-          toast.error("Failed to cancel booking");
-        }
-      };
-
-      return (
-        <DataTableRowActions 
-          row={booking}
-          onDelete={handleCancel}
-        />
-      );
-    }
   }
 ];

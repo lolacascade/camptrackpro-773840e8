@@ -23,7 +23,8 @@ export function useBookings() {
           asset:assets(*)
         `)
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        .eq('account_id', accountId)
+        .order('created_at', { ascending: false });
 
       if (error) {
         toast.error("Failed to fetch bookings");

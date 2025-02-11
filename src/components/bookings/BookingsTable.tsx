@@ -8,6 +8,7 @@ import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { DateRange } from "react-day-picker";
 import { isWithinInterval } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -17,6 +18,7 @@ interface BookingsTableProps {
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const { bookings, isLoading, error } = useBookings();
+  const navigate = useNavigate();
 
   // Filter bookings based on selected status and date range
   const filteredBookings = bookings?.filter(booking => {
@@ -37,6 +39,10 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
 
   const handleStatusChange = (value: string) => {
     setSelectedStatus(value);
+  };
+
+  const handleView = (booking: Booking) => {
+    navigate(`/app/bookings/${booking.id}`);
   };
 
   if (error) {
@@ -65,8 +71,9 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
             }
           ]}
           tableName="bookings"
+          onViewDetails={handleView}
           onEdit={onEdit}
-          onViewDetails={onEdit}
+          searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
         />
       </div>
     </Card>
