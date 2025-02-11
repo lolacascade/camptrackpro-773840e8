@@ -2,8 +2,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { format, startOfMonth } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,11 @@ interface DateRangeFilterProps {
 }
 
 export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
-  const [date, setDate] = useState<DateRange | undefined>();
+  // Initialize with current month range
+  const [date, setDate] = useState<DateRange>({
+    from: startOfMonth(new Date()),
+    to: new Date()
+  });
 
   return (
     <div className="w-full sm:w-auto">
@@ -43,15 +46,19 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
           <Calendar
             initialFocus
             mode="range"
-            defaultMonth={date?.from}
+            defaultMonth={date?.from || new Date()}
             selected={date}
             onSelect={(newDate: DateRange | undefined) => {
-              setDate(newDate);
+              // Only update if we have both dates
               if (newDate?.from && newDate?.to) {
+                setDate(newDate);
                 onDateRangeChange({
                   from: newDate.from,
                   to: newDate.to
                 });
+              } else if (newDate) {
+                // Update local state for partial selection
+                setDate(newDate);
               }
             }}
             numberOfMonths={1}
