@@ -1,7 +1,6 @@
 
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 import { format, startOfMonth } from "date-fns";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -12,11 +11,21 @@ interface DateRangeFilterProps {
 }
 
 export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
-  // Initialize with current month range
-  const [date, setDate] = useState<DateRange>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: startOfMonth(new Date()),
     to: new Date()
   });
+
+  const handleSelect = (newDate: DateRange | undefined) => {
+    setDate(newDate);
+    // Only trigger the parent callback when we have both dates
+    if (newDate?.from && newDate?.to) {
+      onDateRangeChange({
+        from: newDate.from,
+        to: newDate.to
+      });
+    }
+  };
 
   return (
     <div className="w-full sm:w-auto">
@@ -34,7 +43,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
                 : "Pick a date range"
             }
             readOnly
-            className="w-full justify-start text-left font-normal hover:bg-accent hover:text-accent-foreground"
+            className="w-full justify-start text-left font-normal hover:bg-accent hover:text-accent-foreground cursor-pointer"
           />
         </PopoverTrigger>
         <PopoverContent 
@@ -48,19 +57,7 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
             mode="range"
             defaultMonth={date?.from || new Date()}
             selected={date}
-            onSelect={(newDate: DateRange | undefined) => {
-              // Only update if we have both dates
-              if (newDate?.from && newDate?.to) {
-                setDate(newDate);
-                onDateRangeChange({
-                  from: newDate.from,
-                  to: newDate.to
-                });
-              } else if (newDate) {
-                // Update local state for partial selection
-                setDate(newDate);
-              }
-            }}
+            onSelect={handleSelect}
             numberOfMonths={1}
             className="rounded-md border"
           />
