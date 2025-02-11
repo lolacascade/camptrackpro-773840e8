@@ -5,47 +5,34 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
+import { DateRange } from "react-day-picker";
+import { Input } from "@/components/ui/input";
 
 interface DateRangeFilterProps {
   onDateRangeChange: (range: { from: Date; to: Date }) => void;
 }
 
 export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
-  const [date, setDate] = useState<{
-    from: Date;
-    to: Date;
-  }>({
-    from: new Date(),
-    to: new Date(),
-  });
+  const [date, setDate] = useState<DateRange | undefined>();
 
   return (
     <div className="w-full sm:w-auto">
       <Popover>
         <PopoverTrigger asChild>
-          <div
-            className={cn(
-              "flex h-10 w-full items-center justify-start rounded-md border border-input bg-white px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-accent hover:text-accent-foreground",
-              !date && "text-muted-foreground"
-            )}
-            role="combobox"
-            aria-expanded="false"
-            aria-haspopup="dialog"
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
-                </>
-              ) : (
-                format(date.from, "LLL dd, y")
-              )
-            ) : (
-              <span>Pick a date range</span>
-            )}
-          </div>
+          <Input
+            value={
+              date?.from
+                ? date.to
+                  ? `${format(date.from, "LLL dd, y")} - ${format(
+                      date.to,
+                      "LLL dd, y"
+                    )}`
+                  : format(date.from, "LLL dd, y")
+                : "Pick a date range"
+            }
+            readOnly
+            className="w-full justify-start text-left font-normal hover:bg-accent hover:text-accent-foreground"
+          />
         </PopoverTrigger>
         <PopoverContent 
           className="w-auto p-0" 
@@ -58,10 +45,13 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
             mode="range"
             defaultMonth={date?.from}
             selected={date}
-            onSelect={(newDate: any) => {
+            onSelect={(newDate: DateRange | undefined) => {
               setDate(newDate);
               if (newDate?.from && newDate?.to) {
-                onDateRangeChange(newDate);
+                onDateRangeChange({
+                  from: newDate.from,
+                  to: newDate.to
+                });
               }
             }}
             numberOfMonths={1}
