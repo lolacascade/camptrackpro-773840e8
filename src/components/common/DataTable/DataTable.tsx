@@ -6,7 +6,6 @@ import { Column } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
 import { useDataSearch } from "@/hooks/use-data-search";
-import { useDataTable } from "@/hooks/use-data-table";
 
 interface DataTableProps<T> {
   data: T[];
@@ -21,6 +20,7 @@ interface DataTableProps<T> {
   tableName?: string;
   onRowClick?: (row: T) => void;
   searchFields?: string[];
+  title?: string;
 }
 
 export function DataTable<T extends { id?: number | string }>({
@@ -31,6 +31,7 @@ export function DataTable<T extends { id?: number | string }>({
   tableName,
   onRowClick,
   searchFields,
+  title,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -68,6 +69,7 @@ export function DataTable<T extends { id?: number | string }>({
       <DataTableLoading
         columns={columns}
         filters={filters}
+        title={title}
       />
     );
   }
@@ -79,6 +81,7 @@ export function DataTable<T extends { id?: number | string }>({
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           filters={filters}
+          title={title}
         />
         
         <DataTableContent

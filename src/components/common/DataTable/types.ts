@@ -34,21 +34,22 @@ export interface SortConfig {
 export interface DataTableProps<T> {
   data: T[];
   columns: Column<T>[];
-  onViewDetails?: (item: T) => void;
-  onEdit?: (item: T) => void;
-  onDelete?: (item: T) => void;
   title?: string;
-  itemsPerPage?: number;
   isLoading?: boolean;
   filters?: Filter[];
-  sortConfig?: SortConfig;
-  onSort?: (key: string) => void;
-  showTodayOnly?: boolean;
-  onShowTodayChange?: (checked: boolean) => void;
   tableName?: string;
-  searchTerm?: string;
-  onSearchChange?: (value: string) => void;
   onRowClick?: (row: T) => void;
-  dateRange?: DateRange;
   searchFields?: string[];
+}
+
+export interface DataTableHeaderProps {
+  searchTerm: string;
+  onSearchChange: (value: string) => void;
+  title?: string;
+  filters?: Filter[];
+}
+
+export interface DataTableLoadingProps<T> {
+  columns: Column<T>[];
+  filters?: Filter[];
 }

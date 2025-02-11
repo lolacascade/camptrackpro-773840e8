@@ -1,10 +1,7 @@
+
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { DataTableFiltersBar } from "./DataTableFiltersBar";
-import { DataTableColumns } from "./DataTableColumns";
-import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
 
 interface FilterOption {
   label: string;
@@ -21,15 +18,6 @@ interface DataTableHeaderProps {
     value: string;
     onChange: (value: string) => void;
   }[];
-  showTodayOnly?: boolean;
-  onShowTodayChange?: (checked: boolean) => void;
-  columns: any[];
-  onColumnVisibilityChange: (columns: string[]) => void;
-  dateRange?: {
-    startDate: Date | null;
-    endDate: Date | null;
-    onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
-  };
 }
 
 export function DataTableHeader({ 
@@ -37,11 +25,6 @@ export function DataTableHeader({
   onSearchChange,
   title,
   filters = [],
-  showTodayOnly,
-  onShowTodayChange,
-  columns,
-  onColumnVisibilityChange,
-  dateRange
 }: DataTableHeaderProps) {
   const filteredFilters = filters.filter(filter => filter.name !== 'customer');
 
@@ -61,39 +44,7 @@ export function DataTableHeader({
           />
         </div>
         
-        {dateRange && (
-          <div className="flex items-center gap-2 bg-white px-3 py-2 rounded-md border">
-            <DatePickerField
-              value={dateRange.startDate}
-              onChange={(date) => dateRange.onDateRangeChange(date, dateRange.endDate)}
-              placeholder="Start Date"
-              className="w-40"
-            />
-            <span className="text-gray-500">to</span>
-            <DatePickerField
-              value={dateRange.endDate}
-              onChange={(date) => dateRange.onDateRangeChange(dateRange.startDate, date)}
-              placeholder="End Date"
-              className="w-40"
-            />
-          </div>
-        )}
-        
         <DataTableFiltersBar filters={filteredFilters} />
-        <DataTableColumns 
-          columns={columns}
-          onColumnVisibilityChange={onColumnVisibilityChange}
-        />
-        {onShowTodayChange && (
-          <div className="flex items-center gap-4">
-            <Switch
-              id="show-today"
-              checked={showTodayOnly}
-              onCheckedChange={onShowTodayChange}
-            />
-            <Label htmlFor="show-today" className="text-base font-medium">Today only</Label>
-          </div>
-        )}
       </div>
     </div>
   );
