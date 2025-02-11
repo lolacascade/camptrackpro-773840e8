@@ -26,21 +26,16 @@ export function useBookingsInsights(dateRange?: DateRange) {
         throw new Error("Organization or account context not found");
       }
 
-      // Get booking stats using our secure function
+      // Get booking stats using our secure function with date range
       const { data: stats, error: statsError } = await supabase
         .rpc('get_booking_stats', {
           org_id: organizationId,
-          acc_id: accountId
+          acc_id: accountId,
+          start_date: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : null,
+          end_date: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : null
         });
 
       if (statsError) throw statsError;
-
-      // Filter stats based on provided date range
-      const filteredStats = stats.filter(stat => {
-        if (!dateRange?.from || !dateRange?.to) return true;
-        const statDate = new Date(stat.check_in_date);
-        return statDate >= dateRange.from && statDate <= dateRange.to;
-      });
 
       // Get RV type distribution for the selected date range
       const { data: rvTypes, error: rvError } = await supabase
@@ -78,8 +73,8 @@ export function useBookingsInsights(dateRange?: DateRange) {
         .sort((a, b) => Number(b.value) - Number(a.value))
         .slice(0, 2);
 
-      // Calculate totals from filtered stats for the selected period
-      const totals = filteredStats.reduce(
+      // Calculate totals from stats
+      const totals = stats.reduce(
         (acc, stat) => ({
           activeBookings: acc.activeBookings + Number(stat.active_bookings || 0),
           checkIns: acc.checkIns + Number(stat.check_ins || 0),
