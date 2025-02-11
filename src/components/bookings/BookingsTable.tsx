@@ -1,6 +1,5 @@
 
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { Booking } from "@/types/booking";
 import { useBookings } from "./hooks/useBookings";
@@ -15,6 +14,15 @@ interface BookingsTableProps {
   dateRange?: DateRange;
 }
 
+/**
+ * BookingsTable Component
+ * 
+ * Displays a table of bookings with filtering, sorting, and search capabilities.
+ * Integrates with real-time updates and provides booking management functions.
+ * 
+ * @param onEdit - Optional callback for editing a booking
+ * @param dateRange - Optional date range for filtering bookings
+ */
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const { bookings, isLoading, error } = useBookings();
@@ -47,35 +55,29 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
 
   if (error) {
     return (
-      <Card className="bg-transparent">
-        <div className="p-4 text-center text-red-500">
-          Error loading bookings. Please try again.
-        </div>
-      </Card>
+      <div className="text-center text-red-500">
+        Error loading bookings. Please try again.
+      </div>
     );
   }
 
   return (
-    <Card className="bg-transparent">
-      <div className="p-4">
-        <DataTable
-          data={filteredBookings}
-          columns={getBookingColumns()}
-          isLoading={isLoading}
-          filters={[
-            {
-              name: "status",
-              options: statusOptions,
-              value: selectedStatus,
-              onChange: handleStatusChange,
-            }
-          ]}
-          tableName="bookings"
-          onViewDetails={handleView}
-          onEdit={onEdit}
-          searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
-        />
-      </div>
-    </Card>
+    <DataTable
+      data={filteredBookings}
+      columns={getBookingColumns()}
+      isLoading={isLoading}
+      filters={[
+        {
+          name: "status",
+          options: statusOptions,
+          value: selectedStatus,
+          onChange: handleStatusChange,
+        }
+      ]}
+      tableName="bookings"
+      onViewDetails={handleView}
+      onEdit={onEdit}
+      searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
+    />
   );
 }
