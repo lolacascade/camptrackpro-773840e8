@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useMemo } from 'react';
 
 export function useDataSearch<T>(data: T[], searchTerm: string) {
@@ -8,7 +9,8 @@ export function useDataSearch<T>(data: T[], searchTerm: string) {
     const item = data[0];
     return Object.keys(item as object).filter(key => 
       typeof (item as any)[key] === 'string' || 
-      typeof (item as any)[key] === 'number'
+      typeof (item as any)[key] === 'number' ||
+      key === 'email' // Explicitly include email field
     );
   }, [data]);
 
@@ -23,6 +25,10 @@ export function useDataSearch<T>(data: T[], searchTerm: string) {
       return searchFields.some(field => {
         const value = (item as any)[field];
         if (value === null || value === undefined) return false;
+        if (field === 'email') {
+          // Special handling for email field
+          return String(value).toLowerCase().includes(searchTermLower);
+        }
         return String(value).toLowerCase().includes(searchTermLower);
       });
     });
