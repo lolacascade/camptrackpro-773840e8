@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
@@ -50,11 +51,11 @@ export function useCustomerForm({
 
       onCustomerUpdated();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving customer:', error);
       toast({
         title: "Error",
-        description: "Failed to save customer",
+        description: error.message || "Failed to save customer",
         variant: "destructive",
       });
     }

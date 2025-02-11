@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { CustomerFormData } from "./types";
 
@@ -12,6 +13,17 @@ export const saveCustomer = async (
     organization_id: organizationId,
     account_id: accountId
   };
+
+  // First check if email exists for a different customer
+  const { data: existingCustomer } = await supabase
+    .rpc('check_customer_email_exists', { 
+      p_email: formData.email,
+      p_organization_id: organizationId
+    });
+
+  if (existingCustomer && !customerId) {
+    throw new Error('A customer with this email already exists');
+  }
 
   if (customerId) {
     const { error } = await supabase

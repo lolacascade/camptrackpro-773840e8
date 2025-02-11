@@ -1352,6 +1352,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_customer_email_exists: {
+        Args: {
+          p_email: string
+          p_organization_id: string
+        }
+        Returns: boolean
+      }
       check_login_rate_limit: {
         Args: {
           p_email: string
