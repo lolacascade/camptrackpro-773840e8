@@ -26,7 +26,7 @@ export function useBookingsInsights(dateRange?: DateRange) {
         throw new Error("Organization or account context not found");
       }
 
-      // Get booking stats using our new secure function
+      // Get booking stats using our secure function
       const { data: stats, error: statsError } = await supabase
         .rpc('get_booking_stats', {
           org_id: organizationId,
@@ -35,14 +35,14 @@ export function useBookingsInsights(dateRange?: DateRange) {
 
       if (statsError) throw statsError;
 
-      // Filter stats based on date range if provided
+      // Filter stats based on provided date range
       const filteredStats = stats.filter(stat => {
         if (!dateRange?.from || !dateRange?.to) return true;
         const statDate = new Date(stat.check_in_date);
         return statDate >= dateRange.from && statDate <= dateRange.to;
       });
 
-      // Get RV type distribution
+      // Get RV type distribution for the selected date range
       const { data: rvTypes, error: rvError } = await supabase
         .from('assets')
         .select('asset_type')
@@ -54,6 +54,8 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
           .in('status', ['confirmed', 'checked_in'])
+          .gte('check_in_date', dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : '1970-01-01')
+          .lte('check_in_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : '2100-12-31')
         ).data?.map(b => b.asset_id) || []);
 
       if (rvError) throw rvError;
@@ -76,12 +78,12 @@ export function useBookingsInsights(dateRange?: DateRange) {
         .sort((a, b) => Number(b.value) - Number(a.value))
         .slice(0, 2);
 
-      // Calculate totals from filtered stats
+      // Calculate totals from filtered stats for the selected period
       const totals = filteredStats.reduce(
         (acc, stat) => ({
-          activeBookings: acc.activeBookings + Number(stat.active_bookings),
-          checkIns: acc.checkIns + Number(stat.check_ins),
-          checkOuts: acc.checkOuts + Number(stat.completed_bookings)
+          activeBookings: acc.activeBookings + Number(stat.active_bookings || 0),
+          checkIns: acc.checkIns + Number(stat.check_ins || 0),
+          checkOuts: acc.checkOuts + Number(stat.completed_bookings || 0)
         }),
         { activeBookings: 0, checkIns: 0, checkOuts: 0 }
       );
