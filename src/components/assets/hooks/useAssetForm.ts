@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
@@ -24,8 +25,8 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
     customer_id: customerId || asset?.customer_id || null,
     site_id: asset?.site_id || null,
     asset_type: asset?.asset_type || '',
+    type: asset?.type || asset?.asset_type || '', // Set type equal to asset_type if available
     name: asset?.name || '',
-    type: asset?.type || '',
     status: asset?.status || 'available',
     daily_rate: asset?.daily_rate || 0,
     user_id: session?.user?.id || null,

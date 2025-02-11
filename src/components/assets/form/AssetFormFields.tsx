@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Asset, RV_TYPE_TO_CATEGORY } from "@/types/asset";
@@ -42,7 +43,8 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
     setNewAsset({ 
       ...newAsset, 
       asset_type: value,
-      pricing_category: pricing_category // Auto-set pricing category based on RV type
+      type: value, // Set both type and asset_type
+      pricing_category: pricing_category
     });
   };
 
@@ -53,7 +55,11 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         <Input
           id="asset_name"
           value={newAsset.asset_name || ''}
-          onChange={(e) => setNewAsset({ ...newAsset, asset_name: e.target.value })}
+          onChange={(e) => setNewAsset({ 
+            ...newAsset, 
+            asset_name: e.target.value,
+            name: e.target.value // Set both name and asset_name
+          })}
           placeholder="Enter RV name or identifier"
         />
       </div>
@@ -67,7 +73,7 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_type">RV Type</Label>
+        <Label htmlFor="asset_type">RV Type *</Label>
         <SelectField
           value={newAsset.asset_type || ''}
           onChange={handleAssetTypeChange}
