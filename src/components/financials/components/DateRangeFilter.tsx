@@ -47,10 +47,11 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
           />
         </PopoverTrigger>
         <PopoverContent 
-          className="w-auto p-0" 
+          className="w-auto p-0 z-50" 
           align="start"
           side="bottom"
           sideOffset={8}
+          forceMount
         >
           <Calendar
             initialFocus
