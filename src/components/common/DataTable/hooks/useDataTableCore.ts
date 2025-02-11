@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +19,7 @@ interface UseDataTableCoreProps<T> {
   }[];
   itemsPerPage?: number;
   tableName?: string;
+  searchFields?: string[];
 }
 
 export function useDataTableCore<T extends { id?: number | string }>({
@@ -26,6 +28,7 @@ export function useDataTableCore<T extends { id?: number | string }>({
   filters = [],
   itemsPerPage = 10,
   tableName,
+  searchFields,
 }: UseDataTableCoreProps<T>) {
   const { organizationId, accountId } = useOrganization();
   
@@ -48,11 +51,12 @@ export function useDataTableCore<T extends { id?: number | string }>({
   } = useDataTable({ 
     data: localData || [], 
     columns: columns || [], 
-    filters: filters || [] 
+    filters: filters || [],
+    searchFields
   });
 
   // Apply search filter to sorted data
-  const searchFilteredData = useDataSearch(localData || [], searchTerm);
+  const searchFilteredData = useDataSearch(localData || [], searchTerm, searchFields);
 
   // Calculate pagination
   const startIndex = (currentPage - 1) * itemsPerPage;
