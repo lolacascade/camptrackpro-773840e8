@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { DateRangeFilter } from "@/components/financials/components/DateRangeFilter";
+import { DateRangeFilter } from "@/components/common/DateRangeFilter";
 import { startOfMonth, endOfMonth, subMonths, startOfYear, endOfYear } from "date-fns";
 
 interface BookingsHeaderProps {
