@@ -15,38 +15,54 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [hasOrganization, setHasOrganization] = useState(false);
 
   useEffect(() => {
-    async function checkOrganization() {
-      if (session?.user) {
-        // Using .select() instead of .single() to handle multiple results
+    async function checkSession() {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        if (!currentSession) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Check organization membership
         const { data: orgRoles, error } = await supabase
           .from('organization_roles')
           .select('organization_id')
-          .eq('user_id', session.user.id)
+          .eq('user_id', currentSession.user.id)
           .limit(1);
 
         if (error) {
           console.error('Error checking organization:', error);
           setHasOrganization(false);
         } else {
-          // Check if we have at least one organization role
           setHasOrganization(orgRoles && orgRoles.length > 0);
         }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Session check failed:', error);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
 
-    checkOrganization();
-  }, [session]);
+    checkSession();
+  }, []);
 
+  // Show loading state while checking session
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Redirect to login if no session
   if (!session) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  // If user has no organization, redirect to dashboard where they'll be prompted to create one
+  // If user has no organization, redirect to dashboard
   if (!hasOrganization) {
     return <Navigate to="/app" replace />;
   }

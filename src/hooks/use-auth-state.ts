@@ -13,8 +13,9 @@ export function useAuthState(fromPath: string = '/app') {
     // Check for existing session on mount
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        navigate('/signin', { replace: true });
+      if (session) {
+        // If we have a session, navigate to the intended path
+        navigate(fromPath, { replace: true });
       }
     };
     
@@ -39,10 +40,10 @@ export function useAuthState(fromPath: string = '/app') {
         });
       }
 
-      // Handle token refresh errors
-      if (event === 'TOKEN_REFRESHED' && !currentSession) {
-        console.log('Token refresh failed, redirecting to signin');
-        navigate('/signin', { replace: true });
+      // Handle token refresh
+      if (event === 'TOKEN_REFRESHED' && currentSession) {
+        // Stay on current page if token was refreshed successfully
+        console.log('Token refreshed successfully');
       }
     });
 
