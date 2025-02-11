@@ -1,73 +1,73 @@
 
-import { DataTableHeader } from "./DataTableHeader";
+import { useState } from "react";
 import { DataTableContent } from "./DataTableContent";
-import { DataTablePagination } from "./DataTablePagination";
-import { DataTableProps } from "./types";
+import { DataTableHeader } from "./DataTableHeader";
+import { Column } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
-import { useDataTableCore } from "./hooks/useDataTableCore";
+import { useDataSearch } from "@/hooks/use-data-search";
+import { useDataTable } from "@/hooks/use-data-table";
+
+interface DataTableProps<T> {
+  data: T[];
+  columns: Column<T>[];
+  isLoading?: boolean;
+  filters?: {
+    name: string;
+    options: { label: string; value: string }[];
+    value: string;
+    onChange: (value: string) => void;
+  }[];
+  tableName?: string;
+  onRowClick?: (row: T) => void;
+  searchFields?: string[];
+}
 
 export function DataTable<T extends { id?: number | string }>({
-  data = [],
+  data,
   columns,
-  onViewDetails,
-  onEdit,
-  onDelete,
-  title,
-  itemsPerPage = 10,
-  isLoading = false,
-  filters = [],
-  sortConfig: externalSortConfig,
-  onSort: externalOnSort,
-  showTodayOnly,
-  onShowTodayChange,
+  isLoading,
+  filters,
   tableName,
   onRowClick,
   searchFields,
 }: DataTableProps<T>) {
-  const {
-    organizationId,
-    accountId,
-    sortConfig,
-    handleSort,
-    currentPage,
-    setCurrentPage,
-    searchTerm,
-    setSearchTerm,
-    visibleColumns,
-    setVisibleColumns,
-    visibleColumnsData,
-    handleFilterChange,
-    paginatedData,
-    totalPages,
-  } = useDataTableCore({
-    data,
-    columns,
-    filters,
-    itemsPerPage,
-    tableName,
-    searchFields,
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
-  if (!organizationId || !accountId) {
-    return (
-      <DataTableContainer>
-        <div className="text-center text-gray-500">
-          Please ensure you have an organization and account selected
-        </div>
-      </DataTableContainer>
-    );
-  }
+  const filteredData = useDataSearch(data, searchTerm, searchFields);
+
+  const handleSort = (key: string) => {
+    setSortConfig(current => {
+      if (!current || current.key !== key) {
+        return { key, direction: 'asc' };
+      }
+      if (current.direction === 'asc') {
+        return { key, direction: 'desc' };
+      }
+      return null;
+    });
+  };
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (!sortConfig) return 0;
+
+    const aValue = (a as any)[sortConfig.key];
+    const bValue = (b as any)[sortConfig.key];
+
+    if (aValue === bValue) return 0;
+    if (aValue === null) return 1;
+    if (bValue === null) return -1;
+
+    const modifier = sortConfig.direction === 'asc' ? 1 : -1;
+    return aValue < bValue ? -1 * modifier : 1 * modifier;
+  });
 
   if (isLoading) {
     return (
       <DataTableLoading
-        title={title}
         columns={columns}
         filters={filters}
-        showTodayOnly={showTodayOnly}
-        onShowTodayChange={onShowTodayChange}
-        onColumnVisibilityChange={setVisibleColumns}
       />
     );
   }
@@ -78,32 +78,15 @@ export function DataTable<T extends { id?: number | string }>({
         <DataTableHeader
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
-          title={title}
-          filters={filters.map(filter => ({
-            ...filter,
-            onChange: (value: string) => handleFilterChange(filter.name, value)
-          }))}
-          showTodayOnly={showTodayOnly}
-          onShowTodayChange={onShowTodayChange}
-          columns={columns}
-          onColumnVisibilityChange={setVisibleColumns}
+          filters={filters}
         />
-
+        
         <DataTableContent
-          data={paginatedData}
-          columns={visibleColumnsData}
+          data={sortedData}
+          columns={columns}
           sortConfig={sortConfig}
           onSort={handleSort}
-          onViewDetails={onViewDetails}
-          onEdit={onEdit}
-          onDelete={onDelete}
           onRowClick={onRowClick}
-        />
-
-        <DataTablePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
         />
       </div>
     </DataTableContainer>

@@ -12,6 +12,7 @@ import Customers from "@/pages/Customers";
 import CustomerDetails from "@/pages/CustomerDetails";
 import Assets from "@/pages/Assets";
 import Bookings from "@/pages/Bookings";
+import BookingDetails from "@/pages/BookingDetails";
 import Maintenance from "@/pages/Maintenance";
 import Settings from "@/pages/Settings";
 import Financials from "@/pages/Financials";
@@ -35,6 +36,7 @@ export function AppRoutes() {
         <Route path="/app/customers/:id" element={<CustomerDetails />} />
         <Route path="/app/assets" element={<Assets />} />
         <Route path="/app/bookings" element={<Bookings />} />
+        <Route path="/app/bookings/:id" element={<BookingDetails />} />
         <Route path="/app/maintenance" element={<Maintenance />} />
         <Route path="/app/settings" element={<Settings />} />
         <Route path="/app/financials" element={<Financials />} />

@@ -20,10 +20,12 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const navigate = useNavigate();
 
   const filteredBookings = bookings?.filter(booking => {
-    const matchesStatus = selectedStatus === "all" || booking.status === selectedStatus;
+    // First apply status filter
+    if (selectedStatus !== "all" && booking.status !== selectedStatus) {
+      return false;
+    }
     
-    if (!matchesStatus) return false;
-    
+    // Then apply date range filter if it exists
     if (dateRange?.from && dateRange?.to) {
       const bookingDate = new Date(booking.check_in_date);
       return isWithinInterval(bookingDate, { 
@@ -36,10 +38,12 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   }) || [];
 
   const handleStatusChange = (value: string) => {
+    console.log('Status changed to:', value);
     setSelectedStatus(value);
   };
 
   const handleRowClick = (booking: Booking) => {
+    console.log('Row clicked, navigating to:', `/app/bookings/${booking.id}`);
     navigate(`/app/bookings/${booking.id}`);
   };
 
@@ -66,7 +70,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       ]}
       tableName="bookings"
       onRowClick={handleRowClick}
-      searchFields={["customer.first_name", "customer.last_name", "customer.email", "customer_id"]}
+      searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
     />
   );
 }
