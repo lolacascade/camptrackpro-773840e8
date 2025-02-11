@@ -2,12 +2,12 @@
 import { Table } from "@/components/ui/table";
 import { DataTableHeaderRow } from "./DataTableHeaderRow";
 import { DataTableBody } from "./DataTableBody";
-import { Column } from "./types";
+import { Column, SortConfig } from "./types";
 
 interface DataTableContentProps<T> {
   data: T[];
   columns: Column<T>[];
-  sortConfig: { key: string; direction: 'asc' | 'desc' } | null;
+  sortConfig: SortConfig | null;
   onSort: (key: string) => void;
   onRowClick?: (item: T) => void;
 }

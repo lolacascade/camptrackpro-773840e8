@@ -6,6 +6,7 @@ import { Column } from "./types";
 import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
 import { useDataSearch } from "@/hooks/use-data-search";
+import { DataTableRowActions } from "./DataTableRowActions";
 
 interface DataTableProps<T> {
   data: T[];
@@ -21,6 +22,15 @@ interface DataTableProps<T> {
   onRowClick?: (row: T) => void;
   searchFields?: string[];
   title?: string;
+  onEdit?: (row: T) => void;
+  onDelete?: (row: T) => Promise<void>;
+  onViewDetails?: (row: T) => void;
+  itemsPerPage?: number;
+  dateRange?: {
+    startDate: Date | null;
+    endDate: Date | null;
+    onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
+  };
 }
 
 export function DataTable<T extends { id?: number | string }>({
@@ -32,6 +42,11 @@ export function DataTable<T extends { id?: number | string }>({
   onRowClick,
   searchFields,
   title,
+  onEdit,
+  onDelete,
+  onViewDetails,
+  itemsPerPage,
+  dateRange,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -64,10 +79,27 @@ export function DataTable<T extends { id?: number | string }>({
     return aValue < bValue ? -1 * modifier : 1 * modifier;
   });
 
+  const getActionsColumn = (): Column<T> => ({
+    header: "Actions",
+    accessorKey: "actions",
+    cell: (item: T) => (
+      <DataTableRowActions 
+        row={item}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        onViewDetails={onViewDetails}
+      />
+    ),
+  });
+
+  const columnsWithActions = onEdit || onDelete || onViewDetails
+    ? [...columns, getActionsColumn()]
+    : columns;
+
   if (isLoading) {
     return (
       <DataTableLoading
-        columns={columns}
+        columns={columnsWithActions}
         filters={filters}
         title={title}
       />
@@ -86,7 +118,7 @@ export function DataTable<T extends { id?: number | string }>({
         
         <DataTableContent
           data={sortedData}
-          columns={columns}
+          columns={columnsWithActions}
           sortConfig={sortConfig}
           onSort={handleSort}
           onRowClick={onRowClick}

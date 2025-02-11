@@ -13,8 +13,6 @@ export function DataTableBody<T extends { id?: number | string }>({
   columns,
   onRowClick,
 }: DataTableBodyProps<T>) {
-  console.log('DataTableBody received data:', data);
-
   if (!data || data.length === 0) {
     return (
       <TableBody>
@@ -35,7 +33,7 @@ export function DataTableBody<T extends { id?: number | string }>({
       {data.map((item) => (
         <TableRow 
           key={item.id}
-          className="hover:bg-[#F8F9F9] transition-colors cursor-pointer"
+          className={`hover:bg-[#F8F9F9] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
           onClick={() => onRowClick?.(item)}
         >
           {columns.map((column, index) => (
