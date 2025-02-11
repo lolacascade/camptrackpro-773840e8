@@ -1416,6 +1416,20 @@ export type Database = {
               cancelled_bookings: number
             }[]
           }
+      get_booking_stats_by_period: {
+        Args: {
+          org_id: string
+          acc_id: string
+          start_date?: string
+          end_date?: string
+        }
+        Returns: {
+          active_bookings: number
+          check_ins: number
+          completed_bookings: number
+          cancelled_bookings: number
+        }[]
+      }
       populate_booking_trends: {
         Args: Record<PropertyKey, never>
         Returns: undefined

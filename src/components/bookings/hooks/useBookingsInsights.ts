@@ -26,16 +26,23 @@ export function useBookingsInsights(dateRange?: DateRange) {
         throw new Error("Organization or account context not found");
       }
 
-      // Get booking stats using our secure function with date range
+      console.log('Fetching booking stats for date range:', dateRange);
+
+      // Get booking stats using our new period-based function
       const { data: stats, error: statsError } = await supabase
-        .rpc('get_booking_stats', {
+        .rpc('get_booking_stats_by_period', {
           org_id: organizationId,
           acc_id: accountId,
           start_date: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : null,
           end_date: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : null
         });
 
-      if (statsError) throw statsError;
+      if (statsError) {
+        console.error('Error fetching booking stats:', statsError);
+        throw statsError;
+      }
+
+      console.log('Received booking stats:', stats);
 
       // Get RV type distribution for the selected date range
       const { data: rvTypes, error: rvError } = await supabase
@@ -53,7 +60,12 @@ export function useBookingsInsights(dateRange?: DateRange) {
           .lte('check_in_date', dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : '2100-12-31')
         ).data?.map(b => b.asset_id) || []);
 
-      if (rvError) throw rvError;
+      if (rvError) {
+        console.error('Error fetching RV types:', rvError);
+        throw rvError;
+      }
+
+      console.log('Received RV types:', rvTypes);
 
       // Calculate RV type distribution
       const rvCounts: Record<string, number> = {};
@@ -73,21 +85,19 @@ export function useBookingsInsights(dateRange?: DateRange) {
         .sort((a, b) => Number(b.value) - Number(a.value))
         .slice(0, 2);
 
-      // Calculate totals from stats
-      const totals = stats.reduce(
-        (acc, stat) => ({
-          activeBookings: acc.activeBookings + Number(stat.active_bookings || 0),
-          checkIns: acc.checkIns + Number(stat.check_ins || 0),
-          checkOuts: acc.checkOuts + Number(stat.completed_bookings || 0)
-        }),
-        { activeBookings: 0, checkIns: 0, checkOuts: 0 }
-      );
+      // Since our new function returns a single row with period totals
+      const periodStats = stats[0] || {
+        active_bookings: 0,
+        check_ins: 0,
+        completed_bookings: 0,
+        cancelled_bookings: 0
+      };
 
       return {
-        activeBookings: totals.activeBookings,
+        activeBookings: Number(periodStats.active_bookings || 0),
         rvTypeDistribution: rvDistribution,
-        checkIns: totals.checkIns,
-        checkOuts: totals.checkOuts
+        checkIns: Number(periodStats.check_ins || 0),
+        checkOuts: Number(periodStats.completed_bookings || 0)
       };
     },
     enabled: !!organizationId && !!accountId,
