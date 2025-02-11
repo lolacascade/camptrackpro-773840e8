@@ -14,21 +14,11 @@ interface BookingsTableProps {
   dateRange?: DateRange;
 }
 
-/**
- * BookingsTable Component
- * 
- * Displays a table of bookings with filtering, sorting, and search capabilities.
- * Integrates with real-time updates and provides booking management functions.
- * 
- * @param onEdit - Optional callback for editing a booking
- * @param dateRange - Optional date range for filtering bookings
- */
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const { bookings, isLoading, error } = useBookings();
   const navigate = useNavigate();
 
-  // Filter bookings based on selected status and date range
   const filteredBookings = bookings?.filter(booking => {
     const matchesStatus = selectedStatus === "all" || booking.status === selectedStatus;
     
@@ -49,7 +39,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
     setSelectedStatus(value);
   };
 
-  const handleView = (booking: Booking) => {
+  const handleRowClick = (booking: Booking) => {
     navigate(`/app/bookings/${booking.id}`);
   };
 
@@ -75,9 +65,8 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
         }
       ]}
       tableName="bookings"
-      onViewDetails={handleView}
-      onEdit={onEdit}
-      searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
+      onRowClick={handleRowClick}
+      searchFields={["customer.first_name", "customer.last_name", "customer.email", "customer_id"]}
     />
   );
 }

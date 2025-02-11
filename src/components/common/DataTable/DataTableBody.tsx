@@ -1,22 +1,16 @@
+
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { DataTableRowActions } from "./DataTableRowActions";
 import { Column } from "./types";
 
 interface DataTableBodyProps<T> {
   data: T[];
   columns: Column<T>[];
-  onViewDetails?: (item: T) => void;
-  onEdit?: (item: T) => void;
-  onDelete?: (item: T) => void;
   onRowClick?: (item: T) => void;
 }
 
 export function DataTableBody<T extends { id?: number | string }>({
   data,
   columns,
-  onViewDetails,
-  onEdit,
-  onDelete,
   onRowClick,
 }: DataTableBodyProps<T>) {
   console.log('DataTableBody received data:', data);
@@ -26,7 +20,7 @@ export function DataTableBody<T extends { id?: number | string }>({
       <TableBody>
         <TableRow>
           <TableCell
-            colSpan={columns.length + 1}
+            colSpan={columns.length}
             className="text-center py-4"
           >
             No items found
@@ -41,7 +35,7 @@ export function DataTableBody<T extends { id?: number | string }>({
       {data.map((item) => (
         <TableRow 
           key={item.id}
-          className={`hover:bg-[#F8F9F9] transition-colors ${onRowClick ? 'cursor-pointer' : ''}`}
+          className="hover:bg-[#F8F9F9] transition-colors cursor-pointer"
           onClick={() => onRowClick?.(item)}
         >
           {columns.map((column, index) => (
@@ -53,14 +47,6 @@ export function DataTableBody<T extends { id?: number | string }>({
                   : 'N/A'}
             </TableCell>
           ))}
-          <TableCell>
-            <DataTableRowActions
-              row={item}
-              onEdit={onEdit}
-              onViewDetails={onViewDetails}
-              onDelete={onDelete}
-            />
-          </TableCell>
         </TableRow>
       ))}
     </TableBody>

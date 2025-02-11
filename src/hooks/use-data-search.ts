@@ -10,7 +10,7 @@ export function useDataSearch<T>(data: T[], searchTerm: string, searchFields?: s
     return Object.keys(item as object).filter(key => 
       typeof (item as any)[key] === 'string' || 
       typeof (item as any)[key] === 'number' ||
-      key === 'email' // Explicitly include email field
+      typeof (item as any)[key] === 'object'
     );
   }, [data]);
 
@@ -25,21 +25,32 @@ export function useDataSearch<T>(data: T[], searchTerm: string, searchFields?: s
 
     const filtered = data.filter(item => {
       return fieldsToSearch.some(field => {
-        const value = (item as any)[field];
-        if (value === null || value === undefined) return false;
+        let value = (item as any)[field];
 
         // Handle nested object paths (e.g., "customer.first_name")
         if (field.includes('.')) {
           const parts = field.split('.');
-          let nestedValue = item as any;
+          let current = item as any;
           for (const part of parts) {
-            if (!nestedValue || typeof nestedValue !== 'object') return false;
-            nestedValue = nestedValue[part];
+            if (!current || typeof current !== 'object') {
+              return false;
+            }
+            current = current[part];
           }
-          return nestedValue ? String(nestedValue).toLowerCase().includes(searchTermLower) : false;
+          value = current;
         }
 
-        // Handle regular fields
+        if (value === null || value === undefined) {
+          return false;
+        }
+
+        // Handle objects
+        if (typeof value === 'object') {
+          return Object.values(value).some(v => 
+            String(v).toLowerCase().includes(searchTermLower)
+          );
+        }
+
         return String(value).toLowerCase().includes(searchTermLower);
       });
     });
