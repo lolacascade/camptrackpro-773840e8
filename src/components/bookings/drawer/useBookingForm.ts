@@ -15,9 +15,9 @@ type BookingFormData = {
   asset_id: string;
   site_id: string;
   special_requirements?: string;
+  status?: string;
+  total_amount?: number;
 };
-
-type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
 
 export function useBookingForm({ booking, onClose, onBookingUpdated }: {
   booking?: Booking;
@@ -55,7 +55,9 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
       customer_id: booking.customer_id,
       asset_id: booking.asset_id,
       site_id: booking.site_id?.toString() || '',
-      special_requirements: booking.special_requirements
+      special_requirements: booking.special_requirements,
+      status: booking.status,
+      total_amount: booking.total_amount
     } : {}
   });
 
@@ -91,12 +93,12 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
         site_id: parseInt(data.site_id),
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending' as BookingStatus,
+        status: data.status || 'pending',
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        total_amount: 0
+        total_amount: data.total_amount || 0
       };
 
       if (booking?.id) {
