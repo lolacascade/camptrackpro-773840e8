@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
@@ -25,72 +26,71 @@ export function useBookingsInsights(dateRange?: DateRange) {
         throw new Error("Organization or account context not found");
       }
 
-      // Base query for active bookings within date range
-      let query = supabase
-        .from('bookings')
-        .select(`
-          *,
-          asset:assets(
-            asset_type
-          )
-        `)
+      // Get booking stats using our new secure function
+      const { data: stats, error: statsError } = await supabase
+        .rpc('get_booking_stats', {
+          org_id: organizationId,
+          acc_id: accountId
+        });
+
+      if (statsError) throw statsError;
+
+      // Filter stats based on date range if provided
+      const filteredStats = stats.filter(stat => {
+        if (!dateRange?.from || !dateRange?.to) return true;
+        const statDate = new Date(stat.check_in_date);
+        return statDate >= dateRange.from && statDate <= dateRange.to;
+      });
+
+      // Get RV type distribution
+      const { data: rvTypes, error: rvError } = await supabase
+        .from('assets')
+        .select('asset_type')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
-        .in('status', ['pending', 'confirmed', 'checked_in']);
-
-      // Apply date range filter to all queries
-      const startDate = dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
-      const endDate = dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
-
-      query = query
-        .or(`check_in_date.gte.${startDate},check_out_date.lte.${endDate}`);
-
-      const [bookings, checkIns, checkOuts] = await Promise.all([
-        query,
-        supabase
+        .in('id', (await supabase
           .from('bookings')
-          .select('*')
+          .select('asset_id')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
-          .in('status', ['pending', 'confirmed'])
-          .gte('check_in_date', startDate)
-          .lte('check_in_date', endDate),
-        supabase
-          .from('bookings')
-          .select('*')
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-          .in('status', ['checked_in', 'confirmed'])
-          .gte('check_out_date', startDate)
-          .lte('check_out_date', endDate)
-      ]);
+          .in('status', ['confirmed', 'checked_in'])
+        ).data?.map(b => b.asset_id) || []);
 
-      if (bookings.error) throw bookings.error;
-      if (checkIns.error) throw checkIns.error;
-      if (checkOuts.error) throw checkOuts.error;
+      if (rvError) throw rvError;
 
       // Calculate RV type distribution
-      const rvTypeDistribution = bookings.data?.reduce((acc: Record<string, number>, booking) => {
-        const rvType = booking.asset?.asset_type || 'Unknown';
-        acc[rvType] = (acc[rvType] || 0) + 1;
-        return acc;
-      }, {});
+      const rvCounts: Record<string, number> = {};
+      rvTypes.forEach(({ asset_type }) => {
+        if (asset_type) {
+          rvCounts[asset_type] = (rvCounts[asset_type] || 0) + 1;
+        }
+      });
 
-      // Get the top 2 RV types for the breakdown
-      const topRvTypes = Object.entries(rvTypeDistribution || {})
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 2)
+      const totalRvs = Object.values(rvCounts).reduce((sum, count) => sum + count, 0);
+      const rvDistribution = Object.entries(rvCounts)
         .map(([type, count]) => ({
           label: type,
           value: String(count),
-          percentage: Math.round((count / (bookings.data?.length || 1)) * 100)
-        }));
+          percentage: Math.round((count / totalRvs) * 100)
+        }))
+        .sort((a, b) => Number(b.value) - Number(a.value))
+        .slice(0, 2);
+
+      // Calculate totals from filtered stats
+      const totals = filteredStats.reduce(
+        (acc, stat) => ({
+          activeBookings: acc.activeBookings + Number(stat.active_bookings),
+          checkIns: acc.checkIns + Number(stat.check_ins),
+          checkOuts: acc.checkOuts + Number(stat.completed_bookings)
+        }),
+        { activeBookings: 0, checkIns: 0, checkOuts: 0 }
+      );
 
       return {
-        activeBookings: bookings.data?.length || 0,
-        rvTypeDistribution: topRvTypes,
-        checkIns: checkIns.data?.length || 0,
-        checkOuts: checkOuts.data?.length || 0
+        activeBookings: totals.activeBookings,
+        rvTypeDistribution: rvDistribution,
+        checkIns: totals.checkIns,
+        checkOuts: totals.checkOuts
       };
     },
     enabled: !!organizationId && !!accountId,

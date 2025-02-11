@@ -1387,6 +1387,19 @@ export type Database = {
             }
             Returns: boolean
           }
+      get_booking_stats: {
+        Args: {
+          org_id: string
+          acc_id: string
+        }
+        Returns: {
+          check_in_date: string
+          active_bookings: number
+          check_ins: number
+          completed_bookings: number
+          cancelled_bookings: number
+        }[]
+      }
       populate_booking_trends: {
         Args: Record<PropertyKey, never>
         Returns: undefined
