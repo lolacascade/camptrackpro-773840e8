@@ -1,3 +1,4 @@
+
 import { DataTableHeader } from "./DataTableHeader";
 import { DataTableContent } from "./DataTableContent";
 import { DataTablePagination } from "./DataTablePagination";
@@ -22,6 +23,7 @@ export function DataTable<T extends { id?: number | string }>({
   onShowTodayChange,
   tableName,
   onRowClick,
+  searchFields,
 }: DataTableProps<T>) {
   const {
     organizationId,
@@ -44,6 +46,7 @@ export function DataTable<T extends { id?: number | string }>({
     filters,
     itemsPerPage,
     tableName,
+    searchFields,
   });
 
   if (!organizationId || !accountId) {

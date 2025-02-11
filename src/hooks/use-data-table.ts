@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Column } from '@/components/common/DataTable/types';
 
@@ -10,9 +11,10 @@ interface UseDataTableProps<T> {
     value: string;
     onChange: (value: string) => void;
   }[];
+  searchFields?: string[];
 }
 
-export function useDataTable<T>({ data, columns, filters }: UseDataTableProps<T>) {
+export function useDataTable<T>({ data, columns, filters, searchFields }: UseDataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [visibleColumns, setVisibleColumns] = useState<string[]>(

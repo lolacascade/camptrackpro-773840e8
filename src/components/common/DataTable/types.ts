@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 
 export interface FilterOption {
@@ -49,4 +50,5 @@ export interface DataTableProps<T> {
   onSearchChange?: (value: string) => void;
   onRowClick?: (row: T) => void;
   dateRange?: DateRange;
+  searchFields?: string[];
 }
