@@ -23,7 +23,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
     label: `${customer.first_name} ${customer.last_name}`
   }));
 
-  const handleCustomerCreated = (customer: Customer) => {
+  const handleCustomerUpdated = (customer: Customer) => {
     // Update the local state and form
     onCustomerCreated(customer);
     // Invalidate the customers query to trigger a refresh
@@ -55,7 +55,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={handleCustomerCreated}
+        onCustomerUpdated={handleCustomerUpdated}
       />
     </div>
   );

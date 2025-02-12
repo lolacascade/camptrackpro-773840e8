@@ -74,7 +74,7 @@ export function useBookingForm({
       status: booking.status as BookingStatus,
       total_amount: booking.total_amount
     } : {
-      customer_id: newlyCreatedCustomer?.id || '',
+      customer_id: newlyCreatedCustomer?.id ? String(newlyCreatedCustomer.id) : '',
       asset_id: newlyCreatedAssetId || '',
       site_id: newlyCreatedSiteId || ''
     }
@@ -142,6 +142,7 @@ export function useBookingForm({
       onBookingUpdated();
       onClose();
     } catch (error) {
+      console.error('Error saving booking:', error);
       toast.error("Failed to save booking");
     }
   };
