@@ -1,3 +1,4 @@
+
 export interface Expense {
   id: string;
   description: string;
@@ -11,6 +12,15 @@ export interface Expense {
   status?: string;
   payment_method?: string;
   receipt_url?: string;
+  booking_id?: string;
+  bookings?: {
+    reservation_code: string;
+    customer_id: string;
+    customers: {
+      first_name: string;
+      last_name: string;
+    }
+  };
 }
 
 export interface ExpenseCategory {
