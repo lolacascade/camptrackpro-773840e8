@@ -8,6 +8,7 @@ import { Expense } from "@/types/expense";
 import { Column } from "@/components/common/DataTable/types";
 import { format } from "date-fns";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const expenseCategories = [
   { label: "All Categories", value: "all" },
@@ -25,16 +26,16 @@ const expenseCategories = [
 ];
 
 interface ExpenseTableProps {
-  onEdit?: (expense: Expense) => void;
   dateRange: {
     from: Date;
     to: Date;
   };
 }
 
-export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
+export function ExpenseTable({ dateRange }: ExpenseTableProps) {
   const { organizationId, accountId } = useOrganization();
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const navigate = useNavigate();
 
   const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['expenses', organizationId, accountId, dateRange.from, dateRange.to, selectedCategory],
@@ -75,7 +76,6 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
       const { data, error } = await query;
 
       if (error) {
-        console.error('Error fetching expenses:', error);
         throw error;
       }
 
@@ -84,25 +84,8 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
     enabled: !!organizationId && !!accountId
   });
 
-  const handleDelete = async (expense: Expense) => {
-    if (expense.booking_id) {
-      toast.error("Cannot delete expenses linked to bookings");
-      return;
-    }
-
-    const { error } = await supabase
-      .from('expenses')
-      .delete()
-      .eq('id', expense.id)
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId);
-
-    if (error) {
-      toast.error("Failed to delete expense");
-      return;
-    }
-
-    toast.success("Expense deleted successfully");
+  const handleRowClick = (expense: Expense) => {
+    navigate(`/app/expenses/${expense.id}`);
   };
 
   const columns: Column<Expense>[] = [
@@ -176,8 +159,7 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
       data={expenses}
       columns={columns}
       isLoading={isLoading}
-      onEdit={onEdit}
-      onDelete={handleDelete}
+      onRowClick={handleRowClick}
       tableName="expenses"
       filters={[
         {
