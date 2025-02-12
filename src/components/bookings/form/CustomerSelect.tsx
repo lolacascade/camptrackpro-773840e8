@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { CustomerDrawer } from "@/components/customers/CustomerDrawer";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface CustomerSelectProps {
   value: string;
@@ -15,16 +16,19 @@ interface CustomerSelectProps {
 
 export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }: CustomerSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const options = customers.map(customer => ({
     value: String(customer.id),
     label: `${customer.first_name} ${customer.last_name}`
   }));
 
-  const handleCustomerUpdated = () => {
+  const handleCustomerCreated = (customer: Customer) => {
+    // Update the local state and form
+    onCustomerCreated(customer);
+    // Invalidate the customers query to trigger a refresh
+    queryClient.invalidateQueries({ queryKey: ['customers'] });
     setIsDrawerOpen(false);
-    // The customers list will automatically update through the useCustomers hook
-    // and the newly created customer will be passed back to the booking form
   };
 
   return (
@@ -51,8 +55,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={handleCustomerUpdated}
-        onCustomerCreated={onCustomerCreated}
+        onCustomerUpdated={handleCustomerCreated}
       />
     </div>
   );

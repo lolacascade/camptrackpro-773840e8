@@ -3,7 +3,7 @@ import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DateRange } from "react-day-picker";
 import { useOrganization } from "@/hooks/use-organization";
@@ -20,6 +20,7 @@ interface SlotSelectProps {
 export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { organizationId, accountId } = useOrganization();
+  const queryClient = useQueryClient();
 
   const { data: sites } = useQuery({
     queryKey: ['sites', organizationId, accountId, dateRange],
@@ -52,10 +53,12 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
   ];
 
   const handleEntityUpdated = (newSite: any) => {
-    setIsDrawerOpen(false);
     if (newSite?.id) {
       onSiteCreated(newSite.id);
+      // Invalidate the sites query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ['sites', organizationId, accountId] });
     }
+    setIsDrawerOpen(false);
   };
 
   return (

@@ -9,6 +9,7 @@ import { addDays } from "date-fns";
 import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
+import { Customer } from "@/types/customer";
 
 type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
 
@@ -21,11 +22,23 @@ type BookingFormData = {
   total_amount?: number;
 };
 
-export function useBookingForm({ booking, onClose, onBookingUpdated }: {
+interface UseBookingFormProps {
   booking?: Booking;
   onClose: () => void;
   onBookingUpdated: () => void;
-}) {
+  newlyCreatedCustomer: Customer | null;
+  newlyCreatedAssetId: string | null;
+  newlyCreatedSiteId: string | null;
+}
+
+export function useBookingForm({ 
+  booking, 
+  onClose, 
+  onBookingUpdated,
+  newlyCreatedCustomer,
+  newlyCreatedAssetId,
+  newlyCreatedSiteId
+}: UseBookingFormProps) {
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
@@ -60,7 +73,11 @@ export function useBookingForm({ booking, onClose, onBookingUpdated }: {
       special_requirements: booking.special_requirements,
       status: booking.status as BookingStatus,
       total_amount: booking.total_amount
-    } : {}
+    } : {
+      customer_id: newlyCreatedCustomer?.id || '',
+      asset_id: newlyCreatedAssetId || '',
+      site_id: newlyCreatedSiteId || ''
+    }
   });
 
   const onSubmit = async (data: BookingFormData) => {

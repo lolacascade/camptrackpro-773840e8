@@ -3,7 +3,7 @@ import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
@@ -18,6 +18,7 @@ interface AssetSelectProps {
 export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { organizationId, accountId } = useOrganization();
+  const queryClient = useQueryClient();
 
   const { data: assets } = useQuery({
     queryKey: ['assets', organizationId, accountId],
@@ -48,10 +49,12 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
   ];
 
   const handleEntityUpdated = (newAsset: any) => {
-    setIsDrawerOpen(false);
     if (newAsset?.id) {
       onAssetCreated(newAsset.id);
+      // Invalidate the assets query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ['assets', organizationId, accountId] });
     }
+    setIsDrawerOpen(false);
   };
 
   return (
