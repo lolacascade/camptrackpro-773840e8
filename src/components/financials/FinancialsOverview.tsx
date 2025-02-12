@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ExpenseTable } from "./ExpenseTable";
 import { FinancialsStatsCards } from "./FinancialsStatsCards";
@@ -19,11 +20,6 @@ export function FinancialsOverview({ dateRange }: FinancialsOverviewProps) {
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const { expenses, isLoading, refetch } = useExpenseData();
 
-  const handleEditExpense = async (expense: Expense) => {
-    setSelectedExpense(expense);
-    setIsAddExpenseOpen(true);
-  };
-
   const handleDrawerClose = () => {
     setIsAddExpenseOpen(false);
     setSelectedExpense(null);
@@ -35,10 +31,7 @@ export function FinancialsOverview({ dateRange }: FinancialsOverviewProps) {
       <FinancialsStatsCards dateRange={dateRange} />
       <RevenueChart dateRange={dateRange} />
       <ExpenseBreakdownChart dateRange={dateRange} />
-      <ExpenseTable
-        onEdit={handleEditExpense}
-        dateRange={dateRange}
-      />
+      <ExpenseTable dateRange={dateRange} />
 
       <AddExpenseDrawer
         open={isAddExpenseOpen}
