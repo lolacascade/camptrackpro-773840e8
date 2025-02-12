@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { MaintenanceDrawer } from "@/components/maintenance/MaintenanceDrawer";
@@ -44,7 +45,12 @@ export default function Maintenance() {
             site_id,
             user_id,
             organization_id,
-            account_id
+            account_id,
+            site:sites(
+              id,
+              name,
+              status
+            )
           `)
           .eq('organization_id', organizationId)
           .eq('account_id', accountId);
@@ -60,7 +66,7 @@ export default function Maintenance() {
           throw error;
         }
 
-        return data as Maintenance[];
+        return data || [];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
         toast({
@@ -73,16 +79,6 @@ export default function Maintenance() {
     },
     enabled: !!organizationId && !!accountId
   });
-
-  const handleEdit = (maintenance: Maintenance) => {
-    setSelectedMaintenance(maintenance);
-    setIsDrawerOpen(true);
-  };
-
-  const handleViewDetails = (maintenance: Maintenance) => {
-    setSelectedMaintenance(maintenance);
-    setIsDrawerOpen(true);
-  };
 
   if (!organizationId || !accountId) {
     return (
@@ -106,8 +102,6 @@ export default function Maintenance() {
           ) : (
             <MaintenanceTable
               maintenanceRequests={maintenanceRequests}
-              onEdit={handleEdit}
-              onViewDetails={handleViewDetails}
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
             />
