@@ -36,7 +36,7 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
   });
 
   const options = (assets || []).map(asset => ({
-    value: asset.id,
+    value: String(asset.id),
     label: `${asset.name} (${asset.asset_size})`
   }));
 
@@ -47,15 +47,6 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
     { name: 'asset_type', label: 'Type', type: 'text', required: true },
     { name: 'daily_rate', label: 'Daily Rate', type: 'number', required: true }
   ];
-
-  const handleEntityUpdated = (newAsset: any) => {
-    if (newAsset?.id) {
-      onAssetCreated(newAsset.id);
-      // Invalidate the assets query to trigger a refresh
-      queryClient.invalidateQueries({ queryKey: ['assets', organizationId, accountId] });
-    }
-    setIsDrawerOpen(false);
-  };
 
   return (
     <div className="space-y-2">
@@ -81,7 +72,13 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={handleEntityUpdated}
+        onEntityUpdated={(newAsset: any) => {
+          if (newAsset?.id) {
+            onAssetCreated(String(newAsset.id));
+            queryClient.invalidateQueries({ queryKey: ['assets', organizationId, accountId] });
+          }
+          setIsDrawerOpen(false);
+        }}
         title="RV"
         fields={assetFields}
         tableName="assets"

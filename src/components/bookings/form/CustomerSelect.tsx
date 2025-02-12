@@ -23,14 +23,6 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
     label: `${customer.first_name} ${customer.last_name}`
   }));
 
-  const handleCustomerUpdated = (customer: Customer) => {
-    // Update the local state and form
-    onCustomerCreated(customer);
-    // Invalidate the customers query to trigger a refresh
-    queryClient.invalidateQueries({ queryKey: ['customers'] });
-    setIsDrawerOpen(false);
-  };
-
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -55,7 +47,11 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={handleCustomerUpdated}
+        onCustomerUpdated={() => {
+          queryClient.invalidateQueries({ queryKey: ['customers'] });
+          setIsDrawerOpen(false);
+        }}
+        onCustomerCreated={onCustomerCreated}
       />
     </div>
   );

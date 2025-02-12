@@ -39,7 +39,7 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
   });
 
   const options = (sites || []).map(site => ({
-    value: site.id.toString(),
+    value: String(site.id),
     label: `${site.name} (${site.length_ft}ft x ${site.width_ft}ft)`
   }));
 
@@ -51,15 +51,6 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
     { name: 'has_water', label: 'Water Available', type: 'checkbox' },
     { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' }
   ];
-
-  const handleEntityUpdated = (newSite: any) => {
-    if (newSite?.id) {
-      onSiteCreated(newSite.id);
-      // Invalidate the sites query to trigger a refresh
-      queryClient.invalidateQueries({ queryKey: ['sites', organizationId, accountId] });
-    }
-    setIsDrawerOpen(false);
-  };
 
   return (
     <div className="space-y-2">
@@ -85,7 +76,13 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={handleEntityUpdated}
+        onEntityUpdated={(newSite: any) => {
+          if (newSite?.id) {
+            onSiteCreated(String(newSite.id));
+            queryClient.invalidateQueries({ queryKey: ['sites', organizationId, accountId] });
+          }
+          setIsDrawerOpen(false);
+        }}
         title="Site"
         fields={siteFields}
         tableName="sites"
