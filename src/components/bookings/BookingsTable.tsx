@@ -1,13 +1,13 @@
 
 import { DataTable } from "@/components/common/DataTable/DataTable";
-import { useState } from "react";
 import { Booking } from "@/types/booking";
 import { useBookings } from "./hooks/useBookings";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { DateRange } from "react-day-picker";
-import { isWithinInterval } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import { useBookingFilters } from "./hooks/useBookingFilters";
+import { usePagination } from "@/hooks/use-pagination";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -15,39 +15,15 @@ interface BookingsTableProps {
 }
 
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 25;
-  const { bookings, total, isLoading, error } = useBookings(currentPage, itemsPerPage);
   const navigate = useNavigate();
+  const { currentPage, itemsPerPage, handlePageChange } = usePagination();
+  const { selectedStatus, handleStatusChange, filterBookings } = useBookingFilters();
+  const { bookings, total, isLoading, error } = useBookings({
+    page: currentPage,
+    itemsPerPage
+  });
 
-  const filteredBookings = bookings?.filter(booking => {
-    // First apply status filter
-    if (selectedStatus !== "all" && booking.status !== selectedStatus) {
-      return false;
-    }
-    
-    // Then apply date range filter if it exists
-    if (dateRange?.from && dateRange?.to) {
-      const bookingDate = new Date(booking.check_in_date);
-      return isWithinInterval(bookingDate, { 
-        start: dateRange.from, 
-        end: dateRange.to 
-      });
-    }
-    
-    return true;
-  }) || [];
-
-  const handleStatusChange = (value: string) => {
-    console.log('Status changed to:', value);
-    setSelectedStatus(value);
-    setCurrentPage(1); // Reset to first page on filter change
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const filteredBookings = filterBookings(bookings, dateRange);
 
   const handleRowClick = (booking: Booking) => {
     console.log('Row clicked, navigating to:', `/app/bookings/${booking.id}`);

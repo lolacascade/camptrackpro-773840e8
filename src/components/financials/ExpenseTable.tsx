@@ -1,4 +1,3 @@
-
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,11 +168,6 @@ export function ExpenseTable({ dateRange }: ExpenseTableProps) {
           onChange: setSelectedCategory
         }
       ]}
-      dateRange={{
-        startDate: dateRange.from,
-        endDate: dateRange.to,
-        onDateRangeChange: () => {}
-      }}
     />
   );
 }

@@ -5,7 +5,12 @@ import { Booking } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 
-export function useBookings(page = 1, itemsPerPage = 25) {
+interface UseBookingsOptions {
+  page?: number;
+  itemsPerPage?: number;
+}
+
+export function useBookings({ page = 1, itemsPerPage = 25 }: UseBookingsOptions = {}) {
   const { organizationId, accountId } = useOrganization();
 
   const { data, isLoading, error } = useQuery({
@@ -15,40 +20,42 @@ export function useBookings(page = 1, itemsPerPage = 25) {
         return { data: [], total: 0 };
       }
 
-      // First, get total count
-      const { count, error: countError } = await supabase
-        .from('bookings')
-        .select('*', { count: 'exact', head: true })
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+      const [countResult, bookingsResult] = await Promise.all([
+        // Get total count
+        supabase
+          .from('bookings')
+          .select('*', { count: 'exact', head: true })
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId),
+        
+        // Get paginated data
+        supabase
+          .from('bookings')
+          .select(`
+            *,
+            customer:customers(*),
+            asset:assets(*),
+            site:sites(*)
+          `)
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .order('created_at', { ascending: false })
+          .range((page - 1) * itemsPerPage, page * itemsPerPage - 1)
+      ]);
 
-      if (countError) {
+      if (countResult.error) {
         toast.error("Failed to fetch bookings count");
-        throw countError;
+        throw countResult.error;
       }
 
-      // Then get paginated data
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          *,
-          customer:customers(*),
-          asset:assets(*),
-          site:sites(*)
-        `)
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .order('created_at', { ascending: false })
-        .range((page - 1) * itemsPerPage, page * itemsPerPage - 1);
-
-      if (error) {
+      if (bookingsResult.error) {
         toast.error("Failed to fetch bookings");
-        throw error;
+        throw bookingsResult.error;
       }
 
       return {
-        data: data as Booking[],
-        total: count || 0
+        data: bookingsResult.data as Booking[],
+        total: countResult.count || 0
       };
     },
     enabled: !!organizationId && !!accountId
