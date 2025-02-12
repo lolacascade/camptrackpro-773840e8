@@ -1,12 +1,14 @@
-
 import { BaseDrawer } from "@/components/common/drawer";
+import { Button } from "@/components/ui/button";
 import { Booking } from "@/types/booking";
-import { useCustomers } from "../form/useCustomers";
-import { useBookingForm } from "./useBookingForm";
-import { BookingForm } from "./BookingForm";
+import { useCustomers } from "@/components/bookings/form/useCustomers";
+import { CustomerSelect } from "./form/CustomerSelect";
+import { AssetSelect } from "./form/AssetSelect";
+import { SlotSelect } from "./form/SlotSelect";
 import { useState } from "react";
 import { Customer } from "@/types/customer";
 import { DateRange } from "react-day-picker";
+import { useForm } from "react-hook-form";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -25,17 +27,61 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     to: new Date()
   });
 
-  const {
-    form,
-    onSubmit
-  } = useBookingForm({ 
-    booking, 
-    onClose, 
-    onBookingUpdated,
-    newlyCreatedCustomer,
-    newlyCreatedAssetId,
-    newlyCreatedSiteId
+  const form = useForm({
+    defaultValues: booking ? {
+      customer_id: booking.customer_id,
+      asset_id: booking.asset_id,
+      site_id: booking.site_id,
+      special_requirements: booking.special_requirements,
+      status: booking.status,
+      total_amount: booking.total_amount
+    } : {
+      customer_id: '',
+      asset_id: '',
+      site_id: '',
+      special_requirements: '',
+      status: 'pending',
+      total_amount: 0
+    }
   });
+
+  const onSubmit = async (data: any) => {
+    try {
+      if (booking) {
+        // Update existing booking
+        const { error } = await supabase
+          .from('bookings')
+          .update({
+            ...data,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', booking.id);
+
+        if (error) throw error;
+      } else {
+        // Create new booking
+        const { error } = await supabase
+          .from('bookings')
+          .insert([{
+            ...data,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }]);
+
+        if (error) throw error;
+      }
+
+      onBookingUpdated();
+      onClose();
+    } catch (error) {
+      console.error('Error saving booking:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save booking. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
 
   return (
     <BaseDrawer
@@ -73,7 +119,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
           }}
         />
 
-        <Button type="button" onClick={onSubmit} className="w-full">
+        <Button type="button" onClick={form.handleSubmit(onSubmit)} className="w-full">
           {booking ? "Update Booking" : "Create Booking"}
         </Button>
       </div>

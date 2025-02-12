@@ -1,3 +1,4 @@
+
 import { ReactNode } from "react";
 
 export type TableName = 
@@ -26,7 +27,7 @@ export interface EntityDrawerProps {
   entity: any;
   open: boolean;
   onClose: () => void;
-  onEntityUpdated: () => void;
+  onEntityUpdated: (entity: any) => void;
   title: string;
   fields: Field[];
   tableName: TableName;

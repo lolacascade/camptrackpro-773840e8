@@ -1,3 +1,4 @@
+
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { CustomerSelect } from "../form/CustomerSelect";
@@ -15,6 +16,9 @@ interface BookingDrawerFormProps {
   onSubmit: (data: BookingFormData) => Promise<void>;
   customers: Customer[];
   isSubmitting: boolean;
+  onCustomerCreated: (customer: Customer) => void;
+  onAssetCreated: (assetId: string) => void;
+  onSiteCreated: (siteId: string) => void;
 }
 
 export function BookingDrawerForm({
@@ -23,7 +27,10 @@ export function BookingDrawerForm({
   onDateRangeChange,
   onSubmit,
   customers,
-  isSubmitting
+  isSubmitting,
+  onCustomerCreated,
+  onAssetCreated,
+  onSiteCreated
 }: BookingDrawerFormProps) {
   const { register, handleSubmit, setValue, watch } = useForm<BookingFormData>({
     defaultValues: booking ? {
@@ -40,6 +47,7 @@ export function BookingDrawerForm({
         value={watch('customer_id') || ''}
         onSelect={(value) => setValue('customer_id', value)}
         customers={customers}
+        onCustomerCreated={onCustomerCreated}
       />
 
       <BookingDateRange
@@ -50,12 +58,14 @@ export function BookingDrawerForm({
       <AssetSelect
         value={watch('asset_id') || ''}
         onSelect={(value) => setValue('asset_id', value)}
+        onAssetCreated={onAssetCreated}
       />
 
       <SlotSelect
-        value={watch('site_id')?.toString() || ''}
-        onSelect={(value) => setValue('site_id', parseInt(value))}
+        value={watch('site_id') || ''}
+        onSelect={(value) => setValue('site_id', value)}
         dateRange={dateRange}
+        onSiteCreated={onSiteCreated}
       />
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
