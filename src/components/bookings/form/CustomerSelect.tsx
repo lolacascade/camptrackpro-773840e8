@@ -23,11 +23,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
     label: `${customer.first_name} ${customer.last_name}`
   }));
 
-  const handleCustomerUpdate = (customer: Customer | undefined) => {
-    if (customer) {
-      onCustomerCreated(customer);
-      queryClient.invalidateQueries({ queryKey: ['customers'] });
-    }
+  const handleCustomerUpdate = () => {
     setIsDrawerOpen(false);
   };
 
@@ -55,7 +51,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={handleCustomerUpdate}
+        onCustomerUpdated={() => handleCustomerUpdate()}
       />
     </div>
   );
