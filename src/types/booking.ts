@@ -1,5 +1,7 @@
+
 import { Customer } from "./customer";
 import { Slot } from "./slot";
+import { Site } from "./site";
 
 export interface Booking {
   id: string;
@@ -16,6 +18,7 @@ export interface Booking {
   status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
   total_amount: number;
   site_id?: number;
+  site?: Site;
   slot?: Slot;
   special_requirements?: string;
   reservation_code?: string;

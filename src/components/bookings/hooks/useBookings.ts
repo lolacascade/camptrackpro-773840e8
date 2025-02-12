@@ -20,7 +20,8 @@ export function useBookings() {
         .select(`
           *,
           customer:customers(*),
-          asset:assets(*)
+          asset:assets(*),
+          site:sites(*)
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
