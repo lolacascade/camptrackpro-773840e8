@@ -18,14 +18,14 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const navigate = useNavigate();
   const { currentPage, itemsPerPage, handlePageChange } = usePagination();
   const { selectedStatus, handleStatusChange, filterBookings } = useBookingFilters();
-  const { bookings, total, isLoading, error } = useBookings({
+  const { bookings, isLoading, error } = useBookings({
     page: currentPage,
     itemsPerPage
   });
 
   const filteredBookings = filterBookings(bookings, dateRange);
   const filteredTotal = filteredBookings.length;
-  const shouldShowPagination = total > itemsPerPage;
+  const totalPages = Math.ceil(filteredTotal / itemsPerPage);
 
   const handleRowClick = (booking: Booking) => {
     console.log('Row clicked, navigating to:', `/app/bookings/${booking.id}`);
@@ -56,9 +56,9 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       tableName="bookings"
       onRowClick={handleRowClick}
       searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
-      currentPage={shouldShowPagination ? currentPage : undefined}
-      totalPages={shouldShowPagination ? Math.ceil(total / itemsPerPage) : undefined}
-      onPageChange={shouldShowPagination ? handlePageChange : undefined}
+      currentPage={totalPages > 1 ? currentPage : undefined}
+      totalPages={totalPages > 1 ? totalPages : undefined}
+      onPageChange={totalPages > 1 ? handlePageChange : undefined}
       itemsPerPage={itemsPerPage}
     />
   );
