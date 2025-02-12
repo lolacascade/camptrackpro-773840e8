@@ -76,9 +76,9 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={(newSite: any) => {
-          if (newSite?.id) {
-            onSiteCreated(String(newSite.id));
+        onEntityUpdated={(entity) => {
+          if (entity?.id) {
+            onSiteCreated(String(entity.id));
             queryClient.invalidateQueries({ queryKey: ['sites', organizationId, accountId] });
           }
           setIsDrawerOpen(false);

@@ -72,9 +72,9 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={(newAsset: any) => {
-          if (newAsset?.id) {
-            onAssetCreated(String(newAsset.id));
+        onEntityUpdated={(entity) => {
+          if (entity?.id) {
+            onAssetCreated(String(entity.id));
             queryClient.invalidateQueries({ queryKey: ['assets', organizationId, accountId] });
           }
           setIsDrawerOpen(false);
