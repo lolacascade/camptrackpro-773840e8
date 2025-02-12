@@ -1,3 +1,4 @@
+
 import { Customer } from "@/types/customer";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,10 @@ interface CustomerSelectProps {
   value: string;
   onSelect: (customerId: string) => void;
   customers: Customer[];
+  onCustomerCreated: (customer: Customer) => void;
 }
 
-export function CustomerSelect({ value, onSelect, customers }: CustomerSelectProps) {
+export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }: CustomerSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const options = customers.map(customer => ({
@@ -19,9 +21,10 @@ export function CustomerSelect({ value, onSelect, customers }: CustomerSelectPro
     label: `${customer.first_name} ${customer.last_name}`
   }));
 
-  const handleCustomerCreated = () => {
+  const handleCustomerUpdated = () => {
     setIsDrawerOpen(false);
     // The customers list will automatically update through the useCustomers hook
+    // and the newly created customer will be passed back to the booking form
   };
 
   return (
@@ -48,7 +51,8 @@ export function CustomerSelect({ value, onSelect, customers }: CustomerSelectPro
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={handleCustomerCreated}
+        onCustomerUpdated={handleCustomerUpdated}
+        onCustomerCreated={onCustomerCreated}
       />
     </div>
   );

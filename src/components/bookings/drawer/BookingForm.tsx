@@ -19,6 +19,9 @@ interface BookingFormProps {
   customers: Customer[];
   onSubmit: () => void;
   isEdit?: boolean;
+  onCustomerCreated: (customer: Customer) => void;
+  onAssetCreated: (assetId: string) => void;
+  onSiteCreated: (siteId: string) => void;
 }
 
 export function BookingForm({
@@ -27,7 +30,10 @@ export function BookingForm({
   onDateRangeChange,
   customers,
   onSubmit,
-  isEdit
+  isEdit,
+  onCustomerCreated,
+  onAssetCreated,
+  onSiteCreated
 }: BookingFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -35,6 +41,7 @@ export function BookingForm({
         value={form.watch('customer_id') || ''}
         onSelect={(value) => form.setValue('customer_id', value)}
         customers={customers}
+        onCustomerCreated={onCustomerCreated}
       />
 
       <BookingDateRange
@@ -45,12 +52,14 @@ export function BookingForm({
       <AssetSelect
         value={form.watch('asset_id') || ''}
         onSelect={(value) => form.setValue('asset_id', value)}
+        onAssetCreated={onAssetCreated}
       />
 
       <SlotSelect
         value={form.watch('site_id') || ''}
         onSelect={(value) => form.setValue('site_id', value.toString())}
         dateRange={dateRange}
+        onSiteCreated={onSiteCreated}
       />
 
       {isEdit && (

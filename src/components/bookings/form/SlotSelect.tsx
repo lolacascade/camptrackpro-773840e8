@@ -1,3 +1,4 @@
+
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -13,9 +14,10 @@ interface SlotSelectProps {
   value: string;
   onSelect: (slotId: string) => void;
   dateRange?: DateRange;
+  onSiteCreated: (siteId: string) => void;
 }
 
-export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
+export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { organizationId, accountId } = useOrganization();
 
@@ -49,6 +51,13 @@ export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
     { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' }
   ];
 
+  const handleEntityUpdated = (newSite: any) => {
+    setIsDrawerOpen(false);
+    if (newSite?.id) {
+      onSiteCreated(newSite.id);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -73,7 +82,7 @@ export function SlotSelect({ value, onSelect, dateRange }: SlotSelectProps) {
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={() => setIsDrawerOpen(false)}
+        onEntityUpdated={handleEntityUpdated}
         title="Site"
         fields={siteFields}
         tableName="sites"

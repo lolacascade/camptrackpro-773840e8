@@ -1,3 +1,4 @@
+
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -11,9 +12,10 @@ import { Field } from "@/components/common/EntityDrawer/types";
 interface AssetSelectProps {
   value: string;
   onSelect: (assetId: string) => void;
+  onAssetCreated: (assetId: string) => void;
 }
 
-export function AssetSelect({ value, onSelect }: AssetSelectProps) {
+export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { organizationId, accountId } = useOrganization();
 
@@ -45,6 +47,13 @@ export function AssetSelect({ value, onSelect }: AssetSelectProps) {
     { name: 'daily_rate', label: 'Daily Rate', type: 'number', required: true }
   ];
 
+  const handleEntityUpdated = (newAsset: any) => {
+    setIsDrawerOpen(false);
+    if (newAsset?.id) {
+      onAssetCreated(newAsset.id);
+    }
+  };
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
@@ -69,7 +78,7 @@ export function AssetSelect({ value, onSelect }: AssetSelectProps) {
         entity={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onEntityUpdated={() => setIsDrawerOpen(false)}
+        onEntityUpdated={handleEntityUpdated}
         title="RV"
         fields={assetFields}
         tableName="assets"
