@@ -36,12 +36,12 @@ export function BookingDrawerForm({
     defaultValues: booking ? {
       customer_id: String(booking.customer_id),
       asset_id: String(booking.asset_id),
-      site_id: String(booking.site_id),
+      site_id: Number(booking.site_id),
       special_requirements: booking.special_requirements
     } : {
       customer_id: '',
       asset_id: '',
-      site_id: '',
+      site_id: 0,
       special_requirements: ''
     }
   });
@@ -68,9 +68,12 @@ export function BookingDrawerForm({
 
       <SlotSelect
         value={String(watch('site_id') || '')}
-        onSelect={(value) => setValue('site_id', value)}
+        onSelect={(value) => setValue('site_id', Number(value))}
         dateRange={dateRange}
-        onSiteCreated={onSiteCreated}
+        onSiteCreated={(siteId) => {
+          onSiteCreated(siteId);
+          setValue('site_id', Number(siteId));
+        }}
       />
 
       <Button type="submit" className="w-full" disabled={isSubmitting}>
