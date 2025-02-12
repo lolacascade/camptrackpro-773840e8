@@ -37,17 +37,27 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { data: expenses = [], isLoading, error } = useQuery({
-    queryKey: ['expenses', organizationId, accountId, dateRange.from, dateRange.to],
+    queryKey: ['expenses', organizationId, accountId, dateRange.from, dateRange.to, selectedCategory],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         throw new Error("Organization or account context not found");
       }
 
+      console.log('Fetching expenses with params:', {
+        organizationId,
+        accountId,
+        dateRange: {
+          from: format(dateRange.from, 'yyyy-MM-dd'),
+          to: format(dateRange.to, 'yyyy-MM-dd')
+        },
+        category: selectedCategory
+      });
+
       let query = supabase
         .from('expenses')
         .select(`
           *,
-          bookings (
+          bookings!expenses_booking_id_fkey (
             reservation_code,
             customer_id,
             customers (
@@ -73,7 +83,9 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         throw error;
       }
 
-      return data as any[];
+      console.log('Fetched expenses:', data);
+
+      return data as Expense[];
     },
     enabled: !!organizationId && !!accountId
   });
@@ -105,7 +117,7 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
       header: "Description",
       accessorKey: "description",
       sortable: true,
-      cell: (item: any) => {
+      cell: (item: Expense) => {
         if (item.bookings) {
           const booking = item.bookings;
           const customer = booking.customers;
@@ -163,6 +175,7 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   ];
 
   if (error) {
+    console.error('Query error:', error);
     toast.error("Failed to load expenses. Please try again.");
   }
 
