@@ -592,6 +592,7 @@ export type Database = {
         Row: {
           account_id: string
           amount: number | null
+          booking_id: string | null
           category: string
           created_at: string | null
           date: string
@@ -607,6 +608,7 @@ export type Database = {
         Insert: {
           account_id: string
           amount?: number | null
+          booking_id?: string | null
           category: string
           created_at?: string | null
           date: string
@@ -622,6 +624,7 @@ export type Database = {
         Update: {
           account_id?: string
           amount?: number | null
+          booking_id?: string | null
           category?: string
           created_at?: string | null
           date?: string
@@ -640,6 +643,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
             referencedColumns: ["id"]
           },
           {

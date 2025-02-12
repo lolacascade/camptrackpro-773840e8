@@ -1,3 +1,4 @@
+
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ import { useState } from "react";
 
 const expenseCategories = [
   { label: "All Categories", value: "all" },
+  { label: "Revenue", value: "Revenue" },
   { label: "Maintenance", value: "Maintenance" },
   { label: "Utilities", value: "Utilities" },
   { label: "Supplies", value: "Supplies" },
@@ -32,6 +34,7 @@ interface ExpenseTableProps {
 
 export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   const { organizationId, accountId } = useOrganization();
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { data: expenses = [], isLoading, error } = useQuery({
     queryKey: ['expenses', organizationId, accountId, dateRange.from, dateRange.to],
@@ -42,12 +45,26 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
 
       let query = supabase
         .from('expenses')
-        .select('*')
+        .select(`
+          *,
+          bookings (
+            reservation_code,
+            customer_id,
+            customers (
+              first_name,
+              last_name
+            )
+          )
+        `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId)
         .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
         .lte('date', format(dateRange.to, 'yyyy-MM-dd'))
         .order('date', { ascending: false });
+
+      if (selectedCategory !== "all") {
+        query = query.eq('category', selectedCategory);
+      }
 
       const { data, error } = await query;
 
@@ -56,13 +73,18 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         throw error;
       }
 
-      return data as Expense[];
+      return data as any[];
     },
     enabled: !!organizationId && !!accountId
   });
 
   const handleDelete = async (expense: Expense) => {
     try {
+      if (expense.booking_id) {
+        toast.error("Cannot delete expenses linked to bookings");
+        return;
+      }
+
       const { error } = await supabase
         .from('expenses')
         .delete()
@@ -82,14 +104,31 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
     {
       header: "Description",
       accessorKey: "description",
-      sortable: true
+      sortable: true,
+      cell: (item: any) => {
+        if (item.bookings) {
+          const booking = item.bookings;
+          const customer = booking.customers;
+          return (
+            <div>
+              <div>{item.description}</div>
+              <div className="text-sm text-gray-500">
+                {customer?.first_name} {customer?.last_name}
+              </div>
+            </div>
+          );
+        }
+        return item.description;
+      }
     },
     {
       header: "Amount",
       accessorKey: "amount",
       sortable: true,
       cell: (item: Expense) => (
-        <span>${item.amount?.toLocaleString()}</span>
+        <span className={item.category === 'Revenue' ? 'text-green-600' : ''}>
+          ${item.amount?.toLocaleString()}
+        </span>
       )
     },
     {
@@ -139,8 +178,8 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         {
           name: "category",
           options: expenseCategories,
-          value: "all",
-          onChange: () => {}
+          value: selectedCategory,
+          onChange: setSelectedCategory
         }
       ]}
       dateRange={{
