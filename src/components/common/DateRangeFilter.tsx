@@ -46,19 +46,19 @@ export function DateRangeFilter({ onDateRangeChange }: DateRangeFilterProps) {
               : "Pick a date range"}
           </Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent className="w-full sm:max-w-lg">
           <SheetHeader>
             <SheetTitle>Select Date Range</SheetTitle>
           </SheetHeader>
-          <div className="mt-4">
+          <div className="mt-4 flex justify-center">
             <Calendar
               initialFocus
               mode="range"
               defaultMonth={date?.from || new Date()}
               selected={date}
               onSelect={handleSelect}
-              numberOfMonths={2}
-              className="rounded-md border"
+              numberOfMonths={1}
+              className="w-full rounded-md border sm:p-3"
             />
           </div>
         </SheetContent>
