@@ -6,7 +6,7 @@ import { AddMaintenanceDrawer } from "@/components/maintenance/AddMaintenanceDra
 import { MaintenanceStatsCards } from "@/components/maintenance/insights/MaintenanceStatsCards";
 import { MaintenanceHeader } from "@/components/maintenance/MaintenanceHeader";
 import { MaintenanceTable } from "@/components/maintenance/MaintenanceTable";
-import type { Maintenance } from "@/types/maintenance";
+import type { Maintenance, MaintenanceStatus } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { PageWithChat } from "@/components/layout/PageWithChat";
@@ -66,7 +66,17 @@ export default function Maintenance() {
           throw error;
         }
 
-        return data || [];
+        // Transform the data to ensure status is of the correct type
+        return (data || []).map(item => ({
+          ...item,
+          status: item.status as MaintenanceStatus,
+          priority: item.priority as 'low' | 'medium' | 'high',
+          customer_id: item.customer_id?.toString() || null,
+          user_id: item.user_id?.toString() || null,
+          organization_id: item.organization_id?.toString(),
+          account_id: item.account_id?.toString(),
+          assigned_to: item.assigned_to?.toString() || null
+        })) as Maintenance[];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
         toast({
