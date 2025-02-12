@@ -1,4 +1,5 @@
-import { BaseDrawer } from "@/components/common/BaseDrawer";
+
+import { BaseDrawer } from "@/components/common/drawer";
 import { Booking } from "@/types/booking";
 import { useCustomers } from "../form/useCustomers";
 import { useBookingForm } from "./useBookingForm";
