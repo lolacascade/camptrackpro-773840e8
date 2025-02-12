@@ -44,8 +44,8 @@ export function DataTable<T extends { id?: number | string }>({
   onEdit,
   onDelete,
   onViewDetails,
-  currentPage = 1,
-  totalPages = 1,
+  currentPage,
+  totalPages,
   onPageChange,
   itemsPerPage = 25,
 }: DataTableProps<T>) {
@@ -125,11 +125,11 @@ export function DataTable<T extends { id?: number | string }>({
           onRowClick={onRowClick}
         />
 
-        {totalPages > 1 && (
+        {currentPage && totalPages && totalPages > 1 && onPageChange && (
           <DataTablePagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange!}
+            onPageChange={onPageChange}
           />
         )}
       </div>
