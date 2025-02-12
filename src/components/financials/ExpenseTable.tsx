@@ -43,23 +43,19 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         throw new Error("Organization or account context not found");
       }
 
-      console.log('Fetching expenses with params:', {
-        organizationId,
-        accountId,
-        dateRange: {
-          from: format(dateRange.from, 'yyyy-MM-dd'),
-          to: format(dateRange.to, 'yyyy-MM-dd')
-        },
-        category: selectedCategory
-      });
-
       let query = supabase
         .from('expenses')
         .select(`
-          *,
+          id,
+          description,
+          amount,
+          category,
+          date,
+          status,
+          payment_method,
+          booking_id,
           bookings!expenses_booking_id_fkey (
             reservation_code,
-            customer_id,
             customers (
               first_name,
               last_name
@@ -83,33 +79,30 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
         throw error;
       }
 
-      console.log('Fetched expenses:', data);
-
       return data as Expense[];
     },
     enabled: !!organizationId && !!accountId
   });
 
   const handleDelete = async (expense: Expense) => {
-    try {
-      if (expense.booking_id) {
-        toast.error("Cannot delete expenses linked to bookings");
-        return;
-      }
-
-      const { error } = await supabase
-        .from('expenses')
-        .delete()
-        .eq('id', expense.id)
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
-
-      if (error) throw error;
-      toast.success("Expense deleted successfully");
-    } catch (error) {
-      console.error('Error deleting expense:', error);
-      toast.error("Failed to delete expense");
+    if (expense.booking_id) {
+      toast.error("Cannot delete expenses linked to bookings");
+      return;
     }
+
+    const { error } = await supabase
+      .from('expenses')
+      .delete()
+      .eq('id', expense.id)
+      .eq('organization_id', organizationId)
+      .eq('account_id', accountId);
+
+    if (error) {
+      toast.error("Failed to delete expense");
+      return;
+    }
+
+    toast.success("Expense deleted successfully");
   };
 
   const columns: Column<Expense>[] = [
@@ -175,7 +168,6 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
   ];
 
   if (error) {
-    console.error('Query error:', error);
     toast.error("Failed to load expenses. Please try again.");
   }
 
@@ -198,7 +190,7 @@ export function ExpenseTable({ onEdit, dateRange }: ExpenseTableProps) {
       dateRange={{
         startDate: dateRange.from,
         endDate: dateRange.to,
-        onDateRangeChange: () => {} // We'll handle date changes at the page level
+        onDateRangeChange: () => {}
       }}
     />
   );
