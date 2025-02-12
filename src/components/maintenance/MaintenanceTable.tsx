@@ -2,22 +2,21 @@
 import { DataTable } from "@/components/common/DataTable/DataTable";
 import { maintenanceColumns } from "./table/MaintenanceColumns";
 import type { Maintenance } from "@/types/maintenance";
+import { useNavigate } from "react-router-dom";
 
 interface MaintenanceTableProps {
   maintenanceRequests: Maintenance[];
-  onEdit: (maintenance: Maintenance) => void;
-  onViewDetails: (maintenance: Maintenance) => void;
   statusFilter: string;
   setStatusFilter: (value: string) => void;
 }
 
 export function MaintenanceTable({
   maintenanceRequests,
-  onEdit,
-  onViewDetails,
   statusFilter,
   setStatusFilter
 }: MaintenanceTableProps) {
+  const navigate = useNavigate();
+
   const filters = [
     {
       name: "status",
@@ -32,12 +31,15 @@ export function MaintenanceTable({
     }
   ];
 
+  const handleRowClick = (maintenance: Maintenance) => {
+    navigate(`/app/maintenance/${maintenance.id}`);
+  };
+
   return (
     <DataTable
-      data={maintenanceRequests}
+      data={maintenanceRequests || []}
       columns={maintenanceColumns}
-      onEdit={onEdit}
-      onViewDetails={onViewDetails}
+      onRowClick={handleRowClick}
       filters={filters}
       tableName="maintenance"
     />

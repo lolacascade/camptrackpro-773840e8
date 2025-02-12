@@ -1,6 +1,8 @@
+
 import { Badge } from "@/components/ui/badge";
 import type { Column } from "@/components/common/DataTable/types";
 import type { Maintenance } from "@/types/maintenance";
+import { format } from "date-fns";
 
 export const maintenanceColumns: Column<Maintenance>[] = [
   {
@@ -45,13 +47,13 @@ export const maintenanceColumns: Column<Maintenance>[] = [
   {
     header: "Created",
     accessorKey: "created_at",
-    cell: (maintenance) => new Date(maintenance.created_at).toLocaleDateString(),
+    cell: (maintenance) => maintenance.created_at ? format(new Date(maintenance.created_at), 'MMM dd, yyyy') : '-',
     sortable: true,
   },
   {
     header: "Updated",
     accessorKey: "updated_at",
-    cell: (maintenance) => maintenance.updated_at ? new Date(maintenance.updated_at).toLocaleDateString() : '-',
+    cell: (maintenance) => maintenance.updated_at ? format(new Date(maintenance.updated_at), 'MMM dd, yyyy') : '-',
     sortable: true,
   }
 ];
