@@ -1,3 +1,4 @@
+
 import { BaseDrawer } from "@/components/common/drawer";
 import { Button } from "@/components/ui/button";
 import { Booking } from "@/types/booking";
@@ -9,6 +10,8 @@ import { useState } from "react";
 import { Customer } from "@/types/customer";
 import { DateRange } from "react-day-picker";
 import { useForm } from "react-hook-form";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface BookingDrawerProps {
   booking?: Booking;
@@ -19,6 +22,7 @@ interface BookingDrawerProps {
 
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const { customers } = useCustomers();
+  const { toast } = useToast();
   const [newlyCreatedCustomer, setNewlyCreatedCustomer] = useState<Customer | null>(null);
   const [newlyCreatedAssetId, setNewlyCreatedAssetId] = useState<string | null>(null);
   const [newlyCreatedSiteId, setNewlyCreatedSiteId] = useState<string | null>(null);
@@ -48,7 +52,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
   const onSubmit = async (data: any) => {
     try {
       if (booking) {
-        // Update existing booking
         const { error } = await supabase
           .from('bookings')
           .update({
@@ -59,7 +62,6 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
         if (error) throw error;
       } else {
-        // Create new booking
         const { error } = await supabase
           .from('bookings')
           .insert([{
@@ -73,7 +75,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
       onBookingUpdated();
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving booking:', error);
       toast({
         title: "Error",
@@ -91,7 +93,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     >
       <div className="space-y-6">
         <CustomerSelect
-          value={form.watch('customer_id') || ''}
+          value={String(form.watch('customer_id') || '')}
           onSelect={(value) => form.setValue('customer_id', value)}
           customers={customers}
           onCustomerCreated={(customer) => {
@@ -101,7 +103,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         />
 
         <AssetSelect
-          value={form.watch('asset_id') || ''}
+          value={String(form.watch('asset_id') || '')}
           onSelect={(value) => form.setValue('asset_id', value)}
           onAssetCreated={(assetId) => {
             setNewlyCreatedAssetId(assetId);
@@ -110,7 +112,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         />
 
         <SlotSelect
-          value={form.watch('site_id') || ''}
+          value={String(form.watch('site_id') || '')}
           onSelect={(value) => form.setValue('site_id', value)}
           dateRange={dateRange}
           onSiteCreated={(siteId) => {

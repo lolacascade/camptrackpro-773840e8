@@ -27,7 +27,7 @@ export interface EntityDrawerProps {
   entity: any;
   open: boolean;
   onClose: () => void;
-  onEntityUpdated: (entity: any) => void;
+  onEntityUpdated: (entity?: any) => void;
   title: string;
   fields: Field[];
   tableName: TableName;

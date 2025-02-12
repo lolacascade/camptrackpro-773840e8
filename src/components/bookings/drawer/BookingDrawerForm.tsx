@@ -34,17 +34,22 @@ export function BookingDrawerForm({
 }: BookingDrawerFormProps) {
   const { register, handleSubmit, setValue, watch } = useForm<BookingFormData>({
     defaultValues: booking ? {
-      customer_id: booking.customer_id,
-      asset_id: booking.asset_id,
-      site_id: booking.site_id,
+      customer_id: String(booking.customer_id),
+      asset_id: String(booking.asset_id),
+      site_id: String(booking.site_id),
       special_requirements: booking.special_requirements
-    } : {}
+    } : {
+      customer_id: '',
+      asset_id: '',
+      site_id: '',
+      special_requirements: ''
+    }
   });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <CustomerSelect
-        value={watch('customer_id') || ''}
+        value={String(watch('customer_id') || '')}
         onSelect={(value) => setValue('customer_id', value)}
         customers={customers}
         onCustomerCreated={onCustomerCreated}
@@ -56,13 +61,13 @@ export function BookingDrawerForm({
       />
 
       <AssetSelect
-        value={watch('asset_id') || ''}
+        value={String(watch('asset_id') || '')}
         onSelect={(value) => setValue('asset_id', value)}
         onAssetCreated={onAssetCreated}
       />
 
       <SlotSelect
-        value={watch('site_id') || ''}
+        value={String(watch('site_id') || '')}
         onSelect={(value) => setValue('site_id', value)}
         dateRange={dateRange}
         onSiteCreated={onSiteCreated}

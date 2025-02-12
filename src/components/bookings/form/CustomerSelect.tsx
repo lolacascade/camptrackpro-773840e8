@@ -47,7 +47,7 @@ export function CustomerSelect({ value, onSelect, customers, onCustomerCreated }
         customer={null}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        onCustomerUpdated={(customer: Customer) => {
+        onCustomerUpdated={(customer: Customer | undefined) => {
           if (customer) {
             onCustomerCreated(customer);
             queryClient.invalidateQueries({ queryKey: ['customers'] });
