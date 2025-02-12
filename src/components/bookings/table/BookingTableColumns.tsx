@@ -1,8 +1,6 @@
 
 import { Column } from "@/components/common/DataTable/types";
 import { Booking } from "@/types/booking";
-import { DataTableRowActions } from "@/components/common/DataTable/DataTableRowActions";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 export const getBookingColumns = (): Column<Booking>[] => [
@@ -19,7 +17,18 @@ export const getBookingColumns = (): Column<Booking>[] => [
     header: "Asset",
     accessorKey: "asset",
     cell: (booking: Booking) => {
-      return booking.asset?.asset_name || booking.asset?.name || '-';
+      const asset = booking.asset;
+      // Return asset_name if available, fallback to name, or show dash if neither exists
+      return asset ? (asset.asset_name || asset.name || '-') : '-';
+    },
+    sortable: true
+  },
+  {
+    header: "Site",
+    accessorKey: "site_id",
+    cell: (booking: Booking) => {
+      const site = booking.site;
+      return site ? site.name : '-';
     },
     sortable: true
   },
