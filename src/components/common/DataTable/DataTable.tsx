@@ -7,6 +7,7 @@ import { DataTableContainer } from "./components/DataTableContainer";
 import { DataTableLoading } from "./components/DataTableLoading";
 import { useDataSearch } from "@/hooks/use-data-search";
 import { DataTableRowActions } from "./DataTableRowActions";
+import { DataTablePagination } from "./DataTablePagination";
 
 interface DataTableProps<T> {
   data: T[];
@@ -25,12 +26,10 @@ interface DataTableProps<T> {
   onEdit?: (row: T) => void;
   onDelete?: (row: T) => Promise<void>;
   onViewDetails?: (row: T) => void;
+  currentPage?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
   itemsPerPage?: number;
-  dateRange?: {
-    startDate: Date | null;
-    endDate: Date | null;
-    onDateRangeChange: (startDate: Date | null, endDate: Date | null) => void;
-  };
 }
 
 export function DataTable<T extends { id?: number | string }>({
@@ -45,8 +44,10 @@ export function DataTable<T extends { id?: number | string }>({
   onEdit,
   onDelete,
   onViewDetails,
-  itemsPerPage,
-  dateRange,
+  currentPage = 1,
+  totalPages = 1,
+  onPageChange,
+  itemsPerPage = 25,
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
@@ -123,6 +124,14 @@ export function DataTable<T extends { id?: number | string }>({
           onSort={handleSort}
           onRowClick={onRowClick}
         />
+
+        {totalPages > 1 && (
+          <DataTablePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange!}
+          />
+        )}
       </div>
     </DataTableContainer>
   );

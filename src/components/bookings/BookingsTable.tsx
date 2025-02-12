@@ -16,7 +16,9 @@ interface BookingsTableProps {
 
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const { bookings, isLoading, error } = useBookings();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 25;
+  const { bookings, total, isLoading, error } = useBookings(currentPage, itemsPerPage);
   const navigate = useNavigate();
 
   const filteredBookings = bookings?.filter(booking => {
@@ -40,6 +42,11 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const handleStatusChange = (value: string) => {
     console.log('Status changed to:', value);
     setSelectedStatus(value);
+    setCurrentPage(1); // Reset to first page on filter change
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleRowClick = (booking: Booking) => {
@@ -71,6 +78,10 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       tableName="bookings"
       onRowClick={handleRowClick}
       searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
+      currentPage={currentPage}
+      totalPages={Math.ceil(total / itemsPerPage)}
+      onPageChange={handlePageChange}
+      itemsPerPage={itemsPerPage}
     />
   );
 }
