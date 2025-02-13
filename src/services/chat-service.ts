@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -23,7 +24,6 @@ export const chatService = {
       });
 
       if (error) {
-        console.error('Error in chat service:', error);
         let errorMessage: any;
         try {
           errorMessage = JSON.parse(error.message);
@@ -40,7 +40,6 @@ export const chatService = {
 
       return data;
     } catch (error: any) {
-      console.error('Error in sendMessage:', error);
       throw error;
     }
   },
@@ -62,7 +61,6 @@ export const chatService = {
         attachments: item.attachments,
       }));
     } catch (error) {
-      console.error('Error fetching chat history:', error);
       toast.error("Failed to load chat history");
       return [];
     }
