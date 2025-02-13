@@ -8,6 +8,7 @@ import { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { useBookingFilters } from "./hooks/useBookingFilters";
 import { usePagination } from "@/hooks/use-pagination";
+import { useState } from "react";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
@@ -18,9 +19,14 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const navigate = useNavigate();
   const { currentPage, itemsPerPage, handlePageChange } = usePagination();
   const { selectedStatus, handleStatusChange } = useBookingFilters();
+  const [searchTerm, setSearchTerm] = useState("");
+
   const { bookings, isLoading, error, total } = useBookings({
     page: currentPage,
-    itemsPerPage
+    itemsPerPage,
+    searchTerm,
+    status: selectedStatus,
+    dateRange
   });
 
   const handleRowClick = (booking: Booking) => {
@@ -50,13 +56,12 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       ]}
       tableName="bookings"
       onRowClick={handleRowClick}
-      searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
+      searchTerm={searchTerm}
+      onSearchChange={setSearchTerm}
       currentPage={currentPage}
       totalPages={Math.ceil(total / itemsPerPage)}
       onPageChange={handlePageChange}
       itemsPerPage={itemsPerPage}
-      dateRange={dateRange}
-      dateField="check_in_date"
     />
   );
 }
