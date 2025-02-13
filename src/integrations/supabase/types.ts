@@ -75,7 +75,7 @@ export type Database = {
       }
       assets: {
         Row: {
-          account_id: string | null
+          account_id: string
           asset_name: string | null
           asset_size: string | null
           asset_type: string | null
@@ -84,7 +84,7 @@ export type Database = {
           daily_rate: number | null
           id: string
           name: string
-          organization_id: string | null
+          organization_id: string
           pricing_category:
             | Database["public"]["Enums"]["rv_pricing_category"]
             | null
@@ -95,7 +95,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          account_id?: string | null
+          account_id: string
           asset_name?: string | null
           asset_size?: string | null
           asset_type?: string | null
@@ -104,7 +104,7 @@ export type Database = {
           daily_rate?: number | null
           id?: string
           name: string
-          organization_id?: string | null
+          organization_id: string
           pricing_category?:
             | Database["public"]["Enums"]["rv_pricing_category"]
             | null
@@ -115,7 +115,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          account_id?: string | null
+          account_id?: string
           asset_name?: string | null
           asset_size?: string | null
           asset_type?: string | null
@@ -124,7 +124,7 @@ export type Database = {
           daily_rate?: number | null
           id?: string
           name?: string
-          organization_id?: string | null
+          organization_id?: string
           pricing_category?:
             | Database["public"]["Enums"]["rv_pricing_category"]
             | null
@@ -161,6 +161,20 @@ export type Database = {
             columns: ["site_id"]
             isOneToOne: false
             referencedRelation: "sites"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_assets_account"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_assets_organization"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
