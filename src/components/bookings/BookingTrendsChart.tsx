@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,15 +33,12 @@ export function BookingTrendsChart({ dateRange }: BookingTrendsChartProps) {
   const { data: trends, isLoading, error } = useQuery({
     queryKey: ['booking-trends', organizationId, accountId, dateRange],
     queryFn: async () => {
-      console.log('Fetching booking trends with context:', { organizationId, accountId, dateRange });
-      
       let query = supabase
         .from('booking_trends_data')
         .select('*')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
-      // Apply date range filter if provided
       if (dateRange?.from) {
         query = query.gte('month', dateRange.from.toISOString().split('T')[0]);
       }
@@ -51,27 +49,20 @@ export function BookingTrendsChart({ dateRange }: BookingTrendsChartProps) {
       const { data, error } = await query.order('month', { ascending: true });
 
       if (error) {
-        console.error('Error fetching booking trends:', error);
         throw error;
       }
 
-      console.log('Raw booking trends data:', data);
-
       if (!data || data.length === 0) {
-        console.log('No booking trends data found');
         return [];
       }
 
-      const formattedData = data.map((trend: BookingTrend) => ({
+      return data.map((trend: BookingTrend) => ({
         ...trend,
         month: format(new Date(trend.month), 'MMM yyyy'),
         short_term_bookings: Number(trend.short_term_bookings) || 0,
         long_term_bookings: Number(trend.long_term_bookings) || 0,
         cancellations: Number(trend.cancellations) || 0
       }));
-
-      console.log('Formatted booking trends data:', formattedData);
-      return formattedData;
     },
     enabled: !!organizationId && !!accountId,
   });
