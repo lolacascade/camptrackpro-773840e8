@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -84,11 +85,7 @@ export function useDataTableCore<T extends { id?: number | string }>({
           table: tableName,
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
-        (payload) => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('Real-time update received:', payload.eventType);
-          }
-          
+        (payload) => {          
           setLocalData(currentData => {
             if (!currentData) return data;
 
