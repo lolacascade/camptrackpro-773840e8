@@ -1,39 +1,26 @@
 
 import { useState } from 'react';
-import { DateRange } from "react-day-picker";
-import { isWithinInterval } from "date-fns";
-import { Booking } from "@/types/booking";
+import { BookingFilters, BookingStatus } from '@/types/booking';
+
+const DEFAULT_FILTERS: BookingFilters = {
+  searchTerm: '',
+  status: 'all',
+  page: 1,
+  dateRange: null
+};
 
 export function useBookingFilters() {
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [filters, setFilters] = useState<BookingFilters>(DEFAULT_FILTERS);
 
-  const filterBookings = (bookings: Booking[], dateRange?: DateRange) => {
-    return bookings.filter(booking => {
-      // Status filter
-      if (selectedStatus !== "all" && booking.status !== selectedStatus) {
-        return false;
-      }
-      
-      // Date range filter
-      if (dateRange?.from && dateRange?.to) {
-        const bookingDate = new Date(booking.check_in_date);
-        return isWithinInterval(bookingDate, { 
-          start: dateRange.from, 
-          end: dateRange.to 
-        });
-      }
-      
-      return true;
-    });
-  };
-
-  const handleStatusChange = (value: string) => {
-    setSelectedStatus(value);
+  const updateFilters = (updates: Partial<BookingFilters>) => {
+    setFilters(current => ({
+      ...current,
+      ...updates
+    }));
   };
 
   return {
-    selectedStatus,
-    handleStatusChange,
-    filterBookings
+    filters,
+    updateFilters
   };
 }

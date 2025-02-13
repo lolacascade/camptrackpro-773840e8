@@ -1,31 +1,21 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Booking, BookingStatus } from "@/types/booking";
+import { Booking, BookingFilters } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
-import { DateRange } from "react-day-picker";
 import { format } from "date-fns";
 
 interface UseBookingsOptions {
-  page?: number;
-  itemsPerPage?: number;
-  searchTerm?: string;
-  status?: BookingStatus | 'all';
-  dateRange?: DateRange;
+  filters: BookingFilters;
 }
 
-export function useBookings({ 
-  page = 1, 
-  itemsPerPage = 25,
-  searchTerm = "",
-  status = "all",
-  dateRange
-}: UseBookingsOptions = {}) {
+export function useBookings({ filters }: UseBookingsOptions) {
   const { organizationId, accountId } = useOrganization();
+  const ITEMS_PER_PAGE = 25;
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['bookings', organizationId, accountId, page, itemsPerPage, searchTerm, status, dateRange?.from, dateRange?.to],
+    queryKey: ['bookings', organizationId, accountId, filters],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         return { data: [], total: 0 };
@@ -43,30 +33,31 @@ export function useBookings({
         .eq('account_id', accountId);
 
       // Apply date range filter if provided
-      if (dateRange?.from && dateRange?.to) {
+      if (filters.dateRange?.from && filters.dateRange?.to) {
         query = query
-          .gte('check_in_date', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('check_in_date', format(dateRange.to, 'yyyy-MM-dd'));
+          .gte('check_in_date', format(filters.dateRange.from, 'yyyy-MM-dd'))
+          .lte('check_in_date', format(filters.dateRange.to, 'yyyy-MM-dd'));
       }
 
       // Apply status filter if not "all"
-      if (status !== "all") {
-        query = query.eq('status', status as BookingStatus);
+      if (filters.status !== "all") {
+        query = query.eq('status', filters.status);
       }
 
       // Apply search filter if provided
-      if (searchTerm) {
+      if (filters.searchTerm) {
         query = query.or(`
-          customer.first_name.ilike.%${searchTerm}%,
-          customer.last_name.ilike.%${searchTerm}%,
-          customer.email.ilike.%${searchTerm}%
+          customer.first_name.ilike.%${filters.searchTerm}%,
+          customer.last_name.ilike.%${filters.searchTerm}%,
+          customer.email.ilike.%${filters.searchTerm}%
         `);
       }
 
       // Apply pagination
+      const start = (filters.page - 1) * ITEMS_PER_PAGE;
       query = query
         .order('created_at', { ascending: false })
-        .range((page - 1) * itemsPerPage, page * itemsPerPage - 1);
+        .range(start, start + ITEMS_PER_PAGE - 1);
 
       const { data, error, count } = await query;
 

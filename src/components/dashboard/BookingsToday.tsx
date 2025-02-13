@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -71,7 +70,6 @@ export function BookingsToday() {
           data={bookings}
           columns={getBookingsColumns()}
           onViewDetails={handleViewDetails}
-          itemsPerPage={5}
           isLoading={isLoading}
           tableName="bookings"
         />

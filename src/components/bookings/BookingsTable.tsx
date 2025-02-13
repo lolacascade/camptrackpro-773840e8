@@ -4,29 +4,20 @@ import { Booking } from "@/types/booking";
 import { useBookings } from "./hooks/useBookings";
 import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
-import { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { useBookingFilters } from "./hooks/useBookingFilters";
-import { usePagination } from "@/hooks/use-pagination";
-import { useState } from "react";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
-  dateRange?: DateRange;
 }
 
-export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
+export function BookingsTable({ onEdit }: BookingsTableProps) {
   const navigate = useNavigate();
-  const { currentPage, itemsPerPage, handlePageChange } = usePagination();
-  const { selectedStatus, handleStatusChange } = useBookingFilters();
-  const [searchTerm, setSearchTerm] = useState("");
+  const { filters, updateFilters } = useBookingFilters();
+  const ITEMS_PER_PAGE = 25;
 
   const { bookings, isLoading, error, total } = useBookings({
-    page: currentPage,
-    itemsPerPage,
-    searchTerm,
-    status: selectedStatus,
-    dateRange
+    filters
   });
 
   const handleRowClick = (booking: Booking) => {
@@ -50,18 +41,17 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
         {
           name: "status",
           options: statusOptions,
-          value: selectedStatus,
-          onChange: handleStatusChange,
+          value: filters.status,
+          onChange: (value) => updateFilters({ status: value as Booking['status'] })
         }
       ]}
       tableName="bookings"
       onRowClick={handleRowClick}
-      searchTerm={searchTerm}
-      onSearchChange={setSearchTerm}
-      currentPage={currentPage}
-      totalPages={Math.ceil(total / itemsPerPage)}
-      onPageChange={handlePageChange}
-      itemsPerPage={itemsPerPage}
+      searchTerm={filters.searchTerm}
+      onSearchChange={(term) => updateFilters({ searchTerm: term })}
+      currentPage={filters.page}
+      totalPages={Math.ceil(total / ITEMS_PER_PAGE)}
+      onPageChange={(page) => updateFilters({ page })}
     />
   );
 }

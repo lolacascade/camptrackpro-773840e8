@@ -3,6 +3,18 @@ import { Customer } from "./customer";
 import { Slot } from "./slot";
 import { Site } from "./site";
 
+export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled' | 'all';
+
+export interface BookingFilters {
+  searchTerm: string;
+  status: BookingStatus;
+  page: number;
+  dateRange?: {
+    from: Date;
+    to: Date;
+  } | null;
+}
+
 export interface Booking {
   id: string;
   customer_id: string;
@@ -15,7 +27,7 @@ export interface Booking {
   };
   check_in_date: string;
   check_out_date: string;
-  status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
+  status: Exclude<BookingStatus, 'all'>;
   total_amount: number;
   site_id?: number;
   site?: Site;
