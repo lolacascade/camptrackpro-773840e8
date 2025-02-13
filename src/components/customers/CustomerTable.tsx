@@ -26,7 +26,8 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
         .eq('id', customer.id.toString());
 
       if (error) {
-        throw error;
+        toast.error(error.message || "Failed to delete customer");
+        return;
       }
 
       toast.success("Customer deleted successfully");
