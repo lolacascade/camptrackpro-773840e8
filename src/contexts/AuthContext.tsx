@@ -22,7 +22,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check active session
     const initSession = async () => {
       try {
         const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -31,8 +30,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(currentSession.user);
         }
       } catch (error) {
-        console.error('Error checking session:', error);
-        // Clear session state on error
+        toast({
+          title: "Error checking session",
+          description: "There was a problem verifying your login status",
+          variant: "destructive",
+        });
         setSession(null);
         setUser(null);
       } finally {
@@ -42,26 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initSession();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log('Auth state changed:', event, currentSession?.user?.id);
-      
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
       } else {
-        // Clear state when session ends
         setSession(null);
         setUser(null);
       }
-
       setIsLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [toast]);
 
   const signIn = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
@@ -81,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "You have successfully signed in.",
       });
     } catch (error: any) {
-      console.error('Sign in error:', error);
       toast({
         title: "Unable to sign in",
         description: error.message || "The email or password you entered is incorrect.",
@@ -98,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
-      // Clear state immediately on successful signout
       setSession(null);
       setUser(null);
 
@@ -107,7 +102,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         description: "You have been signed out successfully.",
       });
     } catch (error: any) {
-      console.error('Sign out error:', error);
       toast({
         title: "Error",
         description: "Failed to sign out. Please try again.",
