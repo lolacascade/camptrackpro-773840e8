@@ -1,34 +1,27 @@
 
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useSession } from "@supabase/auth-helpers-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const session = useSession();
+  const { user, isLoading } = useAuth();
   const location = useLocation();
-  const [isLoading, setIsLoading] = useState(true);
   const [hasOrganization, setHasOrganization] = useState(false);
 
   useEffect(() => {
-    async function checkSession() {
-      try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
-        if (!currentSession) {
-          setIsLoading(false);
-          return;
-        }
+    async function checkOrganization() {
+      if (!user) return;
 
-        // Check organization membership
+      try {
         const { data: orgRoles, error } = await supabase
           .from('organization_roles')
           .select('organization_id')
-          .eq('user_id', currentSession.user.id)
+          .eq('user_id', user.id)
           .limit(1);
 
         if (error) {
@@ -37,18 +30,17 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
         } else {
           setHasOrganization(orgRoles && orgRoles.length > 0);
         }
-
-        setIsLoading(false);
       } catch (error) {
-        console.error('Session check failed:', error);
-        setIsLoading(false);
+        console.error('Organization check failed:', error);
+        setHasOrganization(false);
       }
     }
 
-    checkSession();
-  }, []);
+    if (user) {
+      checkOrganization();
+    }
+  }, [user]);
 
-  // Show loading state while checking session
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -57,12 +49,10 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Redirect to login if no session
-  if (!session) {
+  if (!user) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // If user has no organization, redirect to dashboard
   if (!hasOrganization) {
     return <Navigate to="/app" replace />;
   }
