@@ -1,3 +1,4 @@
+
 import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
@@ -44,19 +45,26 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
     }
 
     try {
+      console.log('Creating asset with:', {
+        ...newAsset,
+        organization_id: organizationId,
+        account_id: accountId
+      });
+
       const assetData = {
         asset_name: newAsset.asset_name,
         asset_size: newAsset.asset_size || null,
         asset_type: newAsset.asset_type || null,
         site_id: newAsset.site_id,
         customer_id: newAsset.customer_id,
-        name: newAsset.asset_name,
-        type: newAsset.asset_type || null,
+        name: newAsset.asset_name, // Set name equal to asset_name
+        type: newAsset.asset_type || null, // Set type equal to asset_type
         status: 'available',
         daily_rate: newAsset.daily_rate || 0,
         user_id: session.user.id,
         organization_id: organizationId,
-        account_id: accountId
+        account_id: accountId,
+        pricing_category: newAsset.pricing_category
       };
 
       if (asset?.id) {
@@ -67,7 +75,10 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error updating asset:', error);
+          throw error;
+        }
 
         toast({
           title: "Success",
@@ -80,7 +91,10 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error creating asset:', error);
+          throw error;
+        }
 
         toast({
           title: "Success",
@@ -90,11 +104,11 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
 
       onClose();
       onAssetAdded();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving asset:', error);
       toast({
         title: "Error",
-        description: "Failed to save asset. Please try again.",
+        description: error.message || "Failed to save asset. Please try again.",
         variant: "destructive",
       });
     }
