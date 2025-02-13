@@ -33,7 +33,6 @@ export function useDataTable<T>({ data, columns, filters, searchFields }: UseDat
   );
 
   const handleFilterChange = (filterName: string, value: string) => {
-    console.log('Filter changing in hook:', filterName, value);
     setFilterValues(prev => ({ ...prev, [filterName]: value }));
     const filter = filters?.find(f => f.name === filterName);
     if (filter) {
