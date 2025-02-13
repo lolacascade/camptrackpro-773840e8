@@ -17,14 +17,11 @@ interface BookingsTableProps {
 export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const navigate = useNavigate();
   const { currentPage, itemsPerPage, handlePageChange } = usePagination();
-  const { selectedStatus, handleStatusChange, filterBookings } = useBookingFilters();
+  const { selectedStatus, handleStatusChange } = useBookingFilters();
   const { bookings, isLoading, error, total } = useBookings({
     page: currentPage,
     itemsPerPage
   });
-
-  const filteredBookings = filterBookings(bookings, dateRange);
-  const totalPages = Math.ceil(total / itemsPerPage);
 
   const handleRowClick = (booking: Booking) => {
     navigate(`/app/bookings/${booking.id}`);
@@ -40,7 +37,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
 
   return (
     <DataTable
-      data={filteredBookings}
+      data={bookings}
       columns={getBookingColumns()}
       isLoading={isLoading}
       filters={[
@@ -54,10 +51,12 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       tableName="bookings"
       onRowClick={handleRowClick}
       searchFields={["customer.first_name", "customer.last_name", "customer.email"]}
-      currentPage={totalPages > 1 ? currentPage : undefined}
-      totalPages={totalPages > 1 ? totalPages : undefined}
-      onPageChange={totalPages > 1 ? handlePageChange : undefined}
+      currentPage={currentPage}
+      totalPages={Math.ceil(total / itemsPerPage)}
+      onPageChange={handlePageChange}
       itemsPerPage={itemsPerPage}
+      dateRange={dateRange}
+      dateField="check_in_date"
     />
   );
 }

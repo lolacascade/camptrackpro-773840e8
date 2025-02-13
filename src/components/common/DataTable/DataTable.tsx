@@ -8,6 +8,8 @@ import { DataTableLoading } from "./components/DataTableLoading";
 import { useDataSearch } from "@/hooks/use-data-search";
 import { DataTableRowActions } from "./DataTableRowActions";
 import { DataTablePagination } from "./DataTablePagination";
+import { DateRange } from "react-day-picker";
+import { isWithinInterval } from "date-fns";
 
 interface DataTableProps<T> {
   data: T[];
@@ -30,6 +32,8 @@ interface DataTableProps<T> {
   totalPages?: number;
   onPageChange?: (page: number) => void;
   itemsPerPage?: number;
+  dateRange?: DateRange;
+  dateField?: keyof T;
 }
 
 export function DataTable<T extends { id?: number | string }>({
@@ -44,15 +48,44 @@ export function DataTable<T extends { id?: number | string }>({
   onEdit,
   onDelete,
   onViewDetails,
-  currentPage,
-  totalPages,
+  currentPage = 1,
   onPageChange,
   itemsPerPage = 25,
+  dateRange,
+  dateField
 }: DataTableProps<T>) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
-  const filteredData = useDataSearch(data, searchTerm, searchFields);
+  // First apply search filter
+  const searchFilteredData = useDataSearch(data, searchTerm, searchFields);
+
+  // Then apply date filter if both dateRange and dateField are provided
+  const dateFilteredData = dateRange && dateField
+    ? searchFilteredData.filter(item => {
+        const itemDate = new Date((item[dateField] as string));
+        return dateRange.from && dateRange.to && 
+               isWithinInterval(itemDate, { 
+                 start: dateRange.from, 
+                 end: dateRange.to 
+               });
+      })
+    : searchFilteredData;
+
+  // Sort the filtered data
+  const sortedData = [...dateFilteredData].sort((a, b) => {
+    if (!sortConfig) return 0;
+
+    const aValue = (a as any)[sortConfig.key];
+    const bValue = (b as any)[sortConfig.key];
+
+    if (aValue === bValue) return 0;
+    if (aValue === null) return 1;
+    if (bValue === null) return -1;
+
+    const modifier = sortConfig.direction === 'asc' ? 1 : -1;
+    return aValue < bValue ? -1 * modifier : 1 * modifier;
+  });
 
   const handleSort = (key: string) => {
     setSortConfig(current => {
@@ -66,19 +99,11 @@ export function DataTable<T extends { id?: number | string }>({
     });
   };
 
-  const sortedData = [...filteredData].sort((a, b) => {
-    if (!sortConfig) return 0;
-
-    const aValue = (a as any)[sortConfig.key];
-    const bValue = (b as any)[sortConfig.key];
-
-    if (aValue === bValue) return 0;
-    if (aValue === null) return 1;
-    if (bValue === null) return -1;
-
-    const modifier = sortConfig.direction === 'asc' ? 1 : -1;
-    return aValue < bValue ? -1 * modifier : 1 * modifier;
-  });
+  // Calculate pagination
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = sortedData.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
 
   const getActionsColumn = (): Column<T> => ({
     header: "Actions",
@@ -118,18 +143,18 @@ export function DataTable<T extends { id?: number | string }>({
         />
         
         <DataTableContent
-          data={sortedData}
+          data={paginatedData}
           columns={columnsWithActions}
           sortConfig={sortConfig}
           onSort={handleSort}
           onRowClick={onRowClick}
         />
 
-        {currentPage && totalPages && totalPages > 1 && onPageChange && (
+        {totalPages > 1 && (
           <DataTablePagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            onPageChange={onPageChange || ((page) => {})}
           />
         )}
       </div>
