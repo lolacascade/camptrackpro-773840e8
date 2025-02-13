@@ -1,10 +1,19 @@
+
 import { LucideIcon } from "lucide-react";
 
 export interface BookingInsight {
-  totalBookings: number;
   activeBookings: number;
+  quarterlyGrowth: number;
+  yoyComparison: number;
+  avgTenancyDays: number;
+  minTenancyDays: number;
+  maxTenancyDays: number;
   todayCheckIns: number;
-  totalRevenue: number;
+  monthlyCheckIns: number;
+  periodCheckIns: number;
+  todayCheckOuts: number;
+  monthlyCheckOuts: number;
+  periodCheckOuts: number;
 }
 
 export interface BookingStat {

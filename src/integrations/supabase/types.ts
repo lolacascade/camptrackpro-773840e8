@@ -1446,6 +1446,28 @@ export type Database = {
           cancelled_bookings: number
         }[]
       }
+      get_enhanced_booking_stats: {
+        Args: {
+          org_id: string
+          acc_id: string
+          start_date?: string
+          end_date?: string
+        }
+        Returns: {
+          active_bookings: number
+          quarterly_growth: number
+          yoy_comparison: number
+          avg_tenancy_days: number
+          min_tenancy_days: number
+          max_tenancy_days: number
+          todays_checkins: number
+          monthly_checkins: number
+          period_checkins: number
+          todays_checkouts: number
+          monthly_checkouts: number
+          period_checkouts: number
+        }[]
+      }
       populate_booking_trends: {
         Args: Record<PropertyKey, never>
         Returns: undefined

@@ -1,7 +1,8 @@
+
 import { DateRange } from "react-day-picker";
 import { useBookingsInsights } from "./hooks/useBookingsInsights";
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
-import { CalendarDays, CaravanIcon, LogIn, LogOut } from "lucide-react";
+import { CalendarDays, Clock, LogIn, LogOut } from "lucide-react";
 
 interface BookingsInsightsProps {
   dateRange?: DateRange;
@@ -30,34 +31,44 @@ export function BookingsInsights({ dateRange }: BookingsInsightsProps) {
         title="Active Bookings"
         value={insights?.activeBookings || 0}
         icon={CalendarDays}
+        trend={{
+          value: `${Math.abs(insights?.quarterlyGrowth || 0).toFixed(1)}%`,
+          isPositive: (insights?.quarterlyGrowth || 0) >= 0,
+          comparedTo: "this quarter"
+        }}
         breakdown={[
-          { label: "Current", value: String(insights?.activeBookings || 0) }
+          { 
+            label: "YoY Change", 
+            value: `${Math.abs(insights?.yoyComparison || 0).toFixed(1)}%`,
+            percentage: insights?.yoyComparison || 0
+          }
         ]}
       />
       <EnhancedStatCard
-        title="RV Types"
-        value={insights?.rvTypeDistribution?.[0]?.value || "0"}
-        icon={CaravanIcon}
-        breakdown={insights?.rvTypeDistribution?.map(type => ({
-          label: type.label,
-          value: type.value,
-          percentage: type.percentage
-        })) || []}
+        title="Average Tenancy Duration"
+        value={`${Math.round(insights?.avgTenancyDays || 0)} days`}
+        icon={Clock}
+        breakdown={[
+          { label: "Shortest Stay", value: `${insights?.minTenancyDays || 0} days` },
+          { label: "Longest Stay", value: `${insights?.maxTenancyDays || 0} days` }
+        ]}
       />
       <EnhancedStatCard
-        title="Check-ins"
-        value={insights?.checkIns || 0}
+        title="Check-ins Today"
+        value={insights?.todayCheckIns || 0}
         icon={LogIn}
         breakdown={[
-          { label: "Today", value: String(insights?.checkIns || 0) }
+          { label: "This Month", value: String(insights?.monthlyCheckIns || 0) },
+          { label: "This Period", value: String(insights?.periodCheckIns || 0) }
         ]}
       />
       <EnhancedStatCard
-        title="Check-outs"
-        value={insights?.checkOuts || 0}
+        title="Check-outs Today"
+        value={insights?.todayCheckOuts || 0}
         icon={LogOut}
         breakdown={[
-          { label: "Today", value: String(insights?.checkOuts || 0) }
+          { label: "This Month", value: String(insights?.monthlyCheckOuts || 0) },
+          { label: "This Period", value: String(insights?.periodCheckOuts || 0) }
         ]}
       />
     </div>
