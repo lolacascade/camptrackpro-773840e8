@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useSession } from "@supabase/auth-helpers-react";
 import { chatService } from "@/services/chat-service";
@@ -60,7 +61,6 @@ export function ChatContainer({
         setMessages(prev => [...prev, assistantMessage]);
       }
     } catch (error: any) {
-      console.error('Error sending message:', error);
       if (error.message === "API quota exceeded") {
         toast.error("API quota exceeded. Please try again later.");
       } else {
