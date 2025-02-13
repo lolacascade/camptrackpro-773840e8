@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,12 +25,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           .limit(1);
 
         if (error) {
+          // Keep error logging for critical errors
           console.error('Error checking organization:', error);
           setHasOrganization(false);
         } else {
           setHasOrganization(orgRoles && orgRoles.length > 0);
         }
       } catch (error) {
+        // Keep error logging for critical errors
         console.error('Organization check failed:', error);
         setHasOrganization(false);
       } finally {
