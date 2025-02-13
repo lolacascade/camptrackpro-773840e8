@@ -12,6 +12,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
   const location = useLocation();
   const [hasOrganization, setHasOrganization] = useState(false);
+  const [isCheckingOrg, setIsCheckingOrg] = useState(true);
 
   useEffect(() => {
     async function checkOrganization() {
@@ -20,7 +21,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       try {
         const { data: orgRoles, error } = await supabase
           .from('organization_roles')
-          .select('organization_id')
+          .select('organization_id, role')
           .eq('user_id', user.id)
           .limit(1);
 
@@ -33,15 +34,19 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       } catch (error) {
         console.error('Organization check failed:', error);
         setHasOrganization(false);
+      } finally {
+        setIsCheckingOrg(false);
       }
     }
 
     if (user) {
       checkOrganization();
+    } else {
+      setIsCheckingOrg(false);
     }
   }, [user]);
 
-  if (isLoading) {
+  if (isLoading || isCheckingOrg) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -53,7 +58,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  if (!hasOrganization) {
+  if (!hasOrganization && location.pathname !== '/app') {
     return <Navigate to="/app" replace />;
   }
 
