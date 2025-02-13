@@ -32,6 +32,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error('Error checking session:', error);
+        // Clear session state on error
+        setSession(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -47,6 +50,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(currentSession);
         setUser(currentSession.user);
       } else {
+        // Clear state when session ends
         setSession(null);
         setUser(null);
       }
@@ -60,6 +64,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string): Promise<void> => {
+    setIsLoading(true);
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -79,10 +84,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Sign in error:', error);
       toast({
         title: "Unable to sign in",
-        description: "The email or password you entered is incorrect.",
+        description: error.message || "The email or password you entered is incorrect.",
         variant: "destructive",
       });
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      // Clear state immediately on successful signout
       setSession(null);
       setUser(null);
 
