@@ -10,18 +10,13 @@ export function useOrganization() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context'],
     queryFn: async () => {
-      console.log('Fetching organization context...');
-      
-      // Get current session and user
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session?.user) {
-        console.log('No active session found, redirecting to login');
         navigate('/signin');
         return null;
       }
 
-      // Get organization role for current user
       const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id')
@@ -29,19 +24,14 @@ export function useOrganization() {
         .maybeSingle();
 
       if (orgError) {
-        console.error('Error fetching organization:', orgError);
         toast.error("Failed to fetch organization context");
         return null;
       }
 
       if (!orgRoles?.organization_id) {
-        console.error('No organization found');
         return null;
       }
 
-      console.log('Found organization:', orgRoles);
-
-      // Get account role for current user
       const { data: accRoles, error: accError } = await supabase
         .from('account_roles')
         .select('account_id')
@@ -49,17 +39,13 @@ export function useOrganization() {
         .maybeSingle();
 
       if (accError) {
-        console.error('Error fetching account:', accError);
         toast.error("Failed to fetch account context");
         return null;
       }
 
       if (!accRoles?.account_id) {
-        console.error('No account found');
         return null;
       }
-
-      console.log('Found account:', accRoles);
 
       return {
         organizationId: orgRoles.organization_id,
