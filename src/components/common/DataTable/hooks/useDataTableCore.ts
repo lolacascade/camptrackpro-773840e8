@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -66,7 +65,6 @@ export function useDataTableCore<T extends { id?: number | string }>({
 
   // Update localData when data prop changes
   useEffect(() => {
-    console.log('Data prop changed:', data);
     if (data && data.length > 0) {
       setLocalData(data);
     }
@@ -76,7 +74,6 @@ export function useDataTableCore<T extends { id?: number | string }>({
   useEffect(() => {
     if (!tableName || !organizationId || !accountId) return;
 
-    console.log('Setting up real-time subscription for:', tableName);
     const channel = supabase
       .channel('table_db_changes')
       .on(
@@ -88,7 +85,9 @@ export function useDataTableCore<T extends { id?: number | string }>({
           filter: `organization_id=eq.${organizationId} AND account_id=eq.${accountId}`
         },
         (payload) => {
-          console.log('Received real-time update:', payload);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('Real-time update received:', payload.eventType);
+          }
           
           setLocalData(currentData => {
             if (!currentData) return data;
@@ -111,7 +110,6 @@ export function useDataTableCore<T extends { id?: number | string }>({
       .subscribe();
 
     return () => {
-      console.log('Cleaning up real-time subscription');
       supabase.removeChannel(channel);
     };
   }, [tableName, organizationId, accountId, setLocalData, data]);
