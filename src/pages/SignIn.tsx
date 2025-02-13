@@ -23,6 +23,20 @@ export default function SignIn() {
     }
   }, [searchParams]);
 
+  const checkExistingUser = async (email: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-email-exists', {
+        body: { email }
+      });
+
+      if (error) throw error;
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    }
+  };
+
   const validateInput = () => {
     if (!email.trim() || !password.trim()) {
       throw new Error('Please fill in all fields');
@@ -36,11 +50,18 @@ export default function SignIn() {
     e.preventDefault();
     
     if (isLoading) return;
-    
     setIsLoading(true);
 
     try {
       validateInput();
+
+      // Check if user exists
+      const userExists = await checkExistingUser(email);
+      if (!userExists) {
+        // Redirect to signup if user doesn't exist
+        navigate('/signup?email=' + encodeURIComponent(email));
+        return;
+      }
 
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),

@@ -46,13 +46,39 @@ export function useSignUp() {
     }
   };
 
+  const checkExistingUser = async (email: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-email-exists', {
+        body: { email }
+      });
+
+      if (error) throw error;
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
+    }
+  };
+
   const handleSignUp = async (data: SignUpFormData) => {
     setIsLoading(true);
 
     try {
       validateForm(data);
 
-      // Try to sign up the user
+      // Check if user already exists
+      const userExists = await checkExistingUser(data.email);
+      if (userExists) {
+        toast({
+          title: "Account exists",
+          description: "This email is already registered. Please sign in instead.",
+          variant: "destructive",
+        });
+        navigate('/signin?email=' + encodeURIComponent(data.email));
+        return;
+      }
+
+      // Attempt signup
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -63,23 +89,7 @@ export function useSignUp() {
         }
       });
 
-      if (signUpError) {
-        // Check for user exists error directly from the error message
-        if (
-          signUpError.message === "User already registered" || 
-          signUpError.message?.includes('user_already_exists')
-        ) {
-          toast({
-            title: "Account exists",
-            description: "This email is already registered. Please sign in instead.",
-            variant: "destructive",
-          });
-          navigate('/signin?email=' + encodeURIComponent(data.email));
-          return;
-        }
-        throw signUpError;
-      }
-
+      if (signUpError) throw signUpError;
       if (!signUpData.user) throw new Error('Signup failed - no user data returned');
 
       // Sign in the user
@@ -98,17 +108,12 @@ export function useSignUp() {
         }
       );
 
-      if (checkoutError) {
-        console.error('Checkout error:', checkoutError);
-        throw checkoutError;
-      }
+      if (checkoutError) throw checkoutError;
+      if (!checkoutData?.url) throw new Error('Failed to create checkout session');
 
-      if (checkoutData?.url) {
-        window.location.href = checkoutData.url;
-        return;
-      }
+      // Redirect to Stripe
+      window.location.href = checkoutData.url;
 
-      throw new Error('Failed to create checkout session');
     } catch (error: any) {
       console.error('Signup process error:', error);
       toast({
