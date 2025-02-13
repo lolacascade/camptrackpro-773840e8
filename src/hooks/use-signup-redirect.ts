@@ -27,8 +27,8 @@ export function useSignupRedirect() {
 
       if (error) throw error;
 
-      // If email exists, redirect to sign in, otherwise to sign up
-      if (data.exists) {
+      // Explicit boolean check for exists property
+      if (data.exists === true) {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
       } else {
         navigate(`/signup?email=${encodeURIComponent(email)}`);

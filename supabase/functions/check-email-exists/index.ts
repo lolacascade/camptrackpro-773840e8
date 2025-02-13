@@ -45,8 +45,9 @@ Deno.serve(async (req) => {
         throw lookupError
       }
 
-      const exists = users && users.length > 0
-      console.log('Email lookup complete. Users found:', users?.length)
+      // Explicit boolean evaluation
+      const exists = Boolean(users && users.length > 0)
+      console.log('Email lookup complete. Users found:', users?.length || 0)
       console.log('Email exists:', exists)
 
       return new Response(
