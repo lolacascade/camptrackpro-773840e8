@@ -21,10 +21,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const { bookings, isLoading, error, total } = useBookings({
     filters: {
       ...filters,
-      dateRange: dateRange ? {
-        from: dateRange.from as Date,
-        to: dateRange.to as Date
-      } : null
+      dateRange: dateRange || null
     }
   });
 
