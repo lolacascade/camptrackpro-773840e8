@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { DataTableContent } from "./DataTableContent";
 import { DataTableHeader } from "./DataTableHeader";
 import { Column } from "./types";
@@ -29,7 +28,6 @@ interface DataTableProps<T> {
   currentPage?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
-  itemsPerPage?: number;
 }
 
 export function DataTable<T extends { id?: number | string }>({
@@ -48,22 +46,7 @@ export function DataTable<T extends { id?: number | string }>({
   currentPage = 1,
   totalPages = 1,
   onPageChange,
-  itemsPerPage = 25,
 }: DataTableProps<T>) {
-  const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
-
-  const handleSort = (key: string) => {
-    setSortConfig(current => {
-      if (!current || current.key !== key) {
-        return { key, direction: 'asc' };
-      }
-      if (current.direction === 'asc') {
-        return { key, direction: 'desc' };
-      }
-      return null;
-    });
-  };
-
   const getActionsColumn = (): Column<T> => ({
     header: "Actions",
     accessorKey: "actions",
@@ -105,15 +88,13 @@ export function DataTable<T extends { id?: number | string }>({
           data={data}
           columns={columnsWithActions}
           onRowClick={onRowClick}
-          sortConfig={sortConfig}
-          onSort={handleSort}
         />
 
         {totalPages > 1 && (
           <DataTablePagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange || ((page) => {})}
+            onPageChange={onPageChange || (() => {})}
           />
         )}
       </div>

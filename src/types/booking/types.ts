@@ -1,13 +1,14 @@
 
 import { Customer } from "../customer";
 import { Slot } from "../slot";
+import { Site } from "../site";
 
 export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
 
 export interface BookingFormData {
   customer_id: string;
   asset_id: string;
-  site_id: number;  // Changed from string to number to match Booking interface
+  site_id: number;
   special_requirements?: string;
 }
 
@@ -26,6 +27,7 @@ export interface Booking {
   status: BookingStatus;
   total_amount: number;
   site_id?: number;
+  site?: Site;
   slot?: Slot;
   special_requirements?: string;
   reservation_code?: string;
