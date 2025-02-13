@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,13 +16,9 @@ export function BookingsToday() {
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['bookings-today', organizationId, accountId],
     queryFn: async () => {
-      if (!organizationId || !accountId) {
-        console.log('No organization or account context found:', { organizationId, accountId });
-        return [];
-      }
+      if (!organizationId || !accountId) return [];
 
       const today = new Date().toISOString().split('T')[0];
-      console.log('Fetching bookings for date:', today);
 
       const { data, error } = await supabase
         .from('bookings')
@@ -47,12 +44,10 @@ export function BookingsToday() {
         .eq('account_id', accountId);
 
       if (error) {
-        console.error('Error fetching bookings:', error);
         toast.error("Failed to fetch today's bookings");
         throw error;
       }
 
-      console.log('Bookings data received:', data);
       return data as unknown as Booking[];
     },
     enabled: !!organizationId && !!accountId && !isLoadingContext
