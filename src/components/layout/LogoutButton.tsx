@@ -1,44 +1,28 @@
 
 import { LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LogoutButton() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signOut } = useAuth();
 
   const handleLogout = async () => {
     try {
-      // First check if we have a session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        // If no session, just redirect to signin
-        navigate('/signin', { replace: true });
-        return;
-      }
-
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
+      await signOut();
       navigate('/signin', { replace: true });
-      
-      toast({
-        title: "Logged out successfully",
-        description: "You have been logged out of your account.",
-      });
     } catch (error: any) {
       console.error('Error logging out:', error);
-      // Even if logout fails, redirect to signin page
-      navigate('/signin', { replace: true });
-      
       toast({
         title: "Error during logout",
         description: "You have been redirected to the sign in page.",
         variant: "destructive",
       });
+      // Even if logout fails, redirect to signin page
+      navigate('/signin', { replace: true });
     }
   };
 
