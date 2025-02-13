@@ -27,36 +27,27 @@ Deno.serve(async (req) => {
 
     // Initialize the Supabase client with the service role key
     const supabase = createClient(supabaseUrl, supabaseServiceRole)
-    console.log('Supabase client initialized with URL:', supabaseUrl)
+    console.log('Supabase client initialized')
     
     try {
-      console.log('Starting user lookup for email:', email)
-      const { data: { users }, error: lookupError } = await supabase
-        .auth
-        .admin
-        .listUsers({
-          filters: {
-            email: email
-          }
-        })
+      // Use our new database function to check if email exists
+      const { data, error } = await supabase
+        .rpc('check_email_exists', { email_to_check: email })
       
-      if (lookupError) {
-        console.error('Error during email lookup:', lookupError)
-        throw lookupError
+      if (error) {
+        console.error('Database function error:', error)
+        throw error
       }
 
-      // Explicit boolean evaluation and force true/false
-      const exists = Boolean(users && users.length > 0)
-      console.log('Email lookup complete. Users found:', users?.length || 0)
-      console.log('Email exists:', exists)
+      console.log('Email exists check result:', data)
 
       return new Response(
-        JSON.stringify({ exists: exists ? true : false }),
+        JSON.stringify({ exists: data }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
-    } catch (lookupError) {
-      console.error('Email lookup failed:', lookupError)
-      throw lookupError
+    } catch (dbError) {
+      console.error('Database error:', dbError)
+      throw dbError
     }
 
   } catch (error) {
