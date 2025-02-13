@@ -9,12 +9,12 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { BookingsHeader } from "@/components/bookings/components/BookingsHeader";
 import { DateRange } from "react-day-picker";
 import { startOfMonth } from "date-fns";
-import type { Booking } from "@/types/booking/types";
+import type { Booking } from "@/types/booking";
 
 export default function Bookings() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState<Booking | undefined>();
-  const [dateRange, setDateRange] = useState<DateRange>({
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: startOfMonth(new Date()),
     to: new Date(),
   });
@@ -34,7 +34,7 @@ export default function Bookings() {
     setSelectedBooking(undefined);
   };
 
-  const handleDateRangeChange = (range: DateRange) => {
+  const handleDateRangeChange = (range: DateRange | undefined) => {
     setDateRange(range);
   };
 

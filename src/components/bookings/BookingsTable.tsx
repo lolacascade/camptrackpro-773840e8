@@ -6,18 +6,26 @@ import { getBookingColumns } from "./table/BookingTableColumns";
 import { statusOptions } from "./table/BookingStatusOptions";
 import { useNavigate } from "react-router-dom";
 import { useBookingFilters } from "./hooks/useBookingFilters";
+import { DateRange } from "react-day-picker";
 
 interface BookingsTableProps {
   onEdit?: (booking: Booking) => void;
+  dateRange?: DateRange;
 }
 
-export function BookingsTable({ onEdit }: BookingsTableProps) {
+export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const navigate = useNavigate();
   const { filters, updateFilters } = useBookingFilters();
   const ITEMS_PER_PAGE = 25;
 
   const { bookings, isLoading, error, total } = useBookings({
-    filters
+    filters: {
+      ...filters,
+      dateRange: dateRange ? {
+        from: dateRange.from as Date,
+        to: dateRange.to as Date
+      } : null
+    }
   });
 
   const handleRowClick = (booking: Booking) => {
