@@ -15,7 +15,6 @@ export function useCustomerForm({
   const { organizationId, accountId } = useOrganization();
   
   const defaultValues = getDefaultValues(customer);
-  console.log('Form default values:', defaultValues); // Debug log
   
   const {
     register,
@@ -23,7 +22,7 @@ export function useCustomerForm({
     formState: { errors, isSubmitting }
   } = useForm<CustomerFormData>({
     defaultValues,
-    values: defaultValues // Explicitly set current values
+    values: defaultValues
   });
 
   const onSubmit = async (formData: CustomerFormData) => {
@@ -52,7 +51,6 @@ export function useCustomerForm({
       onCustomerUpdated();
       onClose();
     } catch (error: any) {
-      console.error('Error saving customer:', error);
       toast({
         title: "Error",
         description: error.message || "Failed to save customer",
