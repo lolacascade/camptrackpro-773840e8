@@ -21,21 +21,24 @@ export function useSignupRedirect() {
     
     setIsLoading(true);
     try {
+      console.log('Starting email check for:', email);
       const { data, error } = await supabase.functions.invoke('check-email-exists', {
         body: { email }
       });
 
       if (error) throw error;
 
-      // Force boolean comparison and add debug logging
-      console.log('Email check response:', data);
+      console.log('Raw response data:', data);
       const exists = data?.exists === true;
-      console.log('Exists evaluation:', exists);
+      console.log('Email exists evaluation:', exists);
+      console.log('About to navigate to:', exists ? 'signin' : 'signup');
 
-      if (exists) {
-        navigate(`/signin?email=${encodeURIComponent(email)}`);
-      } else {
+      if (!exists) {
+        console.log('Navigating to signup...');
         navigate(`/signup?email=${encodeURIComponent(email)}`);
+      } else {
+        console.log('Navigating to signin...');
+        navigate(`/signin?email=${encodeURIComponent(email)}`);
       }
       
     } catch (error: any) {
