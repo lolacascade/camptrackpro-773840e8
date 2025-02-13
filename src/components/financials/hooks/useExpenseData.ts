@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -28,7 +29,6 @@ export function useExpenseData() {
         .order('date', { ascending: false });
 
       if (error) {
-        console.error('Error fetching expenses:', error);
         toast({
           title: "Error",
           description: "Failed to fetch expenses. Please try again.",
