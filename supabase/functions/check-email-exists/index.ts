@@ -27,10 +27,10 @@ Deno.serve(async (req) => {
 
     // Initialize the Supabase client with the service role key
     const supabase = createClient(supabaseUrl, supabaseServiceRole)
-    console.log('Supabase client initialized')
+    console.log('Supabase client initialized with URL:', supabaseUrl)
     
     try {
-      console.log('Attempting to look up users by email filter')
+      console.log('Starting user lookup for email:', email)
       const { data: { users }, error: lookupError } = await supabase
         .auth
         .admin
@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
       }
 
       const exists = users && users.length > 0
-      console.log('Email lookup result - exists:', exists)
+      console.log('Email lookup complete. Users found:', users?.length)
+      console.log('Email exists:', exists)
 
       return new Response(
         JSON.stringify({ exists }),
