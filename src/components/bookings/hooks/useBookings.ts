@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Booking } from "@/types/booking";
+import { Booking, BookingStatus } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 import { DateRange } from "react-day-picker";
@@ -11,7 +11,7 @@ interface UseBookingsOptions {
   page?: number;
   itemsPerPage?: number;
   searchTerm?: string;
-  status?: string;
+  status?: BookingStatus | 'all';
   dateRange?: DateRange;
 }
 
@@ -51,7 +51,7 @@ export function useBookings({
 
       // Apply status filter if not "all"
       if (status !== "all") {
-        query = query.eq('status', status);
+        query = query.eq('status', status as BookingStatus);
       }
 
       // Apply search filter if provided
