@@ -59,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string): Promise<void> => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -68,12 +68,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error;
 
+      setSession(data.session);
+      setUser(data.user);
+
       toast({
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-
-      return data.session;
     } catch (error: any) {
       console.error('Sign in error:', error);
       toast({
@@ -90,6 +91,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       
+      setSession(null);
+      setUser(null);
+
       toast({
         title: "Signed out",
         description: "You have been signed out successfully.",
