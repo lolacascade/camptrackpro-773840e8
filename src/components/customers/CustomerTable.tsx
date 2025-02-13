@@ -12,11 +12,10 @@ interface CustomerTableProps {
 
 export function CustomerTable({ onEdit }: CustomerTableProps) {
   const { customers, isLoading } = useCustomers();
-  console.log('CustomerTable rendered with:', { customersCount: customers.length, isLoading });
 
   const handleDelete = async (customer: Customer) => {
     if (!customer.id) {
-      console.error('No customer ID provided for deletion');
+      toast.error("Invalid customer ID");
       return;
     }
 
@@ -27,19 +26,17 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
         .eq('id', customer.id.toString());
 
       if (error) {
-        console.error('Error deleting customer:', error);
         throw error;
       }
 
       toast.success("Customer deleted successfully");
     } catch (error) {
-      console.error('Error deleting customer:', error);
       toast.error("Failed to delete customer");
     }
   };
 
   const handleViewDetails = (customer: Customer) => {
-    onEdit(customer); // Using same handler for view/edit for now
+    onEdit(customer);
   };
 
   return (
