@@ -45,13 +45,13 @@ Deno.serve(async (req) => {
         throw lookupError
       }
 
-      // Explicit boolean evaluation
+      // Explicit boolean evaluation and force true/false
       const exists = Boolean(users && users.length > 0)
       console.log('Email lookup complete. Users found:', users?.length || 0)
       console.log('Email exists:', exists)
 
       return new Response(
-        JSON.stringify({ exists }),
+        JSON.stringify({ exists: exists ? true : false }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     } catch (lookupError) {

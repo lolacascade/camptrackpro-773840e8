@@ -27,8 +27,12 @@ export function useSignupRedirect() {
 
       if (error) throw error;
 
-      // Explicit boolean check for exists property
-      if (data.exists === true) {
+      // Force boolean comparison and add debug logging
+      console.log('Email check response:', data);
+      const exists = data?.exists === true;
+      console.log('Exists evaluation:', exists);
+
+      if (exists) {
         navigate(`/signin?email=${encodeURIComponent(email)}`);
       } else {
         navigate(`/signup?email=${encodeURIComponent(email)}`);
