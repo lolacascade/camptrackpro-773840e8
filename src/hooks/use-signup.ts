@@ -78,7 +78,7 @@ export function useSignUp() {
         return;
       }
 
-      // Attempt signup
+      // Create user without signing them in
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -92,14 +92,6 @@ export function useSignUp() {
       if (signUpError) throw signUpError;
       if (!signUpData.user) throw new Error('Signup failed - no user data returned');
 
-      // Sign in the user
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: data.email,
-        password: data.password
-      });
-
-      if (signInError) throw signInError;
-
       // Create Stripe checkout session
       const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke(
         'create-checkout-session',
@@ -110,6 +102,12 @@ export function useSignUp() {
 
       if (checkoutError) throw checkoutError;
       if (!checkoutData?.url) throw new Error('Failed to create checkout session');
+
+      // Show success message before redirecting to Stripe
+      toast({
+        title: "Account created!",
+        description: "Please complete your subscription setup.",
+      });
 
       // Redirect to Stripe
       window.location.href = checkoutData.url;
