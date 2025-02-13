@@ -15,6 +15,7 @@ export function useAuthState(fromPath: string = '/app') {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         // If we have a session, navigate to the intended path
+        console.log('Existing session found, navigating to:', fromPath);
         navigate(fromPath, { replace: true });
       }
     };
@@ -25,6 +26,7 @@ export function useAuthState(fromPath: string = '/app') {
       console.log('Auth state changed:', event, currentSession?.user?.id);
       
       if (event === 'SIGNED_IN' && currentSession) {
+        console.log('User signed in, navigating to:', fromPath);
         navigate(fromPath, { replace: true });
         toast({
           title: "Welcome!",
@@ -33,6 +35,7 @@ export function useAuthState(fromPath: string = '/app') {
       }
 
       if (event === 'SIGNED_OUT') {
+        console.log('User signed out, navigating to signin');
         navigate('/signin', { replace: true });
         toast({
           title: "Signed out",
