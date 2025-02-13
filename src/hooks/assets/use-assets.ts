@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
@@ -21,7 +22,7 @@ export function useAssets() {
 
       console.log('Fetching assets with org:', organizationId, 'account:', accountId);
 
-      const query = supabase
+      const { data, error } = await supabase
         .from("assets")
         .select(`
           *,
@@ -65,15 +66,15 @@ export function useAssets() {
           )
         `)
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .order('created_at', { ascending: false });
-
-      const { data, error } = await query;
+        .eq('account_id', accountId);
 
       if (error) {
         console.error('Supabase error:', error);
         throw error;
       }
+
+      // Log the response to help debug
+      console.log('Assets response:', data);
       
       // Ensure the status is one of the allowed values and handle site status
       return (data || []).map(asset => ({
