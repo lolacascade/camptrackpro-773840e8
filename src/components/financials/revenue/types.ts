@@ -1,4 +1,3 @@
-import { TooltipProps } from 'recharts';
 
 export interface MonthlyFinancials {
   month: string;
@@ -13,10 +12,4 @@ export interface RevenueChartProps {
     from: Date;
     to: Date;
   };
-}
-
-export interface CustomTooltipProps extends TooltipProps<number, string> {
-  active?: boolean;
-  payload?: any[];
-  label?: string;
 }

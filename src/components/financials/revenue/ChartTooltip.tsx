@@ -1,3 +1,4 @@
+
 import { CustomTooltipProps } from './types';
 
 export function ChartTooltip({ active, payload, label }: CustomTooltipProps) {
