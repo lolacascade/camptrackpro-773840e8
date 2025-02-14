@@ -45,7 +45,11 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[#0D1D1F] text-foreground;
+  }
+
+  html {
+    @apply bg-[#0D1D1F];
   }
 
   /* Improve touch targets on mobile */

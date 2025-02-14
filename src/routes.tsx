@@ -5,40 +5,28 @@ import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
 import Dashboard from "@/pages/Dashboard";
 import Assets from "@/pages/Assets";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { Layout } from "@/components/layout/Layout";
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <AuthProvider><SignIn /></AuthProvider>,
+    element: <SignIn />,
   },
   {
     path: "/signin",
-    element: <AuthProvider><SignIn /></AuthProvider>,
+    element: <SignIn />,
   },
   {
     path: "/signup",
-    element: <AuthProvider><SignUp /></AuthProvider>,
+    element: <SignUp />,
   },
   {
     path: "/app",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
+    element: <ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>,
   },
   {
     path: "/app/assets",
-    element: (
-      <AuthProvider>
-        <ProtectedRoute>
-          <Assets />
-        </ProtectedRoute>
-      </AuthProvider>
-    ),
+    element: <ProtectedRoute><Layout><Assets /></Layout></ProtectedRoute>,
   }
 ];
 
