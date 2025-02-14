@@ -38,7 +38,7 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
           .lte('date', format(dateRange.to, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
-          .select('amount')
+          .select('amount, type')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
           .eq('status', 'paid')
@@ -92,11 +92,20 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         return sum + (typeof budget.amount === 'number' ? budget.amount : 0);
       }, 0) || 0;
 
-      // Calculate category percentages
+      // Calculate category percentages and revenue breakdown
       const categoryTotals: { [key: string]: number } = {};
       currentExpenses.data?.forEach(exp => {
         if (exp.category && typeof exp.amount === 'number') {
           categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
+        }
+      });
+
+      // Calculate revenue by type
+      const revenueByType: { [key: string]: number } = {};
+      currentInvoices.data?.forEach(inv => {
+        if (inv.type && typeof inv.amount === 'number') {
+          const type = inv.type === 'booking_revenue' ? 'Booking Revenue' : inv.type;
+          revenueByType[type] = (revenueByType[type] || 0) + inv.amount;
         }
       });
 
@@ -112,6 +121,7 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         previousRevenue,
         totalBudget,
         categoryTotals,
+        revenueByType,
         largestExpense
       };
     },
@@ -138,6 +148,12 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
     percentage: Math.round((amount / stats.currentTotal) * 100)
   }));
 
+  const revenueBreakdown = Object.entries(stats.revenueByType).map(([type, amount]) => ({
+    label: type,
+    value: `$${amount.toLocaleString()}`,
+    percentage: Math.round((amount / stats.currentRevenue) * 100)
+  }));
+
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       <EnhancedStatCard
@@ -149,10 +165,7 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
           isPositive: revenueChange >= 0,
           comparedTo: "previous period"
         }}
-        breakdown={[
-          { label: "Current", value: `$${stats.currentRevenue.toLocaleString()}` },
-          { label: "Previous", value: `$${stats.previousRevenue.toLocaleString()}` }
-        ]}
+        breakdown={revenueBreakdown}
       />
       <EnhancedStatCard
         title="Total Expenses"
