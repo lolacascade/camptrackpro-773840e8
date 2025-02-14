@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
 import { useAssets } from "@/hooks/assets/use-assets";
 import { useAssetDrawer } from "@/features/assets/hooks/useAssetDrawer";
+import { useAssetFilters } from "@/features/assets/hooks/useAssetFilters";
 
 export default function Assets() {
   const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
@@ -31,6 +32,13 @@ export default function Assets() {
       });
     }
   });
+
+  const {
+    filters,
+    setFilters,
+    customerOptions,
+    filteredAssets
+  } = useAssetFilters(assets);
 
   const handleViewDetails = (asset: Asset) => {
     console.log("View details for asset:", asset);
@@ -59,7 +67,7 @@ export default function Assets() {
           <AssetsHeader onAddAsset={handleAddAsset} />
           <AssetStatsCards />
           <AssetTable
-            assets={assets}
+            assets={filteredAssets}
             onEdit={handleEditClick}
             onViewDetails={handleViewDetails}
             isLoading={isLoading}

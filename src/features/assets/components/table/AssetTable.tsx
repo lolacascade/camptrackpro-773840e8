@@ -9,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AssetTableProps {
   assets: Asset[];
@@ -22,7 +23,6 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   const [customerFilter, setCustomerFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Create unique customer options from assets
   const customerOptions = [
     { label: "All Customers", value: "all" },
     ...Array.from(new Set(assets?.map(asset => asset.customer_id)))
@@ -36,15 +36,10 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
       })
   ];
 
-  // Filter assets based on all criteria
   const filteredAssets = assets?.filter(asset => {
-    // Type filter
     if (typeFilter !== "all" && asset.asset_type !== typeFilter) return false;
-    
-    // Customer filter
     if (customerFilter !== "all" && String(asset.customer_id) !== customerFilter) return false;
     
-    // Search term
     if (searchTerm) {
       const searchLower = searchTerm.toLowerCase();
       return (
@@ -62,7 +57,18 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
   if (isLoading) {
     return (
       <Card className="p-6">
-        <div className="text-center">Loading...</div>
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-[200px]" />
+            <Skeleton className="h-10 w-[200px]" />
+            <Skeleton className="h-10 w-[200px]" />
+          </div>
+          <div className="space-y-2">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-16 w-full" />
+            ))}
+          </div>
+        </div>
       </Card>
     );
   }
