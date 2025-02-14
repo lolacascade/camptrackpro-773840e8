@@ -12,13 +12,13 @@ import { BookingStatus } from "@/types/booking";
 
 export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBookingDrawerProps) {
   const session = useSession();
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: isOrgLoading } = useOrganization();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: booking ? new Date(booking.check_in_date) : new Date(),
     to: booking ? new Date(booking.check_out_date) : addDays(new Date(), 7)
   });
 
-  const { data: profile } = useQuery({
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ['profile', session?.user?.id],
     queryFn: async () => {
       if (!session?.user?.id) return null;
@@ -39,8 +39,14 @@ export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBook
 
   const handleSubmit = async (data: BookingFormData) => {
     try {
+      // Wait for organization context to be loaded
+      if (isOrgLoading || isProfileLoading) {
+        toast.error("Loading required context...");
+        return;
+      }
+
       if (!session?.user?.id || !organizationId || !accountId) {
-        toast.error("Missing required context");
+        toast.error("Missing required organization context");
         return;
       }
 
@@ -89,6 +95,7 @@ export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBook
     dateRange,
     setDateRange,
     handleSubmit,
-    profile
+    profile,
+    isLoading: isOrgLoading || isProfileLoading
   };
 }
