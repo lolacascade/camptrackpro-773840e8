@@ -2,7 +2,7 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
+import { format, isWithinInterval } from "date-fns";
 import { useSupabaseClient } from "@/hooks/use-supabase-client";
 import { useOrganization } from "@/hooks/use-organization";
 
