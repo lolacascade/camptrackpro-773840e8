@@ -1,7 +1,8 @@
+
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DateRangeFilter } from "@/components/financials/components/DateRangeFilter";
-import { startOfMonth, endOfMonth, subDays, startOfYear, endOfYear, subMonths } from "date-fns";
+import { startOfMonth, endOfMonth, subMonths, startOfYear, endOfYear } from "date-fns";
 
 interface FinancialsHeaderProps {
   onAdd: () => void;
@@ -15,25 +16,24 @@ export function FinancialsHeader({ onAdd, onDateRangeChange }: FinancialsHeaderP
     let to: Date;
 
     switch (timeFrame) {
-      case 'this-month':
+      case '1M':
         from = startOfMonth(today);
         to = endOfMonth(today);
         break;
-      case 'last-30':
-        from = subDays(today, 30);
-        to = today;
+      case '3M':
+        from = startOfMonth(subMonths(today, 2));
+        to = endOfMonth(today);
         break;
-      case 'prev-month':
-        const lastMonth = subMonths(today, 1);
-        from = startOfMonth(lastMonth);
-        to = endOfMonth(lastMonth);
+      case '6M':
+        from = startOfMonth(subMonths(today, 5));
+        to = endOfMonth(today);
         break;
-      case 'last-year':
-        from = startOfYear(new Date(2024, 0, 1));
-        to = endOfYear(new Date(2024, 11, 31));
+      case '1Y':
+        from = startOfMonth(subMonths(today, 11));
+        to = endOfMonth(today);
         break;
-      case 'ytd':
-        from = startOfYear(today);
+      case 'ALL':
+        from = new Date(2020, 0, 1); // Set a reasonable start date for "ALL"
         to = today;
         break;
       default:
@@ -51,42 +51,42 @@ export function FinancialsHeader({ onAdd, onDateRangeChange }: FinancialsHeaderP
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => handleTimeFrameClick('this-month')}
+            onClick={() => handleTimeFrameClick('1M')}
             className="bg-white"
           >
-            This Mo
+            1M
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => handleTimeFrameClick('last-30')}
+            onClick={() => handleTimeFrameClick('3M')}
             className="bg-white"
           >
-            Last 30D
+            3M
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => handleTimeFrameClick('prev-month')}
+            onClick={() => handleTimeFrameClick('6M')}
             className="bg-white"
           >
-            Prev Mo
+            6M
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => handleTimeFrameClick('last-year')}
+            onClick={() => handleTimeFrameClick('1Y')}
             className="bg-white"
           >
-            2024
+            1Y
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => handleTimeFrameClick('ytd')}
+            onClick={() => handleTimeFrameClick('ALL')}
             className="bg-white"
           >
-            YTD
+            ALL
           </Button>
         </div>
         <DateRangeFilter onDateRangeChange={onDateRangeChange} />
