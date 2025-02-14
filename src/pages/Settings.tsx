@@ -1,9 +1,10 @@
+
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { MarinaForm } from "@/components/settings/MarinaForm";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from '@supabase/auth-helpers-react';
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Edit, LogOut } from "lucide-react";
@@ -12,20 +13,25 @@ import { MarinaOverviewCard } from "@/components/settings/overview/MarinaOvervie
 import { ProfileCompletion } from "@/components/settings/profile/ProfileCompletion";
 import { SettingsLoading } from "@/components/settings/loading/SettingsLoading";
 import { useNavigate } from "react-router-dom";
+import { useOrganization } from "@/hooks/use-organization";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 
 export default function Settings() {
   const [marinaDetails, setMarinaDetails] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completionPercentage, setCompletionPercentage] = useState(0);
-  const session = useSession();
+  const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   useEffect(() => {
-    if (!session?.user?.id) {
-      setIsLoading(false);
-      setError("Please log in to access marina settings.");
+    if (!user?.id || !organizationId || !accountId) {
+      if (!isLoadingOrg) {
+        setIsLoading(false);
+        setError("Please log in to access marina settings.");
+      }
       return;
     }
 
@@ -37,7 +43,8 @@ export default function Settings() {
         const { data, error: fetchError } = await supabase
           .from('marina_details')
           .select('*')
-          .eq('user_id', session.user.id)
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .single();
 
         if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
@@ -65,7 +72,7 @@ export default function Settings() {
     };
 
     fetchMarinaDetails();
-  }, [session, toast]);
+  }, [user, organizationId, accountId, isLoadingOrg, toast]);
 
   const handleLogout = async () => {
     try {
@@ -76,7 +83,7 @@ export default function Settings() {
         title: "Success",
         description: "You have been logged out successfully.",
       });
-      navigate('/login');
+      navigate('/signin');
     } catch (error) {
       console.error('Error logging out:', error);
       toast({
@@ -92,86 +99,75 @@ export default function Settings() {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  if (!session?.user?.id) {
-    return (
+  return (
+    <AuthGuard>
       <PageWithChat>
         <PageContainer>
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>Please log in to access marina settings.</AlertDescription>
-          </Alert>
+          <div className="space-y-8">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
+                <p className="text-muted-foreground">
+                  {marinaDetails 
+                    ? "Manage your marina's information and settings below." 
+                    : "Get started by adding your marina's information."}
+                </p>
+              </div>
+              <Button
+                onClick={handleLogout}
+                variant="destructive"
+                size="sm"
+                className="ml-4"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Log Out
+              </Button>
+            </div>
+
+            {isLoading ? (
+              <SettingsLoading />
+            ) : error ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            ) : (
+              <>
+                <MarinaOverviewCard marinaDetails={marinaDetails} />
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-4">
+                    <Button 
+                      onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
+                      variant="outline" 
+                      size="sm"
+                      className="border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit Information
+                    </Button>
+                  </div>
+                  <ProfileCompletion 
+                    completionPercentage={completionPercentage}
+                    onNavigateToSection={handleNavigateToSection}
+                  />
+                </div>
+
+                <div id="marina-form">
+                  <MarinaForm 
+                    initialData={marinaDetails} 
+                    onSuccess={() => {
+                      toast({
+                        title: "Success",
+                        description: "Marina details have been saved successfully.",
+                      });
+                    }}
+                  />
+                </div>
+              </>
+            )}
+          </div>
         </PageContainer>
       </PageWithChat>
-    );
-  }
-
-  return (
-    <PageWithChat>
-      <PageContainer>
-        <div className="space-y-8">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
-              <p className="text-muted-foreground">
-                {marinaDetails 
-                  ? "Manage your marina's information and settings below." 
-                  : "Get started by adding your marina's information."}
-              </p>
-            </div>
-            <Button
-              onClick={handleLogout}
-              variant="destructive"
-              size="sm"
-              className="ml-4"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Log Out
-            </Button>
-          </div>
-
-          {isLoading ? (
-            <SettingsLoading />
-          ) : error ? (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : (
-            <>
-              <MarinaOverviewCard marinaDetails={marinaDetails} />
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-4">
-                  <Button 
-                    onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
-                    variant="outline" 
-                    size="sm"
-                    className="border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Information
-                  </Button>
-                </div>
-                <ProfileCompletion 
-                  completionPercentage={completionPercentage}
-                  onNavigateToSection={handleNavigateToSection}
-                />
-              </div>
-
-              <div id="marina-form">
-                <MarinaForm 
-                  initialData={marinaDetails} 
-                  onSuccess={() => {
-                    toast({
-                      title: "Success",
-                      description: "Marina details have been saved successfully.",
-                    });
-                  }}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </PageContainer>
-    </PageWithChat>
+    </AuthGuard>
   );
 }
