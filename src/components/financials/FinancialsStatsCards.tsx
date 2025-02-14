@@ -1,10 +1,8 @@
-
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { format, subDays, isWithinInterval } from "date-fns";
-import { useOrganization } from "@/hooks/use-organization";
+import { format, isWithinInterval } from "date-fns";
+import { useSupabaseClient } from "@/hooks/use-supabase-client";
 
 interface FinancialsStatsCardsProps {
   dateRange: {
@@ -14,13 +12,11 @@ interface FinancialsStatsCardsProps {
 }
 
 export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
-  const { organizationId, accountId } = useOrganization();
+  const supabase = useSupabaseClient();
 
   const { data: stats } = useQuery({
-    queryKey: ['expense-stats', dateRange.from, dateRange.to, organizationId, accountId],
+    queryKey: ['expense-stats', dateRange.from, dateRange.to],
     queryFn: async () => {
-      if (!organizationId || !accountId) return null;
-
       // Calculate previous period
       const periodLength = dateRange.to.getTime() - dateRange.from.getTime();
       const previousFrom = new Date(dateRange.from.getTime() - periodLength);
@@ -32,22 +28,16 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
           .from('expenses')
           .select('amount, category')
           .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('date', format(dateRange.to, 'yyyy-MM-dd'))
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId),
+          .lte('date', format(dateRange.to, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
           .select('amount')
           .gte('created_at', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('created_at', format(dateRange.to, 'yyyy-MM-dd'))
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
           .eq('status', 'paid'),
         supabase
           .from('monthly_budgets')
           .select('amount')
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
           .gte('month', format(dateRange.from, 'yyyy-MM-01'))
           .lte('month', format(dateRange.to, 'yyyy-MM-01'))
       ]);
@@ -58,16 +48,12 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
           .from('expenses')
           .select('amount')
           .gte('date', format(previousFrom, 'yyyy-MM-dd'))
-          .lte('date', format(previousTo, 'yyyy-MM-dd'))
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId),
+          .lte('date', format(previousTo, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
           .select('amount')
           .gte('created_at', format(previousFrom, 'yyyy-MM-dd'))
           .lte('created_at', format(previousTo, 'yyyy-MM-dd'))
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
           .eq('status', 'paid')
       ]);
 
@@ -97,8 +83,7 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         categoryTotals,
         largestExpense
       };
-    },
-    enabled: !!organizationId && !!accountId
+    }
   });
 
   if (!stats) return null;

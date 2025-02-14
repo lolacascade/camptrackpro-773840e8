@@ -1,8 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useOrganization } from "@/hooks/use-organization";
+import { useSupabaseClient } from "@/hooks/use-supabase-client";
 
 interface RevenueData {
   category: string;
@@ -11,18 +10,14 @@ interface RevenueData {
 
 export function RevenueBreakdown() {
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
-  const { organizationId, accountId } = useOrganization();
+  const supabase = useSupabaseClient();
 
   useEffect(() => {
     const fetchRevenueData = async () => {
-      if (!organizationId || !accountId) return;
-
       const { data, error } = await supabase
         .from('invoices')
         .select('type, amount')
-        .eq('status', 'paid')
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        .eq('status', 'paid');
 
       if (error) {
         console.error("Error fetching revenue data:", error);
@@ -43,7 +38,7 @@ export function RevenueBreakdown() {
     };
 
     fetchRevenueData();
-  }, [organizationId, accountId]);
+  }, [supabase]);
 
   return (
     <div className="w-full rounded-2xl bg-white p-6">
