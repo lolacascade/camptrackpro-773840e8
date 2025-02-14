@@ -22,11 +22,23 @@ const routes: RouteObject[] = [
   },
   {
     path: "/app",
-    element: <ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <Dashboard />
+        </Layout>
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/app/assets",
-    element: <ProtectedRoute><Layout><Assets /></Layout></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Layout>
+          <Assets />
+        </Layout>
+      </ProtectedRoute>
+    ),
   }
 ];
 
