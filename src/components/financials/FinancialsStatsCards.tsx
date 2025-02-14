@@ -13,11 +13,25 @@ interface FinancialsStatsCardsProps {
   };
 }
 
+interface FinancialStats {
+  currentTotal: number;
+  previousTotal: number;
+  currentRevenue: number;
+  previousRevenue: number;
+  totalBudget: number;
+  categoryTotals: Record<string, number>;
+  revenueByType: Record<string, number>;
+  largestExpense: {
+    amount: number;
+    category: string;
+  };
+}
+
 export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
   const supabase = useSupabaseClient();
   const { organizationId, accountId } = useOrganization();
 
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<FinancialStats | null>({
     queryKey: ['expense-stats', dateRange.from, dateRange.to, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) return null;
@@ -92,8 +106,11 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         return sum + (typeof budget.amount === 'number' ? budget.amount : 0);
       }, 0) || 0;
 
-      // Calculate category percentages and revenue breakdown
-      const categoryTotals: { [key: string]: number } = {};
+      // Initialize the objects before using them
+      const categoryTotals: Record<string, number> = {};
+      const revenueByType: Record<string, number> = {};
+
+      // Calculate category percentages
       currentExpenses.data?.forEach(exp => {
         if (exp.category && typeof exp.amount === 'number') {
           categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
@@ -101,13 +118,20 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       });
 
       // Calculate revenue by type
-      const revenueByType: { [key: string]: number } = {};
       currentInvoices.data?.forEach(inv => {
         if (inv.type && typeof inv.amount === 'number') {
           const type = inv.type === 'booking_revenue' ? 'Booking Revenue' : inv.type;
           revenueByType[type] = (revenueByType[type] || 0) + inv.amount;
         }
       });
+
+      // Initialize with default values if no data
+      if (Object.keys(categoryTotals).length === 0) {
+        categoryTotals['No Categories'] = 0;
+      }
+      if (Object.keys(revenueByType).length === 0) {
+        revenueByType['No Revenue'] = 0;
+      }
 
       const largestExpense = currentExpenses.data?.reduce((max, exp) => 
         (typeof exp.amount === 'number' && exp.amount > max.amount) ? exp : max, 
@@ -120,8 +144,8 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         currentRevenue,
         previousRevenue,
         totalBudget,
-        categoryTotals: Object.keys(categoryTotals).length > 0 ? categoryTotals : { 'No Categories': 0 },
-        revenueByType: Object.keys(revenueByType).length > 0 ? revenueByType : { 'No Revenue': 0 },
+        categoryTotals,
+        revenueByType,
         largestExpense
       };
     },
@@ -144,14 +168,13 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
     ? 'current period'
     : format(dateRange.from, 'MMM dd') + ' - ' + format(dateRange.to, 'MMM dd');
 
-  // Ensure we always have objects to map over
-  const categoryBreakdown = Object.entries(stats.categoryTotals || {}).map(([category, amount]) => ({
+  const categoryBreakdown = Object.entries(stats.categoryTotals).map(([category, amount]) => ({
     label: category,
     value: `$${amount.toLocaleString()}`,
     percentage: Math.round((amount / (stats.currentTotal || 1)) * 100)
   }));
 
-  const revenueBreakdown = Object.entries(stats.revenueByType || {}).map(([type, amount]) => ({
+  const revenueBreakdown = Object.entries(stats.revenueByType).map(([type, amount]) => ({
     label: type,
     value: `$${amount.toLocaleString()}`,
     percentage: Math.round((amount / (stats.currentRevenue || 1)) * 100)
@@ -189,10 +212,10 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       />
       <EnhancedStatCard
         title="Budget Status"
-        value={`${((stats.currentTotal / stats.totalBudget) * 100).toFixed(1)}%`}
+        value={`${((stats.currentTotal / (stats.totalBudget || 1)) * 100).toFixed(1)}%`}
         icon={AlertCircle}
         trend={{
-          value: `${Math.abs(100 - ((stats.currentTotal / stats.totalBudget) * 100)).toFixed(1)}%`,
+          value: `${Math.abs(100 - ((stats.currentTotal / (stats.totalBudget || 1)) * 100)).toFixed(1)}%`,
           isPositive: stats.currentTotal <= stats.totalBudget,
           comparedTo: periodLabel
         }}
