@@ -1,3 +1,4 @@
+
 import { Site } from "./site";
 import { Customer } from "./customer";
 
@@ -36,3 +37,32 @@ export const RV_TYPE_TO_CATEGORY: Record<string, RVPricingCategory> = {
   'Truck Camper': 'up_to_15',
   'Teardrop': 'up_to_15'
 };
+
+export interface AssetTableProps {
+  assets: Asset[];
+  onEdit: (asset: Asset) => void;
+  onViewDetails: (asset: Asset) => void;
+  isLoading?: boolean;
+}
+
+export interface AssetFormProps {
+  asset?: Asset;
+  onSubmit: (asset: Partial<Asset>) => void;
+  onCancel: () => void;
+}
+
+export interface AssetDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  onAssetAdded: () => void;
+  customerId: string | null;
+  asset?: Asset;
+}
+
+export interface AssetFilterState {
+  searchTerm: string;
+  typeFilter: string;
+  customerFilter: string;
+}
+
+export type AssetFormFields = Pick<Asset, 'asset_name' | 'asset_size' | 'asset_type' | 'site_id'>;

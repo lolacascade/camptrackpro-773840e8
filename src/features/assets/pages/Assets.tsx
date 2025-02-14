@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { Asset } from "@/types/asset";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { AssetsHeader } from "@/features/assets/components/header/AssetsHeader";
@@ -10,23 +9,28 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { useToast } from "@/hooks/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
 import { useAssets } from "@/hooks/assets/use-assets";
+import { useAssetDrawer } from "@/features/assets/hooks/useAssetDrawer";
 
 export default function Assets() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
   const { data: assets = [], isLoading: isLoadingAssets, error } = useAssets();
   const { toast } = useToast();
-
-  const handleAddAsset = () => {
-    setSelectedAsset(null);
-    setIsDrawerOpen(true);
-  };
-
-  const handleEditClick = (asset: Asset) => {
-    setSelectedAsset(asset);
-    setIsDrawerOpen(true);
-  };
+  
+  const {
+    isOpen: isDrawerOpen,
+    selectedAsset,
+    handleAddAsset,
+    handleEditAsset: handleEditClick,
+    handleClose: handleCloseDrawer,
+    handleSuccess: handleAssetAdded
+  } = useAssetDrawer({
+    onAssetAdded: () => {
+      toast({
+        title: "Success",
+        description: "Asset has been added successfully",
+      });
+    }
+  });
 
   const handleViewDetails = (asset: Asset) => {
     console.log("View details for asset:", asset);
@@ -34,11 +38,6 @@ export default function Assets() {
       title: "Coming Soon",
       description: "Asset details view is under development",
     });
-  };
-
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-    setSelectedAsset(null);
   };
 
   if (error || (!organizationId && !isLoadingOrg)) {
@@ -68,13 +67,9 @@ export default function Assets() {
           <AssetDrawer
             open={isDrawerOpen}
             onClose={handleCloseDrawer}
-            onAssetAdded={() => {
-              toast({
-                title: "Success",
-                description: "Asset has been added successfully",
-              });
-            }}
+            onAssetAdded={handleAssetAdded}
             customerId={selectedAsset?.customer_id || null}
+            asset={selectedAsset || undefined}
           />
         </div>
       </PageContainer>
