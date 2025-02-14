@@ -1423,6 +1423,24 @@ export type Database = {
             }
             Returns: boolean
           }
+      get_booking_invoice_audit: {
+        Args: {
+          p_org_id: string
+          p_acc_id: string
+          p_days?: number
+        }
+        Returns: {
+          booking_id: string
+          booking_total_amount: number
+          booking_status: Database["public"]["Enums"]["booking_status"]
+          booking_created_at: string
+          invoice_id: string
+          invoice_amount: number
+          invoice_status: string
+          invoice_type: string
+          invoice_created_at: string
+        }[]
+      }
       get_booking_stats:
         | {
             Args: {
