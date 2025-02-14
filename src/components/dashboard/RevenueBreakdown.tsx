@@ -14,25 +14,52 @@ export function RevenueBreakdown() {
 
   useEffect(() => {
     const fetchRevenueData = async () => {
-      const { data, error } = await supabase
+      // Get invoices for income data
+      const { data: incomeData, error: incomeError } = await supabase
         .from('invoices')
-        .select(`type, amount`)
+        .select('amount, type')
         .eq('status', 'paid');
 
-      if (error) {
-        console.error("Error fetching revenue data:", error);
-      } else if (data) {
-        const groupedData = data.reduce((acc: RevenueData[], curr) => {
-          const existingCategory = acc.find(item => item.category === curr.type);
-          if (existingCategory) {
-            existingCategory.amount += curr.amount;
-          } else {
-            acc.push({ category: curr.type, amount: curr.amount });
-          }
-          return acc;
-        }, []);
+      // Get expenses data
+      const { data: expenseData, error: expenseError } = await supabase
+        .from('expenses')
+        .select('amount, category');
+
+      if (incomeError) {
+        console.error("Error fetching income data:", incomeError);
+      } else if (expenseError) {
+        console.error("Error fetching expense data:", expenseError);
+      } else {
+        // Process and combine both datasets
+        const combinedData: RevenueData[] = [];
+
+        // Process income data
+        if (incomeData) {
+          const incomeByType = incomeData.reduce((acc: Record<string, number>, curr) => {
+            const type = curr.type || 'General Income';
+            acc[type] = (acc[type] || 0) + (curr.amount || 0);
+            return acc;
+          }, {});
+
+          Object.entries(incomeByType).forEach(([type, amount]) => {
+            combinedData.push({ category: type, amount });
+          });
+        }
+
+        // Process expense data
+        if (expenseData) {
+          const expensesByCategory = expenseData.reduce((acc: Record<string, number>, curr) => {
+            const category = curr.category || 'Other Expenses';
+            acc[category] = (acc[category] || 0) + (curr.amount || 0);
+            return acc;
+          }, {});
+
+          Object.entries(expensesByCategory).forEach(([category, amount]) => {
+            combinedData.push({ category, amount });
+          });
+        }
         
-        setRevenueData(groupedData);
+        setRevenueData(combinedData);
       }
     };
 
