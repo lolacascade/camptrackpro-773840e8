@@ -8,6 +8,7 @@ import { useOrganization } from "@/hooks/use-organization";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { BookingFormData, UseBookingDrawerProps } from "../types";
+import { BookingStatus } from "@/types/booking";
 
 export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBookingDrawerProps) {
   const session = useSession();
@@ -52,7 +53,7 @@ export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBook
         ...data,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: data.status || 'pending',
+        status: (data.status || 'pending') as BookingStatus,
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,

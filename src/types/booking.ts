@@ -1,14 +1,14 @@
-
 import { Customer } from "./customer";
 import { Slot } from "./slot";
 import { Site } from "./site";
 import { DateRange } from "react-day-picker";
 
-export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled' | 'all';
+export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
+export type BookingStatusFilter = BookingStatus | 'all';
 
 export interface BookingFilters {
   searchTerm: string;
-  status: BookingStatus;
+  status: BookingStatusFilter;
   page: number;
   dateRange: DateRange | null;
 }
@@ -38,4 +38,3 @@ export interface Booking {
   organization_id?: string;
   account_id?: string;
 }
-
