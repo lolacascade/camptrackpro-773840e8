@@ -1,3 +1,4 @@
+
 import { Table } from "@/components/ui/table";
 import { Asset } from "@/types/asset";
 import { useState } from "react";
