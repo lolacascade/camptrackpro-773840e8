@@ -1,5 +1,5 @@
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -10,21 +10,19 @@ import routes from "@/routes";
 
 const queryClient = new QueryClient();
 
-// Create a router instance but wrap the routes with AuthProvider
-const router = createBrowserRouter(
-  routes.map(route => ({
-    ...route,
-    element: <AuthProvider>{route.element}</AuthProvider>
-  }))
-);
+const router = createBrowserRouter(routes);
 
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <SessionContextProvider supabaseClient={supabase}>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-          <Toaster />
+          <BrowserRouter>
+            <AuthProvider>
+              <RouterProvider router={router} />
+              <Toaster />
+            </AuthProvider>
+          </BrowserRouter>
         </QueryClientProvider>
       </SessionContextProvider>
     </ThemeProvider>
