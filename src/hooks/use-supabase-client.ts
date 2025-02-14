@@ -18,13 +18,18 @@ export function useSupabaseClient() {
 
     // If we have org/account context, automatically filter by it
     if (organizationId && accountId) {
-      const hasOrgId = 'organization_id' in (query as any).defaultFilter;
-      const hasAccId = 'account_id' in (query as any).defaultFilter;
-
-      return query
-        .select('*')
-        .eq(hasOrgId ? 'organization_id' : '', organizationId)
-        .eq(hasAccId ? 'account_id' : '', accountId);
+      // First select all columns
+      const baseQuery = query.select('*');
+      
+      try {
+        // Attempt to add organization and account filters
+        return baseQuery
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId);
+      } catch {
+        // If the filters fail (table doesn't have these columns), return base query
+        return baseQuery;
+      }
     }
 
     // Return unfiltered query if no context
