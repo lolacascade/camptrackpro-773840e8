@@ -1,27 +1,40 @@
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { StrictMode } from 'react';
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
-import { supabase } from "@/integrations/supabase/client";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import routes from "@/routes";
+import { BrowserRouter } from "react-router-dom";
+import { AppRoutes } from "@/components/routing/AppRoutes";
+import { AuthProvider } from "@/contexts/AuthContext";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+    },
+  },
+});
 
-const router = createBrowserRouter(routes);
-
-function App() {
+const App = () => {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <SessionContextProvider supabaseClient={supabase}>
+    <StrictMode>
+      <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-          <Toaster />
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <AppRoutes />
+            </TooltipProvider>
+          </AuthProvider>
         </QueryClientProvider>
-      </SessionContextProvider>
-    </ThemeProvider>
+      </BrowserRouter>
+    </StrictMode>
   );
-}
+};
 
 export default App;

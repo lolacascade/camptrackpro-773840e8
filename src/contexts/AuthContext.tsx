@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from 'react-router-dom';
 
 interface AuthState {
   user: User | null;
@@ -21,31 +20,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const initSession = async () => {
       try {
-        // Get initial session
         const { data: { session: currentSession } } = await supabase.auth.getSession();
-        
         if (currentSession) {
           setSession(currentSession);
           setUser(currentSession.user);
-        } else {
-          // If no session, clear state and redirect to signin
-          setSession(null);
-          setUser(null);
-          navigate('/signin');
         }
       } catch (error) {
-        console.error('Error checking session:', error);
         toast({
-          title: "Session Error",
-          description: "Please sign in again",
+          title: "Error checking session",
+          description: "There was a problem verifying your login status",
           variant: "destructive",
         });
-        navigate('/signin');
+        setSession(null);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -53,32 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initSession();
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log('Auth state change:', event, currentSession?.user?.id);
-      
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       if (currentSession) {
         setSession(currentSession);
         setUser(currentSession.user);
       } else {
         setSession(null);
         setUser(null);
-        
-        // Only redirect to signin if we're not already there
-        if (!window.location.pathname.includes('/signin')) {
-          navigate('/signin');
-        }
       }
-      
       setIsLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, [toast]);
 
   const signIn = async (email: string, password: string): Promise<void> => {
     setIsLoading(true);
@@ -97,10 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         title: "Welcome back!",
         description: "You have successfully signed in.",
       });
-      
-      navigate('/app');
     } catch (error: any) {
-      console.error('Sign in error:', error);
       toast({
         title: "Unable to sign in",
         description: error.message || "The email or password you entered is incorrect.",
@@ -119,15 +96,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       setSession(null);
       setUser(null);
-      
-      navigate('/signin');
 
       toast({
         title: "Signed out",
         description: "You have been signed out successfully.",
       });
     } catch (error: any) {
-      console.error('Sign out error:', error);
       toast({
         title: "Error",
         description: "Failed to sign out. Please try again.",
@@ -138,17 +112,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const checkSession = async () => {
-    try {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      if (!currentSession) {
-        navigate('/signin');
-      }
-      return currentSession;
-    } catch (error) {
-      console.error('Error checking session:', error);
-      navigate('/signin');
-      return null;
-    }
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    return currentSession;
   };
 
   const value = {

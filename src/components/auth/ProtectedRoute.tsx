@@ -23,15 +23,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       }
 
       try {
-        // Check for session first
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          console.log('No active session found');
-          setHasOrganization(false);
-          setIsCheckingOrg(false);
-          return;
-        }
-
         const { data: orgRoles, error } = await supabase
           .from('organization_roles')
           .select('organization_id')
