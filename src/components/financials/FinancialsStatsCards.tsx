@@ -1,3 +1,4 @@
+
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
