@@ -62,41 +62,37 @@ export function BookingForm({
         onSiteCreated={onSiteCreated}
       />
 
-      {isEdit && (
-        <>
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <SelectField
-              value={form.watch('status') || ''}
-              onChange={(value) => form.setValue('status', value)}
-              options={statusOptions.filter(opt => opt.value !== 'all')}
-              placeholder="Select status"
-            />
-          </div>
+      <div className="space-y-2">
+        <Label>Status</Label>
+        <SelectField
+          value={form.watch('status') || 'pending'}
+          onChange={(value) => form.setValue('status', value)}
+          options={statusOptions.filter(opt => opt.value !== 'all')}
+          placeholder="Select status"
+        />
+      </div>
 
-          <div className="space-y-2">
-            <Label>Total Amount</Label>
-            <Input
-              type="number"
-              step="0.01"
-              value={form.watch('total_amount') || ''}
-              onChange={(e) => form.setValue('total_amount', parseFloat(e.target.value))}
-              placeholder="Enter total amount"
-              className="bg-white"
-            />
-          </div>
+      <div className="space-y-2">
+        <Label>Total Amount</Label>
+        <Input
+          type="number"
+          step="0.01"
+          value={form.watch('total_amount') || ''}
+          onChange={(e) => form.setValue('total_amount', parseFloat(e.target.value))}
+          placeholder="Enter total amount"
+          className="bg-white"
+        />
+      </div>
 
-          <div className="space-y-2">
-            <Label>Special Requirements</Label>
-            <Input
-              value={form.watch('special_requirements') || ''}
-              onChange={(e) => form.setValue('special_requirements', e.target.value)}
-              placeholder="Enter any special requirements"
-              className="bg-white"
-            />
-          </div>
-        </>
-      )}
+      <div className="space-y-2">
+        <Label>Special Requirements</Label>
+        <Input
+          value={form.watch('special_requirements') || ''}
+          onChange={(e) => form.setValue('special_requirements', e.target.value)}
+          placeholder="Enter any special requirements"
+          className="bg-white"
+        />
+      </div>
 
       <Button type="submit" className="w-full">
         {isEdit ? "Update Booking" : "Create Booking"}
