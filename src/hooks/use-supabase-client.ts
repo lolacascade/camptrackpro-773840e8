@@ -13,11 +13,8 @@ export function useSupabaseClient() {
       return supabase.from(table);
     }
 
-    return supabase
-      .from(table)
-      .select()
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId);
+    // Return the base query without filters, let components chain their own select and filters
+    return supabase.from(table);
   }, [organizationId, accountId]);
 
   return {

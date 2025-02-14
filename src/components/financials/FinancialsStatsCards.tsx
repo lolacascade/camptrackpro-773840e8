@@ -1,3 +1,4 @@
+
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -26,18 +27,18 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       const [currentExpenses, currentInvoices, budgets] = await Promise.all([
         supabase
           .from('expenses')
-          .select('amount, category')
+          .select(`amount, category`)
           .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('date', format(dateRange.to, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
-          .select('amount')
+          .select(`amount`)
           .gte('created_at', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('created_at', format(dateRange.to, 'yyyy-MM-dd'))
           .eq('status', 'paid'),
         supabase
           .from('monthly_budgets')
-          .select('amount')
+          .select(`amount`)
           .gte('month', format(dateRange.from, 'yyyy-MM-01'))
           .lte('month', format(dateRange.to, 'yyyy-MM-01'))
       ]);
@@ -46,12 +47,12 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       const [previousExpenses, previousInvoices] = await Promise.all([
         supabase
           .from('expenses')
-          .select('amount')
+          .select(`amount`)
           .gte('date', format(previousFrom, 'yyyy-MM-dd'))
           .lte('date', format(previousTo, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
-          .select('amount')
+          .select(`amount`)
           .gte('created_at', format(previousFrom, 'yyyy-MM-dd'))
           .lte('created_at', format(previousTo, 'yyyy-MM-dd'))
           .eq('status', 'paid')

@@ -16,13 +16,12 @@ export function RevenueBreakdown() {
     const fetchRevenueData = async () => {
       const { data, error } = await supabase
         .from('invoices')
-        .select('type, amount')
+        .select(`type, amount`)
         .eq('status', 'paid');
 
       if (error) {
         console.error("Error fetching revenue data:", error);
-      } else {
-        // Process the data to group by type
+      } else if (data) {
         const groupedData = data.reduce((acc: RevenueData[], curr) => {
           const existingCategory = acc.find(item => item.category === curr.type);
           if (existingCategory) {
