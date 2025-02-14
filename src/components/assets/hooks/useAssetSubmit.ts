@@ -1,6 +1,6 @@
 
 import { useSession } from "@supabase/auth-helpers-react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useOrganization } from "@/hooks/use-organization";
 import { supabase } from "@/integrations/supabase/client";
 import { Asset } from "@/types/asset";
@@ -18,6 +18,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
 
   const handleSubmit = async (newAsset: Partial<Asset>) => {
     if (!session?.user?.id) {
+      console.error('No session found:', session);
       toast({
         title: "Error",
         description: "You must be signed in to add assets.",
@@ -48,7 +49,8 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
       console.log('Creating asset with:', {
         ...newAsset,
         organization_id: organizationId,
-        account_id: accountId
+        account_id: accountId,
+        user_id: session.user.id
       });
 
       const assetData = {
@@ -75,10 +77,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) {
-          console.error('Error updating asset:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         toast({
           title: "Success",
@@ -91,10 +90,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) {
-          console.error('Error creating asset:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         toast({
           title: "Success",
