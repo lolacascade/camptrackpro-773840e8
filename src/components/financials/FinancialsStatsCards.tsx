@@ -120,15 +120,17 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         currentRevenue,
         previousRevenue,
         totalBudget,
-        categoryTotals,
-        revenueByType,
+        categoryTotals: Object.keys(categoryTotals).length > 0 ? categoryTotals : { 'No Categories': 0 },
+        revenueByType: Object.keys(revenueByType).length > 0 ? revenueByType : { 'No Revenue': 0 },
         largestExpense
       };
     },
     enabled: !!organizationId && !!accountId
   });
 
-  if (!stats) return null;
+  if (!stats) {
+    return null;
+  }
 
   const revenueChange = stats.previousRevenue 
     ? ((stats.currentRevenue - stats.previousRevenue) / stats.previousRevenue) * 100 
@@ -142,16 +144,17 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
     ? 'current period'
     : format(dateRange.from, 'MMM dd') + ' - ' + format(dateRange.to, 'MMM dd');
 
-  const categoryBreakdown = Object.entries(stats.categoryTotals).map(([category, amount]) => ({
+  // Ensure we always have objects to map over
+  const categoryBreakdown = Object.entries(stats.categoryTotals || {}).map(([category, amount]) => ({
     label: category,
     value: `$${amount.toLocaleString()}`,
-    percentage: Math.round((amount / stats.currentTotal) * 100)
+    percentage: Math.round((amount / (stats.currentTotal || 1)) * 100)
   }));
 
-  const revenueBreakdown = Object.entries(stats.revenueByType).map(([type, amount]) => ({
+  const revenueBreakdown = Object.entries(stats.revenueByType || {}).map(([type, amount]) => ({
     label: type,
     value: `$${amount.toLocaleString()}`,
-    percentage: Math.round((amount / stats.currentRevenue) * 100)
+    percentage: Math.round((amount / (stats.currentRevenue || 1)) * 100)
   }));
 
   return (
