@@ -17,6 +17,8 @@ export function useOrganization() {
         return null;
       }
 
+      console.log("Fetching organization context for user:", session.user.id);
+
       const { data: orgRoles, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id')
@@ -24,11 +26,15 @@ export function useOrganization() {
         .maybeSingle();
 
       if (orgError) {
+        console.error("Error fetching organization roles:", orgError);
         toast.error("Failed to fetch organization context");
         return null;
       }
 
+      console.log("Organization roles:", orgRoles);
+
       if (!orgRoles?.organization_id) {
+        console.log("No organization_id found in roles");
         return null;
       }
 
@@ -39,11 +45,15 @@ export function useOrganization() {
         .maybeSingle();
 
       if (accError) {
+        console.error("Error fetching account roles:", accError);
         toast.error("Failed to fetch account context");
         return null;
       }
 
+      console.log("Account roles:", accRoles);
+
       if (!accRoles?.account_id) {
+        console.log("No account_id found in roles");
         return null;
       }
 

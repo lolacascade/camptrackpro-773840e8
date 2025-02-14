@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 import { addDays } from "date-fns";
@@ -51,12 +52,11 @@ export function useBookingDrawer({ booking, onClose, onBookingUpdated }: UseBook
         ...data,
         check_in_date: dateRange.from.toISOString(),
         check_out_date: dateRange.to.toISOString(),
-        status: 'pending' as const,
+        status: data.status || 'pending',
         created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        total_amount: 0
       };
 
       if (booking?.id) {
