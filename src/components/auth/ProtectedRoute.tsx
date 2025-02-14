@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,31 +9,34 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: isAuthLoading } = useAuth();
   const location = useLocation();
-  const [hasOrganization, setHasOrganization] = useState(false);
+  const [hasOrganization, setHasOrganization] = useState<boolean | null>(null);
   const [isCheckingOrg, setIsCheckingOrg] = useState(true);
 
   useEffect(() => {
     async function checkOrganization() {
-      if (!user) return;
+      if (!user) {
+        setHasOrganization(false);
+        setIsCheckingOrg(false);
+        return;
+      }
 
       try {
         const { data: orgRoles, error } = await supabase
           .from('organization_roles')
-          .select('organization_id, role')
+          .select('organization_id')
           .eq('user_id', user.id)
-          .limit(1);
+          .limit(1)
+          .maybeSingle();
 
         if (error) {
-          // Keep error logging for critical errors
           console.error('Error checking organization:', error);
           setHasOrganization(false);
         } else {
-          setHasOrganization(orgRoles && orgRoles.length > 0);
+          setHasOrganization(!!orgRoles?.organization_id);
         }
       } catch (error) {
-        // Keep error logging for critical errors
         console.error('Organization check failed:', error);
         setHasOrganization(false);
       } finally {
@@ -42,12 +46,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
     if (user) {
       checkOrganization();
-    } else {
+    } else if (!isAuthLoading) {
       setIsCheckingOrg(false);
     }
-  }, [user]);
+  }, [user, isAuthLoading]);
 
-  if (isLoading || isCheckingOrg) {
+  // Show loading state while checking auth or organization
+  if (isAuthLoading || isCheckingOrg) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -55,13 +60,16 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
+  // If not authenticated, redirect to signin
   if (!user) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  if (!hasOrganization && location.pathname !== '/app') {
+  // Only redirect to /app if we've confirmed there's no organization AND we're not already on /app
+  if (hasOrganization === false && location.pathname !== '/app') {
     return <Navigate to="/app" replace />;
   }
 
+  // If we have an organization or we're on /app, render children
   return <>{children}</>;
 }
