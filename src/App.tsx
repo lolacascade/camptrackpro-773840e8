@@ -1,5 +1,5 @@
 
-import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
@@ -17,12 +17,8 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <SessionContextProvider supabaseClient={supabase}>
         <QueryClientProvider client={queryClient}>
-          <BrowserRouter>
-            <AuthProvider>
-              <RouterProvider router={router} />
-              <Toaster />
-            </AuthProvider>
-          </BrowserRouter>
+          <RouterProvider router={router} />
+          <Toaster />
         </QueryClientProvider>
       </SessionContextProvider>
     </ThemeProvider>
