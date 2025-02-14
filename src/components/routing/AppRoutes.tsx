@@ -10,7 +10,7 @@ import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
 import Customers from "@/pages/Customers";
 import CustomerDetails from "@/pages/CustomerDetails";
-import Assets from "@/pages/Assets";
+import Assets from "@/features/assets/pages/Assets";
 import Bookings from "@/pages/Bookings";
 import BookingDetails from "@/pages/BookingDetails";
 import Maintenance from "@/pages/Maintenance";
