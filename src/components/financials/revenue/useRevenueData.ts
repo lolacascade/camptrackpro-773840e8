@@ -23,7 +23,6 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
           .select('amount, created_at')
           .gte('created_at', dateRange.from.toISOString())
           .lte('created_at', dateRange.to.toISOString())
-          .eq('status', 'paid')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId),
         
