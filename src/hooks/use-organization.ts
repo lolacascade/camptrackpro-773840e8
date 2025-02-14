@@ -10,60 +10,74 @@ export function useOrganization() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context'],
     queryFn: async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session?.user) {
-        navigate('/signin');
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session?.user) {
+          console.log("No session found, redirecting to signin");
+          navigate('/signin');
+          return null;
+        }
+
+        console.log("Current user ID:", session.user.id);
+
+        // First check organization roles
+        const { data: orgRoles, error: orgError } = await supabase
+          .from('organization_roles')
+          .select('organization_id, role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (orgError) {
+          console.error("Error fetching organization roles:", orgError);
+          return null;
+        }
+
+        console.log("Organization role data:", orgRoles);
+
+        if (!orgRoles?.organization_id) {
+          console.log("No organization_id found for user");
+          return null;
+        }
+
+        // Then check account roles
+        const { data: accRoles, error: accError } = await supabase
+          .from('account_roles')
+          .select('account_id, role')
+          .eq('user_id', session.user.id)
+          .maybeSingle();
+
+        if (accError) {
+          console.error("Error fetching account roles:", accError);
+          return null;
+        }
+
+        console.log("Account role data:", accRoles);
+
+        if (!accRoles?.account_id) {
+          console.log("No account_id found for user");
+          return null;
+        }
+
+        const result = {
+          organizationId: orgRoles.organization_id,
+          accountId: accRoles.account_id
+        };
+
+        console.log("Returning organization context:", result);
+        return result;
+      } catch (error) {
+        console.error("Error in organization context:", error);
         return null;
       }
-
-      console.log("Fetching organization context for user:", session.user.id);
-
-      const { data: orgRoles, error: orgError } = await supabase
-        .from('organization_roles')
-        .select('organization_id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (orgError) {
-        console.error("Error fetching organization roles:", orgError);
-        toast.error("Failed to fetch organization context");
-        return null;
-      }
-
-      console.log("Organization roles:", orgRoles);
-
-      if (!orgRoles?.organization_id) {
-        console.log("No organization_id found in roles");
-        return null;
-      }
-
-      const { data: accRoles, error: accError } = await supabase
-        .from('account_roles')
-        .select('account_id')
-        .eq('user_id', session.user.id)
-        .maybeSingle();
-
-      if (accError) {
-        console.error("Error fetching account roles:", accError);
-        toast.error("Failed to fetch account context");
-        return null;
-      }
-
-      console.log("Account roles:", accRoles);
-
-      if (!accRoles?.account_id) {
-        console.log("No account_id found in roles");
-        return null;
-      }
-
-      return {
-        organizationId: orgRoles.organization_id,
-        accountId: accRoles.account_id
-      };
     },
-    retry: false
+    retry: false,
+    staleTime: 30000, // Cache for 30 seconds
   });
+
+  if (error) {
+    console.error("useOrganization hook error:", error);
+  }
 
   return {
     organizationId: data?.organizationId,
