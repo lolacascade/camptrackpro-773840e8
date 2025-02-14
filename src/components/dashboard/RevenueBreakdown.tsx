@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { useSupabaseClient } from "@/hooks/use-supabase-client";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface RevenueData {
   category: string;
@@ -11,19 +12,26 @@ interface RevenueData {
 export function RevenueBreakdown() {
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const supabase = useSupabaseClient();
+  const { organizationId, accountId } = useOrganization();
 
   useEffect(() => {
     const fetchRevenueData = async () => {
+      if (!organizationId || !accountId) return;
+
       // Get invoices for income data
       const { data: incomeData, error: incomeError } = await supabase
         .from('invoices')
         .select('amount, type')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId)
         .eq('status', 'paid');
 
       // Get expenses data
       const { data: expenseData, error: expenseError } = await supabase
         .from('expenses')
-        .select('amount, category');
+        .select('amount, category')
+        .eq('organization_id', organizationId)
+        .eq('account_id', accountId);
 
       if (incomeError) {
         console.error("Error fetching income data:", incomeError);
@@ -37,7 +45,8 @@ export function RevenueBreakdown() {
         if (incomeData) {
           const incomeByType = incomeData.reduce((acc: Record<string, number>, curr) => {
             const type = curr.type || 'General Income';
-            acc[type] = (acc[type] || 0) + (curr.amount || 0);
+            const amount = typeof curr.amount === 'number' ? curr.amount : 0;
+            acc[type] = (acc[type] || 0) + amount;
             return acc;
           }, {});
 
@@ -50,7 +59,8 @@ export function RevenueBreakdown() {
         if (expenseData) {
           const expensesByCategory = expenseData.reduce((acc: Record<string, number>, curr) => {
             const category = curr.category || 'Other Expenses';
-            acc[category] = (acc[category] || 0) + (curr.amount || 0);
+            const amount = typeof curr.amount === 'number' ? curr.amount : 0;
+            acc[category] = (acc[category] || 0) + amount;
             return acc;
           }, {});
 
@@ -64,7 +74,7 @@ export function RevenueBreakdown() {
     };
 
     fetchRevenueData();
-  }, [supabase]);
+  }, [supabase, organizationId, accountId]);
 
   return (
     <div className="w-full rounded-2xl bg-white p-6">

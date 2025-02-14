@@ -2,8 +2,9 @@
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { DollarSign, TrendingUp, PieChart, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { format, isWithinInterval } from "date-fns";
+import { format } from "date-fns";
 import { useSupabaseClient } from "@/hooks/use-supabase-client";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface FinancialsStatsCardsProps {
   dateRange: {
@@ -14,10 +15,13 @@ interface FinancialsStatsCardsProps {
 
 export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
   const supabase = useSupabaseClient();
+  const { organizationId, accountId } = useOrganization();
 
   const { data: stats } = useQuery({
-    queryKey: ['expense-stats', dateRange.from, dateRange.to],
+    queryKey: ['expense-stats', dateRange.from, dateRange.to, organizationId, accountId],
     queryFn: async () => {
+      if (!organizationId || !accountId) return null;
+
       // Calculate previous period
       const periodLength = dateRange.to.getTime() - dateRange.from.getTime();
       const previousFrom = new Date(dateRange.from.getTime() - periodLength);
@@ -27,18 +31,24 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       const [currentExpenses, currentInvoices, budgets] = await Promise.all([
         supabase
           .from('expenses')
-          .select(`amount, category`)
+          .select('amount, category')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .gte('date', format(dateRange.from, 'yyyy-MM-dd'))
           .lte('date', format(dateRange.to, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
-          .select(`amount`)
+          .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .eq('status', 'paid')
           .gte('created_at', format(dateRange.from, 'yyyy-MM-dd'))
-          .lte('created_at', format(dateRange.to, 'yyyy-MM-dd'))
-          .eq('status', 'paid'),
+          .lte('created_at', format(dateRange.to, 'yyyy-MM-dd')),
         supabase
           .from('monthly_budgets')
-          .select(`amount`)
+          .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .gte('month', format(dateRange.from, 'yyyy-MM-01'))
           .lte('month', format(dateRange.to, 'yyyy-MM-01'))
       ]);
@@ -47,31 +57,51 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
       const [previousExpenses, previousInvoices] = await Promise.all([
         supabase
           .from('expenses')
-          .select(`amount`)
+          .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
           .gte('date', format(previousFrom, 'yyyy-MM-dd'))
           .lte('date', format(previousTo, 'yyyy-MM-dd')),
         supabase
           .from('invoices')
-          .select(`amount`)
+          .select('amount')
+          .eq('organization_id', organizationId)
+          .eq('account_id', accountId)
+          .eq('status', 'paid')
           .gte('created_at', format(previousFrom, 'yyyy-MM-dd'))
           .lte('created_at', format(previousTo, 'yyyy-MM-dd'))
-          .eq('status', 'paid')
       ]);
 
-      const currentTotal = currentExpenses.data?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const previousTotal = previousExpenses.data?.reduce((sum, exp) => sum + exp.amount, 0) || 0;
-      const currentRevenue = currentInvoices.data?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
-      const previousRevenue = previousInvoices.data?.reduce((sum, inv) => sum + inv.amount, 0) || 0;
-      const totalBudget = budgets.data?.reduce((sum, budget) => sum + budget.amount, 0) || 0;
+      const currentTotal = currentExpenses.data?.reduce((sum, exp) => {
+        return sum + (typeof exp.amount === 'number' ? exp.amount : 0);
+      }, 0) || 0;
+
+      const previousTotal = previousExpenses.data?.reduce((sum, exp) => {
+        return sum + (typeof exp.amount === 'number' ? exp.amount : 0);
+      }, 0) || 0;
+
+      const currentRevenue = currentInvoices.data?.reduce((sum, inv) => {
+        return sum + (typeof inv.amount === 'number' ? inv.amount : 0);
+      }, 0) || 0;
+
+      const previousRevenue = previousInvoices.data?.reduce((sum, inv) => {
+        return sum + (typeof inv.amount === 'number' ? inv.amount : 0);
+      }, 0) || 0;
+
+      const totalBudget = budgets.data?.reduce((sum, budget) => {
+        return sum + (typeof budget.amount === 'number' ? budget.amount : 0);
+      }, 0) || 0;
 
       // Calculate category percentages
       const categoryTotals: { [key: string]: number } = {};
       currentExpenses.data?.forEach(exp => {
-        categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
+        if (exp.category && typeof exp.amount === 'number') {
+          categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
+        }
       });
 
       const largestExpense = currentExpenses.data?.reduce((max, exp) => 
-        exp.amount > max.amount ? exp : max, 
+        (typeof exp.amount === 'number' && exp.amount > max.amount) ? exp : max, 
         { amount: 0, category: 'None' }
       );
 
@@ -84,7 +114,8 @@ export function FinancialsStatsCards({ dateRange }: FinancialsStatsCardsProps) {
         categoryTotals,
         largestExpense
       };
-    }
+    },
+    enabled: !!organizationId && !!accountId
   });
 
   if (!stats) return null;
