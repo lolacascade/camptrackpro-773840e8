@@ -10,17 +10,21 @@ import routes from "@/routes";
 
 const queryClient = new QueryClient();
 
-const router = createBrowserRouter(routes);
+// Create a router instance but wrap the routes with AuthProvider
+const router = createBrowserRouter(
+  routes.map(route => ({
+    ...route,
+    element: <AuthProvider>{route.element}</AuthProvider>
+  }))
+);
 
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <SessionContextProvider supabaseClient={supabase}>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <RouterProvider router={router} />
-            <Toaster />
-          </AuthProvider>
+          <RouterProvider router={router} />
+          <Toaster />
         </QueryClientProvider>
       </SessionContextProvider>
     </ThemeProvider>
