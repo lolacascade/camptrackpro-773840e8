@@ -17,10 +17,10 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
         throw new Error("Organization or account context not found");
       }
 
-      const [incomeResponse, expensesResponse] = await Promise.all([
+      const [bookingsResponse, expensesResponse] = await Promise.all([
         supabase
-          .from('invoices')
-          .select('amount, created_at')
+          .from('bookings')
+          .select('total_amount, created_at')
           .gte('created_at', dateRange.from.toISOString())
           .lte('created_at', dateRange.to.toISOString())
           .eq('organization_id', organizationId)
@@ -35,7 +35,7 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
           .eq('account_id', accountId)
       ]);
 
-      if (incomeResponse.error) throw incomeResponse.error;
+      if (bookingsResponse.error) throw bookingsResponse.error;
       if (expensesResponse.error) throw expensesResponse.error;
 
       const data: { [key: string]: MonthlyFinancials } = {};
@@ -56,12 +56,12 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
         }
       });
 
-      // Aggregate income
-      incomeResponse.data?.forEach(invoice => {
-        const date = new Date(invoice.created_at);
+      // Aggregate booking income
+      bookingsResponse.data?.forEach(booking => {
+        const date = new Date(booking.created_at);
         const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
         if (data[key]) {
-          data[key].income += Number(invoice.amount);
+          data[key].income += Number(booking.total_amount || 0);
         }
       });
 
