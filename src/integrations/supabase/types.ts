@@ -839,6 +839,7 @@ export type Database = {
       }
       marina_details: {
         Row: {
+          account_id: string | null
           address: string | null
           approach_info: Json | null
           contact_email: string | null
@@ -847,6 +848,7 @@ export type Database = {
           created_at: string | null
           id: number
           name: string
+          organization_id: string | null
           other_features: Json | null
           photos: string[] | null
           services_amenities: Json | null
@@ -858,6 +860,7 @@ export type Database = {
           website: string | null
         }
         Insert: {
+          account_id?: string | null
           address?: string | null
           approach_info?: Json | null
           contact_email?: string | null
@@ -866,6 +869,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           name: string
+          organization_id?: string | null
           other_features?: Json | null
           photos?: string[] | null
           services_amenities?: Json | null
@@ -877,6 +881,7 @@ export type Database = {
           website?: string | null
         }
         Update: {
+          account_id?: string | null
           address?: string | null
           approach_info?: Json | null
           contact_email?: string | null
@@ -885,6 +890,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           name?: string
+          organization_id?: string | null
           other_features?: Json | null
           photos?: string[] | null
           services_amenities?: Json | null
