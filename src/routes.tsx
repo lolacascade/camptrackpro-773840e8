@@ -6,23 +6,29 @@ import SignUp from "@/pages/SignUp";
 import Dashboard from "@/pages/Dashboard";
 import Assets from "@/pages/Assets";
 import { Layout } from "@/components/layout/Layout";
+import { AuthProvider } from "@/contexts/AuthContext";
+
+// Wrap each element with AuthProvider after router context is available
+const withAuth = (element: React.ReactNode) => (
+  <AuthProvider>{element}</AuthProvider>
+);
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <SignIn />,
+    element: withAuth(<SignIn />),
   },
   {
     path: "/signin",
-    element: <SignIn />,
+    element: withAuth(<SignIn />),
   },
   {
     path: "/signup",
-    element: <SignUp />,
+    element: withAuth(<SignUp />),
   },
   {
     path: "/app",
-    element: (
+    element: withAuth(
       <ProtectedRoute>
         <Layout>
           <Dashboard />
@@ -32,7 +38,7 @@ const routes: RouteObject[] = [
   },
   {
     path: "/app/assets",
-    element: (
+    element: withAuth(
       <ProtectedRoute>
         <Layout>
           <Assets />
