@@ -17,10 +17,7 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <SessionContextProvider supabaseClient={supabase}>
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <RouterProvider router={router} />
-            <Toaster />
-          </AuthProvider>
+          <RouterProvider router={router} />
         </QueryClientProvider>
       </SessionContextProvider>
     </ThemeProvider>
