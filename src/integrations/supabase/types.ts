@@ -1510,6 +1510,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      user_belongs_to_org_and_account: {
+        Args: {
+          org_id: string
+          acc_id: string
+        }
+        Returns: boolean
+      }
       user_belongs_to_organization: {
         Args: {
           org_id: string
