@@ -5,14 +5,17 @@ import type { Asset, AssetStatus } from "@/types/asset";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   return useQuery({
     queryKey: ["assets", organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
+        console.log('Missing organization context:', { organizationId, accountId });
         return [];
       }
+
+      console.log('Fetching assets with:', { organizationId, accountId });
 
       const { data, error } = await supabase
         .from("assets")
@@ -70,8 +73,10 @@ export function useAssets() {
         status: (asset.status || 'available') as AssetStatus,
       })) as Asset[];
 
+      console.log('Fetched assets:', typedData);
+
       return typedData;
     },
-    enabled: !!organizationId && !!accountId
+    enabled: !!organizationId && !!accountId && !isLoadingOrg
   });
 }
