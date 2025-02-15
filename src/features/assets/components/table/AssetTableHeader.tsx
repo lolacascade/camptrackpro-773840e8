@@ -1,12 +1,7 @@
 
 import { TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-interface AssetTableHeaderProps {
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
-}
-
-export function AssetTableHeader({ searchTerm, onSearchChange }: AssetTableHeaderProps) {
+export function AssetTableHeader() {
   return (
     <TableHeader>
       <TableRow>

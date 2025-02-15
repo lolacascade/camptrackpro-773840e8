@@ -10,17 +10,11 @@ export function useAssets() {
   const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   return useQuery({
-    queryKey: ["assets", session?.user?.id, organizationId, accountId],
+    queryKey: ["assets", organizationId, accountId],
     queryFn: async (): Promise<Asset[]> => {
-      if (!session?.user?.id) {
-        throw new Error("No authenticated user");
-      }
-
       if (!organizationId || !accountId) {
         throw new Error("No organization or account context found");
       }
-
-      console.log('Fetching assets with org:', organizationId, 'account:', accountId);
 
       const { data, error } = await supabase
         .from("assets")
@@ -69,14 +63,10 @@ export function useAssets() {
         .eq('account_id', accountId);
 
       if (error) {
-        console.error('Supabase error:', error);
+        console.error('Error fetching assets:', error);
         throw error;
       }
 
-      // Log the response to help debug
-      console.log('Assets response:', data);
-      
-      // Ensure the status is one of the allowed values and handle site status
       return (data || []).map(asset => ({
         ...asset,
         status: asset.status as 'available' | 'occupied' | 'maintenance',
@@ -86,6 +76,6 @@ export function useAssets() {
         } : null
       }));
     },
-    enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,
+    enabled: !!organizationId && !!accountId && !isLoadingOrg,
   });
 }

@@ -13,26 +13,20 @@ import { useAssetDrawer } from "@/features/assets/hooks/useAssetDrawer";
 import { useAssetFilters } from "@/features/assets/hooks/useAssetFilters";
 
 export default function Assets() {
+  // Organization context at the top level
   const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
-  const { data: assets = [], isLoading: isLoadingAssets, error } = useAssets();
-  const { toast } = useToast();
   
-  const {
-    isOpen: isDrawerOpen,
-    selectedAsset,
-    handleAddAsset,
-    handleEditAsset: handleEditClick,
-    handleClose: handleCloseDrawer,
-    handleSuccess: handleAssetAdded
-  } = useAssetDrawer({
-    onAssetAdded: () => {
-      toast({
-        title: "Success",
-        description: "Asset has been added successfully",
-      });
-    }
-  });
+  // Data fetching with organization context
+  const { 
+    data: assets = [], 
+    isLoading: isLoadingAssets, 
+    error: assetsError,
+    refetch: refetchAssets 
+  } = useAssets();
+  
+  const { toast } = useToast();
 
+  // Asset filtering
   const {
     filters,
     setFilters,
@@ -40,22 +34,43 @@ export default function Assets() {
     filteredAssets
   } = useAssetFilters(assets);
 
+  // Drawer state management
+  const {
+    isOpen: isDrawerOpen,
+    selectedAsset,
+    handleAddAsset,
+    handleEditAsset,
+    handleClose: handleCloseDrawer,
+    handleSuccess: handleAssetAdded
+  } = useAssetDrawer({
+    onAssetAdded: () => {
+      refetchAssets();
+      toast({
+        title: "Success",
+        description: "Asset has been added successfully",
+      });
+    }
+  });
+
+  // View details handler (placeholder for future implementation)
   const handleViewDetails = (asset: Asset) => {
-    console.log("View details for asset:", asset);
     toast({
       title: "Coming Soon",
       description: "Asset details view is under development",
     });
   };
 
-  if (error || (!organizationId && !isLoadingOrg)) {
-    setTimeout(() => {
-      toast({
-        title: "Error",
-        description: error ? "Failed to load assets. Please try again." : "No organization found. Please set up your organization first.",
-        variant: "destructive",
-      });
-    }, 0);
+  // Error handling
+  if (assetsError || (!organizationId && !isLoadingOrg)) {
+    const errorMessage = assetsError 
+      ? "Failed to load assets. Please try again." 
+      : "No organization found. Please set up your organization first.";
+    
+    toast({
+      title: "Error",
+      description: errorMessage,
+      variant: "destructive",
+    });
   }
 
   const isLoading = isLoadingOrg || isLoadingAssets;
@@ -68,7 +83,7 @@ export default function Assets() {
           <AssetStatsCards />
           <AssetTable
             assets={filteredAssets}
-            onEdit={handleEditClick}
+            onEdit={handleEditAsset}
             onViewDetails={handleViewDetails}
             isLoading={isLoading}
             filters={filters}
@@ -80,7 +95,7 @@ export default function Assets() {
             onClose={handleCloseDrawer}
             onAssetAdded={handleAssetAdded}
             customerId={selectedAsset?.customer_id || null}
-            asset={selectedAsset || undefined}
+            asset={selectedAsset}
           />
         </div>
       </PageContainer>

@@ -26,9 +26,17 @@ export function useAssetFilters(assets: Asset[]) {
   // Apply filters to assets
   const filteredAssets = useMemo(() => 
     assets?.filter(asset => {
-      if (filters.typeFilter !== "all" && asset.asset_type !== filters.typeFilter) return false;
-      if (filters.customerFilter !== "all" && String(asset.customer_id) !== filters.customerFilter) return false;
+      // Type filter
+      if (filters.typeFilter !== "all" && asset.asset_type !== filters.typeFilter) {
+        return false;
+      }
+
+      // Customer filter
+      if (filters.customerFilter !== "all" && String(asset.customer_id) !== filters.customerFilter) {
+        return false;
+      }
       
+      // Search filter
       if (filters.searchTerm) {
         const searchLower = filters.searchTerm.toLowerCase();
         return (
