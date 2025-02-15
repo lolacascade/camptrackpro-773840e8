@@ -25,3 +25,45 @@ export interface Asset {
   created_at: string;
   updated_at: string;
 }
+
+export const RV_TYPE_TO_CATEGORY: Record<string, RVPricingCategory> = {
+  'Class A': 'up_to_40',
+  'Class B': 'up_to_20',
+  'Van': 'up_to_20',
+  'Class C': 'up_to_30',
+  'Travel Trailer': 'up_to_30',
+  'Fifth Wheel': 'up_to_35',
+  'Toy Hauler': 'up_to_35',
+  'Pop-up Camper': 'up_to_15',
+  'Truck Camper': 'up_to_15',
+  'Teardrop': 'up_to_15'
+};
+
+export interface AssetFilterState {
+  searchTerm: string;
+  typeFilter: string;
+  customerFilter: string;
+}
+
+export interface AssetFormProps {
+  asset?: Asset;
+  onSubmit: (asset: Partial<Asset>) => void;
+  onCancel: () => void;
+}
+
+export interface AssetDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  onAssetAdded: () => void;
+  customerId: string | null;
+  asset?: Asset;
+}
+
+export interface AssetTableProps {
+  assets: Asset[];
+  onEdit: (asset: Asset) => void;
+  onViewDetails: (asset: Asset) => void;
+  isLoading?: boolean;
+}
+
+export type AssetFormFields = Pick<Asset, 'asset_name' | 'asset_size' | 'asset_type' | 'site_id'>;

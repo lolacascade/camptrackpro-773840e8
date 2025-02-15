@@ -1,17 +1,14 @@
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
-import { AssetsProvider } from "../context/AssetsProvider";
-import { AssetsLayout } from "../components/AssetsLayout";
+import { AssetsContent } from "@/features/assets/components/AssetsContent";
 
 export default function Assets() {
   return (
-    <AssetsProvider>
-      <PageWithChat>
-        <PageContainer>
-          <AssetsLayout />
-        </PageContainer>
-      </PageWithChat>
-    </AssetsProvider>
+    <PageWithChat>
+      <PageContainer>
+        <AssetsContent />
+      </PageContainer>
+    </PageWithChat>
   );
 }
