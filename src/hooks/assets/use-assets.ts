@@ -7,15 +7,11 @@ import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
   const session = useSession();
-  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
+  const { organizationId, accountId } = useOrganization();
 
   return useQuery({
     queryKey: ["assets", organizationId, accountId],
     queryFn: async (): Promise<Asset[]> => {
-      if (!organizationId || !accountId) {
-        throw new Error("No organization or account context found");
-      }
-
       const { data, error } = await supabase
         .from("assets")
         .select(`
@@ -76,6 +72,6 @@ export function useAssets() {
         } : null
       }));
     },
-    enabled: !!organizationId && !!accountId && !isLoadingOrg,
+    enabled: !!organizationId && !!accountId,
   });
 }

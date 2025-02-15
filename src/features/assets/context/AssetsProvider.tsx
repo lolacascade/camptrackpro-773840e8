@@ -9,7 +9,7 @@ interface AssetsContextType {
   assets: Asset[];
   isLoading: boolean;
   error: Error | null;
-  refetchAssets: () => Promise<any>; // Changed from Promise<void>
+  refetchAssets: () => Promise<any>;
   organizationId: string | undefined;
   accountId: string | undefined;
 }
@@ -17,7 +17,7 @@ interface AssetsContextType {
 const AssetsContext = createContext<AssetsContextType | undefined>(undefined);
 
 export function AssetsProvider({ children }: { children: React.ReactNode }) {
-  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
+  const { organizationId, accountId } = useOrganization();
   const { 
     data: assets = [], 
     isLoading: isLoadingAssets, 
@@ -29,22 +29,18 @@ export function AssetsProvider({ children }: { children: React.ReactNode }) {
 
   // Error handling
   React.useEffect(() => {
-    if (assetsError || (!organizationId && !isLoadingOrg)) {
-      const errorMessage = assetsError 
-        ? "Failed to load assets. Please try again." 
-        : "No organization found. Please set up your organization first.";
-      
+    if (assetsError) {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: "Failed to load assets. Please try again.",
         variant: "destructive",
       });
     }
-  }, [assetsError, organizationId, isLoadingOrg, toast]);
+  }, [assetsError, toast]);
 
   const value = {
     assets,
-    isLoading: isLoadingOrg || isLoadingAssets,
+    isLoading: isLoadingAssets,
     error: assetsError || null,
     refetchAssets,
     organizationId,
