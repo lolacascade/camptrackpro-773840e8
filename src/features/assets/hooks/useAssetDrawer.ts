@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Asset } from '@/types/asset';
-import { useToast } from '@/hooks/use-toast';
+import { useAssetsContext } from '../context/AssetsProvider';
 
 interface UseAssetDrawerProps {
   onAssetAdded: () => void;
@@ -10,7 +10,7 @@ interface UseAssetDrawerProps {
 export function useAssetDrawer({ onAssetAdded }: UseAssetDrawerProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
-  const { toast } = useToast();
+  const { refetchAssets } = useAssetsContext();
 
   const handleAddAsset = () => {
     setSelectedAsset(null);
@@ -27,13 +27,10 @@ export function useAssetDrawer({ onAssetAdded }: UseAssetDrawerProps) {
     setSelectedAsset(null);
   };
 
-  const handleSuccess = () => {
-    onAssetAdded();
+  const handleSuccess = async () => {
+    await refetchAssets();
     handleClose();
-    toast({
-      title: "Success",
-      description: `Asset has been ${selectedAsset ? 'updated' : 'added'} successfully`,
-    });
+    onAssetAdded();
   };
 
   return {
