@@ -5,18 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 
-type AccountRole = Database['public']['Tables']['account_roles']['Row'];
-type OrganizationRole = Database['public']['Tables']['organization_roles']['Row'];
+type OrganizationRoleRow = Database['public']['Tables']['organization_roles']['Row'];
+type AccountRoleRow = Database['public']['Tables']['account_roles']['Row'];
 
-interface RpcUserRolesResult {
+interface OrganizationRoleWithAccounts {
   organization_id: string;
-  account_id: string;
-  org_role: string;
-  account_role: string;
-}
-
-type OrganizationRoleWithAccounts = OrganizationRole & {
-  account_roles: AccountRole[];
+  role: string;
+  account_roles: {
+    account_id: string | null;
+    role: string;
+  }[];
 }
 
 export function useOrganization() {
@@ -43,8 +41,7 @@ export function useOrganization() {
           )
         `)
         .eq('user_id', session.user.id)
-        .returns<OrganizationRoleWithAccounts>()
-        .maybeSingle();
+        .single();
 
       if (error) {
         console.error("Error fetching user roles:", error);
@@ -57,25 +54,13 @@ export function useOrganization() {
         throw new Error("No organization or account found for user");
       }
 
-      const userRoles: RpcUserRolesResult = {
-        organization_id: orgData.organization_id,
-        account_id: orgData.account_roles[0].account_id || '',
-        org_role: orgData.role,
-        account_role: orgData.account_roles[0].role
-      };
-
-      console.log('Found organization context:', {
-        organizationId: userRoles.organization_id,
-        accountId: userRoles.account_id,
-        orgRole: userRoles.org_role,
-        accountRole: userRoles.account_role
-      });
+      const data = orgData as unknown as OrganizationRoleWithAccounts;
 
       return {
-        organizationId: userRoles.organization_id,
-        accountId: userRoles.account_id,
-        orgRole: userRoles.org_role,
-        accountRole: userRoles.account_role
+        organizationId: data.organization_id,
+        accountId: data.account_roles[0].account_id || '',
+        orgRole: data.role,
+        accountRole: data.account_roles[0].role
       };
     },
     enabled: !!session?.user?.id,
