@@ -34,7 +34,7 @@ export function useOrganization() {
 
       console.log('Fetching organization context for user:', session.user.id);
 
-      const { data, error } = await supabase
+      const { data: orgData, error } = await supabase
         .from('organization_roles')
         .select(`
           organization_id,
@@ -53,17 +53,17 @@ export function useOrganization() {
         throw error;
       }
 
-      if (!data?.organization_id || !data.account_roles?.[0]?.account_id) {
+      if (!orgData || !orgData.account_roles?.[0]) {
         console.error("No organization or account found for user");
         navigate('/signin');
         throw new Error("No organization or account found for user");
       }
 
       const userRoles: RpcUserRolesResult = {
-        organization_id: data.organization_id,
-        account_id: data.account_roles[0].account_id,
-        org_role: data.role,
-        account_role: data.account_roles[0].role
+        organization_id: orgData.organization_id,
+        account_id: orgData.account_roles[0].account_id,
+        org_role: orgData.role,
+        account_role: orgData.account_roles[0].role
       };
 
       console.log('Found organization context:', {
