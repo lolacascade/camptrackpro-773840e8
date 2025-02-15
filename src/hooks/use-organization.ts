@@ -5,7 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 
-type UserRoles = Database["public"]["Functions"]["get_user_roles"]["Returns"][0];
+interface UserRoles {
+  organization_id: string;
+  account_id: string;
+  org_role: string;
+  account_role: string;
+}
 
 export function useOrganization() {
   const { session } = useAuth();
@@ -22,7 +27,7 @@ export function useOrganization() {
 
       // Get organization and account roles in a single query
       const { data: userRoles, error } = await supabase
-        .rpc<UserRoles>('get_user_roles', { user_id: session.user.id })
+        .rpc<UserRoles, { user_id: string }>('get_user_roles', { user_id: session.user.id })
         .maybeSingle();
 
       if (error) {
