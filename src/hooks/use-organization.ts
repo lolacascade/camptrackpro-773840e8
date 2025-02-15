@@ -12,6 +12,15 @@ interface RpcUserRolesResult {
   account_role: string;
 }
 
+type OrganizationRoleResponse = {
+  organization_id: string;
+  role: string;
+  account_roles: {
+    account_id: string;
+    role: string;
+  }[];
+}
+
 export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
@@ -29,13 +38,14 @@ export function useOrganization() {
         .from('organization_roles')
         .select(`
           organization_id,
-          role as org_role,
-          account_roles(
+          role,
+          account_roles (
             account_id,
-            role as account_role
+            role
           )
         `)
         .eq('user_id', session.user.id)
+        .returns<OrganizationRoleResponse>()
         .maybeSingle();
 
       if (error) {
@@ -52,8 +62,8 @@ export function useOrganization() {
       const userRoles: RpcUserRolesResult = {
         organization_id: data.organization_id,
         account_id: data.account_roles[0].account_id,
-        org_role: data.org_role,
-        account_role: data.account_roles[0].account_role
+        org_role: data.role,
+        account_role: data.account_roles[0].role
       };
 
       console.log('Found organization context:', {
