@@ -7,8 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/components/ui/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle, Edit, LogOut } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { AlertCircle } from "lucide-react";
 import { MarinaOverviewCard } from "@/components/settings/overview/MarinaOverviewCard";
 import { ProfileCompletion } from "@/components/settings/profile/ProfileCompletion";
 import { SettingsLoading } from "@/components/settings/loading/SettingsLoading";
@@ -40,20 +39,51 @@ export default function Settings() {
       setError(null);
       
       try {
-        const { data, error: fetchError } = await supabase
+        const { data, error } = await supabase
           .from('marina_details')
           .select('*')
           .eq('organization_id', organizationId)
           .eq('account_id', accountId)
-          .single();
+          .maybeSingle();
 
-        if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
+        if (error) throw error;
 
-        setMarinaDetails(data);
+        // Initialize an empty marina details object if none exists
+        const details = data || {
+          name: '',
+          address: '',
+          contact_email: '',
+          contact_phone: '',
+          total_slips: null,
+          website: '',
+          coordinates: { latitude: '', longitude: '' },
+          approach_info: { depth: '', width: '', obstacles: '' },
+          services_amenities: {
+            fuel: false,
+            electricity: false,
+            water: false,
+            pumpout: false,
+            maintenance: false
+          },
+          other_features: {
+            restrooms: false,
+            showers: false,
+            laundry: false,
+            parking: false,
+            wifi: false
+          },
+          social_media: {
+            facebook: '',
+            instagram: '',
+            twitter: ''
+          }
+        };
+
+        setMarinaDetails(details);
         
-        if (data) {
-          const totalFields = Object.keys(data).length;
-          const filledFields = Object.values(data).filter(value => 
+        if (details) {
+          const totalFields = Object.keys(details).length;
+          const filledFields = Object.values(details).filter(value => 
             value !== null && value !== '' && value !== undefined
           ).length;
           setCompletionPercentage((filledFields / totalFields) * 100);
@@ -74,26 +104,6 @@ export default function Settings() {
     fetchMarinaDetails();
   }, [user, organizationId, accountId, isLoadingOrg, toast]);
 
-  const handleLogout = async () => {
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      
-      toast({
-        title: "Success",
-        description: "You have been logged out successfully.",
-      });
-      navigate('/signin');
-    } catch (error) {
-      console.error('Error logging out:', error);
-      toast({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const handleNavigateToSection = (section: string) => {
     const element = document.querySelector(`[data-section="${section}"]`);
     element?.scrollIntoView({ behavior: 'smooth' });
@@ -104,24 +114,13 @@ export default function Settings() {
       <PageWithChat>
         <PageContainer>
           <div className="space-y-8">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
-                <p className="text-muted-foreground">
-                  {marinaDetails 
-                    ? "Manage your marina's information and settings below." 
-                    : "Get started by adding your marina's information."}
-                </p>
-              </div>
-              <Button
-                onClick={handleLogout}
-                variant="destructive"
-                size="sm"
-                className="ml-4"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Log Out
-              </Button>
+            <div className="space-y-1">
+              <h1 className="text-2xl font-bold text-[#133134]">Marina Information</h1>
+              <p className="text-muted-foreground">
+                {marinaDetails 
+                  ? "Manage your marina's information and settings below." 
+                  : "Get started by adding your marina's information."}
+              </p>
             </div>
 
             {isLoading ? (
@@ -136,20 +135,11 @@ export default function Settings() {
                 <MarinaOverviewCard marinaDetails={marinaDetails} />
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-4">
-                    <Button 
-                      onClick={() => document.getElementById('marina-form')?.scrollIntoView({ behavior: 'smooth' })} 
-                      variant="outline" 
-                      size="sm"
-                      className="border-[#133134] text-[#133134] hover:bg-[#133134] hover:text-white"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit Information
-                    </Button>
+                    <ProfileCompletion
+                      completionPercentage={completionPercentage}
+                      onNavigateToSection={handleNavigateToSection}
+                    />
                   </div>
-                  <ProfileCompletion 
-                    completionPercentage={completionPercentage}
-                    onNavigateToSection={handleNavigateToSection}
-                  />
                 </div>
 
                 <div id="marina-form">
