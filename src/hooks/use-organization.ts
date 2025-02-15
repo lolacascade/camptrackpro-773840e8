@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 
-interface UserRoles {
+interface RpcUserRolesResult {
   organization_id: string;
   account_id: string;
   org_role: string;
@@ -25,9 +25,19 @@ export function useOrganization() {
 
       console.log('Fetching organization context for user:', session.user.id);
 
-      // Get organization and account roles in a single query
-      const { data: userRoles, error } = await supabase
-        .rpc<UserRoles, { user_id: string }>('get_user_roles', { user_id: session.user.id })
+      const { data, error } = await supabase
+        .from('organization_roles')
+        .select(`
+          organization_id,
+          role as org_role,
+          accounts!inner(
+            id as account_id,
+            account_roles!inner(
+              role as account_role
+            )
+          )
+        `)
+        .eq('user_id', session.user.id)
         .maybeSingle();
 
       if (error) {
@@ -35,11 +45,18 @@ export function useOrganization() {
         throw error;
       }
 
-      if (!userRoles?.organization_id || !userRoles?.account_id) {
+      if (!data?.organization_id || !data.accounts?.[0]?.account_id) {
         console.error("No organization or account found for user");
         navigate('/signin');
         throw new Error("No organization or account found for user");
       }
+
+      const userRoles: RpcUserRolesResult = {
+        organization_id: data.organization_id,
+        account_id: data.accounts[0].account_id,
+        org_role: data.org_role,
+        account_role: data.accounts[0].account_roles[0].account_role
+      };
 
       console.log('Found organization context:', {
         organizationId: userRoles.organization_id,
