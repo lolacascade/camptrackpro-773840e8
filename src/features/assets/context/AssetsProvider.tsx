@@ -9,7 +9,7 @@ interface AssetsContextType {
   assets: Asset[];
   isLoading: boolean;
   error: Error | null;
-  refetchAssets: () => Promise<void>;
+  refetchAssets: () => Promise<any>; // Changed from Promise<void>
   organizationId: string | undefined;
   accountId: string | undefined;
 }

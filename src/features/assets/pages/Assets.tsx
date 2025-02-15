@@ -1,14 +1,14 @@
 
 import { Asset } from "@/types/asset";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { AssetsHeader } from "./components/header/AssetsHeader";
-import { AssetDrawer } from "./components/drawer/AssetDrawer";
+import { AssetsHeader } from "../components/header/AssetsHeader";
+import { AssetDrawer } from "@/components/assets/AssetDrawer";
 import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { useToast } from "@/hooks/use-toast";
-import { AssetsProvider } from "./context/AssetsProvider";
-import { AssetsContent } from "./components/AssetsContent";
-import { useAssetDrawer } from "./hooks/useAssetDrawer";
+import { AssetsProvider } from "../context/AssetsProvider";
+import { AssetsContent } from "../components/AssetsContent";
+import { useAssetDrawer } from "../hooks/useAssetDrawer";
 
 export default function Assets() {
   const { toast } = useToast();
