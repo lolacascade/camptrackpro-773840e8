@@ -3,13 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { Database } from "@/integrations/supabase/types";
 
-interface UserRoles {
-  organization_id: string;
-  account_id: string;
-  org_role: string;
-  account_role: string;
-}
+type UserRoles = Database["public"]["Functions"]["get_user_roles"]["Returns"][0];
 
 export function useOrganization() {
   const { session } = useAuth();
@@ -27,7 +23,7 @@ export function useOrganization() {
       // Get organization and account roles in a single query
       const { data: userRoles, error } = await supabase
         .rpc<UserRoles>('get_user_roles', { user_id: session.user.id })
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error("Error fetching user roles:", error);
