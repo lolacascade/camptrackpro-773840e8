@@ -2,16 +2,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Asset } from "@/types/asset";
-import { useSession } from "@supabase/auth-helpers-react";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
-  const session = useSession();
   const { organizationId, accountId } = useOrganization();
 
   return useQuery({
     queryKey: ["assets", organizationId, accountId],
-    queryFn: async (): Promise<Asset[]> => {
+    queryFn: async () => {
+      if (!organizationId || !accountId) {
+        return [];
+      }
+
       const { data, error } = await supabase
         .from("assets")
         .select(`
@@ -59,19 +61,11 @@ export function useAssets() {
         .eq('account_id', accountId);
 
       if (error) {
-        console.error('Error fetching assets:', error);
         throw error;
       }
 
-      return (data || []).map(asset => ({
-        ...asset,
-        status: asset.status as 'available' | 'occupied' | 'maintenance',
-        site: asset.site ? {
-          ...asset.site,
-          status: asset.site.status as 'available' | 'occupied' | 'maintenance'
-        } : null
-      }));
+      return data || [];
     },
-    enabled: !!organizationId && !!accountId,
+    enabled: !!organizationId && !!accountId
   });
 }
