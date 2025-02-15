@@ -30,6 +30,11 @@ export function useOrganization() {
 
       console.log('Fetching organization context for user:', session.user.id);
 
+      // Explicitly type the response
+      type DbResponse = OrganizationRoleRow & {
+        account_roles: AccountRoleRow[];
+      };
+
       const { data: orgData, error } = await supabase
         .from('organization_roles')
         .select(`
@@ -41,7 +46,7 @@ export function useOrganization() {
           )
         `)
         .eq('user_id', session.user.id)
-        .single();
+        .single() as { data: DbResponse | null; error: any };
 
       if (error) {
         console.error("Error fetching user roles:", error);
@@ -54,13 +59,11 @@ export function useOrganization() {
         throw new Error("No organization or account found for user");
       }
 
-      const data = orgData as unknown as OrganizationRoleWithAccounts;
-
       return {
-        organizationId: data.organization_id,
-        accountId: data.account_roles[0].account_id || '',
-        orgRole: data.role,
-        accountRole: data.account_roles[0].role
+        organizationId: orgData.organization_id,
+        accountId: orgData.account_roles[0].account_id || '',
+        orgRole: orgData.role,
+        accountRole: orgData.account_roles[0].role
       };
     },
     enabled: !!session?.user?.id,
