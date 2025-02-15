@@ -1506,6 +1506,17 @@ export type Database = {
           period_checkouts: number
         }[]
       }
+      get_user_roles: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          organization_id: string
+          account_id: string
+          org_role: string
+          account_role: string
+        }[]
+      }
       populate_booking_trends: {
         Args: Record<PropertyKey, never>
         Returns: undefined

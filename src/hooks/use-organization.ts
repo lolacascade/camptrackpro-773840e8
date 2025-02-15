@@ -25,32 +25,33 @@ export function useOrganization() {
       console.log('Fetching organization context for user:', session.user.id);
 
       // Get organization and account roles in a single query
-      const { data, error } = await supabase
-        .rpc('get_user_roles', { user_id: session.user.id });
+      const { data: userRoles, error } = await supabase
+        .rpc<UserRoles>('get_user_roles', { user_id: session.user.id })
+        .single();
 
       if (error) {
         console.error("Error fetching user roles:", error);
         throw error;
       }
 
-      if (!data?.organization_id || !data?.account_id) {
+      if (!userRoles?.organization_id || !userRoles?.account_id) {
         console.error("No organization or account found for user");
         navigate('/signin');
         throw new Error("No organization or account found for user");
       }
 
       console.log('Found organization context:', {
-        organizationId: data.organization_id,
-        accountId: data.account_id,
-        orgRole: data.org_role,
-        accountRole: data.account_role
+        organizationId: userRoles.organization_id,
+        accountId: userRoles.account_id,
+        orgRole: userRoles.org_role,
+        accountRole: userRoles.account_role
       });
 
       return {
-        organizationId: data.organization_id,
-        accountId: data.account_id,
-        orgRole: data.org_role,
-        accountRole: data.account_role
+        organizationId: userRoles.organization_id,
+        accountId: userRoles.account_id,
+        orgRole: userRoles.org_role,
+        accountRole: userRoles.account_role
       };
     },
     enabled: !!session?.user?.id,
