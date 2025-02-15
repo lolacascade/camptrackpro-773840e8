@@ -5,6 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 
+type AccountRole = Database['public']['Tables']['account_roles']['Row'];
+type OrganizationRole = Database['public']['Tables']['organization_roles']['Row'];
+
 interface RpcUserRolesResult {
   organization_id: string;
   account_id: string;
@@ -12,13 +15,8 @@ interface RpcUserRolesResult {
   account_role: string;
 }
 
-type OrganizationRoleResponse = {
-  organization_id: string;
-  role: string;
-  account_roles: {
-    account_id: string;
-    role: string;
-  }[];
+type OrganizationRoleWithAccounts = OrganizationRole & {
+  account_roles: AccountRole[];
 }
 
 export function useOrganization() {
@@ -45,7 +43,7 @@ export function useOrganization() {
           )
         `)
         .eq('user_id', session.user.id)
-        .returns<OrganizationRoleResponse>()
+        .returns<OrganizationRoleWithAccounts>()
         .maybeSingle();
 
       if (error) {
@@ -61,7 +59,7 @@ export function useOrganization() {
 
       const userRoles: RpcUserRolesResult = {
         organization_id: orgData.organization_id,
-        account_id: orgData.account_roles[0].account_id,
+        account_id: orgData.account_roles[0].account_id || '',
         org_role: orgData.role,
         account_role: orgData.account_roles[0].role
       };
