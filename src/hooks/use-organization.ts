@@ -17,54 +17,33 @@ export function useOrganization() {
 
       console.log('Fetching organization context for user:', session.user.id);
 
-      // First check organization roles
-      const { data: orgRoles, error: orgError } = await supabase
-        .from('organization_roles')
-        .select('organization_id, role')
-        .eq('user_id', session.user.id)
-        .single();
+      // Get organization and account roles in a single query
+      const { data, error } = await supabase
+        .rpc('get_user_roles', { user_id: session.user.id });
 
-      if (orgError) {
-        console.error("Error fetching organization roles:", orgError);
-        throw orgError;
+      if (error) {
+        console.error("Error fetching user roles:", error);
+        throw error;
       }
 
-      if (!orgRoles?.organization_id) {
-        console.error("No organization_id found for user");
+      if (!data?.organization_id || !data?.account_id) {
+        console.error("No organization or account found for user");
         navigate('/signin');
-        throw new Error("No organization_id found for user");
-      }
-
-      // Then check account roles
-      const { data: accRoles, error: accError } = await supabase
-        .from('account_roles')
-        .select('account_id, role')
-        .eq('user_id', session.user.id)
-        .single();
-
-      if (accError) {
-        console.error("Error fetching account roles:", accError);
-        throw accError;
-      }
-
-      if (!accRoles?.account_id) {
-        console.error("No account_id found for user");
-        navigate('/signin');
-        throw new Error("No account_id found for user");
+        throw new Error("No organization or account found for user");
       }
 
       console.log('Found organization context:', {
-        organizationId: orgRoles.organization_id,
-        accountId: accRoles.account_id,
-        orgRole: orgRoles.role,
-        accountRole: accRoles.role
+        organizationId: data.organization_id,
+        accountId: data.account_id,
+        orgRole: data.org_role,
+        accountRole: data.account_role
       });
 
       return {
-        organizationId: orgRoles.organization_id,
-        accountId: accRoles.account_id,
-        orgRole: orgRoles.role,
-        accountRole: accRoles.role
+        organizationId: data.organization_id,
+        accountId: data.account_id,
+        orgRole: data.org_role,
+        accountRole: data.account_role
       };
     },
     enabled: !!session?.user?.id,
