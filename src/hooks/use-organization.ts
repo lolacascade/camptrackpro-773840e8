@@ -4,6 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+interface UserRoles {
+  organization_id: string;
+  account_id: string;
+  org_role: string;
+  account_role: string;
+}
+
 export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
