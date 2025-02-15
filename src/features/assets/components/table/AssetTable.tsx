@@ -1,7 +1,6 @@
 
 import { Table } from "@/components/ui/table";
 import { Asset } from "@/types/asset";
-import { useState } from "react";
 import { ASSET_TYPES } from "@/features/assets/components/form/AssetFormFields";
 import { AssetTableHeader } from "@/features/assets/components/table/AssetTableHeader";
 import { AssetTableBody } from "@/features/assets/components/table/AssetTableBody";
@@ -10,50 +9,27 @@ import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AssetFilterState } from "@/types/asset";
 
 interface AssetTableProps {
   assets: Asset[];
   onEdit: (asset: Asset) => void;
   onViewDetails: (asset: Asset) => void;
   isLoading?: boolean;
+  filters: AssetFilterState;
+  onFiltersChange: (filters: AssetFilterState) => void;
+  customerOptions: { label: string; value: string; }[];
 }
 
-export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTableProps) {
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [customerFilter, setCustomerFilter] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const customerOptions = [
-    { label: "All Customers", value: "all" },
-    ...Array.from(new Set(assets?.map(asset => asset.customer_id)))
-      .filter(Boolean)
-      .map(customerId => {
-        const asset = assets.find(a => a.customer_id === customerId);
-        return {
-          label: asset?.customer ? `${asset.customer.first_name} ${asset.customer.last_name}` : 'Unassigned',
-          value: String(customerId)
-        };
-      })
-  ];
-
-  const filteredAssets = assets?.filter(asset => {
-    if (typeFilter !== "all" && asset.asset_type !== typeFilter) return false;
-    if (customerFilter !== "all" && String(asset.customer_id) !== customerFilter) return false;
-    
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        asset.asset_name?.toLowerCase().includes(searchLower) ||
-        asset.asset_type?.toLowerCase().includes(searchLower) ||
-        asset.asset_size?.toLowerCase().includes(searchLower) ||
-        asset.customer?.first_name?.toLowerCase().includes(searchLower) ||
-        asset.customer?.last_name?.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    return true;
-  }) || [];
-
+export function AssetTable({ 
+  assets, 
+  onEdit, 
+  onViewDetails, 
+  isLoading,
+  filters,
+  onFiltersChange,
+  customerOptions
+}: AssetTableProps) {
   if (isLoading) {
     return (
       <Card className="p-6">
@@ -81,14 +57,14 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             <Search className="absolute left-3 top-1/2 h-4 w-4 text-muted-foreground -translate-y-1/2" />
             <Input
               placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={filters.searchTerm}
+              onChange={(e) => onFiltersChange({ ...filters, searchTerm: e.target.value })}
               className="pl-9"
             />
           </div>
           <SelectField
-            value={typeFilter}
-            onChange={setTypeFilter}
+            value={filters.typeFilter}
+            onChange={(value) => onFiltersChange({ ...filters, typeFilter: value })}
             options={[
               { label: "All Types", value: "all" },
               ...ASSET_TYPES
@@ -97,17 +73,17 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             className="w-[200px]"
           />
           <SelectField
-            value={customerFilter}
-            onChange={setCustomerFilter}
+            value={filters.customerFilter}
+            onChange={(value) => onFiltersChange({ ...filters, customerFilter: value })}
             options={customerOptions}
             placeholder="Filter by customer"
             className="w-[200px]"
           />
         </div>
         <Table>
-          <AssetTableHeader searchTerm={searchTerm} onSearchChange={setSearchTerm} />
+          <AssetTableHeader />
           <AssetTableBody
-            assets={filteredAssets}
+            assets={assets}
             onEdit={onEdit}
             onViewDetails={onViewDetails}
           />

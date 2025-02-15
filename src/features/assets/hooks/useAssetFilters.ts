@@ -9,6 +9,7 @@ export function useAssetFilters(assets: Asset[]) {
     customerFilter: 'all'
   });
 
+  // Compute customer options once when assets change
   const customerOptions = useMemo(() => [
     { label: "All Customers", value: "all" },
     ...Array.from(new Set(assets?.map(asset => asset.customer_id)))
@@ -22,6 +23,7 @@ export function useAssetFilters(assets: Asset[]) {
       })
   ], [assets]);
 
+  // Apply filters to assets
   const filteredAssets = useMemo(() => 
     assets?.filter(asset => {
       if (filters.typeFilter !== "all" && asset.asset_type !== filters.typeFilter) return false;

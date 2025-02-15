@@ -71,6 +71,9 @@ export default function Assets() {
             onEdit={handleEditClick}
             onViewDetails={handleViewDetails}
             isLoading={isLoading}
+            filters={filters}
+            onFiltersChange={setFilters}
+            customerOptions={customerOptions}
           />
           <AssetDrawer
             open={isDrawerOpen}
