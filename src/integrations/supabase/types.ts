@@ -14,6 +14,7 @@ export type Database = {
           account_id: string | null
           created_at: string
           id: string
+          organization_id: string | null
           role: string
           user_id: string | null
         }
@@ -21,6 +22,7 @@ export type Database = {
           account_id?: string | null
           created_at?: string
           id?: string
+          organization_id?: string | null
           role: string
           user_id?: string | null
         }
@@ -28,6 +30,7 @@ export type Database = {
           account_id?: string | null
           created_at?: string
           id?: string
+          organization_id?: string | null
           role?: string
           user_id?: string | null
         }
@@ -38,6 +41,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "account_roles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_account_roles_organization_roles"
+            columns: ["user_id", "organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_roles"
+            referencedColumns: ["user_id", "organization_id"]
           },
         ]
       }

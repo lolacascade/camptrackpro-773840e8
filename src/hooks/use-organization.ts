@@ -27,7 +27,16 @@ export function useOrganization() {
 
       const { data, error } = await supabase
         .from('organization_roles')
-        .select('*, organization_id, role, accounts(id, account_roles(role))')
+        .select(`
+          organization_id,
+          role as org_role,
+          accounts!inner(
+            id as account_id,
+            account_roles!inner(
+              role as account_role
+            )
+          )
+        `)
         .eq('user_id', session.user.id)
         .maybeSingle();
 
@@ -36,7 +45,7 @@ export function useOrganization() {
         throw error;
       }
 
-      if (!data?.organization_id || !data.accounts?.[0]?.id) {
+      if (!data?.organization_id || !data.accounts?.[0]?.account_id) {
         console.error("No organization or account found for user");
         navigate('/signin');
         throw new Error("No organization or account found for user");
@@ -44,9 +53,9 @@ export function useOrganization() {
 
       const userRoles: RpcUserRolesResult = {
         organization_id: data.organization_id,
-        account_id: data.accounts[0].id,
-        org_role: data.role,
-        account_role: data.accounts[0].account_roles[0].role
+        account_id: data.accounts[0].account_id,
+        org_role: data.org_role,
+        account_role: data.accounts[0].account_role
       };
 
       console.log('Found organization context:', {
