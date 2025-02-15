@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Asset } from "@/types/asset";
+import type { Asset, AssetStatus } from "@/types/asset";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
@@ -61,10 +61,16 @@ export function useAssets() {
         .eq('account_id', accountId);
 
       if (error) {
+        console.error('Error fetching assets:', error);
         throw error;
       }
 
-      return data || [];
+      const typedData = (data || []).map(asset => ({
+        ...asset,
+        status: (asset.status || 'available') as AssetStatus,
+      })) as Asset[];
+
+      return typedData;
     },
     enabled: !!organizationId && !!accountId
   });
