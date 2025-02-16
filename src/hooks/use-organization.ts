@@ -1,7 +1,7 @@
 
 import { useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
@@ -19,6 +19,10 @@ interface OrganizationContextData {
 export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Don't run the query on public routes
+  const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
   const { data, isLoading, error } = useQuery<OrganizationContextData>({
     queryKey: ['organization-context'],
@@ -63,26 +67,27 @@ export function useOrganization() {
         accountRole: orgData.account_roles[0].role
       };
     },
-    enabled: !!session?.user?.id,
-    staleTime: 30000, // Cache for 30 seconds
-    retry: 0, // Don't retry failed requests
-    refetchOnMount: false, // Don't refetch on mount
-    refetchOnWindowFocus: false // Don't refetch on window focus
+    enabled: !!session?.user?.id && !isPublicRoute,
+    staleTime: 30000,
+    retry: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false
   });
 
-  // Only navigate if we're not loading and have no data
+  // Only navigate if we're not on a public route and have an error
   useEffect(() => {
-    if (!isLoading && !data && error) {
+    if (!isPublicRoute && !isLoading && !data && error) {
+      console.log('Organization data fetch failed, redirecting to signin');
       navigate('/signin');
     }
-  }, [isLoading, data, error, navigate]);
+  }, [isLoading, data, error, navigate, isPublicRoute]);
 
   return {
     organizationId: data?.organizationId,
     accountId: data?.accountId,
     orgRole: data?.orgRole,
     accountRole: data?.accountRole,
-    isLoading,
-    error: error as Error | null
+    isLoading: isPublicRoute ? false : isLoading,
+    error: isPublicRoute ? null : (error as Error | null)
   };
 }
