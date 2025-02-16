@@ -8,7 +8,7 @@ interface MaintenanceTableProps {
   maintenanceRequests: Maintenance[];
   statusFilter: string;
   setStatusFilter: (value: string) => void;
-  filterOptions: readonly { label: string; value: string; }[];
+  filterOptions: ReadonlyArray<{ label: string; value: string; }> | Array<{ label: string; value: string; }>;
 }
 
 export function MaintenanceTable({
@@ -22,7 +22,7 @@ export function MaintenanceTable({
   const filters = [
     {
       name: "status",
-      options: filterOptions,
+      options: [...filterOptions], // Convert readonly array to mutable array
       value: statusFilter,
       onChange: setStatusFilter
     }

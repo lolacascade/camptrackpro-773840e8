@@ -8,7 +8,7 @@ export interface FilterOption {
 
 export interface Filter {
   name: string;
-  options: FilterOption[];
+  options: ReadonlyArray<FilterOption> | Array<FilterOption>;
   value: string;
   onChange: (value: string) => void;
 }
