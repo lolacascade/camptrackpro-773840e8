@@ -793,14 +793,14 @@ export type Database = {
       }
       maintenance_requests: {
         Row: {
-          account_id: string | null
+          account_id: string
           assigned_to: string | null
           completed_at: string | null
           created_at: string | null
           customer_id: string | null
           description: string
           id: number
-          organization_id: string | null
+          organization_id: string
           priority: string
           site_id: number | null
           status: string
@@ -808,14 +808,14 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          account_id?: string | null
+          account_id: string
           assigned_to?: string | null
           completed_at?: string | null
           created_at?: string | null
           customer_id?: string | null
           description: string
           id?: number
-          organization_id?: string | null
+          organization_id: string
           priority?: string
           site_id?: number | null
           status?: string
@@ -823,14 +823,14 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          account_id?: string | null
+          account_id?: string
           assigned_to?: string | null
           completed_at?: string | null
           created_at?: string | null
           customer_id?: string | null
           description?: string
           id?: number
-          organization_id?: string | null
+          organization_id?: string
           priority?: string
           site_id?: number | null
           status?: string
@@ -838,6 +838,20 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_maintenance_account"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_maintenance_organization"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "maintenance_requests_account_id_fkey"
             columns: ["account_id"]
