@@ -13,15 +13,16 @@ export function LogoutButton() {
   const handleLogout = async () => {
     try {
       await signOut();
+      // Always navigate to signin page, even if signOut fails
       navigate('/signin', { replace: true });
     } catch (error: any) {
-      console.error('Error logging out:', error);
+      console.error('Error during logout:', error);
+      // Show toast but still redirect to signin
       toast({
         title: "Error during logout",
         description: "You have been redirected to the sign in page.",
         variant: "destructive",
       });
-      // Even if logout fails, redirect to signin page
       navigate('/signin', { replace: true });
     }
   };
