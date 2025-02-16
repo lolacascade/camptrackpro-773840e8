@@ -6,12 +6,19 @@ import { AddMaintenanceDrawer } from "@/components/maintenance/AddMaintenanceDra
 import { MaintenanceStatsCards } from "@/components/maintenance/insights/MaintenanceStatsCards";
 import { MaintenanceHeader } from "@/components/maintenance/MaintenanceHeader";
 import { MaintenanceTable } from "@/components/maintenance/MaintenanceTable";
-import type { Maintenance, MaintenanceStatus } from "@/types/maintenance";
+import type { Maintenance } from "@/types/maintenance";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { useOrganization } from "@/hooks/use-organization";
+
+const FILTER_OPTIONS = [
+  { label: "All Statuses", value: "all" },
+  { label: "Pending", value: "pending" },
+  { label: "In Progress", value: "in_progress" },
+  { label: "Completed", value: "completed" }
+] as const;
 
 export default function Maintenance() {
   const { toast } = useToast();
@@ -25,12 +32,12 @@ export default function Maintenance() {
     queryKey: ['maintenance_requests', statusFilter, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
-        console.log('Missing organization or account ID');
-        throw new Error("Organization context not found");
+        console.log('Missing organization or account ID:', { organizationId, accountId });
+        return [];
       }
 
       try {
-        console.log('Fetching maintenance requests with:', { organizationId, accountId });
+        console.log('Fetching maintenance requests with:', { organizationId, accountId, statusFilter });
         
         let query = supabase
           .from('maintenance_requests')
@@ -69,7 +76,6 @@ export default function Maintenance() {
         }
 
         console.log('Fetched maintenance requests:', data);
-
         return data as Maintenance[];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
@@ -81,13 +87,14 @@ export default function Maintenance() {
         return [];
       }
     },
-    enabled: !!organizationId && !!accountId
+    enabled: !!organizationId && !!accountId,
+    retry: 1
   });
 
   if (!organizationId || !accountId) {
     return (
       <div className="text-center p-4">
-        <p className="text-gray-500">Unable to load maintenance requests. Please ensure you're properly logged in.</p>
+        <p className="text-gray-500">Loading organization data...</p>
       </div>
     );
   }
@@ -108,6 +115,7 @@ export default function Maintenance() {
               maintenanceRequests={maintenanceRequests}
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
+              filterOptions={FILTER_OPTIONS}
             />
           )}
 
