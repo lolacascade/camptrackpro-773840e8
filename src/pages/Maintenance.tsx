@@ -19,17 +19,19 @@ export default function Maintenance() {
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
-  const { organizationId, accountId } = useOrganization();
+  const { organizationId, accountId, isLoading: orgLoading } = useOrganization();
 
   const { data: maintenanceRequests = [], isLoading, refetch } = useQuery({
     queryKey: ['maintenance_requests', statusFilter, organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         console.log('Missing organization or account ID');
-        return [];
+        throw new Error("Organization context not found");
       }
 
       try {
+        console.log('Fetching maintenance requests with:', { organizationId, accountId });
+        
         let query = supabase
           .from('maintenance_requests')
           .select(`
@@ -66,17 +68,9 @@ export default function Maintenance() {
           throw error;
         }
 
-        // Transform the data to ensure status is of the correct type
-        return (data || []).map(item => ({
-          ...item,
-          status: item.status as MaintenanceStatus,
-          priority: item.priority as 'low' | 'medium' | 'high',
-          customer_id: item.customer_id?.toString() || null,
-          user_id: item.user_id?.toString() || null,
-          organization_id: item.organization_id?.toString(),
-          account_id: item.account_id?.toString(),
-          assigned_to: item.assigned_to?.toString() || null
-        })) as Maintenance[];
+        console.log('Fetched maintenance requests:', data);
+
+        return data as Maintenance[];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
         toast({
@@ -105,7 +99,7 @@ export default function Maintenance() {
           <MaintenanceHeader onAddRequest={() => setIsAddDrawerOpen(true)} />
           <MaintenanceStatsCards />
 
-          {isLoading ? (
+          {isLoading || orgLoading ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>

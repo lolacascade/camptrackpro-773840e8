@@ -1,3 +1,4 @@
+
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { FormSelect } from "@/components/common/FormSelect";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface AddMaintenanceDrawerProps {
   isOpen: boolean;
@@ -20,8 +22,8 @@ export function AddMaintenanceDrawer({
 }: AddMaintenanceDrawerProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { organizationId, accountId } = useOrganization();
   const [formData, setFormData] = useState({
-    title: '',
     description: '',
     priority: 'medium',
   });
@@ -36,17 +38,26 @@ export function AddMaintenanceDrawer({
     e.preventDefault();
     setIsLoading(true);
 
+    if (!organizationId || !accountId) {
+      toast({
+        title: "Error",
+        description: "Organization context not found",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('maintenance_requests')
-        .insert([
-          {
-            title: formData.title,
-            description: formData.description,
-            priority: formData.priority,
-            status: 'pending'
-          }
-        ]);
+        .insert([{
+          description: formData.description,
+          priority: formData.priority,
+          status: 'pending',
+          organization_id: organizationId,
+          account_id: accountId
+        }]);
 
       if (error) throw error;
 
@@ -76,14 +87,6 @@ export function AddMaintenanceDrawer({
           <SheetTitle>Add Maintenance Request</SheetTitle>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-          <div>
-            <Input
-              placeholder="Title"
-              value={formData.title}
-              onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-              required
-            />
-          </div>
           <div>
             <Textarea
               placeholder="Description"
