@@ -1,5 +1,5 @@
 
-import React from 'react';
+import { useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -71,7 +71,7 @@ export function useOrganization() {
   });
 
   // Only navigate if we're not loading and have no data
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isLoading && !data && error) {
       navigate('/signin');
     }
