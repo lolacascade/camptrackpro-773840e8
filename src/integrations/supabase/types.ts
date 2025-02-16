@@ -11,28 +11,28 @@ export type Database = {
     Tables: {
       account_roles: {
         Row: {
-          account_id: string | null
+          account_id: string
           created_at: string
           id: string
-          organization_id: string | null
+          organization_id: string
           role: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
-          account_id?: string | null
+          account_id: string
           created_at?: string
           id?: string
-          organization_id?: string | null
+          organization_id: string
           role: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
-          account_id?: string | null
+          account_id?: string
           created_at?: string
           id?: string
-          organization_id?: string | null
+          organization_id?: string
           role?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -1024,23 +1024,23 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          organization_id: string | null
+          organization_id: string
           role: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          organization_id?: string | null
+          organization_id: string
           role: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          organization_id?: string | null
+          organization_id?: string
           role?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -1111,40 +1111,40 @@ export type Database = {
       }
       profiles: {
         Row: {
-          account_id: string | null
+          account_id: string
           company_name: string | null
           created_at: string
           email: string
           first_name: string | null
           id: string
           last_name: string | null
-          organization_id: string | null
+          organization_id: string
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
         Insert: {
-          account_id?: string | null
+          account_id: string
           company_name?: string | null
           created_at?: string
           email: string
           first_name?: string | null
           id: string
           last_name?: string | null
-          organization_id?: string | null
+          organization_id: string
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Update: {
-          account_id?: string | null
+          account_id?: string
           company_name?: string | null
           created_at?: string
           email?: string
           first_name?: string | null
           id?: string
           last_name?: string | null
-          organization_id?: string | null
+          organization_id?: string
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string

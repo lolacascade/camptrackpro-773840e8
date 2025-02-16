@@ -57,12 +57,12 @@ export function useOrganization() {
       }
 
       if (!orgData || !orgData.account_roles?.[0]) {
-        return null;
+        throw new Error("No organization or account roles found");
       }
 
       return {
         organizationId: orgData.organization_id,
-        accountId: orgData.account_roles[0].account_id || '',
+        accountId: orgData.account_roles[0].account_id,
         orgRole: orgData.role,
         accountRole: orgData.account_roles[0].role
       };
@@ -76,11 +76,11 @@ export function useOrganization() {
 
   // Only navigate if we're not on a public route and have an error
   useEffect(() => {
-    if (!isPublicRoute && !isLoading && !data && error) {
+    if (!isPublicRoute && !isLoading && error) {
       console.log('Organization data fetch failed, redirecting to signin');
       navigate('/signin');
     }
-  }, [isLoading, data, error, navigate, isPublicRoute]);
+  }, [isLoading, error, navigate, isPublicRoute]);
 
   return {
     organizationId: data?.organizationId,
