@@ -1,5 +1,4 @@
 
-import { useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,8 +19,6 @@ export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Don't run the query on public routes
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
   const { data, isLoading, error } = useQuery<OrganizationContextData>({
@@ -30,13 +27,6 @@ export function useOrganization() {
       if (!session?.user) {
         throw new Error("No session found");
       }
-
-      console.log('Fetching organization context for user:', session.user.id);
-
-      // Explicitly type the response
-      type DbResponse = OrganizationRoleRow & {
-        account_roles: AccountRoleRow[];
-      };
 
       const { data: orgData, error } = await supabase
         .from('organization_roles')
@@ -49,14 +39,9 @@ export function useOrganization() {
           )
         `)
         .eq('user_id', session.user.id)
-        .single() as { data: DbResponse | null; error: any };
+        .single();
 
-      if (error) {
-        console.error("Error fetching user roles:", error);
-        throw error;
-      }
-
-      if (!orgData || !orgData.account_roles?.[0]) {
+      if (error || !orgData || !orgData.account_roles?.[0]) {
         throw new Error("No organization or account roles found");
       }
 
@@ -70,17 +55,13 @@ export function useOrganization() {
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
     retry: 0,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
-  });
-
-  // Only navigate if we're not on a public route and have an error
-  useEffect(() => {
-    if (!isPublicRoute && !isLoading && error) {
-      console.log('Organization data fetch failed, redirecting to signin');
-      navigate('/signin');
+    onError: () => {
+      if (!isPublicRoute) {
+        console.log('Organization data fetch failed, redirecting to signin');
+        navigate('/signin');
+      }
     }
-  }, [isLoading, error, navigate, isPublicRoute]);
+  });
 
   return {
     organizationId: data?.organizationId,
