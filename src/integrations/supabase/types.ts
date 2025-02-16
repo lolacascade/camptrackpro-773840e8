@@ -50,13 +50,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_account_roles_org_roles"
-            columns: ["user_id", "organization_id"]
-            isOneToOne: false
-            referencedRelation: "organization_roles"
-            referencedColumns: ["user_id", "organization_id"]
-          },
-          {
             foreignKeyName: "fk_account_roles_organization_roles"
             columns: ["user_id", "organization_id"]
             isOneToOne: false
