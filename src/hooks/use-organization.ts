@@ -25,9 +25,12 @@ export function useOrganization() {
     queryKey: ['organization-context'],
     queryFn: async () => {
       if (!session?.user) {
+        console.log('No session found in useOrganization');
         throw new Error("No session found");
       }
 
+      console.log('Fetching organization roles for user:', session.user.id);
+      
       const { data: orgData, error } = await supabase
         .from('organization_roles')
         .select(`
@@ -41,21 +44,28 @@ export function useOrganization() {
         .eq('user_id', session.user.id)
         .single();
 
+      console.log('Organization roles response:', { orgData, error });
+
       if (error || !orgData || !orgData.account_roles?.[0]) {
+        console.error('Failed to fetch organization data:', { error, orgData });
         throw new Error("No organization or account roles found");
       }
 
-      return {
+      const contextData = {
         organizationId: orgData.organization_id,
         accountId: orgData.account_roles[0].account_id,
         orgRole: orgData.role,
         accountRole: orgData.account_roles[0].role
       };
+
+      console.log('Organization context data:', contextData);
+      return contextData;
     },
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
     retry: 0,
-    onError: () => {
+    onError: (error) => {
+      console.error('useOrganization query error:', error);
       if (!isPublicRoute) {
         console.log('Organization data fetch failed, redirecting to signin');
         navigate('/signin');
