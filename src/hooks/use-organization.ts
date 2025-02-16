@@ -21,7 +21,7 @@ export function useOrganization() {
   const location = useLocation();
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
-  const { data, isLoading, error } = useQuery<OrganizationContextData>({
+  const { data, isLoading, error } = useQuery<OrganizationContextData, Error>({
     queryKey: ['organization-context'],
     queryFn: async () => {
       if (!session?.user) {
@@ -51,7 +51,7 @@ export function useOrganization() {
         throw new Error("No organization or account roles found");
       }
 
-      const contextData = {
+      const contextData: OrganizationContextData = {
         organizationId: orgData.organization_id,
         accountId: orgData.account_roles[0].account_id,
         orgRole: orgData.role,
@@ -64,11 +64,13 @@ export function useOrganization() {
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
     retry: 0,
-    onError: (error) => {
-      console.error('useOrganization query error:', error);
-      if (!isPublicRoute) {
-        console.log('Organization data fetch failed, redirecting to signin');
-        navigate('/signin');
+    meta: {
+      onError: (error: Error) => {
+        console.error('useOrganization query error:', error);
+        if (!isPublicRoute) {
+          console.log('Organization data fetch failed, redirecting to signin');
+          navigate('/signin');
+        }
       }
     }
   });
@@ -79,6 +81,6 @@ export function useOrganization() {
     orgRole: data?.orgRole,
     accountRole: data?.accountRole,
     isLoading: isPublicRoute ? false : isLoading,
-    error: isPublicRoute ? null : (error as Error | null)
+    error: isPublicRoute ? null : error
   };
 }
