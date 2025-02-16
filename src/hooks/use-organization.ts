@@ -8,21 +8,19 @@ import { Database } from "@/integrations/supabase/types";
 type OrganizationRoleRow = Database['public']['Tables']['organization_roles']['Row'];
 type AccountRoleRow = Database['public']['Tables']['account_roles']['Row'];
 
-interface OrganizationRoleWithAccounts {
-  organization_id: string;
-  role: string;
-  account_roles: {
-    account_id: string | null;
-    role: string;
-  }[];
+interface OrganizationContextData {
+  organizationId: string;
+  accountId: string;
+  orgRole: string;
+  accountRole: string;
 }
 
 export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['organization-context', session?.user?.id],
+  const { data, isLoading, error } = useQuery<OrganizationContextData>({
+    queryKey: ['organization-context'],
     queryFn: async () => {
       if (!session?.user) {
         throw new Error("No session found");
@@ -54,9 +52,7 @@ export function useOrganization() {
       }
 
       if (!orgData || !orgData.account_roles?.[0]) {
-        console.error("No organization or account found for user");
-        navigate('/signin');
-        throw new Error("No organization or account found for user");
+        return null;
       }
 
       return {
@@ -68,10 +64,17 @@ export function useOrganization() {
     },
     enabled: !!session?.user?.id,
     staleTime: 30000, // Cache for 30 seconds
-    retry: 1,
-    refetchOnMount: true,
-    refetchOnWindowFocus: false
+    retry: 0, // Don't retry failed requests
+    refetchOnMount: false, // Don't refetch on mount
+    refetchOnWindowFocus: false // Don't refetch on window focus
   });
+
+  // Only navigate if we're not loading and have no data
+  React.useEffect(() => {
+    if (!isLoading && !data && error) {
+      navigate('/signin');
+    }
+  }, [isLoading, data, error, navigate]);
 
   return {
     organizationId: data?.organizationId,

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -10,14 +11,13 @@ export function useAvailableSlots(asset?: Asset) {
   const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchAvailableSlots = async () => {
       try {
         if (!organizationId || !accountId || isLoadingOrg) {
-          console.log('Waiting for organization context...', { organizationId, accountId, isLoadingOrg });
           return;
         }
-
-        console.log('Fetching sites with:', { organizationId, accountId });
 
         const query = supabase
           .from('sites')
@@ -34,24 +34,28 @@ export function useAvailableSlots(asset?: Asset) {
 
         const { data, error } = await query;
 
-        if (error) {
-          console.error('Error fetching sites:', error);
-          throw error;
-        }
+        if (error) throw error;
         
-        console.log('Fetched sites:', data);
-        setAvailableSlots(data || []);
+        if (isMounted) {
+          setAvailableSlots(data || []);
+        }
       } catch (error) {
         console.error('Error fetching sites:', error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch available sites.",
-          variant: "destructive",
-        });
+        if (isMounted) {
+          toast({
+            title: "Error",
+            description: "Failed to fetch available sites.",
+            variant: "destructive",
+          });
+        }
       }
     };
 
     fetchAvailableSlots();
+
+    return () => {
+      isMounted = false;
+    };
   }, [toast, organizationId, accountId, asset, isLoadingOrg]);
 
   return availableSlots;
