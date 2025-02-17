@@ -65,25 +65,28 @@ export function useOrganization(): OrganizationContextData {
           organization_id: orgData.organization_id
         });
         
-        const accountQuery = supabase
+        const { data: accData, error: accError } = await supabase
           .from('account_roles')
           .select('account_id, role')
           .eq('user_id', session.user.id)
-          .eq('organization_id', orgData.organization_id);
+          .eq('organization_id', orgData.organization_id)
+          .maybeSingle();
 
-        console.log('Account query SQL:', accountQuery.toSQL());
-
-        const { data: accData, error: accError } = await accountQuery.maybeSingle();
-
-        console.log('Account query raw response:', { accData, accError, status: accError?.status, code: accError?.code });
+        console.log('Account query response:', { 
+          data: accData, 
+          error: accError ? {
+            message: accError.message,
+            details: accError.details,
+            hint: accError.hint,
+            code: accError.code
+          } : null 
+        });
 
         if (accError) {
           console.error('Failed to fetch account data:', {
-            error: accError,
+            message: accError.message,
             details: accError.details,
             hint: accError.hint,
-            message: accError.message,
-            status: accError.status,
             code: accError.code
           });
           throw accError;
