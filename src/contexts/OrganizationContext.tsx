@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, ReactNode } from 'react';
 import { useAuth } from "@/contexts/AuthContext";
 import { useOrganization as useOrganizationHook } from "@/hooks/use-organization";
 
@@ -10,6 +10,7 @@ interface OrganizationContextData {
   accountRole: string | null;
   isLoading: boolean;
   error: Error | null;
+  refreshContext: () => Promise<void>;
 }
 
 const OrganizationContext = createContext<OrganizationContextData | undefined>(undefined);

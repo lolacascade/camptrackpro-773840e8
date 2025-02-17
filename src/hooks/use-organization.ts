@@ -1,5 +1,5 @@
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +20,7 @@ export function useOrganization() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
   const { data, isLoading, error } = useQuery<OrganizationContextData, Error>({
@@ -106,12 +107,17 @@ export function useOrganization() {
     }
   });
 
+  const refreshContext = async () => {
+    await queryClient.invalidateQueries({ queryKey: ['organization-context', session?.user?.id] });
+  };
+
   return {
-    organizationId: data?.organizationId,
-    accountId: data?.accountId,
-    orgRole: data?.orgRole,
-    accountRole: data?.accountRole,
+    organizationId: data?.organizationId ?? null,
+    accountId: data?.accountId ?? null,
+    orgRole: data?.orgRole ?? null,
+    accountRole: data?.accountRole ?? null,
     isLoading: isPublicRoute ? false : isLoading,
-    error: isPublicRoute ? null : error
+    error: isPublicRoute ? null : error,
+    refreshContext
   };
 }
