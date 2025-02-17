@@ -1446,6 +1446,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_user_account_access: {
+        Args: {
+          user_id: string
+          acc_id: string
+        }
+        Returns: boolean
+      }
+      check_user_organization_access: {
+        Args: {
+          user_id: string
+          org_id: string
+        }
+        Returns: boolean
+      }
       check_user_role:
         | {
             Args: {
