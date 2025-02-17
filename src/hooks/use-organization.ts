@@ -34,15 +34,16 @@ export function useOrganization(): OrganizationContextData {
         throw new Error("No session found");
       }
 
-      console.log('Fetching organization roles for user:', session.user.id);
+      console.log('Current user ID:', session.user.id);
       
+      // First query for organization role
       const { data: orgData, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id, role')
         .eq('user_id', session.user.id)
         .maybeSingle();
 
-      console.log('Organization role response:', { orgData, error: orgError });
+      console.log('Organization query result:', { orgData, orgError });
 
       if (orgError) {
         console.error('Failed to fetch organization data:', orgError);
@@ -50,10 +51,13 @@ export function useOrganization(): OrganizationContextData {
       }
 
       if (!orgData) {
-        console.log('No organization role found');
+        console.log('No organization role found for user');
         throw new Error("No organization role found");
       }
 
+      console.log('Found organization ID:', orgData.organization_id);
+
+      // Then query for account role
       const { data: accData, error: accError } = await supabase
         .from('account_roles')
         .select('account_id, role')
@@ -61,7 +65,7 @@ export function useOrganization(): OrganizationContextData {
         .eq('organization_id', orgData.organization_id)
         .maybeSingle();
 
-      console.log('Account role response:', { accData, error: accError });
+      console.log('Account query result:', { accData, accError });
 
       if (accError) {
         console.error('Failed to fetch account data:', accError);
@@ -73,12 +77,17 @@ export function useOrganization(): OrganizationContextData {
         throw new Error("No account role found");
       }
 
-      return {
+      console.log('Found account ID:', accData.account_id);
+
+      const result = {
         organizationId: orgData.organization_id,
         accountId: accData.account_id,
         orgRole: orgData.role,
         accountRole: accData.role
       };
+
+      console.log('Final context data:', result);
+      return result;
     },
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
