@@ -54,10 +54,7 @@ export function useOrganization(): OrganizationContextData {
           .select(`
             organization_id,
             role,
-            account_roles!account_roles_org_user_fk (
-              account_id,
-              role
-            )
+            account_roles(account_id, role)
           `)
           .eq('user_id', session.user.id)
           .maybeSingle();
