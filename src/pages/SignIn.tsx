@@ -16,15 +16,6 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Clear any existing auth state on component mount
-  useEffect(() => {
-    const clearExistingAuth = async () => {
-      await supabase.auth.signOut();
-      localStorage.clear();
-    };
-    clearExistingAuth();
-  }, []);
-
   useEffect(() => {
     const emailParam = searchParams.get('email');
     if (emailParam) {
@@ -57,11 +48,9 @@ export default function SignIn() {
 
       if (error) {
         console.log('Sign in error:', error);
-        // Check if error indicates invalid credentials or non-existent user
         if (error.message.includes('Invalid login credentials') || 
             error.message.includes('Email not confirmed') ||
             error.message.includes('User not found')) {
-          // For security reasons, show the same generic message
           toast({
             title: "Unable to sign in",
             description: "The email or password you entered is incorrect. Please try again.",
