@@ -97,9 +97,9 @@ export function useOrganization(): OrganizationContextData {
         accountRole: accData.role
       };
     },
-    enabled: !!session?.user?.id,
+    enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
-    retry: 1
+    retry: false
   });
 
   const refreshContext = async () => {
