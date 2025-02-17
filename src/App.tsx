@@ -1,40 +1,27 @@
 
-import { StrictMode } from 'react';
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
-import { AppRoutes } from "@/components/routing/AppRoutes";
+import { BrowserRouter as Router } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { OrganizationProvider } from "@/contexts/OrganizationContext";
+import { AppRoutes } from "@/components/routing/AppRoutes";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as SonnerToaster } from "sonner";
+import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
-    },
-  },
-});
-
-const App = () => {
+function App() {
   return (
-    <StrictMode>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <AppRoutes />
-            </TooltipProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-    </StrictMode>
+    <ErrorBoundary>
+      <Router>
+        <AuthProvider>
+          <OrganizationProvider>
+            <AppRoutes />
+            <Toaster />
+            <SonnerToaster position="top-right" />
+          </OrganizationProvider>
+        </AuthProvider>
+      </Router>
+    </ErrorBoundary>
   );
-};
+}
 
 export default App;
