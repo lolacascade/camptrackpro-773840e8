@@ -37,73 +37,52 @@ export function useOrganization(): OrganizationContextData {
       console.log('Current user ID:', session.user.id);
       
       try {
-        // First query for organization role
-        console.log('Querying organization roles...');
-        const { data: orgData, error: orgError } = await supabase
+        // Query for both organization and account roles in a single join
+        console.log('Querying organization and account roles...');
+        const { data: roleData, error: queryError } = await supabase
           .from('organization_roles')
-          .select('organization_id, role')
+          .select(`
+            organization_id,
+            role as org_role,
+            account_roles!inner(
+              account_id,
+              role
+            )
+          `)
           .eq('user_id', session.user.id)
           .maybeSingle();
 
-        console.log('Organization query result:', { orgData, orgError });
+        console.log('Query result:', { roleData, queryError });
 
-        if (orgError) {
-          console.error('Failed to fetch organization data:', orgError);
-          throw orgError;
+        if (queryError) {
+          console.error('Failed to fetch roles data:', queryError);
+          throw queryError;
         }
 
-        if (!orgData) {
-          console.log('No organization role found for user');
+        if (!roleData) {
+          console.log('No roles found for user');
           return null;
         }
 
-        console.log('Found organization ID:', orgData.organization_id);
-
-        // Then query for account role with detailed logging
-        console.log('Querying account roles with params:', {
-          user_id: session.user.id,
-          organization_id: orgData.organization_id
-        });
+        const accountRole = roleData.account_roles?.[0];
         
-        const { data: accData, error: accError } = await supabase
-          .from('account_roles')
-          .select('account_id, role')
-          .eq('user_id', session.user.id)
-          .eq('organization_id', orgData.organization_id)
-          .maybeSingle();
-
-        console.log('Account query response:', { 
-          data: accData, 
-          error: accError ? {
-            message: accError.message,
-            details: accError.details,
-            hint: accError.hint,
-            code: accError.code
-          } : null 
-        });
-
-        if (accError) {
-          console.error('Failed to fetch account data:', {
-            message: accError.message,
-            details: accError.details,
-            hint: accError.hint,
-            code: accError.code
-          });
-          throw accError;
-        }
-
-        if (!accData) {
+        if (!accountRole) {
           console.log('No account role found');
           return null;
         }
 
-        console.log('Found account ID:', accData.account_id);
+        console.log('Found organization and account data:', {
+          organizationId: roleData.organization_id,
+          accountId: accountRole.account_id,
+          orgRole: roleData.org_role,
+          accountRole: accountRole.role
+        });
 
         return {
-          organizationId: orgData.organization_id,
-          accountId: accData.account_id,
-          orgRole: orgData.role,
-          accountRole: accData.role
+          organizationId: roleData.organization_id,
+          accountId: accountRole.account_id,
+          orgRole: roleData.org_role,
+          accountRole: accountRole.role
         };
       } catch (error) {
         console.error('Error fetching roles:', error);
