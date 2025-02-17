@@ -83,9 +83,11 @@ export function useOrganization(): OrganizationContextData {
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
     retry: false,
-    onError: (error) => {
-      console.error('Error in organization context:', error);
-      toast.error("Unable to establish database connection. Please refresh the page.");
+    meta: {
+      onError: (error: Error) => {
+        console.error('Error in organization context:', error);
+        toast.error("Unable to establish database connection. Please refresh the page.");
+      }
     }
   });
 
