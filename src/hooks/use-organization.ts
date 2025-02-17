@@ -38,6 +38,7 @@ export function useOrganization(): OrganizationContextData {
       
       try {
         // First query for organization role
+        console.log('Querying organization roles...');
         const { data: orgData, error: orgError } = await supabase
           .from('organization_roles')
           .select('organization_id, role')
@@ -58,18 +59,33 @@ export function useOrganization(): OrganizationContextData {
 
         console.log('Found organization ID:', orgData.organization_id);
 
-        // Then query for account role
-        const { data: accData, error: accError } = await supabase
+        // Then query for account role with detailed logging
+        console.log('Querying account roles with params:', {
+          user_id: session.user.id,
+          organization_id: orgData.organization_id
+        });
+        
+        const accountQuery = supabase
           .from('account_roles')
           .select('account_id, role')
           .eq('user_id', session.user.id)
-          .eq('organization_id', orgData.organization_id)
-          .maybeSingle();
+          .eq('organization_id', orgData.organization_id);
 
-        console.log('Account query result:', { accData, accError });
+        console.log('Account query SQL:', accountQuery.toSQL());
+
+        const { data: accData, error: accError } = await accountQuery.maybeSingle();
+
+        console.log('Account query raw response:', { accData, accError, status: accError?.status, code: accError?.code });
 
         if (accError) {
-          console.error('Failed to fetch account data:', accError);
+          console.error('Failed to fetch account data:', {
+            error: accError,
+            details: accError.details,
+            hint: accError.hint,
+            message: accError.message,
+            status: accError.status,
+            code: accError.code
+          });
           throw accError;
         }
 
