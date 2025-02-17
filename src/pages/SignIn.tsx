@@ -16,6 +16,15 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  // Clear any existing auth state on component mount
+  useEffect(() => {
+    const clearExistingAuth = async () => {
+      await supabase.auth.signOut();
+      localStorage.clear();
+    };
+    clearExistingAuth();
+  }, []);
+
   useEffect(() => {
     const emailParam = searchParams.get('email');
     if (emailParam) {
