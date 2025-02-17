@@ -37,18 +37,11 @@ export function useOrganization(): OrganizationContextData {
       console.log('Current user ID:', session.user.id);
       
       try {
-        // Query for both organization and account roles in a single join
+        // Query organization roles and account roles with a join
         console.log('Querying organization and account roles...');
         const { data: roleData, error: queryError } = await supabase
           .from('organization_roles')
-          .select(`
-            organization_id,
-            role as org_role,
-            account_roles!inner(
-              account_id,
-              role
-            )
-          `)
+          .select('*, account_roles(account_id, role)')
           .eq('user_id', session.user.id)
           .maybeSingle();
 
@@ -64,24 +57,25 @@ export function useOrganization(): OrganizationContextData {
           return null;
         }
 
-        const accountRole = roleData.account_roles?.[0];
-        
-        if (!accountRole) {
+        const accountRoles = roleData.account_roles as AccountRoleRow[] | null;
+        if (!accountRoles || accountRoles.length === 0) {
           console.log('No account role found');
           return null;
         }
 
+        const accountRole = accountRoles[0];
+
         console.log('Found organization and account data:', {
           organizationId: roleData.organization_id,
           accountId: accountRole.account_id,
-          orgRole: roleData.org_role,
+          orgRole: roleData.role,
           accountRole: accountRole.role
         });
 
         return {
           organizationId: roleData.organization_id,
           accountId: accountRole.account_id,
-          orgRole: roleData.org_role,
+          orgRole: roleData.role,
           accountRole: accountRole.role
         };
       } catch (error) {
