@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
+import { toast } from "sonner";
 
 type OrganizationRoleRow = Database['public']['Tables']['organization_roles']['Row'];
 type AccountRoleRow = Database['public']['Tables']['account_roles']['Row'];
@@ -22,7 +23,7 @@ export function useOrganization() {
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
   const { data, isLoading, error } = useQuery<OrganizationContextData, Error>({
-    queryKey: ['organization-context'],
+    queryKey: ['organization-context', session?.user?.id],
     queryFn: async () => {
       if (!session?.user) {
         console.log('No session found in useOrganization');
@@ -31,7 +32,7 @@ export function useOrganization() {
 
       console.log('Fetching organization roles for user:', session.user.id);
       
-      const { data: orgData, error } = await supabase
+      const { data: orgData, error: orgError } = await supabase
         .from('organization_roles')
         .select(`
           organization_id,
@@ -44,10 +45,22 @@ export function useOrganization() {
         .eq('user_id', session.user.id)
         .single();
 
-      console.log('Organization roles response:', { orgData, error });
+      console.log('Organization roles response:', { orgData, error: orgError });
 
-      if (error || !orgData || !orgData.account_roles?.[0]) {
-        console.error('Failed to fetch organization data:', { error, orgData });
+      if (orgError) {
+        console.error('Failed to fetch organization data:', orgError);
+        // Show a toast instead of immediately redirecting
+        toast.error("Error loading organization data. Please try refreshing the page.");
+        throw orgError;
+      }
+
+      if (!orgData || !orgData.account_roles?.[0]) {
+        console.log('No organization or account roles found');
+        // Only redirect if the user truly has no access
+        if (!isPublicRoute) {
+          toast.error("No organization access found. Please contact your administrator.");
+          navigate('/signin', { replace: true });
+        }
         throw new Error("No organization or account roles found");
       }
 
@@ -63,13 +76,16 @@ export function useOrganization() {
     },
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
-    retry: 0,
+    retry: 1,
     meta: {
-      onError: (error: Error) => {
-        console.error('useOrganization query error:', error);
-        if (!isPublicRoute) {
-          console.log('Organization data fetch failed, redirecting to signin');
-          navigate('/signin');
+      // Use onSettled to handle both success and error cases
+      onSettled: (data, error) => {
+        if (error && !isPublicRoute) {
+          console.error('Organization data fetch settled with error:', error);
+          // Let the error boundary handle severe errors
+          if (error.message !== "No organization or account roles found") {
+            throw error;
+          }
         }
       }
     }
