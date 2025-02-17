@@ -32,43 +32,60 @@ export function useOrganization() {
 
       console.log('Fetching organization roles for user:', session.user.id);
       
+      // First query: Get organization role
       const { data: orgData, error: orgError } = await supabase
         .from('organization_roles')
-        .select(`
-          organization_id,
-          role,
-          account_roles (
-            account_id,
-            role
-          )
-        `)
+        .select('organization_id, role')
         .eq('user_id', session.user.id)
         .single();
 
-      console.log('Organization roles response:', { orgData, error: orgError });
+      console.log('Organization role response:', { orgData, error: orgError });
 
       if (orgError) {
         console.error('Failed to fetch organization data:', orgError);
-        // Show a toast instead of immediately redirecting
         toast.error("Error loading organization data. Please try refreshing the page.");
         throw orgError;
       }
 
-      if (!orgData || !orgData.account_roles?.[0]) {
-        console.log('No organization or account roles found');
-        // Only redirect if the user truly has no access
+      if (!orgData) {
+        console.log('No organization role found');
         if (!isPublicRoute) {
           toast.error("No organization access found. Please contact your administrator.");
           navigate('/signin', { replace: true });
         }
-        throw new Error("No organization or account roles found");
+        throw new Error("No organization role found");
+      }
+
+      // Second query: Get account role
+      const { data: accData, error: accError } = await supabase
+        .from('account_roles')
+        .select('account_id, role')
+        .eq('user_id', session.user.id)
+        .eq('organization_id', orgData.organization_id)
+        .single();
+
+      console.log('Account role response:', { accData, error: accError });
+
+      if (accError) {
+        console.error('Failed to fetch account data:', accError);
+        toast.error("Error loading account data. Please try refreshing the page.");
+        throw accError;
+      }
+
+      if (!accData) {
+        console.log('No account role found');
+        if (!isPublicRoute) {
+          toast.error("No account access found. Please contact your administrator.");
+          navigate('/signin', { replace: true });
+        }
+        throw new Error("No account role found");
       }
 
       const contextData: OrganizationContextData = {
         organizationId: orgData.organization_id,
-        accountId: orgData.account_roles[0].account_id,
+        accountId: accData.account_id,
         orgRole: orgData.role,
-        accountRole: orgData.account_roles[0].role
+        accountRole: accData.role
       };
 
       console.log('Organization context data:', contextData);
@@ -78,11 +95,9 @@ export function useOrganization() {
     staleTime: 30000,
     retry: 1,
     meta: {
-      // Use onSettled to handle both success and error cases
       onSettled: (data, error) => {
         if (error && !isPublicRoute) {
           console.error('Organization data fetch settled with error:', error);
-          // Let the error boundary handle severe errors
           if (error.message !== "No organization or account roles found") {
             throw error;
           }
