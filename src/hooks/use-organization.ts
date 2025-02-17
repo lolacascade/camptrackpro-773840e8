@@ -26,26 +26,12 @@ export function useOrganization(): OrganizationContextData {
   const queryClient = useQueryClient();
   const isPublicRoute = ['/', '/signin', '/signup', '/reset-password'].includes(location.pathname);
 
-  // Add a force logout function
-  const forceLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      await signOut();
-      window.localStorage.clear();
-      navigate('/signin');
-    } catch (error) {
-      console.error('Force logout failed:', error);
-      // If all else fails, force a hard redirect
-      window.location.href = '/signin';
-    }
-  };
-
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context', session?.user?.id],
     queryFn: async () => {
       if (!session?.user) {
         console.log('No session found in useOrganization');
-        throw new Error("No session found");
+        return null;
       }
 
       console.log('Current user ID:', session.user.id);
@@ -67,8 +53,7 @@ export function useOrganization(): OrganizationContextData {
 
         if (!orgData) {
           console.log('No organization role found for user');
-          await forceLogout(); // Force logout if no organization role found
-          throw new Error("No organization role found");
+          return null;
         }
 
         console.log('Found organization ID:', orgData.organization_id);
@@ -90,24 +75,19 @@ export function useOrganization(): OrganizationContextData {
 
         if (!accData) {
           console.log('No account role found');
-          await forceLogout(); // Force logout if no account role found
-          throw new Error("No account role found");
+          return null;
         }
 
         console.log('Found account ID:', accData.account_id);
 
-        const result = {
+        return {
           organizationId: orgData.organization_id,
           accountId: accData.account_id,
           orgRole: orgData.role,
           accountRole: accData.role
         };
-
-        console.log('Final context data:', result);
-        return result;
       } catch (error) {
         console.error('Error fetching roles:', error);
-        await forceLogout(); // Force logout on any error
         throw error;
       }
     },
@@ -118,7 +98,6 @@ export function useOrganization(): OrganizationContextData {
       onError: async (error: Error) => {
         console.error('Error in organization context:', error);
         toast.error("Unable to establish database connection. Please refresh the page.");
-        await forceLogout();
       }
     }
   });
