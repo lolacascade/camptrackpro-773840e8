@@ -1447,6 +1447,13 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_organization_member: {
+        Args: {
+          user_id: string
+          org_id: string
+        }
+        Returns: boolean
+      }
       check_password_reset_rate_limit: {
         Args: {
           p_email: string
