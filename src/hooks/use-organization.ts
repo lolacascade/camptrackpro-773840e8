@@ -40,7 +40,7 @@ export function useOrganization(): OrganizationContextData {
         .from('organization_roles')
         .select('organization_id, role')
         .eq('user_id', session.user.id)
-        .single();
+        .maybeSingle();
 
       console.log('Organization role response:', { orgData, error: orgError });
 
@@ -59,7 +59,7 @@ export function useOrganization(): OrganizationContextData {
         .select('account_id, role')
         .eq('user_id', session.user.id)
         .eq('organization_id', orgData.organization_id)
-        .single();
+        .maybeSingle();
 
       console.log('Account role response:', { accData, error: accError });
 
@@ -82,7 +82,11 @@ export function useOrganization(): OrganizationContextData {
     },
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
-    retry: false
+    retry: false,
+    onError: (error) => {
+      console.error('Error in organization context:', error);
+      toast.error("Unable to establish database connection. Please refresh the page.");
+    }
   });
 
   const refreshContext = async () => {
