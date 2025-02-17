@@ -7,11 +7,12 @@ import { MaintenanceStatsCards } from "@/components/maintenance/insights/Mainten
 import { MaintenanceHeader } from "@/components/maintenance/MaintenanceHeader";
 import { MaintenanceTable } from "@/components/maintenance/MaintenanceTable";
 import type { Maintenance } from "@/types/maintenance";
-import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { useOrganization } from "@/hooks/use-organization";
+import { toast } from "sonner";
 
 const FILTER_OPTIONS = [
   { label: "All Statuses", value: "all" },
@@ -21,49 +22,36 @@ const FILTER_OPTIONS = [
 ] as const;
 
 export default function Maintenance() {
-  const { toast } = useToast();
   const [selectedMaintenance, setSelectedMaintenance] = useState<Maintenance | null>(null);
   const [isAddDrawerOpen, setIsAddDrawerOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
-  const { organizationId, accountId, isLoading: orgLoading } = useOrganization();
+  const { organizationId, accountId } = useOrganization();
 
   const { data: maintenanceRequests = [], isLoading, refetch } = useQuery({
     queryKey: ['maintenance_requests', statusFilter, organizationId, accountId],
     queryFn: async () => {
-      if (!organizationId || !accountId) {
-        console.log('Missing organization or account ID:', { organizationId, accountId });
-        return [];
-      }
-
       try {
         console.log('Fetching maintenance requests with:', { organizationId, accountId, statusFilter });
         
         let query = supabase
           .from('maintenance_requests')
           .select(`
-            id,
-            description,
-            status,
-            priority,
-            assigned_to,
-            created_at,
-            updated_at,
-            completed_at,
-            customer_id,
-            site_id,
-            user_id,
-            organization_id,
-            account_id,
+            *,
             site:sites(
               id,
               name,
               status
             )
-          `)
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId);
+          `);
 
+        // Only add organization and account filters if they exist
+        if (organizationId) {
+          query = query.eq('organization_id', organizationId);
+        }
+        if (accountId) {
+          query = query.eq('account_id', accountId);
+        }
         if (statusFilter !== 'all') {
           query = query.eq('status', statusFilter);
         }
@@ -79,25 +67,18 @@ export default function Maintenance() {
         return data as Maintenance[];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
-        toast({
-          title: "Error",
-          description: "Failed to load maintenance requests.",
-          variant: "destructive",
-        });
+        toast.error("Failed to load maintenance requests");
         return [];
       }
     },
-    enabled: !!organizationId && !!accountId,
+    enabled: true, // Always enabled to match Customers page pattern
     retry: 1
   });
 
-  if (!organizationId || !accountId) {
-    return (
-      <div className="text-center p-4">
-        <p className="text-gray-500">Loading organization data...</p>
-      </div>
-    );
-  }
+  const handleMaintenanceClick = (maintenance: Maintenance) => {
+    setSelectedMaintenance(maintenance);
+    setIsDrawerOpen(true);
+  };
 
   return (
     <PageWithChat>
@@ -106,18 +87,13 @@ export default function Maintenance() {
           <MaintenanceHeader onAddRequest={() => setIsAddDrawerOpen(true)} />
           <MaintenanceStatsCards />
 
-          {isLoading || orgLoading ? (
-            <div className="flex justify-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-            </div>
-          ) : (
-            <MaintenanceTable
-              maintenanceRequests={maintenanceRequests}
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              filterOptions={FILTER_OPTIONS}
-            />
-          )}
+          <MaintenanceTable
+            maintenanceRequests={maintenanceRequests}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            filterOptions={FILTER_OPTIONS}
+            onRowClick={handleMaintenanceClick}
+          />
 
           <AddMaintenanceDrawer
             isOpen={isAddDrawerOpen}
