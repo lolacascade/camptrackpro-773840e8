@@ -10,20 +10,23 @@ type OrganizationRoleRow = Database['public']['Tables']['organization_roles']['R
 type AccountRoleRow = Database['public']['Tables']['account_roles']['Row'];
 
 interface OrganizationContextData {
-  organizationId: string;
-  accountId: string;
-  orgRole: string;
-  accountRole: string;
+  organizationId: string | null;
+  accountId: string | null;
+  orgRole: string | null;
+  accountRole: string | null;
+  isLoading: boolean;
+  error: Error | null;
+  refreshContext: () => Promise<void>;
 }
 
-export function useOrganization() {
+export function useOrganization(): OrganizationContextData {
   const { session } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
-  const { data, isLoading, error } = useQuery<OrganizationContextData, Error>({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context', session?.user?.id],
     queryFn: async () => {
       if (!session?.user) {
@@ -33,7 +36,6 @@ export function useOrganization() {
 
       console.log('Fetching organization roles for user:', session.user.id);
       
-      // First query: Get organization role
       const { data: orgData, error: orgError } = await supabase
         .from('organization_roles')
         .select('organization_id, role')
@@ -57,7 +59,6 @@ export function useOrganization() {
         throw new Error("No organization role found");
       }
 
-      // Second query: Get account role
       const { data: accData, error: accError } = await supabase
         .from('account_roles')
         .select('account_id, role')
@@ -82,29 +83,16 @@ export function useOrganization() {
         throw new Error("No account role found");
       }
 
-      const contextData: OrganizationContextData = {
+      return {
         organizationId: orgData.organization_id,
         accountId: accData.account_id,
         orgRole: orgData.role,
         accountRole: accData.role
       };
-
-      console.log('Organization context data:', contextData);
-      return contextData;
     },
     enabled: !!session?.user?.id && !isPublicRoute,
     staleTime: 30000,
-    retry: 1,
-    meta: {
-      onSettled: (data, error) => {
-        if (error && !isPublicRoute) {
-          console.error('Organization data fetch settled with error:', error);
-          if (error.message !== "No organization or account roles found") {
-            throw error;
-          }
-        }
-      }
-    }
+    retry: 1
   });
 
   const refreshContext = async () => {
@@ -117,7 +105,7 @@ export function useOrganization() {
     orgRole: data?.orgRole ?? null,
     accountRole: data?.accountRole ?? null,
     isLoading: isPublicRoute ? false : isLoading,
-    error: isPublicRoute ? null : error,
+    error: isPublicRoute ? null : error as Error | null,
     refreshContext
   };
 }
