@@ -26,6 +26,23 @@ export function useOrganization(): OrganizationContextData {
   const queryClient = useQueryClient();
   const isPublicRoute = ['/', '/signin', '/signup', '/reset-password'].includes(location.pathname);
 
+  // For public routes, return null values immediately without running the query
+  if (isPublicRoute) {
+    const refreshContext = async () => {
+      await queryClient.invalidateQueries({ queryKey: ['organization-context', session?.user?.id] });
+    };
+
+    return {
+      organizationId: null,
+      accountId: null,
+      orgRole: null,
+      accountRole: null,
+      isLoading: false,
+      error: null,
+      refreshContext
+    };
+  }
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context', session?.user?.id],
     queryFn: async () => {
@@ -80,7 +97,7 @@ export function useOrganization(): OrganizationContextData {
         accountRole: accData.role
       };
     },
-    enabled: !!session?.user?.id && !isPublicRoute,
+    enabled: !!session?.user?.id,
     staleTime: 30000,
     retry: 1
   });
@@ -88,19 +105,6 @@ export function useOrganization(): OrganizationContextData {
   const refreshContext = async () => {
     await queryClient.invalidateQueries({ queryKey: ['organization-context', session?.user?.id] });
   };
-
-  // If it's a public route, return null values without any error messages
-  if (isPublicRoute) {
-    return {
-      organizationId: null,
-      accountId: null,
-      orgRole: null,
-      accountRole: null,
-      isLoading: false,
-      error: null,
-      refreshContext
-    };
-  }
 
   return {
     organizationId: data?.organizationId ?? null,
