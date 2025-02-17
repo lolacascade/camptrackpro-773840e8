@@ -24,7 +24,7 @@ export function useOrganization(): OrganizationContextData {
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
-  const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
+  const isPublicRoute = ['/', '/signin', '/signup', '/reset-password'].includes(location.pathname);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['organization-context', session?.user?.id],
@@ -46,16 +46,11 @@ export function useOrganization(): OrganizationContextData {
 
       if (orgError) {
         console.error('Failed to fetch organization data:', orgError);
-        toast.error("Error loading organization data. Please try refreshing the page.");
         throw orgError;
       }
 
       if (!orgData) {
         console.log('No organization role found');
-        if (!isPublicRoute) {
-          toast.error("No organization access found. Please contact your administrator.");
-          navigate('/signin', { replace: true });
-        }
         throw new Error("No organization role found");
       }
 
@@ -70,16 +65,11 @@ export function useOrganization(): OrganizationContextData {
 
       if (accError) {
         console.error('Failed to fetch account data:', accError);
-        toast.error("Error loading account data. Please try refreshing the page.");
         throw accError;
       }
 
       if (!accData) {
         console.log('No account role found');
-        if (!isPublicRoute) {
-          toast.error("No account access found. Please contact your administrator.");
-          navigate('/signin', { replace: true });
-        }
         throw new Error("No account role found");
       }
 
@@ -99,13 +89,26 @@ export function useOrganization(): OrganizationContextData {
     await queryClient.invalidateQueries({ queryKey: ['organization-context', session?.user?.id] });
   };
 
+  // If it's a public route, return null values without any error messages
+  if (isPublicRoute) {
+    return {
+      organizationId: null,
+      accountId: null,
+      orgRole: null,
+      accountRole: null,
+      isLoading: false,
+      error: null,
+      refreshContext
+    };
+  }
+
   return {
     organizationId: data?.organizationId ?? null,
     accountId: data?.accountId ?? null,
     orgRole: data?.orgRole ?? null,
     accountRole: data?.accountRole ?? null,
-    isLoading: isPublicRoute ? false : isLoading,
-    error: isPublicRoute ? null : error as Error | null,
+    isLoading,
+    error: error as Error | null,
     refreshContext
   };
 }
