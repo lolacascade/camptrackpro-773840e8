@@ -9,6 +9,16 @@ import { toast } from "sonner";
 type OrganizationRoleRow = Database['public']['Tables']['organization_roles']['Row'];
 type AccountRoleRow = Database['public']['Tables']['account_roles']['Row'];
 
+// Define the exact shape of our query response
+interface RoleQueryResponse {
+  organization_id: string;
+  role: string;
+  account_roles: {
+    account_id: string;
+    role: string;
+  }[];
+}
+
 interface OrganizationContextData {
   organizationId: string | null;
   accountId: string | null;
@@ -37,12 +47,13 @@ export function useOrganization(): OrganizationContextData {
       console.log('Current user ID:', session.user.id);
       
       try {
-        // Query organization roles and account roles with a join
+        // Query organization roles and account roles with explicit typing
         console.log('Querying organization and account roles...');
         const { data: roleData, error: queryError } = await supabase
           .from('organization_roles')
-          .select('*, account_roles(account_id, role)')
+          .select('organization_id, role, account_roles(account_id, role)')
           .eq('user_id', session.user.id)
+          .returns<RoleQueryResponse>()
           .maybeSingle();
 
         console.log('Query result:', { roleData, queryError });
@@ -57,7 +68,7 @@ export function useOrganization(): OrganizationContextData {
           return null;
         }
 
-        const accountRoles = roleData.account_roles as AccountRoleRow[] | null;
+        const accountRoles = roleData.account_roles;
         if (!accountRoles || accountRoles.length === 0) {
           console.log('No account role found');
           return null;
