@@ -2,15 +2,13 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RV } from "@/types/rv";
-import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface RVFormFieldsProps {
   newRV: Partial<RV>;
   setNewRV: (rv: Partial<RV>) => void;
-  availableSlots: { value: string; label: string; }[];
 }
 
-export function RVFormFields({ newRV, setNewRV, availableSlots }: RVFormFieldsProps) {
+export function RVFormFields({ newRV, setNewRV }: RVFormFieldsProps) {
   return (
     <div className="space-y-4">
       <div>
@@ -41,16 +39,6 @@ export function RVFormFields({ newRV, setNewRV, availableSlots }: RVFormFieldsPr
           onChange={(e) => setNewRV({ ...newRV, year: parseInt(e.target.value) || null })}
           placeholder="Enter year"
           className="bg-white"
-        />
-      </div>
-
-      <div>
-        <Label>Site</Label>
-        <SelectField
-          value={newRV.site_id || ''}
-          onChange={(value) => setNewRV({ ...newRV, site_id: value })}
-          options={availableSlots}
-          placeholder="Select site"
         />
       </div>
     </div>

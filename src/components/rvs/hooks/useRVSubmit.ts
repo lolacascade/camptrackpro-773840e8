@@ -27,7 +27,6 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
             make: newRV.make,
             model: newRV.model,
             year: newRV.year,
-            site_id: newRV.site_id,
             organization_id: organizationId,
             account_id: accountId,
           })
@@ -41,7 +40,6 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
             make: newRV.make,
             model: newRV.model,
             year: newRV.year,
-            site_id: newRV.site_id,
             organization_id: organizationId,
             account_id: accountId,
           }]);

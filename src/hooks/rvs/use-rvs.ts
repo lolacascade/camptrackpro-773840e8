@@ -22,10 +22,6 @@ export function useRVs() {
             id,
             first_name,
             last_name
-          ),
-          site:sites(
-            id,
-            name
           )
         `)
         .eq('organization_id', organizationId)
