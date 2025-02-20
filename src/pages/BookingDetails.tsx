@@ -2,7 +2,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useBooking } from "@/hooks/use-booking";
+import { useBooking } from "@/features/bookings/hooks/use-booking";
 import { BookingDrawer } from "@/components/bookings/drawer/BookingDrawer";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -54,8 +54,8 @@ export default function BookingDetails() {
               <div>
                 <h3 className="text-lg font-medium">Booking Details</h3>
                 <div className="mt-2">
-                  <p>Check-in: {new Date(booking.check_in_date).toLocaleDateString()}</p>
-                  <p>Check-out: {new Date(booking.check_out_date).toLocaleDateString()}</p>
+                  <p>Check-in: {new Date(booking.check_in).toLocaleDateString()}</p>
+                  <p>Check-out: {new Date(booking.check_out).toLocaleDateString()}</p>
                   <p>Status: {booking.status}</p>
                   <p>Total Amount: ${booking.total_amount}</p>
                 </div>
@@ -76,7 +76,6 @@ export default function BookingDetails() {
             onClose={() => setIsDrawerOpen(false)}
             onBookingUpdated={() => {
               setIsDrawerOpen(false);
-              // Trigger a refetch of the booking data
             }}
           />
         </div>
