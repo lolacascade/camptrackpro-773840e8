@@ -21,8 +21,7 @@ export function useRVs() {
           customer:customers(
             id,
             first_name,
-            last_name,
-            email
+            last_name
           ),
           site:sites(
             id,
