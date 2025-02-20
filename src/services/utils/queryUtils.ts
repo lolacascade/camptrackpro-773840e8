@@ -1,6 +1,6 @@
 
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { Database } from "@/integrations/supabase/types";
+import { GenericSchema, Tables } from "@/types/database/tables";
 
 export interface QueryOptions {
   page?: number;
@@ -17,25 +17,35 @@ export interface QueryResult<T> {
   pageSize: number;
 }
 
-export function applyQueryOptions(
-  query: PostgrestFilterBuilder<Database['public']['Tables'], any, any>,
+export type TableName = keyof Tables;
+
+export function applyQueryOptions<T extends TableName>(
+  query: PostgrestFilterBuilder<GenericSchema, Tables[T]['Row'], unknown>,
   options: QueryOptions,
-  searchColumns?: string[]
-): PostgrestFilterBuilder<Database['public']['Tables'], any, any> {
+  searchColumns?: (keyof Tables[T]['Row'])[]
+): PostgrestFilterBuilder<GenericSchema, Tables[T]['Row'], unknown> {
   const { page = 1, pageSize = 25, sortBy, sortDirection = 'desc', searchTerm } = options;
 
-  // Apply search
+  // Apply search if search term and columns are provided
   if (searchTerm && searchColumns?.length) {
-    query = query.or(searchColumns.map(col => `${col}.ilike.%${searchTerm}%`).join(','));
+    const searchConditions = searchColumns.map(col => `${String(col)}.ilike.%${searchTerm}%`);
+    query = query.or(searchConditions.join(','));
   }
 
-  // Apply sorting
+  // Apply sorting if sort column is provided
   if (sortBy) {
     query = query.order(sortBy, { ascending: sortDirection === 'asc' });
   }
 
   // Apply pagination
-  query = query.range((page - 1) * pageSize, page * pageSize - 1);
+  const start = (page - 1) * pageSize;
+  query = query.range(start, start + pageSize - 1);
 
   return query;
+}
+
+export interface ServiceError {
+  message: string;
+  code?: string;
+  details?: unknown;
 }

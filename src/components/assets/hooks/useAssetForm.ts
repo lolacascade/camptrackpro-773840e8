@@ -27,7 +27,6 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
     site_id: asset?.site_id || null,
     organization_id: organizationId || '',
     account_id: accountId || '',
-    status: asset?.status || 'available',
   });
 
   return {

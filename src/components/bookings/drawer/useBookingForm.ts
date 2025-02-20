@@ -6,17 +6,17 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 import { addDays } from "date-fns";
-import { Booking } from "@/types/booking";
+import { Booking, BookingStatus } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 import { Customer } from "@/types/customer";
-
-type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
 
 type BookingFormData = {
   customer_id: string;
   rv_id: string;
   site_id: string;
+  check_in: string;
+  check_out: string;
   special_requirements?: string;
   status?: BookingStatus;
   total_amount?: number;
@@ -96,7 +96,6 @@ export function useBookingForm({
         check_out: dateRange.to.toISOString(),
         status: (data.status || 'pending') as BookingStatus,
         special_requirements: data.special_requirements,
-        user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
         total_amount: data.total_amount || 0
