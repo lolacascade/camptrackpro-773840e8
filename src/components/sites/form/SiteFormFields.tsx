@@ -1,21 +1,21 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { SiteFormData } from "@/types/site";
+import { Site } from "@/types/site";
 
 interface SiteFormFieldsProps {
-  formData: SiteFormData;
-  setFormData: (data: SiteFormData) => void;
+  site: Partial<Site>;
+  setSite: (site: Partial<Site>) => void;
 }
 
-export function SiteFormFields({ formData, setFormData }: SiteFormFieldsProps) {
+export function SiteFormFields({ site, setSite }: SiteFormFieldsProps) {
   return (
     <div className="space-y-4">
       <div>
         <Label>Name</Label>
         <Input
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          value={site.name || ''}
+          onChange={(e) => setSite({ ...site, name: e.target.value })}
           placeholder="Enter site name"
           className="bg-white"
         />
@@ -24,8 +24,8 @@ export function SiteFormFields({ formData, setFormData }: SiteFormFieldsProps) {
       <div>
         <Label>Location</Label>
         <Input
-          value={formData.location}
-          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          value={site.location || ''}
+          onChange={(e) => setSite({ ...site, location: e.target.value })}
           placeholder="Enter location"
           className="bg-white"
         />
