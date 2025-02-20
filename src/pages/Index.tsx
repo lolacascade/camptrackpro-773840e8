@@ -1,3 +1,4 @@
+
 import { HeroSection } from "@/components/landing/HeroSection";
 import { KeyFeatures } from "@/components/landing/KeyFeatures";
 import { BenefitsOfAI } from "@/components/landing/BenefitsOfAI";
