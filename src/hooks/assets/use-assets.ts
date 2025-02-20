@@ -28,9 +28,7 @@ export function useAssets() {
             id,
             name
           )
-        `)
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        `);
 
       if (error) {
         console.error('Error fetching RVs:', error);
@@ -39,8 +37,6 @@ export function useAssets() {
 
       return (data || []).map(rv => ({
         ...rv,
-        organization_id: organizationId,
-        account_id: accountId,
         updated_at: rv.updated_at || rv.created_at
       })) as Asset[];
     },

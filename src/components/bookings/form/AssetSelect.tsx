@@ -25,9 +25,7 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rvs')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId);
+        .select('*');
 
       if (error) throw error;
       return data || [];

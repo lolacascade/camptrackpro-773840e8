@@ -11,8 +11,6 @@ export interface Asset {
   customer?: Customer;
   site_id: string | null;
   site?: Site;
-  organization_id: string;
-  account_id: string;
   created_at: string;
   updated_at: string;
 }
