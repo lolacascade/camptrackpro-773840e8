@@ -1,54 +1,45 @@
-import { Column } from "@/components/common/DataTable/types";
-import { Badge } from "@/components/ui/badge";
-import { Booking } from "@/types/booking";
 
-export const getBookingsColumns = (): Column<Booking>[] => [
+import { format } from "date-fns";
+import { Booking } from "@/types/booking";
+import { Column } from "@/components/common/DataTable/types";
+
+export const getBookingColumns = (): Column<Booking>[] => [
   {
     header: "Customer",
     accessorKey: "customer",
-    cell: (booking: Booking) => {
-      const customer = booking.customer;
-      if (!customer) return "N/A";
-      return (
-        <div>
-          <p>{`${customer.first_name} ${customer.last_name}`}</p>
-          <p className="text-sm text-muted-foreground">{customer.email}</p>
-        </div>
-      );
-    },
+    cell: (booking: Booking) => booking.customer ? 
+      `${booking.customer.first_name} ${booking.customer.last_name}` : 'N/A'
   },
   {
-    header: "Asset",
-    accessorKey: "asset",
-    cell: (booking: Booking) => (
-      <span>{booking.asset?.asset_name || booking.asset?.name || 'Unassigned'}</span>
-    ),
+    header: "RV",
+    accessorKey: "rv",
+    cell: (booking: Booking) => booking.rv ? 
+      `${booking.rv.make} ${booking.rv.model}` : 'N/A'
   },
   {
-    header: "Check-in",
-    accessorKey: "check_in_date",
-    cell: (booking: Booking) => (
-      <span>
-        {new Date(booking.check_in_date).toLocaleDateString()}
-      </span>
-    ),
+    header: "Site",
+    accessorKey: "site",
+    cell: (booking: Booking) => booking.site?.name || 'N/A'
   },
   {
-    header: "Check-out",
-    accessorKey: "check_out_date",
-    cell: (booking: Booking) => (
-      <span>
-        {new Date(booking.check_out_date).toLocaleDateString()}
-      </span>
-    ),
+    header: "Check In",
+    accessorKey: "check_in",
+    cell: (booking: Booking) => format(new Date(booking.check_in), 'MMM dd, yyyy')
+  },
+  {
+    header: "Check Out",
+    accessorKey: "check_out",
+    cell: (booking: Booking) => format(new Date(booking.check_out), 'MMM dd, yyyy')
   },
   {
     header: "Status",
     accessorKey: "status",
-    cell: (booking: Booking) => (
-      <Badge variant="outline">
-        {booking.status}
-      </Badge>
-    ),
+    cell: (booking: Booking) => booking.status
   },
+  {
+    header: "Amount",
+    accessorKey: "total_amount",
+    cell: (booking: Booking) => booking.total_amount ? 
+      `$${booking.total_amount.toFixed(2)}` : '-'
+  }
 ];

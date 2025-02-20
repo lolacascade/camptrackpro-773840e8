@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { BookingsInsights } from "@/components/bookings/BookingsInsights";
 import { BookingsTable } from "@/components/bookings/BookingsTable";
 import { BookingDrawer } from "@/components/bookings/drawer/BookingDrawer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
@@ -45,7 +44,6 @@ export default function Bookings() {
             onAdd={handleAddBooking} 
             onDateRangeChange={handleDateRangeChange}
           />
-          <BookingsInsights dateRange={dateRange} />
           <BookingsTable onEdit={handleEditBooking} dateRange={dateRange} />
 
           <BookingDrawer
@@ -53,8 +51,7 @@ export default function Bookings() {
             open={isDrawerOpen}
             onClose={handleDrawerClose}
             onBookingUpdated={() => {
-              // Trigger a refetch in BookingsTable
-              // This will be handled by the query invalidation
+              // Will be handled by query invalidation
             }}
           />
         </div>

@@ -1,51 +1,42 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Profile } from "@/types/common/person";
-import { useToast } from "./use-toast";
+import { useSession } from "@supabase/auth-helpers-react";
+
+interface UserProfile {
+  id: string;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+}
 
 export function useProfile() {
-  const { toast } = useToast();
+  const session = useSession();
 
   return useQuery({
-    queryKey: ["profile"],
-    queryFn: async (): Promise<Profile | null> => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error("No authenticated user");
-      }
-
-      const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching profile:", error);
-        toast({
-          title: "Error",
-          description: "Failed to fetch profile data",
-          variant: "destructive",
-        });
-        throw error;
-      }
-
-      if (!profile) {
-        console.warn("No profile found for user:", user.id);
+    queryKey: ['profile', session?.user?.id],
+    queryFn: async () => {
+      if (!session?.user?.id) {
         return null;
       }
 
+      const { data: users, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
       return {
-        id: profile.id,
-        role: profile.role,
-        first_name: profile.first_name || "",
-        last_name: profile.last_name || "",
-      };
+        id: users.id,
+        email: users.email,
+        first_name: users.first_name || null,
+        last_name: users.last_name || null
+      } as UserProfile;
     },
-    retry: 1,
-    meta: {
-      errorMessage: "Failed to fetch profile",
-    }
+    enabled: !!session?.user?.id
   });
 }
