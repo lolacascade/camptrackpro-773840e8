@@ -5,14 +5,11 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { SiteTable } from "@/components/sites/SiteTable";
-import { SiteStats } from "@/components/sites/SiteStats";
 import { useState } from "react";
-import { useSiteSummary } from "@/hooks/use-site-summary";
 import type { Field } from "@/components/common/EntityDrawer/types";
 
 export default function Sitemap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { data: stats } = useSiteSummary();
 
   const siteFields: Field[] = [
     {
@@ -64,13 +61,6 @@ export default function Sitemap() {
               Add Site
             </Button>
           </div>
-
-          {stats && <SiteStats
-            totalSites={stats.totalSites}
-            availableSites={stats.availableSites}
-            occupiedSites={stats.occupiedSites}
-            occupancyRate={stats.occupancyRate}
-          />}
 
           <SiteTable />
 
