@@ -42,7 +42,7 @@ export function useOrganization(): OrganizationContextData {
       console.log('Current user ID:', session.user.id);
       
       try {
-        // Query user accounts and related organization data
+        // Query user_accounts and join with accounts to get organization_id
         console.log('Querying user account data...');
         const { data: accountData, error: queryError } = await supabase
           .from('user_accounts')
