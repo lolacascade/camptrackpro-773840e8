@@ -14,22 +14,16 @@ export type GenericSchema = {
       Relationships: []
     }
     customers: {
-      Row: { id: string; first_name: string; last_name: string; email: string | null; phone: string | null; organization_id: string; account_id: string; created_at: string; }
-      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; phone?: string | null; organization_id: string; account_id: string; created_at?: string; }
-      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; phone?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
+      Row: { id: string; first_name: string; last_name: string; email: string | null; organization_id: string; account_id: string; created_at: string; }
+      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; organization_id: string; account_id: string; created_at?: string; }
+      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
       Relationships: []
     }
     rvs: {
-      Row: { id: string; make: string; model: string; year: number | null; customer_id: string | null; site_id: string | null; organization_id: string; account_id: string; created_at: string; }
-      Insert: { id?: string; make: string; model: string; year?: number | null; customer_id?: string | null; site_id?: string | null; organization_id: string; account_id: string; created_at?: string; }
-      Update: { id?: string; make?: string; model?: string; year?: number | null; customer_id?: string | null; site_id?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
+      Row: { id: string; make: string; model: string; year: number | null; site_id: string | null; organization_id: string; account_id: string; created_at: string; }
+      Insert: { id?: string; make: string; model: string; year?: number | null; site_id?: string | null; organization_id: string; account_id: string; created_at?: string; }
+      Update: { id?: string; make?: string; model?: string; year?: number | null; site_id?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
       Relationships: [
-        {
-          foreignKeyName: "rvs_customer_id_fkey"
-          columns: ["customer_id"]
-          referencedRelation: "customers"
-          referencedColumns: ["id"]
-        },
         {
           foreignKeyName: "rvs_site_id_fkey"
           columns: ["site_id"]
@@ -45,9 +39,9 @@ export type GenericSchema = {
       Relationships: []
     }
     bookings: {
-      Row: { id: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status: string; total_amount: number; special_requirements: string | null; organization_id: string; account_id: string; created_at: string; }
-      Insert: { id?: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status?: string; total_amount?: number; special_requirements?: string | null; organization_id: string; account_id: string; created_at?: string; }
-      Update: { id?: string; customer_id?: string; rv_id?: string; site_id?: string; check_in?: string; check_out?: string; status?: string; total_amount?: number; special_requirements?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
+      Row: { id: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status: string; organization_id: string; account_id: string; created_at: string; }
+      Insert: { id?: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status?: string; organization_id: string; account_id: string; created_at?: string; }
+      Update: { id?: string; customer_id?: string; rv_id?: string; site_id?: string; check_in?: string; check_out?: string; status?: string; organization_id?: string; account_id?: string; created_at?: string; }
       Relationships: [
         {
           foreignKeyName: "bookings_customer_id_fkey"
@@ -75,12 +69,6 @@ export type GenericSchema = {
       Update: { user_id?: string; account_id?: string; }
       Relationships: []
     }
-    user_organizations: {
-      Row: { id: string; user_id: string; organization_id: string; created_at: string; updated_at: string; }
-      Insert: { id?: string; user_id: string; organization_id: string; created_at?: string; updated_at?: string; }
-      Update: { id?: string; user_id?: string; organization_id?: string; created_at?: string; updated_at?: string; }
-      Relationships: []
-    }
   }
   Views: {
     [key: string]: {
@@ -101,4 +89,3 @@ export type GenericSchema = {
 }
 
 export type Database = GenericSchema;
-export type Tables = GenericSchema['Tables'];

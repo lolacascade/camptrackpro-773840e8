@@ -1,128 +1,120 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Customer } from "@/types/customer";
-import { QueryOptions, QueryResult, applyQueryOptions } from "./utils/queryUtils";
-import { toast } from "sonner";
+import { QueryOptions, applyQueryOptions } from "./utils/queryUtils";
 
-export interface CustomerQueryOptions extends QueryOptions {
-  organizationId?: string;
-  accountId?: string;
-}
+export async function getCustomers(
+  organizationId: string,
+  accountId: string,
+  options?: QueryOptions
+): Promise<{ data: Customer[]; total: number }> {
+  try {
+    let query = supabase
+      .from('customers')
+      .select('*', { count: 'exact' })
+      .eq('organization_id', organizationId)
+      .eq('account_id', accountId);
 
-class CustomerService {
-  private tableName = 'customers';
-
-  async getCustomers(options: CustomerQueryOptions = {}): Promise<QueryResult<Customer>> {
-    try {
-      let query = supabase
-        .from(this.tableName)
-        .select('*', { count: 'exact' });
-
-      // Apply organization and account filters
-      if (options.organizationId) {
-        query = query.eq('organization_id', options.organizationId);
-      }
-      if (options.accountId) {
-        query = query.eq('account_id', options.accountId);
-      }
-
-      // Apply common query options
+    if (options) {
       query = applyQueryOptions(query, options, ['first_name', 'last_name', 'email']);
-
-      const { data, error, count } = await query;
-
-      if (error) {
-        console.error('Error fetching customers:', error);
-        toast.error('Failed to fetch customers');
-        throw error;
-      }
-
-      return {
-        data: data || [],
-        total: count || 0,
-        page: options.page || 1,
-        pageSize: options.pageSize || 25
-      };
-    } catch (error) {
-      console.error('Error in getCustomers:', error);
-      throw error;
-    }
-  }
-
-  async getCustomerById(id: string): Promise<Customer | null> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .select()
-      .eq('id', id)
-      .maybeSingle();
-
-    if (error) {
-      console.error('Error fetching customer:', error);
-      toast.error('Failed to fetch customer');
-      throw error;
     }
 
-    return data;
-  }
+    const { data, error, count } = await query;
 
-  async createCustomer(
-    customer: CustomerCreateInput,
-    organizationId: string,
-    accountId: string
-  ): Promise<Customer> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .insert([{
-        ...customer,
-        organization_id: organizationId,
-        account_id: accountId
-      }])
-      .select()
-      .single();
+    if (error) throw error;
 
-    if (error) {
-      console.error('Error creating customer:', error);
-      toast.error('Failed to create customer');
-      throw error;
-    }
-
-    return data;
-  }
-
-  async updateCustomer(
-    id: string,
-    customer: CustomerUpdateInput
-  ): Promise<Customer> {
-    const { data, error } = await supabase
-      .from(this.tableName)
-      .update(customer)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating customer:', error);
-      toast.error('Failed to update customer');
-      throw error;
-    }
-
-    return data;
-  }
-
-  async deleteCustomer(id: string): Promise<void> {
-    const { error } = await supabase
-      .from(this.tableName)
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting customer:', error);
-      toast.error('Failed to delete customer');
-      throw error;
-    }
-
-    toast.success('Customer deleted successfully');
+    return {
+      data: data as Customer[],
+      total: count || 0
+    };
+  } catch (error) {
+    console.error('Error in getCustomers:', error);
+    throw error;
   }
 }
 
-export const customerService = new CustomerService();
+export async function getCustomerById(
+  customerId: string,
+  organizationId: string,
+  accountId: string
+): Promise<Customer> {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .select('*')
+      .eq('id', customerId)
+      .eq('organization_id', organizationId)
+      .eq('account_id', accountId)
+      .single();
+
+    if (error) throw error;
+    return data as Customer;
+  } catch (error) {
+    console.error('Error in getCustomerById:', error);
+    throw error;
+  }
+}
+
+export async function createCustomer(
+  customer: CustomerCreateInput,
+  organizationId: string,
+  accountId: string
+): Promise<Customer> {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .insert([{ ...customer, organization_id: organizationId, account_id: accountId }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Customer;
+  } catch (error) {
+    console.error('Error in createCustomer:', error);
+    throw error;
+  }
+}
+
+export async function updateCustomer(
+  customerId: string,
+  updates: CustomerUpdateInput,
+  organizationId: string,
+  accountId: string
+): Promise<Customer> {
+  try {
+    const { data, error } = await supabase
+      .from('customers')
+      .update(updates)
+      .eq('id', customerId)
+      .eq('organization_id', organizationId)
+      .eq('account_id', accountId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Customer;
+  } catch (error) {
+    console.error('Error in updateCustomer:', error);
+    throw error;
+  }
+}
+
+export async function deleteCustomer(
+  customerId: string,
+  organizationId: string,
+  accountId: string
+): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from('customers')
+      .delete()
+      .eq('id', customerId)
+      .eq('organization_id', organizationId)
+      .eq('account_id', accountId);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error in deleteCustomer:', error);
+    throw error;
+  }
+}

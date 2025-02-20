@@ -21,12 +21,10 @@ export interface Booking {
   check_out: string;
   status: BookingStatus;
   site_id: string;
-  total_amount: number;
   organization_id: string | null;
   account_id: string | null;
   created_at: string | null;
   customer?: Customer;
   site?: Site;
   asset?: Asset;
-  special_requirements?: string;
 }
