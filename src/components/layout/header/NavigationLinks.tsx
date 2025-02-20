@@ -24,7 +24,7 @@ export function NavigationLinks({ onItemClick, className }: NavigationLinksProps
     { path: 'dashboard', label: 'Dashboard' },
     { path: 'bookings', label: 'Bookings' },
     { path: 'customers', label: 'Customers' },
-    { path: 'assets', label: 'RVs' },
+    { path: 'rvs', label: 'RVs' },
     { path: 'sitemap', label: 'Sites' }
   ];
 

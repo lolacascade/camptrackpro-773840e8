@@ -1,54 +1,54 @@
 
-import { useAssets } from "@/hooks/assets/use-assets";
-import { AssetTable } from "./table/AssetTable";
+import { useRVs } from "@/hooks/rvs/use-rvs";
+import { RVTable } from "./table/RVTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { Asset } from "@/types/asset";
-import { AssetDrawer } from "@/components/assets/AssetDrawer";
+import { RV } from "@/types/rv";
+import { RVDrawer } from "@/components/rvs/RVDrawer";
 import { useToast } from "@/hooks/use-toast";
-import { AssetStatsCards } from "@/components/assets/insights/AssetStatsCards";
+import { RVStatsCards } from "@/components/rvs/insights/RVStatsCards";
 
-export function AssetsContent() {
-  const { data: assets = [], isLoading, error } = useAssets();
+export function RVsContent() {
+  const { data: rvs = [], isLoading, error } = useRVs();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [selectedRV, setSelectedRV] = useState<RV | null>(null);
   const { toast } = useToast();
 
-  const handleAddAsset = () => {
-    setSelectedAsset(null);
+  const handleAddRV = () => {
+    setSelectedRV(null);
     setIsDrawerOpen(true);
   };
 
-  const handleEditAsset = (asset: Asset) => {
-    setSelectedAsset(asset);
+  const handleEditRV = (rv: RV) => {
+    setSelectedRV(rv);
     setIsDrawerOpen(true);
   };
 
   const handleCloseDrawer = () => {
     setIsDrawerOpen(false);
-    setSelectedAsset(null);
+    setSelectedRV(null);
   };
 
   const handleSuccess = () => {
     handleCloseDrawer();
     toast({
       title: "Success",
-      description: selectedAsset ? "Asset updated successfully" : "Asset added successfully",
+      description: selectedRV ? "RV updated successfully" : "RV added successfully",
     });
   };
 
-  const handleViewDetails = (asset: Asset) => {
+  const handleViewDetails = (rv: RV) => {
     toast({
       title: "Coming Soon",
-      description: "Asset details view is under development",
+      description: "RV details view is under development",
     });
   };
 
   if (error) {
     return (
       <div className="text-center py-4 text-red-500">
-        Error loading assets. Please try again.
+        Error loading RVs. Please try again.
       </div>
     );
   }
@@ -58,28 +58,27 @@ export function AssetsContent() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-semibold text-[#133134]">RVs</h1>
         <Button 
-          onClick={handleAddAsset}
+          onClick={handleAddRV}
           className="bg-[#C0CCAB] text-[#0D1D1F] hover:bg-[#C0CCAB]/90"
         >
           <Plus className="mr-2 h-4 w-4" /> Add RV
         </Button>
       </div>
 
-      <AssetStatsCards />
+      <RVStatsCards />
 
-      <AssetTable
-        assets={assets}
-        onEdit={handleEditAsset}
+      <RVTable
+        rvs={rvs}
+        onEdit={handleEditRV}
         onViewDetails={handleViewDetails}
         isLoading={isLoading}
       />
 
-      <AssetDrawer
+      <RVDrawer
         open={isDrawerOpen}
         onClose={handleCloseDrawer}
-        onAssetAdded={handleSuccess}
-        customerId={selectedAsset?.customer_id || null}
-        asset={selectedAsset || undefined}
+        onRVAdded={handleSuccess}
+        rv={selectedRV || undefined}
       />
     </div>
   );

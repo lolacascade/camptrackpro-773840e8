@@ -1,13 +1,13 @@
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
-import { AssetsContent } from "@/features/assets/components/AssetsContent";
+import { RVsContent } from "@/features/rvs/components/RVsContent";
 
-export default function Assets() {
+export default function RVs() {
   return (
     <PageWithChat>
       <PageContainer>
-        <AssetsContent />
+        <RVsContent />
       </PageContainer>
     </PageWithChat>
   );

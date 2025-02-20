@@ -1,41 +1,41 @@
 
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { AssetFormFields } from "./form/AssetFormFields"
-import { useAssetForm } from "./hooks/useAssetForm"
-import { Asset } from "@/types/asset"
+import { RVFormFields } from "./form/RVFormFields"
+import { useRVForm } from "./hooks/useRVForm"
+import { RV } from "@/types/rv"
 
-interface AssetDrawerProps {
+interface RVDrawerProps {
   open: boolean
   onClose: () => void
-  onAssetAdded: () => void
-  asset?: Asset
+  onRVAdded: () => void
+  rv?: RV
 }
 
-export function AssetDrawer({ open, onClose, onAssetAdded, asset }: AssetDrawerProps) {
-  const { newAsset, setNewAsset, availableSlots, handleSubmit } = useAssetForm({ 
+export function RVDrawer({ open, onClose, onRVAdded, rv }: RVDrawerProps) {
+  const { newRV, setNewRV, availableSlots, handleSubmit } = useRVForm({ 
     onClose, 
-    onAssetAdded,
-    asset
+    onRVAdded,
+    rv
   })
 
   return (
     <Sheet open={open} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>{asset ? 'Edit RV' : 'Add New RV'}</SheetTitle>
+          <SheetTitle>{rv ? 'Edit RV' : 'Add New RV'}</SheetTitle>
         </SheetHeader>
         <div className="space-y-6 py-4">
-          <AssetFormFields
-            newAsset={newAsset}
-            setNewAsset={setNewAsset}
+          <RVFormFields
+            newRV={newRV}
+            setNewRV={setNewRV}
             availableSlots={availableSlots}
           />
           <Button 
             onClick={handleSubmit}
             className="w-full bg-[#133134] text-white hover:bg-[#133134]/90"
           >
-            {asset ? 'Save Changes' : 'Add RV'}
+            {rv ? 'Save Changes' : 'Add RV'}
           </Button>
         </div>
       </SheetContent>

@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import Dashboard from "@/pages/Dashboard";
-import Assets from "@/features/assets/pages/Assets";
+import RVs from "@/features/rvs/pages/RVs";
 import Customers from "@/pages/Customers";
 import Bookings from "@/pages/Bookings";
 import Sitemap from "@/pages/Sitemap";
@@ -16,7 +16,7 @@ export function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="bookings" element={<Bookings />} />
         <Route path="customers" element={<Customers />} />
-        <Route path="assets" element={<Assets />} />
+        <Route path="rvs" element={<RVs />} />
         <Route path="sitemap" element={<Sitemap />} />
       </Route>
     </Routes>
