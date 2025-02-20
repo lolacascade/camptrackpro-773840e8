@@ -23,8 +23,8 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       }
 
       try {
-        const { data: orgRoles, error } = await supabase
-          .from('organization_roles')
+        const { data: orgData, error } = await supabase
+          .from('user_organizations')
           .select('organization_id')
           .eq('user_id', user.id)
           .limit(1)
@@ -34,7 +34,7 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           console.error('Error checking organization:', error);
           setHasOrganization(false);
         } else {
-          setHasOrganization(!!orgRoles?.organization_id);
+          setHasOrganization(!!orgData?.organization_id);
         }
       } catch (error) {
         console.error('Organization check failed:', error);
@@ -51,7 +51,6 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     }
   }, [user, isAuthLoading]);
 
-  // Show loading state while checking auth or organization
   if (isAuthLoading || isCheckingOrg) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -60,16 +59,13 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // If not authenticated, redirect to signin
   if (!user) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
-  // Only redirect to /app if we've confirmed there's no organization AND we're not already on /app
   if (hasOrganization === false && location.pathname !== '/app') {
     return <Navigate to="/app" replace />;
   }
 
-  // If we have an organization or we're on /app, render children
   return <>{children}</>;
 }

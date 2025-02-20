@@ -1,6 +1,6 @@
 
-import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
 import { Label } from "@/components/ui/label";
+import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
 
 interface BookingDateRangeProps {
   checkIn: string;
@@ -29,7 +29,6 @@ export function BookingDateRange({
         <DatePickerField
           value={checkOut ? new Date(checkOut) : new Date()}
           onChange={(date) => onCheckOutChange(date?.toISOString() || '')}
-          minDate={checkIn ? new Date(checkIn) : new Date()}
         />
       </div>
     </div>

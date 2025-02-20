@@ -22,3 +22,10 @@ export interface Booking {
   rv?: RV;
   site?: Site;
 }
+
+export interface BookingFilters {
+  status?: BookingStatus | 'all';
+  dateRange?: { from: Date; to: Date };
+  searchTerm?: string;
+  page: number;
+}

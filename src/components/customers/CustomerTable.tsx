@@ -23,7 +23,7 @@ export function CustomerTable({ onEdit }: CustomerTableProps) {
       const { error } = await supabase
         .from('customers')
         .delete()
-        .eq('id', customer.id.toString());
+        .eq('id', customer.id);
 
       if (error) {
         toast.error(error.message || "Failed to delete customer");
