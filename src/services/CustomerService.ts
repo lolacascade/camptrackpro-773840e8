@@ -1,98 +1,46 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Customer, CustomerFormData, CustomerQueryOptions } from "@/types/customer";
-import { FilteringService } from "./base/FilteringService";
-import { applyPagination, applySorting } from "./utils/queryUtils";
+import { useOrganization } from "@/hooks/use-organization";
 
-export class CustomerService extends FilteringService {
-  async list(organizationId: string, options: CustomerQueryOptions = {}): Promise<Customer[]> {
-    let query = supabase
-      .from('customers')
-      .select(`
-        *
-      `)
-      .eq('organization_id', organizationId);
+export async function saveCustomer(
+  formData: CustomerFormData, 
+  customerId: string | null,
+  organizationId: string,
+  accountId: string
+) {
+  const dataWithContext = {
+    ...formData,
+    organization_id: organizationId,
+    account_id: accountId
+  };
 
-    if (options.searchTerm) {
-      query = query.or(`first_name.ilike.%${options.searchTerm}%,last_name.ilike.%${options.searchTerm}%,email.ilike.%${options.searchTerm}%`);
-    }
-
-    if (options.sortBy) {
-      query = applySorting(query, options.sortBy, options.sortOrder || 'asc');
-    }
-
-    if (options.page && options.pageSize) {
-      query = applyPagination(query, options.page, options.pageSize);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      throw new Error(`Failed to fetch customers: ${error.message}`);
-    }
-
-    return data as Customer[];
-  }
-
-  async get(id: string): Promise<Customer> {
-    const { data, error } = await supabase
-      .from('customers')
-      .select(`
-        *
-      `)
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to fetch customer: ${error.message}`);
-    }
-
-    return data as Customer;
-  }
-
-  async create(formData: CustomerFormData, organizationId: string, accountId: string): Promise<Customer> {
-    const { data, error } = await supabase
-      .from('customers')
-      .insert([{
-        ...formData,
-        organization_id: organizationId,
-        account_id: accountId
-      }])
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to create customer: ${error.message}`);
-    }
-
-    return data as Customer;
-  }
-
-  async update(id: string, formData: CustomerFormData): Promise<Customer> {
-    const { data, error } = await supabase
-      .from('customers')
-      .update(formData)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to update customer: ${error.message}`);
-    }
-
-    return data as Customer;
-  }
-
-  async delete(id: string): Promise<void> {
+  if (customerId) {
     const { error } = await supabase
       .from('customers')
-      .delete()
-      .eq('id', id);
+      .update(dataWithContext)
+      .eq('id', customerId);
 
-    if (error) {
-      throw new Error(`Failed to delete customer: ${error.message}`);
-    }
-  }
+    if (error) throw error;
+    return 'Customer updated successfully';
+  } 
+
+  const { error } = await supabase
+    .from('customers')
+    .insert([dataWithContext]);
+
+  if (error) throw error;
+  return 'Customer added successfully';
 }
 
-export const customerService = new CustomerService();
+export async function fetchCustomers(options?: CustomerQueryOptions) {
+  const { organizationId } = useOrganization();
+  const { data, error } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('organization_id', organizationId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data as Customer[];
+}

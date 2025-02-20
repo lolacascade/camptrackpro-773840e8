@@ -1,4 +1,17 @@
 
+export interface CustomerFormData {
+  first_name: string;
+  last_name: string;
+  email: string | null;
+  phone: string | null;
+}
+
+export interface CustomerQueryOptions {
+  searchTerm?: string;
+  page?: number;
+  perPage?: number;
+}
+
 export interface Customer {
   id: string;
   first_name: string;
