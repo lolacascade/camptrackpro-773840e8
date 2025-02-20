@@ -1,7 +1,8 @@
 
-export interface AssetFilters {
-  searchTerm: string;
-  status: string | null;
-  assetType: string | null;
-  page: number;
+import { AssetFilters as BaseAssetFilters } from '@/types/asset';
+
+// Extended filters for feature-specific functionality
+export interface FeatureAssetFilters extends BaseAssetFilters {
+  maintenanceDate?: Date | null;
+  availability?: boolean;
 }

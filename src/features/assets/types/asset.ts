@@ -1,9 +1,19 @@
 
-import { Asset as BaseAsset } from '@/types/asset';
+import { Asset as BaseAsset, AssetStatus, AssetType, AssetSize } from '@/types/asset';
 
-export interface Asset extends BaseAsset {
-  site_id: string | null;
-  status: 'available' | 'occupied' | 'maintenance';
-  asset_type: string;
-  asset_size: string;
+// Extended asset type for feature-specific functionality
+export interface FeatureAsset extends BaseAsset {
+  updated_at?: string;
+  last_maintenance_date?: string;
+  next_maintenance_date?: string;
+}
+
+// Feature-specific asset form data
+export interface AssetFormData {
+  make: string;
+  model: string;
+  year: number | null;
+  asset_type: AssetType;
+  asset_size: AssetSize;
+  status: AssetStatus;
 }

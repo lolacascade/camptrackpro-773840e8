@@ -1,36 +1,20 @@
 
-import { Customer } from "@/types/customer";
-import { Site } from "@/types/site";
-import { Asset } from "@/types/asset";
-import { DateRange } from "react-day-picker";
+import { Booking as BaseBooking, BookingStatus } from '@/types/booking';
 
-export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
-export type BookingStatusFilter = BookingStatus | 'all';
-
-export interface BookingFilters {
-  searchTerm: string;
-  status: BookingStatusFilter;
-  page: number;
-  dateRange: DateRange | null;
+// Extended booking type for feature-specific functionality
+export interface FeatureBooking extends BaseBooking {
+  payment_status?: 'pending' | 'paid' | 'refunded';
+  check_in_time?: string;
+  check_out_time?: string;
+  notes?: string[];
 }
 
-export interface Booking {
-  id: string;
+// Feature-specific booking form data
+export interface BookingFormData {
   customer_id: string;
-  customer?: Customer;
   rv_id: string;
-  asset?: Asset;
+  site_id: string;
   check_in: string;
   check_out: string;
-  status: BookingStatus;
-  site_id: string;
-  site?: Site;
-  total_amount: number;
-  organization_id: string;
-  account_id: string;
-  user_id: string;
   special_requirements?: string;
-  reservation_code?: string;
-  created_at: string;
-  updated_at: string;
 }
