@@ -9,6 +9,7 @@ import { DateRange } from "react-day-picker";
 import { useOrganization } from "@/hooks/use-organization";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { Field } from "@/components/common/EntityDrawer/types";
+import { Site } from "@/types/site";
 
 interface SlotSelectProps {
   value: string;
@@ -22,7 +23,7 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
   const { organizationId, accountId } = useOrganization();
   const queryClient = useQueryClient();
 
-  const { data: sites } = useQuery({
+  const { data: sites } = useQuery<Site[]>({
     queryKey: ['sites', organizationId, accountId, dateRange],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -40,7 +41,7 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
 
   const options = (sites || []).map(site => ({
     value: String(site.id),
-    label: `${site.name} (${site.length_ft}ft x ${site.width_ft}ft)`
+    label: `${site.name} (${site.length_ft || 0}ft x ${site.width_ft || 0}ft)`
   }));
 
   const siteFields: Field[] = [
