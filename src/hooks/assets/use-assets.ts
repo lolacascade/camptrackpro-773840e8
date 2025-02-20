@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Asset } from "@/types/asset";
+import type { Asset } from "@/features/assets/types/asset";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
@@ -16,7 +16,19 @@ export function useAssets() {
 
       const { data, error } = await supabase
         .from("rvs")
-        .select("*, customer:customers (*), site:sites (*)")
+        .select(`
+          *,
+          customer:customers(
+            id,
+            first_name,
+            last_name,
+            email
+          ),
+          site:sites(
+            id,
+            name
+          )
+        `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
@@ -25,7 +37,12 @@ export function useAssets() {
         throw error;
       }
 
-      return (data || []) as Asset[];
+      return (data || []).map(rv => ({
+        ...rv,
+        organization_id: organizationId,
+        account_id: accountId,
+        updated_at: rv.updated_at || rv.created_at
+      })) as Asset[];
     },
     enabled: !!organizationId && !!accountId
   });

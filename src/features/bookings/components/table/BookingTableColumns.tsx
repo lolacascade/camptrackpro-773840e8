@@ -13,6 +13,12 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
+    header: "RV",
+    accessorKey: "rv_id",
+    cell: (booking: Booking) => booking.rv_id || '-',
+    sortable: true
+  },
+  {
     header: "Site",
     accessorKey: "site_id",
     cell: (booking: Booking) => {
@@ -22,7 +28,7 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
-    header: "Check-in Date",
+    header: "Check-in",
     accessorKey: "check_in",
     cell: (booking: Booking) => {
       return booking.check_in ? new Date(booking.check_in).toLocaleDateString() : '-';
@@ -30,7 +36,7 @@ export const getBookingColumns = (): Column<Booking>[] => [
     sortable: true
   },
   {
-    header: "Check-out Date",
+    header: "Check-out",
     accessorKey: "check_out",
     cell: (booking: Booking) => {
       return booking.check_out ? new Date(booking.check_out).toLocaleDateString() : '-';
@@ -53,14 +59,6 @@ export const getBookingColumns = (): Column<Booking>[] => [
           {booking.status?.charAt(0).toUpperCase() + booking.status?.slice(1)}
         </span>
       );
-    },
-    sortable: true
-  },
-  {
-    header: "Total Amount",
-    accessorKey: "total_amount",
-    cell: (booking: Booking) => {
-      return booking.total_amount ? `$${booking.total_amount.toFixed(2)}` : '$0.00';
     },
     sortable: true
   }

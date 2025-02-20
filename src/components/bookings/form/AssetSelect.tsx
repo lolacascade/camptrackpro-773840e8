@@ -37,7 +37,7 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
 
   const options = (rvs || []).map(rv => ({
     value: String(rv.id),
-    label: `${rv.make} (${rv.model})`
+    label: `${rv.make} ${rv.model} ${rv.year || ''}`
   }));
 
   const assetFields: Field[] = [
