@@ -17,7 +17,7 @@ interface BookingDrawerProps {
 export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
   const { customers } = useCustomers();
   const [newlyCreatedCustomer, setNewlyCreatedCustomer] = useState<Customer | null>(null);
-  const [newlyCreatedAssetId, setNewlyCreatedAssetId] = useState<string | null>(null);
+  const [newlyCreatedRvId, setNewlyCreatedRvId] = useState<string | null>(null);
   const [newlyCreatedSiteId, setNewlyCreatedSiteId] = useState<string | null>(null);
 
   const {
@@ -30,7 +30,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     onClose, 
     onBookingUpdated,
     newlyCreatedCustomer,
-    newlyCreatedAssetId,
+    newlyCreatedRvId,
     newlyCreatedSiteId
   });
 
@@ -39,9 +39,9 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
     form.setValue('customer_id', customer.id);
   };
 
-  const handleAssetCreated = (assetId: string) => {
-    setNewlyCreatedAssetId(assetId);
-    form.setValue('rv_id', assetId);
+  const handleRVCreated = (rvId: string) => {
+    setNewlyCreatedRvId(rvId);
+    form.setValue('rv_id', rvId);
   };
 
   const handleSiteCreated = (siteId: string) => {
@@ -63,7 +63,7 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         onSubmit={onSubmit}
         isEdit={!!booking}
         onCustomerCreated={handleCustomerCreated}
-        onAssetCreated={handleAssetCreated}
+        onRVCreated={handleRVCreated}
         onSiteCreated={handleSiteCreated}
       />
     </BaseDrawer>

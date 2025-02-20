@@ -48,8 +48,8 @@ export function useBookingForm({
   const form = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
-      rv_id: booking.rv_id,
-      site_id: booking.site_id,
+      rv_id: booking.rv_id || '',
+      site_id: booking.site_id || '',
       status: booking.status as BookingStatus,
       total_amount: booking.total_amount || undefined,
       special_requirements: booking.special_requirements || undefined

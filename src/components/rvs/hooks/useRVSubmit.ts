@@ -3,6 +3,7 @@ import { useOrganization } from "@/hooks/use-organization";
 import { RV } from "@/types/rv";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface UseRVSubmitProps {
   onClose: () => void;
@@ -20,6 +21,11 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
         throw new Error("Missing organization or account context");
       }
 
+      if (!newRV.make || !newRV.model) {
+        toast.error("Please fill in all required fields");
+        return;
+      }
+
       const rvData = {
         make: newRV.make,
         model: newRV.model,
@@ -35,12 +41,14 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
           .eq("id", rv.id);
 
         if (error) throw error;
+        toast.success("RV updated successfully");
       } else {
         const { error } = await supabase
           .from("rvs")
           .insert([rvData]);
 
         if (error) throw error;
+        toast.success("RV added successfully");
       }
 
       await queryClient.invalidateQueries({ queryKey: ["rvs"] });
@@ -48,6 +56,7 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
       onClose();
     } catch (error) {
       console.error("Error saving RV:", error);
+      toast.error("Failed to save RV");
       throw error;
     }
   };
