@@ -1,13 +1,12 @@
 
 import { useRVs } from "@/hooks/rvs/use-rvs";
-import { RVTable } from "./table/RVTable";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { RV } from "@/types/rv";
 import { RVDrawer } from "@/components/rvs/RVDrawer";
 import { useToast } from "@/hooks/use-toast";
-import { RVStatsCards } from "@/components/rvs/insights/RVStatsCards";
+import { RVTable } from "@/components/rvs/table/RVTable";
 
 export function RVsContent() {
   const { data: rvs = [], isLoading, error } = useRVs();
@@ -38,13 +37,6 @@ export function RVsContent() {
     });
   };
 
-  const handleViewDetails = (rv: RV) => {
-    toast({
-      title: "Coming Soon",
-      description: "RV details view is under development",
-    });
-  };
-
   if (error) {
     return (
       <div className="text-center py-4 text-red-500">
@@ -65,12 +57,9 @@ export function RVsContent() {
         </Button>
       </div>
 
-      <RVStatsCards />
-
       <RVTable
         rvs={rvs}
         onEdit={handleEditRV}
-        onViewDetails={handleViewDetails}
         isLoading={isLoading}
       />
 

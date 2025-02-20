@@ -13,7 +13,7 @@ interface RVDrawerProps {
 }
 
 export function RVDrawer({ open, onClose, onRVAdded, rv }: RVDrawerProps) {
-  const { newRV, setNewRV, availableSlots, handleSubmit } = useRVForm({ 
+  const { newRV, setNewRV, handleSubmit } = useRVForm({ 
     onClose, 
     onRVAdded,
     rv
@@ -29,7 +29,6 @@ export function RVDrawer({ open, onClose, onRVAdded, rv }: RVDrawerProps) {
           <RVFormFields
             newRV={newRV}
             setNewRV={setNewRV}
-            availableSlots={availableSlots}
           />
           <Button 
             onClick={handleSubmit}
