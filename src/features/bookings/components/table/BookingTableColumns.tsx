@@ -1,65 +1,46 @@
 
 import { Column } from "@/components/common/DataTable/types";
-import { Booking } from "../../types/booking";
+import { Booking } from "@/types/booking";
+import { format } from "date-fns";
+import { getStatusLabel } from "@/components/bookings/table/BookingStatusOptions";
 
 export const getBookingColumns = (): Column<Booking>[] => [
   {
     header: "Customer",
     accessorKey: "customer",
-    cell: (booking: Booking) => {
-      const customer = booking.customer;
-      return customer ? `${customer.first_name} ${customer.last_name}` : '-';
-    },
-    sortable: true
-  },
-  {
-    header: "RV",
-    accessorKey: "rv_id",
-    cell: (booking: Booking) => booking.rv_id || '-',
-    sortable: true
+    cell: (booking: Booking) => booking.customer ? 
+      `${booking.customer.first_name} ${booking.customer.last_name}` : 'N/A'
   },
   {
     header: "Site",
-    accessorKey: "site_id",
-    cell: (booking: Booking) => {
-      const site = booking.site;
-      return site ? site.name : '-';
-    },
-    sortable: true
+    accessorKey: "site",
+    cell: (booking: Booking) => booking.site?.name || 'N/A'
   },
   {
-    header: "Check-in",
+    header: "RV",
+    accessorKey: "rv",
+    cell: (booking: Booking) => booking.rv ? 
+      `${booking.rv.make} ${booking.rv.model}` : 'N/A'
+  },
+  {
+    header: "Check In",
     accessorKey: "check_in",
-    cell: (booking: Booking) => {
-      return booking.check_in ? new Date(booking.check_in).toLocaleDateString() : '-';
-    },
-    sortable: true
+    cell: (booking: Booking) => format(new Date(booking.check_in), 'MMM dd, yyyy')
   },
   {
-    header: "Check-out",
+    header: "Check Out",
     accessorKey: "check_out",
-    cell: (booking: Booking) => {
-      return booking.check_out ? new Date(booking.check_out).toLocaleDateString() : '-';
-    },
-    sortable: true
+    cell: (booking: Booking) => format(new Date(booking.check_out), 'MMM dd, yyyy')
   },
   {
     header: "Status",
     accessorKey: "status",
-    cell: (booking: Booking) => {
-      const statusClasses = {
-        pending: "text-yellow-600",
-        confirmed: "text-blue-600",
-        checked_in: "text-green-600",
-        completed: "text-gray-600",
-        cancelled: "text-red-600"
-      };
-      return (
-        <span className={statusClasses[booking.status] || ""}>
-          {booking.status?.charAt(0).toUpperCase() + booking.status?.slice(1)}
-        </span>
-      );
-    },
-    sortable: true
+    cell: (booking: Booking) => getStatusLabel(booking.status)
+  },
+  {
+    header: "Amount",
+    accessorKey: "total_amount",
+    cell: (booking: Booking) => booking.total_amount ? 
+      `$${booking.total_amount.toFixed(2)}` : '-'
   }
 ];

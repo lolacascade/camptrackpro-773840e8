@@ -25,7 +25,7 @@ export interface Booking {
 
 export interface BookingFilters {
   status?: BookingStatus | 'all';
-  dateRange?: { from: Date; to: Date };
+  dateRange?: { from: Date; to: Date } | null;
   searchTerm?: string;
   page: number;
 }

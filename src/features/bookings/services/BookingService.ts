@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Booking, BookingFormData, BookingStatus } from "@/types/booking";
+import { Booking, BookingStatus } from "@/types/booking";
 import { DateRange } from "react-day-picker";
 
 interface GetBookingsOptions {
@@ -9,40 +9,6 @@ interface GetBookingsOptions {
   status?: BookingStatus | 'all';
   searchTerm?: string;
   dateRange?: DateRange | null;
-}
-
-export async function createBooking(
-  formData: BookingFormData, 
-  organizationId: string, 
-  accountId: string
-): Promise<Booking> {
-  const { data, error } = await supabase
-    .from('bookings')
-    .insert([{
-      ...formData,
-      organization_id: organizationId,
-      account_id: accountId
-    }])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export async function updateBooking(
-  id: string, 
-  formData: BookingFormData
-): Promise<Booking> {
-  const { data, error } = await supabase
-    .from('bookings')
-    .update(formData)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
 }
 
 export async function getBookings({
@@ -94,5 +60,24 @@ export async function getBookings({
   const { data, error } = await query;
 
   if (error) throw error;
-  return data as Booking[];
+  return data as unknown as Booking[];
+}
+
+export async function updateBookingStatus(
+  bookingId: string,
+  status: BookingStatus,
+  organizationId: string,
+  accountId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('bookings')
+    .update({ 
+      status,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', bookingId)
+    .eq('organization_id', organizationId)
+    .eq('account_id', accountId);
+
+  if (error) throw error;
 }
