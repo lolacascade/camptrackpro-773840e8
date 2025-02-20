@@ -30,3 +30,14 @@ export interface Booking {
   site?: Site;
   rv?: RV;
 }
+
+export interface BookingFormData {
+  customer_id: string;
+  rv_id: string;
+  site_id: string;
+  check_in: string;
+  check_out: string;
+  status: BookingStatus;
+  total_amount?: number;
+  special_requirements?: string;
+}
