@@ -23,14 +23,7 @@ export type GenericSchema = {
       Row: { id: string; make: string; model: string; year: number | null; site_id: string | null; organization_id: string; account_id: string; created_at: string; }
       Insert: { id?: string; make: string; model: string; year?: number | null; site_id?: string | null; organization_id: string; account_id: string; created_at?: string; }
       Update: { id?: string; make?: string; model?: string; year?: number | null; site_id?: string | null; organization_id?: string; account_id?: string; created_at?: string; }
-      Relationships: [
-        {
-          foreignKeyName: "rvs_site_id_fkey"
-          columns: ["site_id"]
-          referencedRelation: "sites"
-          referencedColumns: ["id"]
-        }
-      ]
+      Relationships: []
     }
     sites: {
       Row: { id: string; name: string; location: string; organization_id: string; account_id: string; created_at: string; }
@@ -42,26 +35,7 @@ export type GenericSchema = {
       Row: { id: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status: string; organization_id: string; account_id: string; created_at: string; }
       Insert: { id?: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status?: string; organization_id: string; account_id: string; created_at?: string; }
       Update: { id?: string; customer_id?: string; rv_id?: string; site_id?: string; check_in?: string; check_out?: string; status?: string; organization_id?: string; account_id?: string; created_at?: string; }
-      Relationships: [
-        {
-          foreignKeyName: "bookings_customer_id_fkey"
-          columns: ["customer_id"]
-          referencedRelation: "customers"
-          referencedColumns: ["id"]
-        },
-        {
-          foreignKeyName: "bookings_rv_id_fkey"
-          columns: ["rv_id"]
-          referencedRelation: "rvs"
-          referencedColumns: ["id"]
-        },
-        {
-          foreignKeyName: "bookings_site_id_fkey"
-          columns: ["site_id"]
-          referencedRelation: "sites"
-          referencedColumns: ["id"]
-        }
-      ]
+      Relationships: []
     }
     user_accounts: {
       Row: { user_id: string; account_id: string; }

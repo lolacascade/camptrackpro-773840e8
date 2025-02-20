@@ -1,30 +1,15 @@
-import { DashboardContent } from "@/components/dashboard/DashboardContent";
-import { useMarinaSummary } from "@/hooks/use-marina-summary";
+
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
-import type { MarinaSummary } from "@/types/dashboard";
 
 export default function Dashboard() {
-  const { data: marinaData, isLoading } = useMarinaSummary();
-  
-  // Transform marina data to match MarinaSummary type
-  const marinaSummary: MarinaSummary = {
-    totalSlots: marinaData?.totalSlots || 0,
-    occupiedSlots: marinaData?.occupiedSlots || 0,
-    activeRVs: marinaData?.activeRVs || 0,
-    occupancyRate: marinaData?.occupancyRate || 0,
-    maintenanceSlots: marinaData?.maintenanceSlots || 0,
-    monthlyRevenue: 0,
-    pendingMaintenance: 0
-  };
-
   return (
     <PageWithChat>
       <PageContainer>
-        <DashboardContent 
-          marinaSummary={marinaSummary}
-          isLoading={isLoading}
-        />
+        <div className="space-y-8">
+          <h1 className="text-3xl font-semibold text-[#133134]">RV Park Dashboard</h1>
+          <p className="text-gray-600">Welcome to your RV Park management system.</p>
+        </div>
       </PageContainer>
     </PageWithChat>
   );
