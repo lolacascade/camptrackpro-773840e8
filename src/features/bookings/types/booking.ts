@@ -21,13 +21,9 @@ export interface Booking {
   check_in: string;
   check_out: string;
   status: BookingStatus;
-  total_amount: number;
   site_id: string;
   site?: Site;
   special_requirements?: string;
-  organization_id: string;
-  account_id: string;
-  user_id: string;
   created_at: string;
   updated_at: string;
 }

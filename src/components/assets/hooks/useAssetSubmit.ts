@@ -1,7 +1,6 @@
 
 import { useSession } from "@supabase/auth-helpers-react";
-import { useToast } from "@/components/ui/use-toast";
-import { useOrganization } from "@/hooks/use-organization";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Asset } from "@/types/asset";
 
@@ -14,7 +13,6 @@ interface UseAssetSubmitProps {
 export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitProps) {
   const { toast } = useToast();
   const session = useSession();
-  const { organizationId, accountId } = useOrganization();
 
   const handleSubmit = async (newAsset: Partial<Asset>) => {
     if (!session?.user?.id) {
@@ -26,39 +24,24 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
       return;
     }
 
-    if (!organizationId || !accountId) {
+    if (!newAsset.make || !newAsset.model || !newAsset.site_id) {
       toast({
         title: "Error",
-        description: "No organization or account context found.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!newAsset.asset_name || !newAsset.site_id) {
-      toast({
-        title: "Error",
-        description: "Please fill in RV Name/Identifier and select a Site.",
+        description: "Please fill in all required fields.",
         variant: "destructive",
       });
       return;
     }
 
     try {
-      console.log('Creating RV with:', {
-        ...newAsset,
-        organization_id: organizationId,
-        account_id: accountId
-      });
+      console.log('Creating RV with:', newAsset);
 
       const assetData = {
-        make: newAsset.asset_name,
-        model: newAsset.asset_type || null,
-        year: null,
+        make: newAsset.make,
+        model: newAsset.model,
+        year: newAsset.year,
         customer_id: newAsset.customer_id,
-        organization_id: organizationId,
-        account_id: accountId,
-        user_id: session.user.id
+        site_id: newAsset.site_id,
       };
 
       if (asset?.id) {
@@ -69,10 +52,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) {
-          console.error('Error updating RV:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         toast({
           title: "Success",
@@ -85,10 +65,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .select()
           .single();
 
-        if (error) {
-          console.error('Error creating RV:', error);
-          throw error;
-        }
+        if (error) throw error;
 
         toast({
           title: "Success",

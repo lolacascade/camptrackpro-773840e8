@@ -1,7 +1,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Asset, RV_TYPE_TO_CATEGORY } from "@/types/asset";
+import { Asset } from "@/types/asset";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 
 interface AssetFormFieldsProps {
@@ -24,79 +24,47 @@ export const ASSET_TYPES = [
   { value: 'Other', label: 'Other' }
 ] as const;
 
-export const PRICING_CATEGORIES = [
-  { value: 'up_to_15', label: 'Up to 15\'' },
-  { value: 'up_to_20', label: 'Up to 20\'' },
-  { value: 'up_to_30', label: 'Up to 30\'' },
-  { value: 'up_to_35', label: 'Up to 35\'' },
-  { value: 'up_to_40', label: 'Up to 40\'' },
-];
-
 export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: AssetFormFieldsProps) {
   const slotOptions = availableSlots.map(slot => ({
     value: slot.id.toString(),
     label: slot.name
   }));
 
-  const handleAssetTypeChange = (value: string) => {
-    const pricing_category = RV_TYPE_TO_CATEGORY[value];
-    setNewAsset({ 
-      ...newAsset, 
-      asset_type: value,
-      type: value, // Set both type and asset_type
-      pricing_category: pricing_category
-    });
-  };
-
   return (
     <div className="grid gap-4 py-4">
       <div className="grid gap-2">
-        <Label htmlFor="asset_name">RV Name/Identifier *</Label>
+        <Label htmlFor="make">Make *</Label>
         <Input
-          id="asset_name"
-          value={newAsset.asset_name || ''}
-          onChange={(e) => setNewAsset({ 
-            ...newAsset, 
-            asset_name: e.target.value,
-            name: e.target.value // Set both name and asset_name
-          })}
-          placeholder="Enter RV name or identifier"
+          id="make"
+          value={newAsset.make || ''}
+          onChange={(e) => setNewAsset({ ...newAsset, make: e.target.value })}
+          placeholder="Enter RV make"
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_size">Size</Label>
+        <Label htmlFor="model">Model *</Label>
         <Input
-          id="asset_size"
-          value={newAsset.asset_size || ''}
-          onChange={(e) => setNewAsset({ ...newAsset, asset_size: e.target.value })}
-          placeholder="e.g., 32 ft"
+          id="model"
+          value={newAsset.model || ''}
+          onChange={(e) => setNewAsset({ ...newAsset, model: e.target.value })}
+          placeholder="Enter RV model"
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="asset_type">RV Type *</Label>
-        <SelectField
-          value={newAsset.asset_type || ''}
-          onChange={handleAssetTypeChange}
-          options={ASSET_TYPES.map(({ value, label }) => ({ value, label }))}
-          placeholder="Select RV type"
+        <Label htmlFor="year">Year</Label>
+        <Input
+          id="year"
+          type="number"
+          value={newAsset.year || ''}
+          onChange={(e) => setNewAsset({ ...newAsset, year: parseInt(e.target.value) || null })}
+          placeholder="Enter RV year"
         />
       </div>
-      {newAsset.asset_type === 'Other' && (
-        <div className="grid gap-2">
-          <Label htmlFor="pricing_category">Pricing Category *</Label>
-          <SelectField
-            value={newAsset.pricing_category || ''}
-            onChange={(value) => setNewAsset({ ...newAsset, pricing_category: value as any })}
-            options={PRICING_CATEGORIES}
-            placeholder="Select pricing category"
-          />
-        </div>
-      )}
       <div className="grid gap-2">
         <Label htmlFor="site_id">Site *</Label>
         <SelectField
           value={newAsset.site_id?.toString() || ''}
-          onChange={(value) => setNewAsset({ ...newAsset, site_id: parseInt(value) })}
+          onChange={(value) => setNewAsset({ ...newAsset, site_id: value })}
           options={slotOptions}
           placeholder="Select a site"
         />
