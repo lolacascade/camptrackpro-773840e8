@@ -14,10 +14,19 @@ export function useRVs() {
         return [];
       }
 
+      console.log('Fetching RVs for org:', organizationId, 'account:', accountId);
+
       const { data, error } = await supabase
         .from("rvs")
         .select(`
-          *,
+          id,
+          make,
+          model,
+          year,
+          organization_id,
+          account_id,
+          created_at,
+          customer_id,
           customer:customers(
             id,
             first_name,

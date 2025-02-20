@@ -13,14 +13,8 @@ export interface RV {
   customer?: Customer;
 }
 
-export interface RVFilters {
-  searchTerm: string;
-  page: number;
-}
-
 export interface RVFormData {
   make: string;
   model: string;
   year: number | null;
-  customer_id?: string | null;
 }

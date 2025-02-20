@@ -20,29 +20,25 @@ export function useRVSubmit({ onClose, onRVAdded, rv }: UseRVSubmitProps) {
         throw new Error("Missing organization or account context");
       }
 
+      const rvData = {
+        make: newRV.make,
+        model: newRV.model,
+        year: newRV.year,
+        organization_id: organizationId,
+        account_id: accountId,
+      };
+
       if (rv?.id) {
         const { error } = await supabase
           .from("rvs")
-          .update({
-            make: newRV.make,
-            model: newRV.model,
-            year: newRV.year,
-            organization_id: organizationId,
-            account_id: accountId,
-          })
+          .update(rvData)
           .eq("id", rv.id);
 
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from("rvs")
-          .insert([{
-            make: newRV.make,
-            model: newRV.model,
-            year: newRV.year,
-            organization_id: organizationId,
-            account_id: accountId,
-          }]);
+          .insert([rvData]);
 
         if (error) throw error;
       }
