@@ -10,35 +10,23 @@ export interface QueryOptions {
   searchTerm?: string;
 }
 
-export interface ServiceError extends Error {
-  code?: string;
-  details?: string;
-  originalError?: any;
+export interface QueryResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
-export class ServiceErrorImpl extends Error implements ServiceError {
-  constructor(
-    message: string,
-    public code?: string,
-    public details?: string,
-    public originalError?: any
-  ) {
-    super(message);
-    this.name = 'ServiceError';
-  }
-}
-
-export function applyQueryOptions<T extends keyof Database['public']['Tables']>(
-  query: PostgrestFilterBuilder<Database['public']['Tables'], T, any>,
+export function applyQueryOptions<T>(
+  query: PostgrestFilterBuilder<any, any>,
   options: QueryOptions,
   searchColumns?: string[]
-): PostgrestFilterBuilder<Database['public']['Tables'], T, any> {
+): PostgrestFilterBuilder<any, any> {
   const { page = 1, pageSize = 25, sortBy, sortDirection = 'desc', searchTerm } = options;
 
-  // Apply search if searchTerm and searchColumns are provided
+  // Apply search
   if (searchTerm && searchColumns?.length) {
-    const searchConditions = searchColumns.map(column => `${column}.ilike.%${searchTerm}%`);
-    query = query.or(searchConditions.join(','));
+    query = query.or(searchColumns.map(col => `${col}.ilike.%${searchTerm}%`).join(','));
   }
 
   // Apply sorting
@@ -47,16 +35,7 @@ export function applyQueryOptions<T extends keyof Database['public']['Tables']>(
   }
 
   // Apply pagination
-  const start = (page - 1) * pageSize;
-  const end = start + pageSize - 1;
-  query = query.range(start, end);
+  query = query.range((page - 1) * pageSize, page * pageSize - 1);
 
   return query;
-}
-
-export interface QueryResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
 }
