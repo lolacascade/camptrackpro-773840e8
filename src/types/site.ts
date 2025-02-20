@@ -8,7 +8,7 @@ export interface Site {
   created_at: string | null;
 }
 
-export interface SiteFilters {
-  searchTerm: string;
-  page: number;
+export interface SiteFormData {
+  name: string;
+  location: string;
 }
