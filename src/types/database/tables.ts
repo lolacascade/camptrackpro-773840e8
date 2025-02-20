@@ -28,9 +28,6 @@ export type Tables = {
     year: number | null;
     customer_id: string | null;
     site_id: string | null;
-    status: 'available' | 'occupied' | 'maintenance';
-    asset_type: 'class_a' | 'class_b' | 'class_c' | 'travel_trailer' | 'fifth_wheel' | 'popup';
-    asset_size: 'small' | 'medium' | 'large';
     organization_id: string;
     account_id: string;
     created_at: string;
@@ -39,12 +36,6 @@ export type Tables = {
     id: string;
     name: string;
     location: string;
-    status: 'available' | 'occupied' | 'maintenance';
-    length_ft: number | null;
-    width_ft: number | null;
-    has_water: boolean;
-    electricity_voltage: number | null;
-    is_covered: boolean;
     organization_id: string;
     account_id: string;
     created_at: string;
@@ -59,28 +50,6 @@ export type Tables = {
     status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
     total_amount: number;
     special_requirements: string | null;
-    organization_id: string;
-    account_id: string;
-    created_at: string;
-  };
-  user_accounts: {
-    user_id: string;
-    account_id: string;
-    role: string;
-  };
-  user_organizations: {
-    user_id: string;
-    organization_id: string;
-    role: string;
-  };
-  marina_details: {
-    id: string;
-    name: string;
-    address: string;
-    contact_email: string;
-    contact_phone: string;
-    website: string | null;
-    total_slips: number;
     organization_id: string;
     account_id: string;
     created_at: string;

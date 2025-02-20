@@ -5,11 +5,10 @@ import { Asset } from "./asset";
 import { DateRange } from "react-day-picker";
 
 export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
-export type BookingStatusFilter = BookingStatus | 'all';
 
 export interface BookingFilters {
   searchTerm: string;
-  status: BookingStatusFilter;
+  status: BookingStatus | 'all';
   page: number;
   dateRange: DateRange | null;
 }
