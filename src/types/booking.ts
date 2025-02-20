@@ -1,33 +1,24 @@
 
 import { Customer } from "./customer";
 import { Site } from "./site";
-import { DateRange } from "react-day-picker";
+import { Asset } from "./asset";
 
 export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
-export type BookingStatusFilter = BookingStatus | 'all';
-
-export interface BookingFilters {
-  searchTerm: string;
-  status: BookingStatusFilter;
-  page: number;
-  dateRange: DateRange | null;
-}
 
 export interface Booking {
   id: string;
   customer_id: string;
-  customer?: Customer;
   rv_id: string;
   check_in: string;
   check_out: string;
   status: BookingStatus;
-  total_amount: number;
   site_id: string;
+  total_amount: number;
+  organization_id: string | null;
+  account_id: string | null;
+  created_at: string | null;
+  customer?: Customer;
   site?: Site;
+  asset?: Asset;
   special_requirements?: string;
-  organization_id: string;
-  account_id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
 }

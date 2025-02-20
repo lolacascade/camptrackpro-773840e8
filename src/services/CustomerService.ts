@@ -52,7 +52,7 @@ class CustomerService {
   async getCustomerById(id: string): Promise<Customer | null> {
     const { data, error } = await supabase
       .from(this.tableName)
-      .select('*')
+      .select()
       .eq('id', id)
       .maybeSingle();
 
@@ -66,7 +66,7 @@ class CustomerService {
   }
 
   async createCustomer(
-    customer: Omit<Customer, 'id' | 'created_at' | 'updated_at'>,
+    customer: CustomerCreateInput,
     organizationId: string,
     accountId: string
   ): Promise<Customer> {
@@ -91,7 +91,7 @@ class CustomerService {
 
   async updateCustomer(
     id: string,
-    customer: Partial<Omit<Customer, 'id' | 'created_at' | 'updated_at'>>
+    customer: CustomerUpdateInput
   ): Promise<Customer> {
     const { data, error } = await supabase
       .from(this.tableName)

@@ -17,11 +17,11 @@ export interface QueryResult<T> {
   pageSize: number;
 }
 
-export function applyQueryOptions<T>(
-  query: PostgrestFilterBuilder<any, any>,
+export function applyQueryOptions(
+  query: PostgrestFilterBuilder<Database['public']['Tables'], any, any>,
   options: QueryOptions,
   searchColumns?: string[]
-): PostgrestFilterBuilder<any, any> {
+): PostgrestFilterBuilder<Database['public']['Tables'], any, any> {
   const { page = 1, pageSize = 25, sortBy, sortDirection = 'desc', searchTerm } = options;
 
   // Apply search
