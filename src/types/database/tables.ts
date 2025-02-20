@@ -1,5 +1,5 @@
 
-export interface Tables {
+export type Tables = {
   organizations: {
     id: string;
     name: string;
@@ -15,8 +15,10 @@ export interface Tables {
     id: string;
     first_name: string;
     last_name: string;
-    email: string;
+    email: string | null;
     phone: string | null;
+    organization_id: string;
+    account_id: string;
     created_at: string;
   };
   rvs: {
@@ -25,12 +27,26 @@ export interface Tables {
     model: string;
     year: number | null;
     customer_id: string | null;
+    site_id: string | null;
+    status: 'available' | 'occupied' | 'maintenance';
+    asset_type: 'class_a' | 'class_b' | 'class_c' | 'travel_trailer' | 'fifth_wheel' | 'popup';
+    asset_size: 'small' | 'medium' | 'large';
+    organization_id: string;
+    account_id: string;
     created_at: string;
   };
   sites: {
     id: string;
     name: string;
     location: string;
+    status: 'available' | 'occupied' | 'maintenance';
+    length_ft: number | null;
+    width_ft: number | null;
+    has_water: boolean;
+    electricity_voltage: number | null;
+    is_covered: boolean;
+    organization_id: string;
+    account_id: string;
     created_at: string;
   };
   bookings: {
@@ -42,92 +58,31 @@ export interface Tables {
     check_out: string;
     status: 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
     total_amount: number;
-    special_requirements?: string;
+    special_requirements: string | null;
     organization_id: string;
     account_id: string;
+    created_at: string;
+  };
+  user_accounts: {
     user_id: string;
-    created_at: string;
-    updated_at: string;
-  };
-  profiles: {
-    id: string;
-    first_name?: string;
-    last_name?: string;
-    email: string;
+    account_id: string;
     role: string;
-    created_at: string;
   };
-  maintenance_requests: {
-    id: string;
-    title: string;
-    description: string;
-    status: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-    priority: 'low' | 'medium' | 'high';
-    site_id?: string;
-    rv_id?: string;
-    created_at: string;
-    due_date?: string;
-    completed_at?: string;
+  user_organizations: {
+    user_id: string;
     organization_id: string;
-    account_id: string;
-  };
-  expenses: {
-    id: string;
-    description: string;
-    amount: number;
-    category: string;
-    date: string;
-    status: 'pending' | 'completed' | 'cancelled';
-    organization_id: string;
-    account_id: string;
-    created_at: string;
-  };
-  invoices: {
-    id: string;
-    booking_id?: string;
-    amount: number;
-    status: 'pending' | 'paid' | 'cancelled';
-    type: string;
-    organization_id: string;
-    account_id: string;
-    created_at: string;
-  };
-  customer_notes: {
-    id: string;
-    customer_id: string;
-    note: string;
-    tag?: string;
-    created_at: string;
-    organization_id: string;
-    account_id: string;
-  };
-  booking_trends_data: {
-    id: string;
-    month: string;
-    short_term_bookings: number;
-    long_term_bookings: number;
-    cancellations: number;
-    organization_id: string;
-    account_id: string;
+    role: string;
   };
   marina_details: {
     id: string;
     name: string;
-    description?: string;
-    address?: string;
-    contact_email?: string;
-    contact_phone?: string;
+    address: string;
+    contact_email: string;
+    contact_phone: string;
+    website: string | null;
+    total_slips: number;
     organization_id: string;
     account_id: string;
     created_at: string;
-    updated_at: string;
   };
-  password_reset_attempts: {
-    id: string;
-    email: string;
-    attempt_time: string;
-    successful: boolean;
-  };
-}
-
-export type TableName = keyof Tables;
+};
