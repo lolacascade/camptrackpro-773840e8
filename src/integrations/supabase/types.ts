@@ -41,6 +41,7 @@ export type Database = {
       bookings: {
         Row: {
           account_id: string | null
+          asset_id: string | null
           check_in: string
           check_out: string
           created_at: string | null
@@ -49,11 +50,13 @@ export type Database = {
           organization_id: string | null
           rv_id: string | null
           site_id: string | null
+          special_requirements: string | null
           status: string
           total_amount: number | null
         }
         Insert: {
           account_id?: string | null
+          asset_id?: string | null
           check_in: string
           check_out: string
           created_at?: string | null
@@ -62,11 +65,13 @@ export type Database = {
           organization_id?: string | null
           rv_id?: string | null
           site_id?: string | null
+          special_requirements?: string | null
           status?: string
           total_amount?: number | null
         }
         Update: {
           account_id?: string | null
+          asset_id?: string | null
           check_in?: string
           check_out?: string
           created_at?: string | null
@@ -75,6 +80,7 @@ export type Database = {
           organization_id?: string | null
           rv_id?: string | null
           site_id?: string | null
+          special_requirements?: string | null
           status?: string
           total_amount?: number | null
         }
@@ -84,6 +90,13 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "rvs"
             referencedColumns: ["id"]
           },
           {
