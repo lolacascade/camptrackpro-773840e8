@@ -30,8 +30,7 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
         .from('sites')
         .select('*')
         .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .eq('status', 'available');
+        .eq('account_id', accountId);
 
       if (error) throw error;
       return data || [];
@@ -41,16 +40,12 @@ export function SlotSelect({ value, onSelect, dateRange, onSiteCreated }: SlotSe
 
   const options = (sites || []).map(site => ({
     value: String(site.id),
-    label: `${site.name} (${site.length_ft || 0}ft x ${site.width_ft || 0}ft)`
+    label: site.name
   }));
 
   const siteFields: Field[] = [
     { name: 'name', label: 'Name', type: 'text', required: true },
-    { name: 'length_ft', label: 'Length (ft)', type: 'number', required: true },
-    { name: 'width_ft', label: 'Width (ft)', type: 'number', required: true },
-    { name: 'is_covered', label: 'Covered', type: 'checkbox' },
-    { name: 'has_water', label: 'Water Available', type: 'checkbox' },
-    { name: 'electricity_voltage', label: 'Electricity Voltage', type: 'text' }
+    { name: 'location', label: 'Location', type: 'text', required: true }
   ];
 
   return (
