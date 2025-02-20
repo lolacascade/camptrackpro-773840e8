@@ -7,8 +7,3 @@ export interface Site {
   account_id: string | null;
   created_at: string | null;
 }
-
-export interface SiteFormData {
-  name: string;
-  location: string;
-}
