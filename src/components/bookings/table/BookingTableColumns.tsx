@@ -1,7 +1,6 @@
 
 import { Column } from "@/components/common/DataTable/types";
 import { Booking } from "@/types/booking";
-import { supabase } from "@/integrations/supabase/client";
 
 export const getBookingColumns = (): Column<Booking>[] => [
   {
@@ -10,16 +9,6 @@ export const getBookingColumns = (): Column<Booking>[] => [
     cell: (booking: Booking) => {
       const customer = booking.customer;
       return customer ? `${customer.first_name} ${customer.last_name}` : '-';
-    },
-    sortable: true
-  },
-  {
-    header: "Asset",
-    accessorKey: "asset",
-    cell: (booking: Booking) => {
-      const asset = booking.asset;
-      // Return asset_name if available, fallback to name, or show dash if neither exists
-      return asset ? (asset.asset_name || asset.name || '-') : '-';
     },
     sortable: true
   },
@@ -34,17 +23,17 @@ export const getBookingColumns = (): Column<Booking>[] => [
   },
   {
     header: "Check-in Date",
-    accessorKey: "check_in_date",
+    accessorKey: "check_in",
     cell: (booking: Booking) => {
-      return booking.check_in_date ? new Date(booking.check_in_date).toLocaleDateString() : '-';
+      return booking.check_in ? new Date(booking.check_in).toLocaleDateString() : '-';
     },
     sortable: true
   },
   {
     header: "Check-out Date",
-    accessorKey: "check_out_date",
+    accessorKey: "check_out",
     cell: (booking: Booking) => {
-      return booking.check_out_date ? new Date(booking.check_out_date).toLocaleDateString() : '-';
+      return booking.check_out ? new Date(booking.check_out).toLocaleDateString() : '-';
     },
     sortable: true
   },

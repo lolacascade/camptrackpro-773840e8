@@ -34,8 +34,8 @@ export function useBooking(id?: string) {
 
       return {
         ...data,
-        check_in: data.check_in,
-        check_out: data.check_out,
+        customer: data.customer,
+        site: data.site,
         total_amount: data.total_amount || 0,
         organization_id: organizationId,
         account_id: accountId,

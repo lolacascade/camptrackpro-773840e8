@@ -20,7 +20,7 @@ export interface Booking {
   rv_id: string;
   check_in: string;
   check_out: string;
-  status: Exclude<BookingStatus, 'all'>;
+  status: BookingStatus;
   total_amount: number;
   site_id: string;
   site?: Site;
