@@ -2,7 +2,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Asset } from "@/types/asset";
 import { FilteringService, FilterConfig } from "./base/FilteringService";
-import { Database } from "@/types/database/tables";
 
 export class AssetService extends FilteringService {
   async list(organizationId: string, filters: FilterConfig[] = []): Promise<Asset[]> {
@@ -12,12 +11,15 @@ export class AssetService extends FilteringService {
         *,
         site:sites (
           id,
-          name
+          name,
+          location
         )
       `)
       .eq('organization_id', organizationId);
 
-    query = this.applyFilters('rvs', query, filters);
+    if (filters.length > 0) {
+      query = this.applyFilters(query, filters);
+    }
 
     const { data, error } = await query;
 
@@ -25,7 +27,7 @@ export class AssetService extends FilteringService {
       throw new Error(`Failed to fetch assets: ${error.message}`);
     }
 
-    return data as Asset[];
+    return (data || []) as Asset[];
   }
 
   async get(id: string): Promise<Asset> {
@@ -35,7 +37,8 @@ export class AssetService extends FilteringService {
         *,
         site:sites (
           id,
-          name
+          name,
+          location
         )
       `)
       .eq('id', id)

@@ -5,20 +5,20 @@ import { Database } from "@/types/database/tables";
 export type TableName = keyof Database["Tables"];
 export type Row<T extends TableName> = Database["Tables"][T]["Row"];
 
-export const applyPagination = <T extends TableName>(
-  query: PostgrestFilterBuilder<Database, Row<T>, unknown>,
+export const applyPagination = (
+  query: PostgrestFilterBuilder<Database, any, any>,
   page: number,
   pageSize: number
-): PostgrestFilterBuilder<Database, Row<T>, unknown> => {
+): PostgrestFilterBuilder<Database, any, any> => {
   const start = (page - 1) * pageSize;
   const end = start + pageSize - 1;
   return query.range(start, end);
 };
 
-export const applySorting = <T extends TableName>(
-  query: PostgrestFilterBuilder<Database, Row<T>, unknown>,
-  sortField: keyof Row<T>,
+export const applySorting = (
+  query: PostgrestFilterBuilder<Database, any, any>,
+  sortField: string,
   sortDirection: 'asc' | 'desc'
-): PostgrestFilterBuilder<Database, Row<T>, unknown> => {
-  return query.order(sortField as string, { ascending: sortDirection === 'asc' });
+): PostgrestFilterBuilder<Database, any, any> => {
+  return query.order(sortField, { ascending: sortDirection === 'asc' });
 };

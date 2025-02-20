@@ -25,35 +25,25 @@ export interface GenericSchema {
       Update: { id?: string; name?: string; location?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
       Relationships: []
     }
-    customers: {
-      Row: { id: string; first_name: string; last_name: string; email: string | null; organization_id: string | null; account_id: string | null; created_at: string | null; }
-      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
-      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
-      Relationships: []
-    }
     bookings: {
       Row: { id: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status: string; organization_id: string | null; account_id: string | null; created_at: string | null; total_amount: number | null; special_requirements: string | null; }
       Insert: { id?: string; customer_id: string; rv_id: string; site_id: string; check_in: string; check_out: string; status?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; total_amount?: number | null; special_requirements?: string | null; }
       Update: { id?: string; customer_id?: string; rv_id?: string; site_id?: string; check_in?: string; check_out?: string; status?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; total_amount?: number | null; special_requirements?: string | null; }
       Relationships: []
     }
-    user_accounts: {
-      Row: { user_id: string; account_id: string; }
-      Insert: { user_id: string; account_id: string; }
-      Update: { user_id?: string; account_id?: string; }
-      Relationships: []
-    }
-    user_organizations: {
-      Row: { id: string; user_id: string | null; organization_id: string | null; created_at: string | null; }
-      Insert: { id?: string; user_id?: string | null; organization_id?: string | null; created_at?: string | null; }
-      Update: { id?: string; user_id?: string | null; organization_id?: string | null; created_at?: string | null; }
+    customers: {
+      Row: { id: string; first_name: string; last_name: string; email: string | null; organization_id: string | null; account_id: string | null; created_at: string | null; }
+      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
+      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
       Relationships: []
     }
   }
   Views: Record<string, never>
-  Functions: Record<string, unknown>
-  Enums: Record<string, unknown>
-  CompositeTypes: Record<string, unknown>
+  Functions: Record<string, {
+    Args: Record<string, unknown>
+    Returns: unknown
+  }>
+  Enums: Record<string, never>
 }
 
 export type Database = GenericSchema;

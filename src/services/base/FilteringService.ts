@@ -9,10 +9,10 @@ export type FilterConfig = {
 };
 
 export abstract class FilteringService {
-  protected applyFilters<T extends keyof Database["Tables"]>(
-    query: PostgrestFilterBuilder<Database, Database["Tables"][T]["Row"], unknown>,
+  protected applyFilters<T>(
+    query: PostgrestFilterBuilder<Database, any, any>,
     filters: FilterConfig[]
-  ): PostgrestFilterBuilder<Database, Database["Tables"][T]["Row"], unknown> {
+  ): PostgrestFilterBuilder<Database, any, any> {
     filters.forEach((filter) => {
       const { field, operator, value } = filter;
 
