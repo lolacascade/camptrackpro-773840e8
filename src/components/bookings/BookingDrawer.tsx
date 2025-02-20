@@ -34,14 +34,14 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
   const form = useForm({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
-      asset_id: booking.asset_id,
+      rv_id: booking.rv_id,
       site_id: booking.site_id,
       special_requirements: booking.special_requirements,
       status: booking.status,
       total_amount: booking.total_amount
     } : {
       customer_id: '',
-      asset_id: '',
+      rv_id: '',
       site_id: '',
       special_requirements: '',
       status: 'pending',
@@ -103,11 +103,11 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
         />
 
         <AssetSelect
-          value={String(form.watch('asset_id') || '')}
-          onSelect={(value) => form.setValue('asset_id', value)}
+          value={String(form.watch('rv_id') || '')}
+          onSelect={(value) => form.setValue('rv_id', value)}
           onAssetCreated={(assetId) => {
             setNewlyCreatedAssetId(assetId);
-            form.setValue('asset_id', assetId);
+            form.setValue('rv_id', assetId);
           }}
         />
 
