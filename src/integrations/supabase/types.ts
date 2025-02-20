@@ -41,7 +41,7 @@ export type Database = {
       bookings: {
         Row: {
           account_id: string | null
-          asset_id: string | null
+          rv_id: string | null
           check_in: string
           check_out: string
           created_at: string | null
@@ -56,7 +56,7 @@ export type Database = {
         }
         Insert: {
           account_id?: string | null
-          asset_id?: string | null
+          rv_id?: string | null
           check_in: string
           check_out: string
           created_at?: string | null
@@ -71,7 +71,7 @@ export type Database = {
         }
         Update: {
           account_id?: string | null
-          asset_id?: string | null
+          rv_id?: string | null
           check_in?: string
           check_out?: string
           created_at?: string | null
@@ -93,8 +93,8 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_asset_id_fkey"
-            columns: ["asset_id"]
+            foreignKeyName: "bookings_rv_id_fkey"
+            columns: ["rv_id"]
             isOneToOne: false
             referencedRelation: "rvs"
             referencedColumns: ["id"]
@@ -365,7 +365,7 @@ export type Database = {
     Functions: {
       calculate_booking_total: {
         Args: {
-          p_asset_id: string
+          p_rv_id: string
           p_start_date: string
           p_end_date: string
         }
@@ -373,7 +373,7 @@ export type Database = {
       }
       calculate_rv_booking_total: {
         Args: {
-          p_asset_id: string
+          p_rv_id: string
           p_start_date: string
           p_end_date: string
         }
