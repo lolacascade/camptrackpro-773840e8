@@ -1,7 +1,4 @@
 
-import { Site } from "./site";
-import { Customer } from "./customer";
-
 export interface Asset {
   id: string;
   make: string;
@@ -11,8 +8,6 @@ export interface Asset {
   organization_id: string | null;
   account_id: string | null;
   created_at: string | null;
-  site?: Site;
-  customer?: Customer;
 }
 
 export interface AssetFilters {

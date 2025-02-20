@@ -8,11 +8,16 @@ interface UseBookingsProps {
   filters: BookingFilters;
 }
 
+interface BookingsQueryResult {
+  data: Booking[];
+  total: number;
+}
+
 export function useBookings({ filters }: UseBookingsProps) {
   const { organizationId, accountId } = useOrganization();
   const ITEMS_PER_PAGE = 25;
 
-  return useQuery({
+  return useQuery<BookingsQueryResult>({
     queryKey: ["bookings", organizationId, accountId, filters],
     queryFn: async () => {
       if (!organizationId || !accountId) {
@@ -67,7 +72,7 @@ export function useBookings({ filters }: UseBookingsProps) {
       }
 
       return {
-        data: data as Booking[],
+        data: data as unknown as Booking[],
         total: count || 0
       };
     },

@@ -18,7 +18,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
   const { filters, updateFilters } = useBookingFilters();
   const ITEMS_PER_PAGE = 25;
 
-  const { bookings, isLoading, error, total } = useBookings({
+  const { data, isLoading, error } = useBookings({
     filters: {
       ...filters,
       dateRange: dateRange || null
@@ -39,7 +39,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
 
   return (
     <DataTable
-      data={bookings}
+      data={data?.data || []}
       columns={getBookingColumns()}
       isLoading={isLoading}
       filters={[
@@ -55,7 +55,7 @@ export function BookingsTable({ onEdit, dateRange }: BookingsTableProps) {
       searchTerm={filters.searchTerm}
       onSearchChange={(term) => updateFilters({ searchTerm: term })}
       currentPage={filters.page}
-      totalPages={Math.ceil(total / ITEMS_PER_PAGE)}
+      totalPages={Math.ceil((data?.total || 0) / ITEMS_PER_PAGE)}
       onPageChange={(page) => updateFilters({ page })}
     />
   );

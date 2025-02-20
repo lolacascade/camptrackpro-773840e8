@@ -1,26 +1,24 @@
 
-import { Asset } from "@/types/asset";
 import { Column } from "@/components/common/DataTable/types";
+import { Asset } from "@/types/asset";
 
 export const getAssetColumns = (): Column<Asset>[] => [
   {
-    header: "Make/Model",
+    header: "Make & Model",
     accessorKey: "make",
-    cell: (asset: Asset) => {
-      return `${asset.make} ${asset.model}`;
-    },
+    cell: (asset: Asset) => `${asset.make} ${asset.model}`,
     sortable: true
   },
   {
     header: "Year",
     accessorKey: "year",
-    cell: (asset: Asset) => asset.year || 'N/A',
+    cell: (asset: Asset) => asset.year || '-',
     sortable: true
   },
   {
-    header: "Site",
-    accessorKey: "site_id",
-    cell: (asset: Asset) => asset.site?.name || 'Unassigned',
+    header: "Created",
+    accessorKey: "created_at",
+    cell: (asset: Asset) => asset.created_at ? new Date(asset.created_at).toLocaleDateString() : '-',
     sortable: true
   }
 ];
