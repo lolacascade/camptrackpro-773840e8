@@ -20,7 +20,7 @@ export function useBooking(id?: string) {
         .select(`
           *,
           customer:customers(*),
-          asset:assets(*)
+          site:sites(*)
         `)
         .eq('id', id)
         .eq('organization_id', organizationId)
@@ -32,7 +32,16 @@ export function useBooking(id?: string) {
         throw error;
       }
 
-      return data as Booking;
+      return {
+        ...data,
+        check_in: data.check_in,
+        check_out: data.check_out,
+        total_amount: data.total_amount || 0,
+        organization_id: organizationId,
+        account_id: accountId,
+        user_id: data.user_id || '',
+        updated_at: data.updated_at || data.created_at
+      } as Booking;
     },
     enabled: !!id && !!organizationId && !!accountId
   });

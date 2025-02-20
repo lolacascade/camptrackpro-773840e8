@@ -37,24 +37,22 @@ export function useAssets() {
         throw error;
       }
 
-      const rvs = data?.map(rv => ({
+      return (data || []).map(rv => ({
         id: rv.id,
         make: rv.make,
         model: rv.model,
         year: rv.year,
-        status: rv.status,
+        status: 'available' as const,
         customer_id: rv.customer_id,
-        site_id: rv.site_id,
-        organization_id: rv.organization_id,
-        account_id: rv.account_id,
-        user_id: rv.user_id,
+        site_id: null,
+        organization_id: organizationId,
+        account_id: accountId,
+        user_id: rv.user_id || '',
         created_at: rv.created_at,
-        updated_at: rv.updated_at,
+        updated_at: new Date().toISOString(),
         customer: rv.customer,
         site: rv.site
-      })) || [];
-
-      return rvs as Asset[];
+      })) as Asset[];
     },
     enabled: !!organizationId && !!accountId
   });

@@ -18,11 +18,6 @@ export interface Booking {
   customer_id: string;
   customer?: Customer;
   rv_id: string;
-  asset?: {
-    id: string;
-    make: string;
-    model: string;
-  };
   check_in: string;
   check_out: string;
   status: Exclude<BookingStatus, 'all'>;

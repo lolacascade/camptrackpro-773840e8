@@ -4,7 +4,11 @@ import { StatsGrid } from "./StatsGrid";
 import { BookingsToday } from "./BookingsToday";
 import { DashboardProps } from "@/types/dashboard";
 
-export function DashboardContent({ marinaSummary }: DashboardProps) {
+export function DashboardContent({ marinaSummary, isLoading }: DashboardProps) {
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-semibold text-[#133134]">RV Park Dashboard</h1>

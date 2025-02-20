@@ -1,7 +1,5 @@
 
-import { BaseEntity } from "./common/base";
-
-export interface Site extends BaseEntity {
+export interface Site {
   id: string;
   name: string;
   status: 'available' | 'occupied' | 'maintenance';

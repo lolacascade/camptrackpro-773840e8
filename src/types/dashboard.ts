@@ -1,18 +1,15 @@
 
-export interface DashboardStats {
-  occupancyRate: number;
-  occupiedSlots: number;
+export interface MarinaSummary {
   totalSlots: number;
+  occupiedSlots: number;
   activeRVs: number;
+  occupancyRate: number;
+  maintenanceSlots: number;
+  monthlyRevenue: number;
+  pendingMaintenance: number;
 }
 
 export interface DashboardProps {
-  marinaSummary?: {
-    occupancyRate: number;
-    occupiedSlots: number;
-    totalSlots: number;
-    activeRVs: number;
-    monthlyRevenue?: number;
-    pendingMaintenance?: number;
-  };
+  marinaSummary?: MarinaSummary;
+  isLoading?: boolean;
 }
