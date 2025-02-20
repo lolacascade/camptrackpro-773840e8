@@ -17,9 +17,7 @@ type BookingFormData = {
   site_id: string;
   check_in: string;
   check_out: string;
-  special_requirements?: string;
   status?: BookingStatus;
-  total_amount?: number;
 };
 
 interface UseBookingFormProps {
@@ -51,9 +49,7 @@ export function useBookingForm({
       customer_id: booking.customer_id,
       rv_id: booking.rv_id,
       site_id: booking.site_id,
-      special_requirements: booking.special_requirements,
-      status: booking.status as BookingStatus,
-      total_amount: booking.total_amount
+      status: booking.status as BookingStatus
     } : {
       customer_id: newlyCreatedCustomer?.id ? String(newlyCreatedCustomer.id) : '',
       rv_id: newlyCreatedAssetId || '',
@@ -95,10 +91,8 @@ export function useBookingForm({
         check_in: dateRange.from.toISOString(),
         check_out: dateRange.to.toISOString(),
         status: (data.status || 'pending') as BookingStatus,
-        special_requirements: data.special_requirements,
         organization_id: organizationId,
-        account_id: accountId,
-        total_amount: data.total_amount || 0
+        account_id: accountId
       };
 
       if (booking?.id) {

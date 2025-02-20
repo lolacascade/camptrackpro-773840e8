@@ -29,10 +29,7 @@ export function NavigationLinks({ onItemClick, className }: NavigationLinksProps
   ];
 
   return (
-    <nav className={cn(
-      "md:flex items-center gap-6",
-      className
-    )}>
+    <nav className={cn("md:flex items-center gap-6", className)}>
       {navItems.map(({ path, label }) => (
         <button
           key={path}
