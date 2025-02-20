@@ -6,11 +6,16 @@ export const getSiteColumns = (): Column<Site>[] => [
   {
     header: "Name",
     accessorKey: "name",
-    sortable: true
+    cell: (site: Site) => site.name
   },
   {
     header: "Location",
     accessorKey: "location",
-    sortable: true
+    cell: (site: Site) => site.location
+  },
+  {
+    header: "Created At",
+    accessorKey: "created_at",
+    cell: (site: Site) => site.created_at ? new Date(site.created_at).toLocaleDateString() : 'N/A'
   }
 ];
