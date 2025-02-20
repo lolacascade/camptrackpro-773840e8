@@ -16,6 +16,11 @@ export const getBookingColumns = (): Column<Booking>[] => [
     cell: (booking: Booking) => booking.site?.name || 'N/A'
   },
   {
+    header: "RV",
+    accessorKey: "rv_id",
+    cell: (booking: Booking) => booking.rv_id || 'N/A'
+  },
+  {
     header: "Check In",
     accessorKey: "check_in",
     cell: (booking: Booking) => format(new Date(booking.check_in), 'MMM dd, yyyy')

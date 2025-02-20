@@ -4,13 +4,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CustomerSelect } from "../form/CustomerSelect";
 import { BookingDateRange } from "../form/BookingDateRange";
-import { AssetSelect } from "../form/AssetSelect";
+import { RVSelect } from "../form/RVSelect";
 import { SlotSelect } from "../form/SlotSelect";
 import { DateRange } from "react-day-picker";
 import { Customer } from "@/types/customer";
 import { UseFormReturn } from "react-hook-form";
 import { SelectField } from "@/components/common/FormFields/SelectField";
 import { statusOptions } from "../table/BookingStatusOptions";
+import { BookingStatus } from "@/types/booking";
 
 interface BookingFormProps {
   form: UseFormReturn<any>;
@@ -20,7 +21,7 @@ interface BookingFormProps {
   onSubmit: () => void;
   isEdit?: boolean;
   onCustomerCreated: (customer: Customer) => void;
-  onAssetCreated: (assetId: string) => void;
+  onRVCreated: (rvId: string) => void;
   onSiteCreated: (siteId: string) => void;
 }
 
@@ -32,7 +33,7 @@ export function BookingForm({
   onSubmit,
   isEdit,
   onCustomerCreated,
-  onAssetCreated,
+  onRVCreated,
   onSiteCreated
 }: BookingFormProps) {
   return (
@@ -49,15 +50,15 @@ export function BookingForm({
         onDateRangeChange={onDateRangeChange}
       />
 
-      <AssetSelect
-        value={form.watch('asset_id') || ''}
-        onSelect={(value) => form.setValue('asset_id', value)}
-        onAssetCreated={onAssetCreated}
+      <RVSelect
+        value={form.watch('rv_id') || ''}
+        onSelect={(value) => form.setValue('rv_id', value)}
+        onRVCreated={onRVCreated}
       />
 
       <SlotSelect
         value={form.watch('site_id') || ''}
-        onSelect={(value) => form.setValue('site_id', value.toString())}
+        onSelect={(value) => form.setValue('site_id', value)}
         dateRange={dateRange}
         onSiteCreated={onSiteCreated}
       />
@@ -66,7 +67,7 @@ export function BookingForm({
         <Label>Status</Label>
         <SelectField
           value={form.watch('status') || 'pending'}
-          onChange={(value) => form.setValue('status', value)}
+          onChange={(value) => form.setValue('status', value as BookingStatus)}
           options={statusOptions.filter(opt => opt.value !== 'all')}
           placeholder="Select status"
         />

@@ -9,3 +9,8 @@ export interface Customer {
   account_id: string | null;
   created_at: string | null;
 }
+
+export interface CustomerFilters {
+  searchTerm: string;
+  page: number;
+}

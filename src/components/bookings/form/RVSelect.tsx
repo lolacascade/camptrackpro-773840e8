@@ -3,7 +3,7 @@ import { SelectField } from "@/components/common/FormFields/SelectField";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/hooks/use-organization";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
@@ -36,7 +36,7 @@ export function RVSelect({ value, onSelect, onRVCreated }: RVSelectProps) {
   });
 
   const options = (rvs || []).map(rv => ({
-    value: String(rv.id),
+    value: rv.id,
     label: `${rv.make} ${rv.model} ${rv.year || ''}`
   }));
 
@@ -72,7 +72,7 @@ export function RVSelect({ value, onSelect, onRVCreated }: RVSelectProps) {
         onClose={() => setIsDrawerOpen(false)}
         onEntityUpdated={(entity) => {
           if (entity?.id) {
-            onRVCreated(String(entity.id));
+            onRVCreated(entity.id);
             queryClient.invalidateQueries({ queryKey: ['rvs', organizationId, accountId] });
           }
           setIsDrawerOpen(false);
