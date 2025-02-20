@@ -1,4 +1,3 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -25,10 +24,7 @@ export function NavigationLinks({ onItemClick, className }: NavigationLinksProps
     { path: 'bookings', label: 'Bookings' },
     { path: 'customers', label: 'Customers' },
     { path: 'assets', label: 'RVs' },
-    { path: 'sitemap', label: 'Sitemap' },
-    // Commenting out non-core navigation items
-    // { path: 'financials', label: 'Financials' },
-    // { path: 'maintenance', label: 'Maintenance' },
+    { path: 'sitemap', label: 'Sites' }
   ];
 
   return (

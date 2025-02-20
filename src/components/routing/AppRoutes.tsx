@@ -1,51 +1,29 @@
 
-import { Routes, Route } from "react-router-dom";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
-import SignIn from "@/pages/SignIn";
-import SignUp from "@/pages/SignUp";
-import ForgotPassword from "@/pages/ForgotPassword";
-import ResetPassword from "@/pages/ResetPassword";
-import Logout from "@/pages/Logout";
-import Index from "@/pages/Index";
 import Dashboard from "@/pages/Dashboard";
+import Assets from "@/features/assets/pages/Assets";
 import Customers from "@/pages/Customers";
 import CustomerDetails from "@/pages/CustomerDetails";
-import Assets from "@/features/assets/pages/Assets";
 import Bookings from "@/pages/Bookings";
 import BookingDetails from "@/pages/BookingDetails";
-import Maintenance from "@/pages/Maintenance";
-import Settings from "@/pages/Settings";
-import Financials from "@/pages/Financials";
 import Sitemap from "@/pages/Sitemap";
+import Settings from "@/pages/Settings";
+import { AuthGuard } from "@/components/auth/AuthGuard";
 
 export function AppRoutes() {
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={<Index />} />
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
-      <Route path="/logout" element={<Logout />} />
-      
-      {/* Protected routes with app layout */}
-      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route path="/app" element={<Dashboard />} />
-        <Route path="/app/dashboard" element={<Dashboard />} />
-        <Route path="/app/customers" element={<Customers />} />
-        <Route path="/app/customers/:id" element={<CustomerDetails />} />
-        <Route path="/app/assets" element={<Assets />} />
-        <Route path="/app/bookings" element={<Bookings />} />
-        <Route path="/app/bookings/:id" element={<BookingDetails />} />
-        <Route path="/app/maintenance" element={<Maintenance />} />
-        <Route path="/app/settings" element={<Settings />} />
-        <Route path="/app/financials" element={<Financials />} />
-        <Route path="/app/sitemap" element={<Sitemap />} />
-        
-        {/* Catch all route for protected area */}
-        <Route path="*" element={<Dashboard />} />
+      <Route element={<AuthGuard><Layout /></AuthGuard>}>
+        <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="bookings" element={<Bookings />} />
+        <Route path="bookings/:id" element={<BookingDetails />} />
+        <Route path="customers" element={<Customers />} />
+        <Route path="customers/:id" element={<CustomerDetails />} />
+        <Route path="assets" element={<Assets />} />
+        <Route path="sitemap" element={<Sitemap />} />
+        <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
   );
