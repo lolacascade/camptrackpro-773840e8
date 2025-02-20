@@ -10,8 +10,15 @@ import { DateRange } from "react-day-picker";
 import { Customer } from "@/types/customer";
 import { UseFormReturn } from "react-hook-form";
 import { SelectField } from "@/components/common/FormFields/SelectField";
-import { statusOptions } from "../table/BookingStatusOptions";
 import { BookingStatus } from "@/types/booking";
+
+const statusOptions = [
+  { value: 'pending', label: 'Pending' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'checked_in', label: 'Checked In' }
+];
 
 interface BookingFormProps {
   form: UseFormReturn<any>;
@@ -68,7 +75,7 @@ export function BookingForm({
         <SelectField
           value={form.watch('status') || 'pending'}
           onChange={(value) => form.setValue('status', value as BookingStatus)}
-          options={statusOptions.filter(opt => opt.value !== 'all')}
+          options={statusOptions}
           placeholder="Select status"
         />
       </div>

@@ -10,16 +10,14 @@ import { useOrganization } from "@/hooks/use-organization";
 import { Customer } from "@/types/customer";
 import { supabase } from "@/integrations/supabase/client";
 
-type BookingFormData = {
+interface BookingFormData {
   customer_id: string;
   rv_id: string;
   site_id: string;
-  check_in: string;
-  check_out: string;
-  status?: BookingStatus;
+  status: BookingStatus;
   total_amount?: number;
   special_requirements?: string;
-};
+}
 
 interface UseBookingFormProps {
   booking?: Booking;
@@ -47,10 +45,10 @@ export function useBookingForm({
 
   const form = useForm<BookingFormData>({
     defaultValues: booking ? {
-      customer_id: booking.customer_id,
+      customer_id: booking.customer_id || '',
       rv_id: booking.rv_id || '',
       site_id: booking.site_id || '',
-      status: booking.status as BookingStatus,
+      status: booking.status,
       total_amount: booking.total_amount || undefined,
       special_requirements: booking.special_requirements || undefined
     } : {
@@ -96,7 +94,7 @@ export function useBookingForm({
         site_id: data.site_id,
         check_in: dateRange.from.toISOString(),
         check_out: dateRange.to.toISOString(),
-        status: (data.status || 'pending') as BookingStatus,
+        status: data.status,
         organization_id: organizationId,
         account_id: accountId,
         total_amount: data.total_amount,

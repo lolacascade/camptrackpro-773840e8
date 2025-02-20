@@ -14,7 +14,12 @@ interface BookingDrawerProps {
   onBookingUpdated: () => void;
 }
 
-export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: BookingDrawerProps) {
+export function BookingDrawer({ 
+  booking, 
+  open, 
+  onClose, 
+  onBookingUpdated 
+}: BookingDrawerProps) {
   const { customers } = useCustomers();
   const [newlyCreatedCustomer, setNewlyCreatedCustomer] = useState<Customer | null>(null);
   const [newlyCreatedRvId, setNewlyCreatedRvId] = useState<string | null>(null);
