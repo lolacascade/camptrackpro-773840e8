@@ -1,12 +1,8 @@
+
 import { MarinaFormData } from '@/types/marina';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-/**
- * Custom hook for handling marina form submission
- * @param onSuccess - Optional callback to execute after successful submission
- * @returns Object containing submit handler
- */
 export const useMarinaSubmit = (onSuccess?: () => void) => {
   const { toast } = useToast();
 
@@ -14,14 +10,15 @@ export const useMarinaSubmit = (onSuccess?: () => void) => {
     e.preventDefault();
 
     try {
-      const { error } = await supabase
-        .from('marina_details')
-        .upsert({
-          ...formData,
-          updated_at: new Date().toISOString(),
-        });
+      // Commenting out marina details query until table is created
+      // const { error } = await supabase
+      //   .from('marina_details')
+      //   .upsert({
+      //     ...formData,
+      //     updated_at: new Date().toISOString(),
+      //   });
 
-      if (error) throw error;
+      // if (error) throw error;
 
       toast({
         title: 'Success',

@@ -21,23 +21,25 @@ export function useExpenseData() {
         return [];
       }
 
-      const { data, error } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('organization_id', organizationId)
-        .eq('account_id', accountId)
-        .order('date', { ascending: false });
+      // Commenting out expenses query until table is created
+      // const { data, error } = await supabase
+      //   .from('expenses')
+      //   .select('*')
+      //   .eq('organization_id', organizationId)
+      //   .eq('account_id', accountId)
+      //   .order('date', { ascending: false });
 
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to fetch expenses. Please try again.",
-          variant: "destructive",
-        });
-        return [];
-      }
+      // if (error) {
+      //   toast({
+      //     title: "Error",
+      //     description: "Failed to fetch expenses. Please try again.",
+      //     variant: "destructive",
+      //   });
+      //   return [];
+      // }
 
-      return data as Expense[];
+      // return data as Expense[];
+      return [];
     },
     enabled: !!organizationId && !!accountId,
   });

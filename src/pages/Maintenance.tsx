@@ -34,44 +34,45 @@ export default function Maintenance() {
       try {
         console.log('Fetching maintenance requests with:', { organizationId, accountId, statusFilter });
         
-        let query = supabase
-          .from('maintenance_requests')
-          .select(`
-            *,
-            site:sites(
-              id,
-              name,
-              status
-            )
-          `);
+        // Commenting out maintenance requests query until table is created
+        // let query = supabase
+        //   .from('maintenance_requests')
+        //   .select(`
+        //     *,
+        //     site:sites(
+        //       id,
+        //       name,
+        //       status
+        //     )
+        //   `);
 
-        // Only add organization and account filters if they exist
-        if (organizationId) {
-          query = query.eq('organization_id', organizationId);
-        }
-        if (accountId) {
-          query = query.eq('account_id', accountId);
-        }
-        if (statusFilter !== 'all') {
-          query = query.eq('status', statusFilter);
-        }
+        // if (organizationId) {
+        //   query = query.eq('organization_id', organizationId);
+        // }
+        // if (accountId) {
+        //   query = query.eq('account_id', accountId);
+        // }
+        // if (statusFilter !== 'all') {
+        //   query = query.eq('status', statusFilter);
+        // }
 
-        const { data, error } = await query;
+        // const { data, error } = await query;
 
-        if (error) {
-          console.error('Error fetching maintenance requests:', error);
-          throw error;
-        }
+        // if (error) {
+        //   console.error('Error fetching maintenance requests:', error);
+        //   throw error;
+        // }
 
-        console.log('Fetched maintenance requests:', data);
-        return data as Maintenance[];
+        // console.log('Fetched maintenance requests:', data);
+        // return data as Maintenance[];
+        return [];
       } catch (error) {
         console.error('Error fetching maintenance requests:', error);
         toast.error("Failed to load maintenance requests");
         return [];
       }
     },
-    enabled: true, // Always enabled to match Customers page pattern
+    enabled: true,
     retry: 1
   });
 

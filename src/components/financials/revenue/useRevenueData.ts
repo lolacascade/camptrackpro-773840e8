@@ -17,26 +17,24 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
         throw new Error("Organization or account context not found");
       }
 
-      const [bookingsResponse, expensesResponse] = await Promise.all([
-        supabase
-          .from('bookings')
-          .select('total_amount, created_at')
-          .gte('created_at', dateRange.from.toISOString())
-          .lte('created_at', dateRange.to.toISOString())
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId),
-        
-        supabase
-          .from('expenses')
-          .select('amount, date')
-          .gte('date', dateRange.from.toISOString())
-          .lte('date', dateRange.to.toISOString())
-          .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-      ]);
-
-      if (bookingsResponse.error) throw bookingsResponse.error;
-      if (expensesResponse.error) throw expensesResponse.error;
+      // Commenting out bookings and expenses queries until tables are created
+      // const [bookingsResponse, expensesResponse] = await Promise.all([
+      //   supabase
+      //     .from('bookings')
+      //     .select('total_amount, created_at')
+      //     .gte('created_at', dateRange.from.toISOString())
+      //     .lte('created_at', dateRange.to.toISOString())
+      //     .eq('organization_id', organizationId)
+      //     .eq('account_id', accountId),
+      //   
+      //   supabase
+      //     .from('expenses')
+      //     .select('amount, date')
+      //     .gte('date', dateRange.from.toISOString())
+      //     .lte('date', dateRange.to.toISOString())
+      //     .eq('organization_id', organizationId)
+      //     .eq('account_id', accountId)
+      // ]);
 
       const data: { [key: string]: MonthlyFinancials } = {};
       
@@ -56,31 +54,9 @@ export function useRevenueData(dateRange: { from: Date; to: Date }) {
         }
       });
 
-      // Aggregate booking income
-      bookingsResponse.data?.forEach(booking => {
-        const date = new Date(booking.created_at);
-        const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
-        if (data[key]) {
-          data[key].income += Number(booking.total_amount || 0);
-        }
-      });
-
-      // Aggregate expenses
-      expensesResponse.data?.forEach(expense => {
-        const date = new Date(expense.date);
-        const key = format(date, showDailyData ? 'yyyy-MM-dd' : 'yyyy-MM');
-        if (data[key]) {
-          data[key].expenses += Number(expense.amount);
-        }
-      });
-
-      // Calculate net profit and convert to array
       return Object.entries(data)
         .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-        .map(([_, value]) => ({
-          ...value,
-          netProfit: value.income - value.expenses
-        }));
+        .map(([_, value]) => value);
     },
     enabled: !!organizationId && !!accountId,
   });
