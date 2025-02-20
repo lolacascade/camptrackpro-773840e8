@@ -1,17 +1,18 @@
+
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { EntityDrawer } from "@/components/common/EntityDrawer";
 import { SiteTable } from "@/components/sites/SiteTable";
-import { SitemapStats } from "@/components/marina/sitemap/SitemapStats";
+import { SiteStats } from "@/components/sites/SiteStats";
 import { useState } from "react";
-import { useMarinaSummary } from "@/hooks/use-marina-summary";
+import { useSiteSummary } from "@/hooks/use-site-summary";
 import type { Field } from "@/components/common/EntityDrawer/types";
 
 export default function Sitemap() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { data: stats } = useMarinaSummary();
+  const { data: stats } = useSiteSummary();
 
   const siteFields: Field[] = [
     {
@@ -64,10 +65,10 @@ export default function Sitemap() {
             </Button>
           </div>
 
-          {stats && <SitemapStats
-            totalSlots={stats.totalSlots}
-            occupiedSlots={stats.occupiedSlots}
-            maintenanceSlots={stats.maintenanceSlots}
+          {stats && <SiteStats
+            totalSites={stats.totalSites}
+            availableSites={stats.availableSites}
+            occupiedSites={stats.occupiedSites}
             occupancyRate={stats.occupancyRate}
           />}
 
