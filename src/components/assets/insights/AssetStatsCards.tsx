@@ -1,8 +1,8 @@
+
 import { EnhancedStatCard } from "@/components/dashboard/EnhancedStatCard";
 import { Caravan, Activity, Wrench, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@supabase/auth-helpers-react";
 import { useOrganization } from "@/hooks/use-organization";
 
 interface AssetStats {
@@ -46,57 +46,56 @@ const defaultStats: AssetStats = {
 };
 
 export function AssetStatsCards() {
-  const session = useSession();
   const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
 
   const { data: stats = defaultStats } = useQuery({
     queryKey: ['asset-stats', organizationId, accountId],
     queryFn: async (): Promise<AssetStats> => {
-      if (!session?.user?.id) throw new Error("No authenticated user");
       if (!organizationId || !accountId) throw new Error("No organization or account context");
 
-      // Fetch assets with their status and type
-      const { data: assets } = await supabase
-        .from('assets')
+      // Fetch RVs with their status and type
+      const { data: rvs } = await supabase
+        .from('rvs')
         .select(`
           id,
-          asset_type,
-          status,
-          bookings_assets (
-            booking_id,
-            bookings (
-              status
-            )
-          )
+          make,
+          model,
+          year,
+          status
         `)
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
-      if (!assets) return defaultStats;
+      if (!rvs) return defaultStats;
 
-      // Calculate motorhomes and trailers based on asset_type
-      const motorhomes = assets.filter(a => 
-        ['Class A', 'Class B', 'Class C'].includes(a.asset_type || '')
+      // Calculate totals based on RV makes/models
+      const motorhomes = rvs.filter(rv => 
+        ['Class A', 'Class B', 'Class C'].some(className => 
+          rv.make?.toLowerCase().includes(className.toLowerCase())
+        )
       ).length;
       
-      const trailers = assets.filter(a => 
-        ['Travel Trailer', 'Fifth Wheel', 'Pop-up Camper'].includes(a.asset_type || '')
+      const trailers = rvs.filter(rv => 
+        ['Travel Trailer', 'Fifth Wheel', 'Pop-up'].some(trailerType => 
+          rv.make?.toLowerCase().includes(trailerType.toLowerCase())
+        )
       ).length;
 
-      // Calculate utilization based on asset status
-      const totalAssets = assets.length;
-      const occupiedAssets = assets.filter(a => a.status === 'occupied').length;
-      const utilizationPercentage = totalAssets > 0 
-        ? Math.round((occupiedAssets / totalAssets) * 100)
+      // Calculate utilization based on status
+      const totalRVs = rvs.length;
+      const occupiedRVs = rvs.filter(rv => rv.status === 'occupied').length;
+      const utilizationPercentage = totalRVs > 0 
+        ? Math.round((occupiedRVs / totalRVs) * 100)
         : 0;
 
-      // Keep existing maintenance and bookings calculations
+      // Fetch maintenance data
       const { data: maintenance } = await supabase
         .from('maintenance_requests')
-        .select('status, id')
+        .select('status')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
+      // Fetch bookings data
       const { data: bookings } = await supabase
         .from('bookings')
         .select('status')
@@ -107,7 +106,7 @@ export function AssetStatsCards() {
         totalAssets: {
           motorhomes,
           trailers,
-          underMaintenance: assets.filter(a => a.status === 'maintenance').length
+          underMaintenance: rvs.filter(rv => rv.status === 'maintenance').length
         },
         utilization: {
           utilized: utilizationPercentage,
@@ -123,7 +122,7 @@ export function AssetStatsCards() {
         }
       };
     },
-    enabled: !!session?.user?.id && !!organizationId && !!accountId && !isLoadingOrg,
+    enabled: !!organizationId && !!accountId && !isLoadingOrg,
   });
 
   return (

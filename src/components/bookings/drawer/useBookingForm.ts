@@ -15,7 +15,7 @@ type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'can
 
 type BookingFormData = {
   customer_id: string;
-  asset_id: string;
+  rv_id: string;
   site_id: string;
   special_requirements?: string;
   status?: BookingStatus;
@@ -42,40 +42,21 @@ export function useBookingForm({
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: booking ? new Date(booking.check_in_date) : new Date(),
-    to: booking ? new Date(booking.check_out_date) : addDays(new Date(), 7)
-  });
-
-  const { data: profile } = useQuery({
-    queryKey: ['profile', session?.user?.id],
-    queryFn: async () => {
-      if (!session?.user?.id) return null;
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .maybeSingle();
-      
-      if (error) {
-        toast.error("Failed to fetch profile");
-        return null;
-      }
-      return data;
-    },
-    enabled: !!session?.user?.id
+    from: booking ? new Date(booking.check_in) : new Date(),
+    to: booking ? new Date(booking.check_out) : addDays(new Date(), 7)
   });
 
   const form = useForm<BookingFormData>({
     defaultValues: booking ? {
       customer_id: booking.customer_id,
-      asset_id: booking.asset_id,
-      site_id: booking.site_id?.toString() || '',
+      rv_id: booking.rv_id,
+      site_id: booking.site_id,
       special_requirements: booking.special_requirements,
       status: booking.status as BookingStatus,
       total_amount: booking.total_amount
     } : {
       customer_id: newlyCreatedCustomer?.id ? String(newlyCreatedCustomer.id) : '',
-      asset_id: newlyCreatedAssetId || '',
+      rv_id: newlyCreatedAssetId || '',
       site_id: newlyCreatedSiteId || ''
     }
   });
@@ -97,7 +78,7 @@ export function useBookingForm({
         return;
       }
 
-      if (!data.asset_id) {
+      if (!data.rv_id) {
         toast.error("Please select an RV");
         return;
       }
@@ -109,13 +90,12 @@ export function useBookingForm({
 
       const submitData = {
         customer_id: data.customer_id,
-        asset_id: data.asset_id,
-        site_id: parseInt(data.site_id),
-        check_in_date: dateRange.from.toISOString(),
-        check_out_date: dateRange.to.toISOString(),
+        rv_id: data.rv_id,
+        site_id: data.site_id,
+        check_in: dateRange.from.toISOString(),
+        check_out: dateRange.to.toISOString(),
         status: (data.status || 'pending') as BookingStatus,
         special_requirements: data.special_requirements,
-        created_by: profile?.id,
         user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,

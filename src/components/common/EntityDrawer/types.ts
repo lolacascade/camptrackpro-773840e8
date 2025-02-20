@@ -4,11 +4,17 @@ import { ReactNode } from "react";
 export type TableName = 
   | "sites" 
   | "customers" 
-  | "assets" 
+  | "rvs"
   | "bookings" 
   | "maintenance_requests" 
   | "expenses" 
-  | "invoices";
+  | "invoices"
+  | "profiles"
+  | "chat_history"
+  | "password_reset_attempts"
+  | "customer_notes"
+  | "booking_trends_data"
+  | "marina_details";
 
 export interface Field {
   name: string;
