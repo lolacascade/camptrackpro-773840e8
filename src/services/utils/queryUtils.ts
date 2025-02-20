@@ -10,11 +10,29 @@ export interface QueryOptions {
   searchTerm?: string;
 }
 
+export interface ServiceError extends Error {
+  code?: string;
+  details?: string;
+  originalError?: any;
+}
+
+export class ServiceErrorImpl extends Error implements ServiceError {
+  constructor(
+    message: string,
+    public code?: string,
+    public details?: string,
+    public originalError?: any
+  ) {
+    super(message);
+    this.name = 'ServiceError';
+  }
+}
+
 export function applyQueryOptions<T extends keyof Database['public']['Tables']>(
-  query: PostgrestFilterBuilder<Database['public']['Tables'], T>,
+  query: PostgrestFilterBuilder<Database['public']['Tables'], T, any>,
   options: QueryOptions,
   searchColumns?: string[]
-) {
+): PostgrestFilterBuilder<Database['public']['Tables'], T, any> {
   const { page = 1, pageSize = 25, sortBy, sortDirection = 'desc', searchTerm } = options;
 
   // Apply search if searchTerm and searchColumns are provided
@@ -41,11 +59,4 @@ export interface QueryResult<T> {
   total: number;
   page: number;
   pageSize: number;
-}
-
-export class ServiceError extends Error {
-  constructor(message: string, public originalError?: any) {
-    super(message);
-    this.name = 'ServiceError';
-  }
 }

@@ -8,3 +8,7 @@ export interface Customer {
   created_at: string;
   updated_at: string;
 }
+
+// Optional fields for create/update operations
+export type CustomerCreateInput = Omit<Customer, 'id' | 'created_at' | 'updated_at'>;
+export type CustomerUpdateInput = Partial<CustomerCreateInput>;
