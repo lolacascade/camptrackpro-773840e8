@@ -3,7 +3,6 @@ import { useState } from "react";
 import { BookingsInsights } from "@/components/bookings/BookingsInsights";
 import { BookingsTable } from "@/components/bookings/BookingsTable";
 import { BookingDrawer } from "@/components/bookings/drawer/BookingDrawer";
-import { BookingTrendsChart } from "@/components/bookings/BookingTrendsChart";
 import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { BookingsHeader } from "@/components/bookings/components/BookingsHeader";
@@ -47,7 +46,6 @@ export default function Bookings() {
             onDateRangeChange={handleDateRangeChange}
           />
           <BookingsInsights dateRange={dateRange} />
-          <BookingTrendsChart dateRange={dateRange} />
           <BookingsTable onEdit={handleEditBooking} dateRange={dateRange} />
 
           <BookingDrawer

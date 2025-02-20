@@ -26,7 +26,7 @@ interface UseBookingFormProps {
   onClose: () => void;
   onBookingUpdated: () => void;
   newlyCreatedCustomer: Customer | null;
-  newlyCreatedAssetId: string | null;
+  newlyCreatedRvId: string | null;
   newlyCreatedSiteId: string | null;
 }
 
@@ -35,7 +35,7 @@ export function useBookingForm({
   onClose, 
   onBookingUpdated,
   newlyCreatedCustomer,
-  newlyCreatedAssetId,
+  newlyCreatedRvId,
   newlyCreatedSiteId
 }: UseBookingFormProps) {
   const session = useSession();
@@ -55,7 +55,7 @@ export function useBookingForm({
       special_requirements: booking.special_requirements || undefined
     } : {
       customer_id: newlyCreatedCustomer?.id || '',
-      rv_id: newlyCreatedAssetId || '',
+      rv_id: newlyCreatedRvId || '',
       site_id: newlyCreatedSiteId || '',
       status: 'pending',
       total_amount: undefined,
