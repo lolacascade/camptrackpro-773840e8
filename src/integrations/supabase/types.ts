@@ -9,251 +9,28 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      account_roles: {
-        Row: {
-          account_id: string
-          created_at: string
-          id: string
-          organization_id: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          account_id: string
-          created_at?: string
-          id?: string
-          organization_id: string
-          role: string
-          user_id: string
-        }
-        Update: {
-          account_id?: string
-          created_at?: string
-          id?: string
-          organization_id?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "account_roles_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "account_roles_org_user_fk"
-            columns: ["user_id", "organization_id"]
-            isOneToOne: false
-            referencedRelation: "organization_roles"
-            referencedColumns: ["user_id", "organization_id"]
-          },
-          {
-            foreignKeyName: "account_roles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_account_roles_organization_roles"
-            columns: ["user_id", "organization_id"]
-            isOneToOne: false
-            referencedRelation: "organization_roles"
-            referencedColumns: ["user_id", "organization_id"]
-          },
-        ]
-      }
       accounts: {
         Row: {
-          created_at: string
+          created_at: string | null
           id: string
           name: string
           organization_id: string
-          updated_at: string
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name: string
           organization_id: string
-          updated_at?: string
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           id?: string
           name?: string
           organization_id?: string
-          updated_at?: string
         }
         Relationships: [
           {
             foreignKeyName: "accounts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_accounts_organization"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      assets: {
-        Row: {
-          account_id: string
-          asset_name: string | null
-          asset_size: string | null
-          asset_type: string | null
-          created_at: string
-          customer_id: string | null
-          daily_rate: number | null
-          id: string
-          name: string
-          organization_id: string
-          pricing_category:
-            | Database["public"]["Enums"]["rv_pricing_category"]
-            | null
-          site_id: number | null
-          status: string
-          type: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          account_id: string
-          asset_name?: string | null
-          asset_size?: string | null
-          asset_type?: string | null
-          created_at?: string
-          customer_id?: string | null
-          daily_rate?: number | null
-          id?: string
-          name: string
-          organization_id: string
-          pricing_category?:
-            | Database["public"]["Enums"]["rv_pricing_category"]
-            | null
-          site_id?: number | null
-          status?: string
-          type: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          account_id?: string
-          asset_name?: string | null
-          asset_size?: string | null
-          asset_type?: string | null
-          created_at?: string
-          customer_id?: string | null
-          daily_rate?: number | null
-          id?: string
-          name?: string
-          organization_id?: string
-          pricing_category?:
-            | Database["public"]["Enums"]["rv_pricing_category"]
-            | null
-          site_id?: number | null
-          status?: string
-          type?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "assets_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assets_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assets_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assets_site_id_fkey"
-            columns: ["site_id"]
-            isOneToOne: false
-            referencedRelation: "sites"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_assets_account"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_assets_organization"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      booking_trends_data: {
-        Row: {
-          account_id: string | null
-          cancellations: number | null
-          created_at: string | null
-          id: string
-          long_term_bookings: number | null
-          month: string | null
-          organization_id: string | null
-          short_term_bookings: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          account_id?: string | null
-          cancellations?: number | null
-          created_at?: string | null
-          id?: string
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          account_id?: string | null
-          cancellations?: number | null
-          created_at?: string | null
-          id?: string
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "booking_trends_data_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "booking_trends_data_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -264,60 +41,36 @@ export type Database = {
       bookings: {
         Row: {
           account_id: string | null
-          asset_id: string
-          check_in_date: string
-          check_out_date: string
-          created_at: string
-          created_by: string | null
-          customer_id: string
-          duration_type: string | null
+          check_in: string
+          check_out: string
+          created_at: string | null
+          customer_id: string | null
           id: string
-          organization_id: string | null
-          reservation_code: string | null
-          site_id: number | null
-          special_requirements: string | null
-          status: Database["public"]["Enums"]["booking_status"]
-          total_amount: number | null
-          updated_at: string
-          user_id: string | null
+          rv_id: string | null
+          site_id: string | null
+          status: string
         }
         Insert: {
           account_id?: string | null
-          asset_id: string
-          check_in_date: string
-          check_out_date: string
-          created_at?: string
-          created_by?: string | null
-          customer_id: string
-          duration_type?: string | null
+          check_in: string
+          check_out: string
+          created_at?: string | null
+          customer_id?: string | null
           id?: string
-          organization_id?: string | null
-          reservation_code?: string | null
-          site_id?: number | null
-          special_requirements?: string | null
-          status?: Database["public"]["Enums"]["booking_status"]
-          total_amount?: number | null
-          updated_at?: string
-          user_id?: string | null
+          rv_id?: string | null
+          site_id?: string | null
+          status?: string
         }
         Update: {
           account_id?: string | null
-          asset_id?: string
-          check_in_date?: string
-          check_out_date?: string
-          created_at?: string
-          created_by?: string | null
-          customer_id?: string
-          duration_type?: string | null
+          check_in?: string
+          check_out?: string
+          created_at?: string | null
+          customer_id?: string | null
           id?: string
-          organization_id?: string | null
-          reservation_code?: string | null
-          site_id?: number | null
-          special_requirements?: string | null
-          status?: Database["public"]["Enums"]["booking_status"]
-          total_amount?: number | null
-          updated_at?: string
-          user_id?: string | null
+          rv_id?: string | null
+          site_id?: string | null
+          status?: string
         }
         Relationships: [
           {
@@ -328,20 +81,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_asset_id_fkey"
-            columns: ["asset_id"]
-            isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "bookings_customer_id_fkey"
             columns: ["customer_id"]
             isOneToOne: false
@@ -349,10 +88,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "bookings_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: "bookings_rv_id_fkey"
+            columns: ["rv_id"]
             isOneToOne: false
-            referencedRelation: "organizations"
+            referencedRelation: "rvs"
             referencedColumns: ["id"]
           },
           {
@@ -364,1044 +103,158 @@ export type Database = {
           },
         ]
       }
-      bookings_assets: {
-        Row: {
-          asset_id: string | null
-          booking_id: string | null
-          created_at: string | null
-          id: number
-        }
-        Insert: {
-          asset_id?: string | null
-          booking_id?: string | null
-          created_at?: string | null
-          id?: number
-        }
-        Update: {
-          asset_id?: string | null
-          booking_id?: string | null
-          created_at?: string | null
-          id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_assets_asset_id_fkey"
-            columns: ["asset_id"]
-            isOneToOne: false
-            referencedRelation: "assets"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "bookings_assets_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_history: {
-        Row: {
-          attachments: Json | null
-          conversation_id: string | null
-          created_at: string | null
-          id: number
-          message: string
-          role: string
-          user_id: string | null
-        }
-        Insert: {
-          attachments?: Json | null
-          conversation_id?: string | null
-          created_at?: string | null
-          id?: number
-          message: string
-          role: string
-          user_id?: string | null
-        }
-        Update: {
-          attachments?: Json | null
-          conversation_id?: string | null
-          created_at?: string | null
-          id?: number
-          message?: string
-          role?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      chat_marina_insights: {
-        Row: {
-          content: Json
-          created_at: string | null
-          id: number
-          insight_type: string
-          updated_at: string | null
-        }
-        Insert: {
-          content: Json
-          created_at?: string | null
-          id?: number
-          insight_type: string
-          updated_at?: string | null
-        }
-        Update: {
-          content?: Json
-          created_at?: string | null
-          id?: number
-          insight_type?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      customer_notes: {
-        Row: {
-          account_id: string | null
-          created_at: string | null
-          customer_id: string
-          id: number
-          note: string
-          organization_id: string | null
-          tag: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          account_id?: string | null
-          created_at?: string | null
-          customer_id: string
-          id?: number
-          note: string
-          organization_id?: string | null
-          tag?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          account_id?: string | null
-          created_at?: string | null
-          customer_id?: string
-          id?: number
-          note?: string
-          organization_id?: string | null
-          tag?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "customer_notes_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_notes_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_notes_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      customer_status_history: {
-        Row: {
-          account_id: string
-          created_at: string
-          customer_id: string
-          id: string
-          organization_id: string
-          recorded_at: string
-          status: string
-        }
-        Insert: {
-          account_id: string
-          created_at?: string
-          customer_id: string
-          id?: string
-          organization_id: string
-          recorded_at?: string
-          status: string
-        }
-        Update: {
-          account_id?: string
-          created_at?: string
-          customer_id?: string
-          id?: string
-          organization_id?: string
-          recorded_at?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "customer_status_history_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_status_history_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customer_status_history_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       customers: {
         Row: {
-          account_id: string | null
-          address: string | null
-          city: string | null
-          country: string | null
-          created_at: string
-          email: string
+          created_at: string | null
+          email: string | null
           first_name: string
           id: string
           last_name: string
-          organization_id: string | null
           phone: string | null
-          postal_code: string | null
-          state: string | null
-          updated_at: string
-          user_id: string | null
         }
         Insert: {
-          account_id?: string | null
-          address?: string | null
-          city?: string | null
-          country?: string | null
-          created_at?: string
-          email: string
+          created_at?: string | null
+          email?: string | null
           first_name: string
           id?: string
           last_name: string
-          organization_id?: string | null
           phone?: string | null
-          postal_code?: string | null
-          state?: string | null
-          updated_at?: string
-          user_id?: string | null
         }
         Update: {
-          account_id?: string | null
-          address?: string | null
-          city?: string | null
-          country?: string | null
-          created_at?: string
-          email?: string
+          created_at?: string | null
+          email?: string | null
           first_name?: string
           id?: string
           last_name?: string
-          organization_id?: string | null
           phone?: string | null
-          postal_code?: string | null
-          state?: string | null
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "customers_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "customers_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expenses: {
-        Row: {
-          account_id: string
-          amount: number | null
-          booking_id: string | null
-          category: string
-          created_at: string | null
-          date: string
-          description: string
-          id: string
-          notes: string | null
-          organization_id: string
-          payment_method: string | null
-          status: string | null
-          updated_at: string | null
-          user_id: string
-        }
-        Insert: {
-          account_id: string
-          amount?: number | null
-          booking_id?: string | null
-          category: string
-          created_at?: string | null
-          date: string
-          description: string
-          id?: string
-          notes?: string | null
-          organization_id: string
-          payment_method?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id: string
-        }
-        Update: {
-          account_id?: string
-          amount?: number | null
-          booking_id?: string | null
-          category?: string
-          created_at?: string | null
-          date?: string
-          description?: string
-          id?: string
-          notes?: string | null
-          organization_id?: string
-          payment_method?: string | null
-          status?: string | null
-          updated_at?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expenses_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expenses_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: true
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expenses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      invoices: {
-        Row: {
-          account_id: string | null
-          amount: number | null
-          booking_id: string | null
-          created_at: string | null
-          id: string
-          organization_id: string | null
-          status: string
-          type: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          account_id?: string | null
-          amount?: number | null
-          booking_id?: string | null
-          created_at?: string | null
-          id?: string
-          organization_id?: string | null
-          status?: string
-          type: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          account_id?: string | null
-          amount?: number | null
-          booking_id?: string | null
-          created_at?: string | null
-          id?: string
-          organization_id?: string | null
-          status?: string
-          type?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "invoices_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invoices_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invoices_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      login_attempts: {
-        Row: {
-          attempt_time: string | null
-          email: string
-          id: string
-          ip_address: string
-          successful: boolean | null
-        }
-        Insert: {
-          attempt_time?: string | null
-          email: string
-          id?: string
-          ip_address: string
-          successful?: boolean | null
-        }
-        Update: {
-          attempt_time?: string | null
-          email?: string
-          id?: string
-          ip_address?: string
-          successful?: boolean | null
         }
         Relationships: []
-      }
-      maintenance_requests: {
-        Row: {
-          account_id: string
-          assigned_to: string | null
-          completed_at: string | null
-          created_at: string | null
-          customer_id: string | null
-          description: string
-          id: number
-          organization_id: string
-          priority: string
-          site_id: number | null
-          status: string
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          account_id: string
-          assigned_to?: string | null
-          completed_at?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          description: string
-          id?: number
-          organization_id: string
-          priority?: string
-          site_id?: number | null
-          status?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          account_id?: string
-          assigned_to?: string | null
-          completed_at?: string | null
-          created_at?: string | null
-          customer_id?: string | null
-          description?: string
-          id?: number
-          organization_id?: string
-          priority?: string
-          site_id?: number | null
-          status?: string
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_maintenance_account"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_maintenance_organization"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "maintenance_requests_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "maintenance_requests_customer_id_fkey"
-            columns: ["customer_id"]
-            isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "maintenance_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "maintenance_requests_site_id_fkey"
-            columns: ["site_id"]
-            isOneToOne: false
-            referencedRelation: "sites"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      marina_details: {
-        Row: {
-          account_id: string | null
-          address: string | null
-          approach_info: Json | null
-          contact_email: string | null
-          contact_phone: string | null
-          coordinates: Json | null
-          created_at: string | null
-          id: number
-          name: string
-          organization_id: string | null
-          other_features: Json | null
-          photos: string[] | null
-          services_amenities: Json | null
-          social_media: Json | null
-          total_slips: number | null
-          updated_at: string | null
-          user_id: string | null
-          videos: string[] | null
-          website: string | null
-        }
-        Insert: {
-          account_id?: string | null
-          address?: string | null
-          approach_info?: Json | null
-          contact_email?: string | null
-          contact_phone?: string | null
-          coordinates?: Json | null
-          created_at?: string | null
-          id?: number
-          name: string
-          organization_id?: string | null
-          other_features?: Json | null
-          photos?: string[] | null
-          services_amenities?: Json | null
-          social_media?: Json | null
-          total_slips?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          videos?: string[] | null
-          website?: string | null
-        }
-        Update: {
-          account_id?: string | null
-          address?: string | null
-          approach_info?: Json | null
-          contact_email?: string | null
-          contact_phone?: string | null
-          coordinates?: Json | null
-          created_at?: string | null
-          id?: number
-          name?: string
-          organization_id?: string | null
-          other_features?: Json | null
-          photos?: string[] | null
-          services_amenities?: Json | null
-          social_media?: Json | null
-          total_slips?: number | null
-          updated_at?: string | null
-          user_id?: string | null
-          videos?: string[] | null
-          website?: string | null
-        }
-        Relationships: []
-      }
-      monthly_budgets: {
-        Row: {
-          account_id: string | null
-          amount: number | null
-          category: string
-          created_at: string | null
-          id: string
-          month: string
-          organization_id: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          account_id?: string | null
-          amount?: number | null
-          category: string
-          created_at?: string | null
-          id?: string
-          month: string
-          organization_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          account_id?: string | null
-          amount?: number | null
-          category?: string
-          created_at?: string | null
-          id?: string
-          month?: string
-          organization_id?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "monthly_budgets_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monthly_budgets_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organization_invites: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          organization_id: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          organization_id?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          organization_id?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "organization_invites_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      organization_roles: {
-        Row: {
-          created_at: string
-          id: string
-          organization_id: string
-          role: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          organization_id: string
-          role: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          organization_id?: string
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "organization_roles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       organizations: {
         Row: {
-          contact_email: string | null
-          contact_phone: string | null
-          created_at: string
-          description: string | null
+          created_at: string | null
           id: string
           name: string
-          updated_at: string
-          website: string | null
         }
         Insert: {
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          description?: string | null
+          created_at?: string | null
           id?: string
           name: string
-          updated_at?: string
-          website?: string | null
         }
         Update: {
-          contact_email?: string | null
-          contact_phone?: string | null
-          created_at?: string
-          description?: string | null
+          created_at?: string | null
           id?: string
           name?: string
-          updated_at?: string
-          website?: string | null
         }
         Relationships: []
       }
-      password_reset_attempts: {
+      rvs: {
         Row: {
-          attempt_time: string | null
-          email: string
-          id: string
-          ip_address: string
-          successful: boolean | null
-        }
-        Insert: {
-          attempt_time?: string | null
-          email: string
-          id?: string
-          ip_address: string
-          successful?: boolean | null
-        }
-        Update: {
-          attempt_time?: string | null
-          email?: string
-          id?: string
-          ip_address?: string
-          successful?: boolean | null
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          account_id: string
-          company_name: string | null
-          created_at: string
-          email: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          organization_id: string
-          phone: string | null
-          role: Database["public"]["Enums"]["user_role"]
-          updated_at: string
-        }
-        Insert: {
-          account_id: string
-          company_name?: string | null
-          created_at?: string
-          email: string
-          first_name?: string | null
-          id: string
-          last_name?: string | null
-          organization_id: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-        }
-        Update: {
-          account_id?: string
-          company_name?: string | null
-          created_at?: string
-          email?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          organization_id?: string
-          phone?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "profiles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      rv_pricing: {
-        Row: {
-          account_id: string | null
-          category: Database["public"]["Enums"]["rv_pricing_category"]
           created_at: string | null
-          duration_months: number
+          customer_id: string | null
           id: string
-          monthly_rate: number
-          organization_id: string | null
-          updated_at: string | null
+          make: string
+          model: string
+          year: number | null
         }
         Insert: {
-          account_id?: string | null
-          category: Database["public"]["Enums"]["rv_pricing_category"]
           created_at?: string | null
-          duration_months: number
+          customer_id?: string | null
           id?: string
-          monthly_rate: number
-          organization_id?: string | null
-          updated_at?: string | null
+          make: string
+          model: string
+          year?: number | null
         }
         Update: {
-          account_id?: string | null
-          category?: Database["public"]["Enums"]["rv_pricing_category"]
           created_at?: string | null
-          duration_months?: number
+          customer_id?: string | null
           id?: string
-          monthly_rate?: number
-          organization_id?: string | null
-          updated_at?: string | null
+          make?: string
+          model?: string
+          year?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: "rv_pricing_account_id_fkey"
-            columns: ["account_id"]
+            foreignKeyName: "rvs_customer_id_fkey"
+            columns: ["customer_id"]
             isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "rv_pricing_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
+            referencedRelation: "customers"
             referencedColumns: ["id"]
           },
         ]
       }
       sites: {
         Row: {
-          account_id: string | null
           created_at: string | null
-          customer_id: string | null
-          electricity_voltage: string | null
-          has_water: boolean | null
-          id: number
-          is_covered: boolean | null
-          last_activity_at: string | null
-          length_ft: number | null
-          location_coordinates: Json | null
-          location_identifier: string | null
-          maintenance_id: number | null
+          id: string
+          location: string
           name: string
-          organization_id: string | null
-          status: Database["public"]["Enums"]["site_status"]
-          updated_at: string | null
-          user_id: string | null
-          utility_connection_type: string | null
-          width_ft: number | null
         }
         Insert: {
-          account_id?: string | null
           created_at?: string | null
-          customer_id?: string | null
-          electricity_voltage?: string | null
-          has_water?: boolean | null
-          id?: number
-          is_covered?: boolean | null
-          last_activity_at?: string | null
-          length_ft?: number | null
-          location_coordinates?: Json | null
-          location_identifier?: string | null
-          maintenance_id?: number | null
+          id?: string
+          location: string
           name: string
-          organization_id?: string | null
-          status?: Database["public"]["Enums"]["site_status"]
-          updated_at?: string | null
-          user_id?: string | null
-          utility_connection_type?: string | null
-          width_ft?: number | null
         }
         Update: {
-          account_id?: string | null
           created_at?: string | null
-          customer_id?: string | null
-          electricity_voltage?: string | null
-          has_water?: boolean | null
-          id?: number
-          is_covered?: boolean | null
-          last_activity_at?: string | null
-          length_ft?: number | null
-          location_coordinates?: Json | null
-          location_identifier?: string | null
-          maintenance_id?: number | null
+          id?: string
+          location?: string
           name?: string
-          organization_id?: string | null
-          status?: Database["public"]["Enums"]["site_status"]
-          updated_at?: string | null
-          user_id?: string | null
-          utility_connection_type?: string | null
-          width_ft?: number | null
+        }
+        Relationships: []
+      }
+      user_accounts: {
+        Row: {
+          account_id: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "slots_account_id_fkey"
+            foreignKeyName: "user_accounts_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "slots_customer_id_fkey"
-            columns: ["customer_id"]
+            foreignKeyName: "user_accounts_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "customers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "slots_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+        }
+        Relationships: []
       }
     }
     Views: {
-      booking_trends: {
-        Row: {
-          account_id: string | null
-          cancellations: number | null
-          long_term_bookings: number | null
-          month: string | null
-          organization_id: string | null
-          short_term_bookings: number | null
-        }
-        Insert: {
-          account_id?: string | null
-          cancellations?: number | null
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-        }
-        Update: {
-          account_id?: string | null
-          cancellations?: number | null
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "booking_trends_data_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "booking_trends_data_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      booking_trends_secure: {
-        Row: {
-          account_id: string | null
-          cancellations: number | null
-          long_term_bookings: number | null
-          month: string | null
-          organization_id: string | null
-          short_term_bookings: number | null
-        }
-        Insert: {
-          account_id?: string | null
-          cancellations?: number | null
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-        }
-        Update: {
-          account_id?: string | null
-          cancellations?: number | null
-          long_term_bookings?: number | null
-          month?: string | null
-          organization_id?: string | null
-          short_term_bookings?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "booking_trends_data_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "booking_trends_data_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
       calculate_booking_total: {
