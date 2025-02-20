@@ -6,7 +6,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 import { toast } from "sonner";
 
-// Define the exact shape of our query response
 interface UserAccountResponse {
   account_id: string;
   accounts: {
@@ -42,7 +41,6 @@ export function useOrganization(): OrganizationContextData {
       console.log('Current user ID:', session.user.id);
       
       try {
-        // Query user_accounts and join with accounts to get organization_id
         console.log('Querying user account data...');
         const { data: accountData, error: queryError } = await supabase
           .from('user_accounts')
@@ -60,13 +58,15 @@ export function useOrganization(): OrganizationContextData {
           throw queryError;
         }
 
-        if (!accountData) {
-          console.log('No account found for user');
-          return null;
-        }
-
-        if (!accountData.accounts) {
-          console.log('No organization data found for account');
+        if (!accountData || !accountData.accounts) {
+          console.log('No account or organization found for user');
+          // Only redirect if we're not already on a public route and not in loading state
+          if (!isPublicRoute && !isLoading) {
+            toast.error("No account found. Please sign in again.");
+            // Sign out the user and redirect to signin
+            await signOut();
+            navigate('/signin', { replace: true });
+          }
           return null;
         }
 
@@ -78,12 +78,16 @@ export function useOrganization(): OrganizationContextData {
         return {
           organizationId: accountData.accounts.organization_id,
           accountId: accountData.account_id,
-          // Since we no longer have explicit roles, defaulting to null
           orgRole: null,
           accountRole: null
         };
       } catch (error) {
         console.error('Error fetching account data:', error);
+        if (!isPublicRoute) {
+          toast.error("Unable to fetch account data. Please try signing in again.");
+          await signOut();
+          navigate('/signin', { replace: true });
+        }
         throw error;
       }
     },
