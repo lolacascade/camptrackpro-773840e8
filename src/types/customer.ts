@@ -8,7 +8,6 @@ export interface Customer {
   organization_id: string | null;
   account_id: string | null;
   created_at: string | null;
-  rvs?: RV[];
 }
 
 export interface CustomerFilters {
