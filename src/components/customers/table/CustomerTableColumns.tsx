@@ -1,3 +1,4 @@
+
 import { Customer } from "@/types/customer";
 import { Column } from "@/components/common/DataTable/types";
 
@@ -20,15 +21,6 @@ export const getCustomerColumns = (): Column<Customer>[] => [
     header: "Phone",
     accessorKey: "phone",
     cell: (item: Customer) => item.phone || '-',
-    sortable: true
-  },
-  {
-    header: "Location",
-    accessorKey: "city",
-    cell: (item: Customer) => {
-      const location = [item.city, item.state].filter(Boolean).join(', ');
-      return location || '-';
-    },
     sortable: true
   }
 ];

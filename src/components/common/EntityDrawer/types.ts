@@ -6,12 +6,7 @@ export type TableName =
   | "customers" 
   | "rvs"
   | "bookings" 
-  | "maintenance_requests" 
-  | "expenses" 
-  | "invoices"
   | "profiles"
-  | "chat_history"
-  | "password_reset_attempts"
   | "customer_notes"
   | "booking_trends_data"
   | "marina_details";

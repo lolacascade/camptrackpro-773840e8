@@ -49,6 +49,7 @@ export type Database = {
           rv_id: string | null
           site_id: string | null
           status: string
+          total_amount: number | null
         }
         Insert: {
           account_id?: string | null
@@ -60,6 +61,7 @@ export type Database = {
           rv_id?: string | null
           site_id?: string | null
           status?: string
+          total_amount?: number | null
         }
         Update: {
           account_id?: string | null
@@ -71,6 +73,7 @@ export type Database = {
           rv_id?: string | null
           site_id?: string | null
           status?: string
+          total_amount?: number | null
         }
         Relationships: [
           {
