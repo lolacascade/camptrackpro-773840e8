@@ -1,86 +1,77 @@
 
-import { FilteringService, FilterOptions } from "./base/FilteringService";
-import { Booking } from "@/types/booking";
+import { supabase } from "@/integrations/supabase/client";
+import { Booking, BookingStatus } from "@/types/booking";
+import { QueryOptions, QueryResult, applyQueryOptions, ServiceError } from "./utils/queryUtils";
 import { DateRange } from "react-day-picker";
 
-interface BookingFilterOptions extends FilterOptions {
-  status?: string;
+export interface BookingQueryOptions extends QueryOptions {
+  status?: BookingStatus | 'all';
   dateRange?: DateRange;
 }
 
-export class BookingService extends FilteringService {
-  constructor() {
-    super('bookings');
+class BookingService {
+  private tableName = 'bookings';
+
+  async getBookings(options: BookingQueryOptions = {}): Promise<QueryResult<Booking>> {
+    try {
+      let query = supabase
+        .from(this.tableName)
+        .select(`
+          *,
+          customer:customers(*),
+          site:sites(*)
+        `, { count: 'exact' });
+
+      query = applyQueryOptions(query, options, [
+        'customer.first_name',
+        'customer.last_name',
+        'customer.email'
+      ]);
+
+      if (options.status && options.status !== 'all') {
+        query = query.eq('status', options.status);
+      }
+
+      if (options.dateRange?.from && options.dateRange?.to) {
+        query = query
+          .gte('check_in', options.dateRange.from.toISOString())
+          .lte('check_in', options.dateRange.to.toISOString());
+      }
+
+      const { data, error, count } = await query;
+
+      if (error) throw new ServiceError('Failed to fetch bookings', error);
+
+      return {
+        data: data as Booking[],
+        total: count || 0,
+        page: options.page || 1,
+        pageSize: options.pageSize || 25
+      };
+    } catch (error) {
+      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch bookings', error);
+    }
   }
 
-  async getBookings(options: BookingFilterOptions = {}) {
-    const {
-      searchTerm,
-      page,
-      pageSize = 25,
-      sortBy = 'created_at',
-      sortDirection = 'desc',
-      status,
-      dateRange
-    } = options;
+  async getBookingById(id: string): Promise<Booking> {
+    try {
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select(`
+          *,
+          customer:customers(*),
+          site:sites(*)
+        `)
+        .eq('id', id)
+        .maybeSingle();
 
-    let query = this.getBaseQuery()
-      .select(`
-        *,
-        customer:customers(*),
-        site:sites(*)
-      `);
+      if (error) throw new ServiceError('Failed to fetch booking', error);
+      if (!data) throw new ServiceError('Booking not found');
 
-    if (status && status !== 'all') {
-      query = query.eq('status', status);
+      return data as Booking;
+    } catch (error) {
+      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch booking', error);
     }
-
-    if (dateRange?.from && dateRange?.to) {
-      query = query
-        .gte('check_in', dateRange.from.toISOString())
-        .lte('check_in', dateRange.to.toISOString());
-    }
-
-    if (searchTerm) {
-      query = query.or(`
-        customer.first_name.ilike.%${searchTerm}%,
-        customer.last_name.ilike.%${searchTerm}%,
-        customer.email.ilike.%${searchTerm}%
-      `);
-    }
-
-    query = this.applySorting(query, sortBy, sortDirection);
-    query = this.applyPagination(query, page, pageSize);
-
-    const { data, error, count } = await query.select('*', { count: 'exact' });
-
-    if (error) {
-      throw error;
-    }
-
-    return {
-      data: data as Booking[],
-      total: count || 0,
-      page,
-      pageSize
-    };
-  }
-
-  async getBookingById(id: string) {
-    const { data, error } = await this.getBaseQuery()
-      .select(`
-        *,
-        customer:customers(*),
-        site:sites(*)
-      `)
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data as Booking;
   }
 }
 

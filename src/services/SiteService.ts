@@ -1,67 +1,57 @@
 
-import { FilteringService, FilterOptions } from "./base/FilteringService";
+import { supabase } from "@/integrations/supabase/client";
 import { Site } from "@/types/site";
+import { QueryOptions, QueryResult, applyQueryOptions, ServiceError } from "./utils/queryUtils";
 
-interface SiteFilterOptions extends FilterOptions {
-  status?: string;
+export interface SiteQueryOptions extends QueryOptions {
+  status?: 'available' | 'occupied' | 'maintenance';
 }
 
-export class SiteService extends FilteringService {
-  constructor() {
-    super('sites');
+class SiteService {
+  private tableName = 'sites';
+
+  async getSites(options: SiteQueryOptions = {}): Promise<QueryResult<Site>> {
+    try {
+      let query = supabase
+        .from(this.tableName)
+        .select('*', { count: 'exact' });
+
+      query = applyQueryOptions(query, options, ['name', 'location']);
+
+      if (options.status) {
+        query = query.eq('status', options.status);
+      }
+
+      const { data, error, count } = await query;
+
+      if (error) throw new ServiceError('Failed to fetch sites', error);
+
+      return {
+        data: data as Site[],
+        total: count || 0,
+        page: options.page || 1,
+        pageSize: options.pageSize || 25
+      };
+    } catch (error) {
+      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch sites', error);
+    }
   }
 
-  async getSites(options: SiteFilterOptions = {}) {
-    const {
-      searchTerm,
-      page,
-      pageSize = 25,
-      sortBy = 'created_at',
-      sortDirection = 'desc',
-      status
-    } = options;
+  async getSiteById(id: string): Promise<Site> {
+    try {
+      const { data, error } = await supabase
+        .from(this.tableName)
+        .select('*')
+        .eq('id', id)
+        .maybeSingle();
 
-    let query = this.getBaseQuery().select('*');
+      if (error) throw new ServiceError('Failed to fetch site', error);
+      if (!data) throw new ServiceError('Site not found');
 
-    if (status) {
-      query = query.eq('status', status);
+      return data as Site;
+    } catch (error) {
+      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch site', error);
     }
-
-    if (searchTerm) {
-      query = query.or(`
-        name.ilike.%${searchTerm}%,
-        location.ilike.%${searchTerm}%
-      `);
-    }
-
-    query = this.applySorting(query, sortBy, sortDirection);
-    query = this.applyPagination(query, page, pageSize);
-
-    const { data, error, count } = await query.select('*', { count: 'exact' });
-
-    if (error) {
-      throw error;
-    }
-
-    return {
-      data: data as Site[],
-      total: count || 0,
-      page,
-      pageSize
-    };
-  }
-
-  async getSiteById(id: string) {
-    const { data, error } = await this.getBaseQuery()
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return data as Site;
   }
 }
 

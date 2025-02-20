@@ -1,5 +1,6 @@
 
 export * from './CustomerService';
 export * from './BookingService';
-export * from './RVService';
+export * from './AssetService';
 export * from './SiteService';
+export * from './utils/queryUtils';
