@@ -3,11 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Asset } from "@/types/asset";
 import { SelectField } from "@/components/common/FormFields/SelectField";
+import { SlotInfo } from "../hooks/useAvailableSlots";
 
 interface AssetFormFieldsProps {
   newAsset: Partial<Asset>;
   setNewAsset: (asset: Partial<Asset>) => void;
-  availableSlots: Array<{ id: number; name: string }>;
+  availableSlots: SlotInfo[];
 }
 
 export const ASSET_TYPES = [
@@ -26,7 +27,7 @@ export const ASSET_TYPES = [
 
 export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: AssetFormFieldsProps) {
   const slotOptions = availableSlots.map(slot => ({
-    value: slot.id.toString(),
+    value: slot.id,
     label: slot.name
   }));
 
@@ -63,7 +64,7 @@ export function AssetFormFields({ newAsset, setNewAsset, availableSlots }: Asset
       <div className="grid gap-2">
         <Label htmlFor="site_id">Site *</Label>
         <SelectField
-          value={newAsset.site_id?.toString() || ''}
+          value={newAsset.site_id || ''}
           onChange={(value) => setNewAsset({ ...newAsset, site_id: value })}
           options={slotOptions}
           placeholder="Select a site"

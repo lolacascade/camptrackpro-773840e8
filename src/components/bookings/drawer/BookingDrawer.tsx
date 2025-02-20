@@ -36,12 +36,12 @@ export function BookingDrawer({ booking, open, onClose, onBookingUpdated }: Book
 
   const handleCustomerCreated = (customer: Customer) => {
     setNewlyCreatedCustomer(customer);
-    form.setValue('customer_id', String(customer.id));
+    form.setValue('customer_id', customer.id);
   };
 
   const handleAssetCreated = (assetId: string) => {
     setNewlyCreatedAssetId(assetId);
-    form.setValue('asset_id', assetId);
+    form.setValue('rv_id', assetId);
   };
 
   const handleSiteCreated = (siteId: string) => {

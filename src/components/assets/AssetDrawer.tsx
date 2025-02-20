@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { AssetFormFields } from "./form/AssetFormFields"
@@ -8,15 +9,13 @@ interface AssetDrawerProps {
   open: boolean
   onClose: () => void
   onAssetAdded: () => void
-  customerId: string | null
   asset?: Asset
 }
 
-export function AssetDrawer({ open, onClose, onAssetAdded, customerId, asset }: AssetDrawerProps) {
+export function AssetDrawer({ open, onClose, onAssetAdded, asset }: AssetDrawerProps) {
   const { newAsset, setNewAsset, availableSlots, handleSubmit } = useAssetForm({ 
     onClose, 
     onAssetAdded,
-    customerId,
     asset
   })
 
