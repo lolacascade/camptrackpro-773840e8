@@ -1,6 +1,6 @@
 
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Asset } from "@/types/asset";
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -25,9 +25,8 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
     
     const term = searchTerm.toLowerCase();
     return assets.filter(asset => 
-      asset.asset_name?.toLowerCase().includes(term) ||
-      asset.asset_type?.toLowerCase().includes(term) ||
-      asset.asset_size?.toLowerCase().includes(term) ||
+      asset.make?.toLowerCase().includes(term) ||
+      asset.model?.toLowerCase().includes(term) ||
       asset.customer?.first_name?.toLowerCase().includes(term) ||
       asset.customer?.last_name?.toLowerCase().includes(term)
     );
@@ -63,10 +62,10 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Size</TableHead>
+              <TableHead>Make/Model</TableHead>
+              <TableHead>Year</TableHead>
               <TableHead>Customer</TableHead>
+              <TableHead>Site</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -81,19 +80,23 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             ) : (
               filteredAssets.map((asset) => (
                 <TableRow key={asset.id}>
-                  <TableCell className="font-medium">{asset.asset_name}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {asset.asset_type || 'Unspecified'}
-                    </Badge>
+                  <TableCell className="font-medium">
+                    {`${asset.make} ${asset.model}`}
                   </TableCell>
-                  <TableCell>{asset.asset_size || 'N/A'}</TableCell>
+                  <TableCell>{asset.year || 'N/A'}</TableCell>
                   <TableCell>
                     {asset.customer 
                       ? `${asset.customer.first_name} ${asset.customer.last_name}`
                       : 'Unassigned'}
                   </TableCell>
-                  <TableCell>{asset.status}</TableCell>
+                  <TableCell>
+                    {asset.site?.name || 'Unassigned'}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary">
+                      {asset.status || 'Available'}
+                    </Badge>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

@@ -19,28 +19,20 @@ export function useAvailableSlots(asset?: Asset) {
           return;
         }
 
-        const query = supabase
+        const { data, error } = await supabase
           .from('sites')
           .select('id, name')
           .eq('organization_id', organizationId)
-          .eq('account_id', accountId);
-
-        // If editing, include the current site even if occupied
-        if (asset?.site_id) {
-          query.or(`status.eq.available,id.eq.${asset.site_id}`);
-        } else {
-          query.eq('status', 'available');
-        }
-
-        const { data, error } = await query;
+          .eq('account_id', accountId)
+          .or(`status.eq.available${asset?.site_id ? `,id.eq.${asset.site_id}` : ''}`);
 
         if (error) throw error;
         
-        if (isMounted) {
-          setAvailableSlots(data?.map(slot => ({
+        if (isMounted && data) {
+          setAvailableSlots(data.map(slot => ({
             id: Number(slot.id),
             name: slot.name
-          })) || []);
+          })));
         }
       } catch (error) {
         console.error('Error fetching sites:', error);

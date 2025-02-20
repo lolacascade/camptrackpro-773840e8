@@ -8,8 +8,12 @@ export interface Asset {
   model: string;
   year: number | null;
   customer_id: string | null;
-  customer?: Customer;
   site_id: string | null;
+  asset_name?: string;
+  asset_type?: string;
+  asset_size?: string;
+  status?: string;
+  customer?: Customer;
   site?: Site;
   created_at: string;
   updated_at: string;
