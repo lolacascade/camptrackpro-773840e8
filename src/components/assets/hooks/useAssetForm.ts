@@ -9,11 +9,10 @@ import { useOrganization } from "@/hooks/use-organization";
 interface UseAssetFormProps {
   onClose: () => void;
   onAssetAdded: () => void;
-  customerId: string | null;
   asset?: Asset;
 }
 
-export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAssetFormProps) {
+export function useAssetForm({ onClose, onAssetAdded, asset }: UseAssetFormProps) {
   const session = useSession();
   const { organizationId, accountId } = useOrganization();
   const availableSlots = useAvailableSlots(asset);
@@ -23,7 +22,6 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
     make: asset?.make || '',
     model: asset?.model || '',
     year: asset?.year || null,
-    customer_id: customerId || asset?.customer_id || null,
     site_id: asset?.site_id || null,
     organization_id: organizationId || '',
     account_id: accountId || '',

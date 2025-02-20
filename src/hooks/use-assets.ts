@@ -8,14 +8,14 @@ export function useAssets() {
   const { organizationId, accountId } = useOrganization();
 
   return useQuery({
-    queryKey: ["assets", organizationId, accountId],
+    queryKey: ["rvs", organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         return [];
       }
 
       const { data, error } = await supabase
-        .from('rvs')
+        .from("rvs")
         .select(`
           *,
           customer:customers(
@@ -26,7 +26,8 @@ export function useAssets() {
           ),
           site:sites(
             id,
-            name
+            name,
+            location
           )
         `)
         .eq('organization_id', organizationId)
@@ -42,15 +43,12 @@ export function useAssets() {
         make: rv.make,
         model: rv.model,
         year: rv.year,
-        customer_id: rv.customer_id,
         site_id: rv.site_id,
         organization_id: rv.organization_id,
         account_id: rv.account_id,
-        status: rv.status || 'available',
-        customer: rv.customer,
-        site: rv.site,
         created_at: rv.created_at,
-        updated_at: rv.updated_at || rv.created_at
+        customer: rv.customer,
+        site: rv.site?.[0] || null
       })) as Asset[];
     },
     enabled: !!organizationId && !!accountId

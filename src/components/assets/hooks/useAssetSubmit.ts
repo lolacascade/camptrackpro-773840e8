@@ -40,11 +40,9 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
         make: newAsset.make,
         model: newAsset.model,
         year: newAsset.year,
-        customer_id: newAsset.customer_id,
         site_id: newAsset.site_id,
         organization_id: organizationId,
-        account_id: accountId,
-        status: newAsset.status || 'available'
+        account_id: accountId
       };
 
       if (asset?.id) {
