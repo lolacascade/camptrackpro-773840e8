@@ -10,7 +10,7 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children }: AuthGuardProps) {
   const { user, isLoading: isAuthLoading } = useAuth();
-  const { isLoading: isOrgLoading, organizationId, accountId } = useOrganization();
+  const { isLoading: isOrgLoading } = useOrganization();
   const location = useLocation();
   const isPublicRoute = ['/signin', '/signup', '/reset-password'].includes(location.pathname);
 
@@ -26,11 +26,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
   // If not authenticated, redirect to signin
   if (!isAuthLoading && !user && !isPublicRoute) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
-  }
-
-  // If authenticated but no organization/account access, redirect to app
-  if (!isAuthLoading && !isOrgLoading && user && !organizationId && !isPublicRoute) {
-    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;
