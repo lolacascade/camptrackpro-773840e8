@@ -3,7 +3,12 @@ export interface Site {
   id: string;
   name: string;
   location: string;
-  organization_id: string | null;
-  account_id: string | null;
-  created_at: string | null;
+  organization_id: string;
+  account_id: string;
+  created_at: string;
+}
+
+export interface SiteFormData {
+  name: string;
+  location: string;
 }

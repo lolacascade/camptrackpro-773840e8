@@ -6,6 +6,18 @@ import { DateRange } from "react-day-picker";
 
 export type BookingStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'checked_in';
 
+export interface BookingFormData {
+  title: string;
+  customer_id: string;
+  rv_id: string;
+  site_id: string;
+  check_in: Date;
+  check_out: Date;
+  status: BookingStatus;
+  special_requirements?: string;
+  total_amount?: number;
+}
+
 export interface Booking {
   id: string;
   customer_id: string | null;
@@ -24,9 +36,7 @@ export interface Booking {
   site?: Site;
 }
 
-export interface BookingFilters {
-  status?: BookingStatus | 'all';
-  dateRange?: DateRange | null;
-  searchTerm?: string;
-  page: number;
+export interface BookingDateRangeProps {
+  dateRange: DateRange;
+  onDateRangeChange: (range: DateRange) => void;
 }

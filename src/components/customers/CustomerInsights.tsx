@@ -1,21 +1,11 @@
-import { Customer } from "@/types/customer";
-import { CustomerStatsCards } from "./insights/CustomerStatsCards";
-import { CustomerTopStats } from "./insights/CustomerTopStats";
 
-interface CustomerInsightsProps {
-  customer: Customer | null;
-}
+import { Card } from "@/components/ui/card";
 
-export function CustomerInsights({ customer }: CustomerInsightsProps) {
-  if (!customer) return null;
-
+export function CustomerInsights() {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-[#133134]">
-        {`${customer.first_name} ${customer.last_name}`}
-      </h2>
-      <CustomerTopStats customer={customer} />
-      <CustomerStatsCards customer={customer} />
-    </div>
+    <Card className="p-6">
+      <h2 className="text-lg font-semibold mb-4">Customer Insights</h2>
+      <p>Customer insights will be implemented here</p>
+    </Card>
   );
 }

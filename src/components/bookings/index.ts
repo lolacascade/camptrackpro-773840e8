@@ -1,6 +1,4 @@
 
-export * from './BookingsTable';
-export * from './BookingsInsights';
-export * from './BookingTrendsChart';
-export * from './drawer/BookingDrawer';
-export * from './components/BookingsHeader';
+export * from "./BookingDrawer";
+export * from "./BookingsTable";
+export * from "./components/BookingsHeader";
