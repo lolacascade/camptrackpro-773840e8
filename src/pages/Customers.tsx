@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Customer } from "@/types/customer";
@@ -7,15 +8,11 @@ import { PageWithChat } from "@/components/layout/PageWithChat";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { CustomerStatsGrid } from "@/components/customers/CustomerStatsGrid";
-import { CustomerAcquisitionChart } from "@/components/customers/insights/CustomerAcquisitionChart";
-import { useCustomerStats } from "@/components/customers/insights/hooks/useCustomerStats";
 
 export default function Customers() {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { toast } = useToast();
-  const { chartData, currentMonthData, isLoading } = useCustomerStats();
 
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -49,13 +46,6 @@ export default function Customers() {
               <Plus className="mr-2 h-4 w-4" /> Add Customer
             </Button>
           </div>
-
-          <CustomerStatsGrid />
-          
-          <CustomerAcquisitionChart 
-            chartData={chartData}
-            currentMonthData={currentMonthData}
-          />
 
           <CustomerTable onEdit={handleEdit} />
 

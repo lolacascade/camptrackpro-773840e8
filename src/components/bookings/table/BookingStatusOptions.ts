@@ -1,8 +1,11 @@
+
+import { BookingStatus } from "@/types/booking";
+
 export const statusOptions = [
-  { label: "All Statuses", value: "all" },
-  { label: "Pending", value: "pending" },
-  { label: "Confirmed", value: "confirmed" },
-  { label: "Checked In", value: "checked_in" },
-  { label: "Completed", value: "completed" },
-  { label: "Cancelled", value: "cancelled" }
-];
+  { value: 'all', label: 'All' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'checked_in', label: 'Checked In' }
+] as const;
