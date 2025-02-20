@@ -24,6 +24,8 @@ export interface Booking {
   organization_id: string | null;
   account_id: string | null;
   created_at: string | null;
+  total_amount: number | null;
+  special_requirements: string | null;
   customer?: Customer;
   site?: Site;
   asset?: Asset;

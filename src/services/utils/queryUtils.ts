@@ -1,51 +1,24 @@
 
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
-import { GenericSchema, Tables } from "@/types/database/tables";
+import { Database } from "@/types/database/tables";
 
-export interface QueryOptions {
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-  searchTerm?: string;
-}
+export type TableName = keyof Database["Tables"];
+export type Row<T extends TableName> = Database["Tables"][T]["Row"];
 
-export interface QueryResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-}
-
-export type TableName = keyof Tables;
-
-export function applyQueryOptions<T extends TableName>(
-  query: PostgrestFilterBuilder<GenericSchema, Tables[T]['Row'], unknown>,
-  options: QueryOptions,
-  searchColumns?: (keyof Tables[T]['Row'])[]
-): PostgrestFilterBuilder<GenericSchema, Tables[T]['Row'], unknown> {
-  const { page = 1, pageSize = 25, sortBy, sortDirection = 'desc', searchTerm } = options;
-
-  // Apply search if search term and columns are provided
-  if (searchTerm && searchColumns?.length) {
-    const searchConditions = searchColumns.map(col => `${String(col)}.ilike.%${searchTerm}%`);
-    query = query.or(searchConditions.join(','));
-  }
-
-  // Apply sorting if sort column is provided
-  if (sortBy) {
-    query = query.order(sortBy, { ascending: sortDirection === 'asc' });
-  }
-
-  // Apply pagination
+export const applyPagination = <T extends TableName>(
+  query: PostgrestFilterBuilder<Database, Row<T>, unknown>,
+  page: number,
+  pageSize: number
+): PostgrestFilterBuilder<Database, Row<T>, unknown> => {
   const start = (page - 1) * pageSize;
-  query = query.range(start, start + pageSize - 1);
+  const end = start + pageSize - 1;
+  return query.range(start, end);
+};
 
-  return query;
-}
-
-export interface ServiceError {
-  message: string;
-  code?: string;
-  details?: unknown;
-}
+export const applySorting = <T extends TableName>(
+  query: PostgrestFilterBuilder<Database, Row<T>, unknown>,
+  sortField: keyof Row<T>,
+  sortDirection: 'asc' | 'desc'
+): PostgrestFilterBuilder<Database, Row<T>, unknown> => {
+  return query.order(sortField as string, { ascending: sortDirection === 'asc' });
+};

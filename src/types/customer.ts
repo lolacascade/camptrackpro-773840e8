@@ -9,5 +9,8 @@ export interface Customer {
   created_at: string | null;
 }
 
-export type CustomerCreateInput = Omit<Customer, 'id' | 'created_at'>;
-export type CustomerUpdateInput = Partial<CustomerCreateInput>;
+export interface CustomerFormData {
+  first_name: string;
+  last_name: string;
+  email: string | null;
+}

@@ -1,70 +1,51 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Asset } from "@/types/asset";
-import { QueryOptions, QueryResult, applyQueryOptions, ServiceError } from "./utils/queryUtils";
+import { FilteringService, FilterConfig } from "./base/FilteringService";
+import { Database } from "@/types/database/tables";
 
-export interface AssetQueryOptions extends QueryOptions {
-  status?: string;
-  type?: string;
-}
+export class AssetService extends FilteringService {
+  async list(organizationId: string, filters: FilterConfig[] = []): Promise<Asset[]> {
+    let query = supabase
+      .from('rvs')
+      .select(`
+        *,
+        site:sites (
+          id,
+          name
+        )
+      `)
+      .eq('organization_id', organizationId);
 
-class AssetService {
-  private tableName = 'rvs';
+    query = this.applyFilters('rvs', query, filters);
 
-  async getAssets(options: AssetQueryOptions = {}): Promise<QueryResult<Asset>> {
-    try {
-      let query = supabase
-        .from(this.tableName)
-        .select(`
-          *,
-          customer:customers(*),
-          site:sites(*)
-        `, { count: 'exact' });
+    const { data, error } = await query;
 
-      query = applyQueryOptions(query, options, ['make', 'model']);
-
-      if (options.status) {
-        query = query.eq('status', options.status);
-      }
-
-      if (options.type) {
-        query = query.eq('asset_type', options.type);
-      }
-
-      const { data, error, count } = await query;
-
-      if (error) throw new ServiceError('Failed to fetch assets', error);
-
-      return {
-        data: data as Asset[],
-        total: count || 0,
-        page: options.page || 1,
-        pageSize: options.pageSize || 25
-      };
-    } catch (error) {
-      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch assets', error);
+    if (error) {
+      throw new Error(`Failed to fetch assets: ${error.message}`);
     }
+
+    return data as Asset[];
   }
 
-  async getAssetById(id: string): Promise<Asset> {
-    try {
-      const { data, error } = await supabase
-        .from(this.tableName)
-        .select(`
-          *,
-          customer:customers(*),
-          site:sites(*)
-        `)
-        .eq('id', id)
-        .maybeSingle();
+  async get(id: string): Promise<Asset> {
+    const { data, error } = await supabase
+      .from('rvs')
+      .select(`
+        *,
+        site:sites (
+          id,
+          name
+        )
+      `)
+      .eq('id', id)
+      .single();
 
-      if (error) throw new ServiceError('Failed to fetch asset', error);
-      if (!data) throw new ServiceError('Asset not found');
-
-      return data as Asset;
-    } catch (error) {
-      throw error instanceof ServiceError ? error : new ServiceError('Failed to fetch asset', error);
+    if (error) {
+      throw new Error(`Failed to fetch asset: ${error.message}`);
     }
+
+    return data as Asset;
   }
 }
 

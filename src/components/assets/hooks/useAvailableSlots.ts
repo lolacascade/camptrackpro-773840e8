@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Asset } from "@/types/asset";
 import { useOrganization } from "@/hooks/use-organization";
 
-interface SlotInfo {
+export interface SlotInfo {
   id: string;
   name: string;
 }

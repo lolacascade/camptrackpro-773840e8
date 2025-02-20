@@ -1,55 +1,51 @@
 
-import { supabase } from "@/integrations/supabase/client";
 import { PostgrestFilterBuilder } from "@supabase/postgrest-js";
+import { Database } from "@/types/database/tables";
 
-export interface FilterOptions {
-  searchTerm?: string;
-  page?: number;
-  pageSize?: number;
-  sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
-}
+export type FilterConfig = {
+  field: string;
+  operator: string;
+  value: any;
+};
 
-export class FilteringService {
-  protected tableName: string;
+export abstract class FilteringService {
+  protected applyFilters<T extends keyof Database["Tables"]>(
+    query: PostgrestFilterBuilder<Database, Database["Tables"][T]["Row"], unknown>,
+    filters: FilterConfig[]
+  ): PostgrestFilterBuilder<Database, Database["Tables"][T]["Row"], unknown> {
+    filters.forEach((filter) => {
+      const { field, operator, value } = filter;
 
-  constructor(tableName: string) {
-    this.tableName = tableName;
-  }
+      switch (operator) {
+        case "eq":
+          query = query.eq(field, value);
+          break;
+        case "neq":
+          query = query.neq(field, value);
+          break;
+        case "gt":
+          query = query.gt(field, value);
+          break;
+        case "gte":
+          query = query.gte(field, value);
+          break;
+        case "lt":
+          query = query.lt(field, value);
+          break;
+        case "lte":
+          query = query.lte(field, value);
+          break;
+        case "in":
+          query = query.in(field, value);
+          break;
+        case "contains":
+          query = query.ilike(field, `%${value}%`);
+          break;
+        default:
+          break;
+      }
+    });
 
-  protected getBaseQuery() {
-    return supabase.from(this.tableName).select();
-  }
-
-  protected applyPagination(
-    query: PostgrestFilterBuilder<any, any, any>,
-    page = 1,
-    pageSize = 10
-  ) {
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize - 1;
-    return query.range(start, end);
-  }
-
-  protected applySearch(
-    query: PostgrestFilterBuilder<any, any, any>,
-    searchTerm: string,
-    searchColumns: string[]
-  ) {
-    if (!searchTerm || !searchColumns.length) return query;
-
-    const searchConditions = searchColumns.map(
-      column => `${column}.ilike.%${searchTerm}%`
-    );
-    return query.or(searchConditions.join(','));
-  }
-
-  protected applySorting(
-    query: PostgrestFilterBuilder<any, any, any>,
-    sortBy?: string,
-    sortDirection: 'asc' | 'desc' = 'asc'
-  ) {
-    if (!sortBy) return query;
-    return query.order(sortBy, { ascending: sortDirection === 'asc' });
+    return query;
   }
 }
