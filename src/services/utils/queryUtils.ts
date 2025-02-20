@@ -22,3 +22,16 @@ export const applySorting = (
 ): PostgrestFilterBuilder<Database, any, any> => {
   return query.order(sortField, { ascending: sortDirection === 'asc' });
 };
+
+export interface QueryOptions {
+  searchTerm?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  pageSize?: number;
+}
+
+export interface QueryResult<T> {
+  data: T[];
+  total: number;
+}

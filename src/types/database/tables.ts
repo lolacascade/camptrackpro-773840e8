@@ -13,22 +13,22 @@ export interface GenericSchema {
       Update: { id?: string; name?: string; organization_id?: string; created_at?: string | null; }
       Relationships: []
     }
-    sites: {
-      Row: { id: string; name: string; location: string; organization_id: string | null; account_id: string | null; created_at: string | null; }
-      Insert: { id?: string; name: string; location: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
-      Update: { id?: string; name?: string; location?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
-      Relationships: []
-    }
     rvs: {
       Row: { id: string; make: string; model: string; year: number | null; site_id: string | null; organization_id: string | null; account_id: string | null; created_at: string | null; }
       Insert: { id?: string; make: string; model: string; year?: number | null; site_id?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
       Update: { id?: string; make?: string; model?: string; year?: number | null; site_id?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
       Relationships: []
     }
+    sites: {
+      Row: { id: string; name: string; location: string; organization_id: string | null; account_id: string | null; created_at: string | null; }
+      Insert: { id?: string; name: string; location: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
+      Update: { id?: string; name?: string; location?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
+      Relationships: []
+    }
     customers: {
-      Row: { id: string; first_name: string; last_name: string; email: string | null; organization_id: string | null; account_id: string | null; created_at: string | null; }
-      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
-      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
+      Row: { id: string; first_name: string; last_name: string; email: string | null; phone: string | null; organization_id: string | null; account_id: string | null; created_at: string | null; }
+      Insert: { id?: string; first_name: string; last_name: string; email?: string | null; phone?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
+      Update: { id?: string; first_name?: string; last_name?: string; email?: string | null; phone?: string | null; organization_id?: string | null; account_id?: string | null; created_at?: string | null; }
       Relationships: []
     }
     bookings: {
@@ -37,16 +37,16 @@ export interface GenericSchema {
       Update: { id?: string; customer_id?: string; rv_id?: string; site_id?: string; check_in?: string; check_out?: string; status?: string; organization_id?: string | null; account_id?: string | null; created_at?: string | null; total_amount?: number | null; special_requirements?: string | null; }
       Relationships: []
     }
-    user_accounts: {
-      Row: { user_id: string; account_id: string; }
-      Insert: { user_id: string; account_id: string; }
-      Update: { user_id?: string; account_id?: string; }
+    profiles: {
+      Row: { id: string; email: string | null; first_name: string | null; last_name: string | null; organization_id: string | null; account_id: string | null; role: string; created_at: string | null; }
+      Insert: { id: string; email?: string | null; first_name?: string | null; last_name?: string | null; organization_id?: string | null; account_id?: string | null; role: string; created_at?: string | null; }
+      Update: { id?: string; email?: string | null; first_name?: string | null; last_name?: string | null; organization_id?: string | null; account_id?: string | null; role?: string; created_at?: string | null; }
       Relationships: []
     }
-    user_organizations: {
-      Row: { id: string; user_id: string | null; organization_id: string | null; created_at: string | null; updated_at: string | null; }
-      Insert: { id?: string; user_id?: string | null; organization_id?: string | null; created_at?: string | null; updated_at?: string | null; }
-      Update: { id?: string; user_id?: string | null; organization_id?: string | null; created_at?: string | null; updated_at?: string | null; }
+    password_reset_attempts: {
+      Row: { id: string; email: string; successful: boolean; created_at: string | null; }
+      Insert: { id?: string; email: string; successful: boolean; created_at?: string | null; }
+      Update: { id?: string; email?: string; successful?: boolean; created_at?: string | null; }
       Relationships: []
     }
     organization_roles: {

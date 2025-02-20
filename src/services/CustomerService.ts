@@ -1,120 +1,98 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Customer } from "@/types/customer";
-import { QueryOptions, applyQueryOptions } from "./utils/queryUtils";
+import { Customer, CustomerFormData, CustomerQueryOptions } from "@/types/customer";
+import { FilteringService } from "./base/FilteringService";
+import { applyPagination, applySorting } from "./utils/queryUtils";
 
-export async function getCustomers(
-  organizationId: string,
-  accountId: string,
-  options?: QueryOptions
-): Promise<{ data: Customer[]; total: number }> {
-  try {
+export class CustomerService extends FilteringService {
+  async list(organizationId: string, options: CustomerQueryOptions = {}): Promise<Customer[]> {
     let query = supabase
       .from('customers')
-      .select('*', { count: 'exact' })
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId);
+      .select(`
+        *
+      `)
+      .eq('organization_id', organizationId);
 
-    if (options) {
-      query = applyQueryOptions(query, options, ['first_name', 'last_name', 'email']);
+    if (options.searchTerm) {
+      query = query.or(`first_name.ilike.%${options.searchTerm}%,last_name.ilike.%${options.searchTerm}%,email.ilike.%${options.searchTerm}%`);
     }
 
-    const { data, error, count } = await query;
+    if (options.sortBy) {
+      query = applySorting(query, options.sortBy, options.sortOrder || 'asc');
+    }
 
-    if (error) throw error;
+    if (options.page && options.pageSize) {
+      query = applyPagination(query, options.page, options.pageSize);
+    }
 
-    return {
-      data: data as Customer[],
-      total: count || 0
-    };
-  } catch (error) {
-    console.error('Error in getCustomers:', error);
-    throw error;
+    const { data, error } = await query;
+
+    if (error) {
+      throw new Error(`Failed to fetch customers: ${error.message}`);
+    }
+
+    return data as Customer[];
   }
-}
 
-export async function getCustomerById(
-  customerId: string,
-  organizationId: string,
-  accountId: string
-): Promise<Customer> {
-  try {
+  async get(id: string): Promise<Customer> {
     const { data, error } = await supabase
       .from('customers')
-      .select('*')
-      .eq('id', customerId)
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId)
+      .select(`
+        *
+      `)
+      .eq('id', id)
       .single();
 
-    if (error) throw error;
-    return data as Customer;
-  } catch (error) {
-    console.error('Error in getCustomerById:', error);
-    throw error;
-  }
-}
+    if (error) {
+      throw new Error(`Failed to fetch customer: ${error.message}`);
+    }
 
-export async function createCustomer(
-  customer: CustomerCreateInput,
-  organizationId: string,
-  accountId: string
-): Promise<Customer> {
-  try {
+    return data as Customer;
+  }
+
+  async create(formData: CustomerFormData, organizationId: string, accountId: string): Promise<Customer> {
     const { data, error } = await supabase
       .from('customers')
-      .insert([{ ...customer, organization_id: organizationId, account_id: accountId }])
+      .insert([{
+        ...formData,
+        organization_id: organizationId,
+        account_id: accountId
+      }])
       .select()
       .single();
 
-    if (error) throw error;
-    return data as Customer;
-  } catch (error) {
-    console.error('Error in createCustomer:', error);
-    throw error;
-  }
-}
+    if (error) {
+      throw new Error(`Failed to create customer: ${error.message}`);
+    }
 
-export async function updateCustomer(
-  customerId: string,
-  updates: CustomerUpdateInput,
-  organizationId: string,
-  accountId: string
-): Promise<Customer> {
-  try {
+    return data as Customer;
+  }
+
+  async update(id: string, formData: CustomerFormData): Promise<Customer> {
     const { data, error } = await supabase
       .from('customers')
-      .update(updates)
-      .eq('id', customerId)
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId)
+      .update(formData)
+      .eq('id', id)
       .select()
       .single();
 
-    if (error) throw error;
-    return data as Customer;
-  } catch (error) {
-    console.error('Error in updateCustomer:', error);
-    throw error;
-  }
-}
+    if (error) {
+      throw new Error(`Failed to update customer: ${error.message}`);
+    }
 
-export async function deleteCustomer(
-  customerId: string,
-  organizationId: string,
-  accountId: string
-): Promise<void> {
-  try {
+    return data as Customer;
+  }
+
+  async delete(id: string): Promise<void> {
     const { error } = await supabase
       .from('customers')
       .delete()
-      .eq('id', customerId)
-      .eq('organization_id', organizationId)
-      .eq('account_id', accountId);
+      .eq('id', id);
 
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error in deleteCustomer:', error);
-    throw error;
+    if (error) {
+      throw new Error(`Failed to delete customer: ${error.message}`);
+    }
   }
 }
+
+export const customerService = new CustomerService();
