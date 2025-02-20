@@ -1,23 +1,37 @@
-import { Calendar } from "@/components/ui/calendar"
-import { Label } from "@/components/ui/label"
-import { DateRange as DateRangeType } from "react-day-picker"
+
+import { DatePickerField } from "@/components/common/FormFields/DatePickerField";
+import { Label } from "@/components/ui/label";
 
 interface BookingDateRangeProps {
-  dateRange: DateRangeType | undefined;
-  onDateRangeChange: (range: DateRangeType | undefined) => void;
+  checkIn: string;
+  checkOut: string;
+  onCheckInChange: (value: string) => void;
+  onCheckOutChange: (value: string) => void;
 }
 
-export function BookingDateRange({ dateRange, onDateRangeChange }: BookingDateRangeProps) {
+export function BookingDateRange({
+  checkIn,
+  checkOut,
+  onCheckInChange,
+  onCheckOutChange
+}: BookingDateRangeProps) {
   return (
-    <div className="space-y-2">
-      <Label>Booking Period</Label>
-      <Calendar
-        mode="range"
-        selected={dateRange}
-        onSelect={onDateRangeChange}
-        numberOfMonths={2}
-        className="rounded-md border"
-      />
+    <div className="space-y-4">
+      <div>
+        <Label>Check-in Date</Label>
+        <DatePickerField
+          value={checkIn ? new Date(checkIn) : new Date()}
+          onChange={(date) => onCheckInChange(date?.toISOString() || '')}
+        />
+      </div>
+      <div>
+        <Label>Check-out Date</Label>
+        <DatePickerField
+          value={checkOut ? new Date(checkOut) : new Date()}
+          onChange={(date) => onCheckOutChange(date?.toISOString() || '')}
+          minDate={checkIn ? new Date(checkIn) : new Date()}
+        />
+      </div>
     </div>
   );
 }
