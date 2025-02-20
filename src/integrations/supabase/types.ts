@@ -46,6 +46,7 @@ export type Database = {
           created_at: string | null
           customer_id: string | null
           id: string
+          organization_id: string | null
           rv_id: string | null
           site_id: string | null
           status: string
@@ -58,6 +59,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          organization_id?: string | null
           rv_id?: string | null
           site_id?: string | null
           status?: string
@@ -70,6 +72,7 @@ export type Database = {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          organization_id?: string | null
           rv_id?: string | null
           site_id?: string | null
           status?: string
@@ -91,6 +94,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "bookings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "bookings_rv_id_fkey"
             columns: ["rv_id"]
             isOneToOne: false
@@ -108,30 +118,44 @@ export type Database = {
       }
       customers: {
         Row: {
+          account_id: string | null
           created_at: string | null
           email: string | null
           first_name: string
           id: string
           last_name: string
+          organization_id: string | null
           phone: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string | null
           email?: string | null
           first_name: string
           id?: string
           last_name: string
+          organization_id?: string | null
           phone?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string | null
           email?: string | null
           first_name?: string
           id?: string
           last_name?: string
+          organization_id?: string | null
           phone?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       organizations: {
         Row: {
@@ -153,27 +177,33 @@ export type Database = {
       }
       rvs: {
         Row: {
+          account_id: string | null
           created_at: string | null
           customer_id: string | null
           id: string
           make: string
           model: string
+          organization_id: string | null
           year: number | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string | null
           customer_id?: string | null
           id?: string
           make: string
           model: string
+          organization_id?: string | null
           year?: number | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string | null
           customer_id?: string | null
           id?: string
           make?: string
           model?: string
+          organization_id?: string | null
           year?: number | null
         }
         Relationships: [
@@ -184,28 +214,49 @@ export type Database = {
             referencedRelation: "customers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "rvs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       sites: {
         Row: {
+          account_id: string | null
           created_at: string | null
           id: string
           location: string
           name: string
+          organization_id: string | null
         }
         Insert: {
+          account_id?: string | null
           created_at?: string | null
           id?: string
           location: string
           name: string
+          organization_id?: string | null
         }
         Update: {
+          account_id?: string | null
           created_at?: string | null
           id?: string
           location?: string
           name?: string
+          organization_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sites_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_accounts: {
         Row: {
