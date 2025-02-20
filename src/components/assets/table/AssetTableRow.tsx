@@ -1,8 +1,8 @@
+
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Edit2, ExternalLink } from "lucide-react";
 import { Asset } from "@/types/asset";
+import { Button } from "@/components/ui/button";
+import { Edit2, ExternalLink } from "lucide-react";
 
 interface AssetTableRowProps {
   asset: Asset;
@@ -12,22 +12,14 @@ interface AssetTableRowProps {
 
 export function AssetTableRow({ asset, onEdit, onViewDetails }: AssetTableRowProps) {
   return (
-    <TableRow>
-      <TableCell className="font-medium">{asset.asset_name}</TableCell>
-      <TableCell>{asset.asset_size || 'N/A'}</TableCell>
-      <TableCell>
-        <Badge variant="secondary">
-          {asset.asset_type || 'Unspecified'}
-        </Badge>
+    <TableRow className="cursor-pointer hover:bg-gray-50">
+      <TableCell className="font-medium">
+        {asset.make} {asset.model} {asset.year || ''}
       </TableCell>
-      <TableCell>
-        {asset.customer 
-          ? `${asset.customer.first_name} ${asset.customer.last_name}`
-          : 'Unassigned'}
-      </TableCell>
-      <TableCell>{asset.site?.name || 'Unassigned'}</TableCell>
-      <TableCell>
-        <div className="flex gap-2">
+      <TableCell>{asset.year || 'N/A'}</TableCell>
+      <TableCell>{asset.site_id || 'Unassigned'}</TableCell>
+      <TableCell className="text-right">
+        <div className="flex justify-end gap-2">
           <Button
             variant="ghost"
             size="icon"

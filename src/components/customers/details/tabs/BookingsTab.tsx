@@ -1,51 +1,62 @@
+
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { format } from "date-fns";
 import { Booking } from "@/types/booking";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DataTable } from "@/components/common/DataTable/DataTable";
 
 interface BookingsTabProps {
-  bookings: Booking[];
-  isLoading: boolean;
+  customerId: string;
 }
 
-export function BookingsTab({ bookings, isLoading }: BookingsTabProps) {
+export function BookingsTab({ customerId }: BookingsTabProps) {
+  const { data: bookings } = useQuery({
+    queryKey: ['customer-bookings', customerId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('bookings')
+        .select(`
+          *,
+          site:sites(name)
+        `)
+        .eq('customer_id', customerId)
+        .order('check_in', { ascending: false });
+      return data as Booking[];
+    }
+  });
+
+  if (!bookings?.length) {
+    return (
+      <Card className="p-6">
+        <p className="text-center text-gray-500">No bookings found</p>
+      </Card>
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Booking History</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <DataTable
-          data={bookings || []}
-          columns={[
-            { 
-              header: "Slot",
-              accessorKey: "slot.name",
-              cell: (booking: Booking) => booking.slot?.name || 'Unassigned'
-            },
-            {
-              header: "Check In",
-              accessorKey: "check_in_date",
-              cell: (booking: Booking) => new Date(booking.check_in_date).toLocaleDateString()
-            },
-            {
-              header: "Check Out",
-              accessorKey: "check_out_date",
-              cell: (booking: Booking) => new Date(booking.check_out_date).toLocaleDateString()
-            },
-            {
-              header: "Status",
-              accessorKey: "status",
-              cell: (booking: Booking) => booking.status
-            },
-            {
-              header: "Reservation",
-              accessorKey: "reservation_code",
-              cell: (booking: Booking) => booking.reservation_code || '-'
-            }
-          ]}
-          isLoading={isLoading}
-        />
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {bookings.map((booking) => (
+        <Card key={booking.id} className="p-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Site</p>
+              <p>{booking.site?.name || 'N/A'}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Check In</p>
+              <p>{format(new Date(booking.check_in), 'MMM dd, yyyy')}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Check Out</p>
+              <p>{format(new Date(booking.check_out), 'MMM dd, yyyy')}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Status</p>
+              <p className="capitalize">{booking.status}</p>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
   );
 }
