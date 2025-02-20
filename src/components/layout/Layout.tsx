@@ -1,13 +1,12 @@
-import { Header } from "./Header";
-import { Footer } from "./Footer";
-import { useLocation } from "react-router-dom";
+
 import { Outlet } from "react-router-dom";
+import { Header } from "./Header";
 
 export function Layout() {
   return (
-    <div className="flex min-h-screen flex-col bg-[#0D1D1F] overflow-x-hidden">
+    <div className="min-h-screen bg-[#F8F9FA]">
       <Header />
-      <main className="flex-1 w-full max-w-[100vw]">
+      <main className="flex-1">
         <Outlet />
       </main>
     </div>

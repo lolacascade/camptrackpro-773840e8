@@ -2,7 +2,6 @@
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { StatsGrid } from "./StatsGrid";
 import { BookingsToday } from "./BookingsToday";
-import { RecentActivity } from "./RecentActivity";
 import { DashboardProps } from "@/types/dashboard";
 
 export function DashboardContent({ marinaSummary }: DashboardProps) {
@@ -24,12 +23,6 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
       <ErrorBoundary>
         <BookingsToday />
       </ErrorBoundary>
-
-      <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
-        <ErrorBoundary>
-          <RecentActivity />
-        </ErrorBoundary>
-      </div>
     </div>
   );
 }
