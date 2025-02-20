@@ -1,3 +1,4 @@
+
 import { PageContainer } from "@/components/layout/PageContainer";
 import { StatsGrid } from "./StatsGrid";
 import { RevenueBreakdown } from "./RevenueBreakdown";
@@ -29,17 +30,21 @@ export function DashboardContent({ marinaSummary }: DashboardProps) {
         <DashboardCallouts />
       </ErrorBoundary>
       
+      {/* Commenting out non-core sections
       <ErrorBoundary>
         <PrioritySection />
       </ErrorBoundary>
+      */}
       
       <ErrorBoundary>
         <BookingsToday />
       </ErrorBoundary>
       
+      {/* Commenting out financial sections
       <ErrorBoundary>
         <RevenueBreakdown />
       </ErrorBoundary>
+      */}
       
       <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
         <ErrorBoundary>

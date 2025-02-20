@@ -23,11 +23,12 @@ export function NavigationLinks({ onItemClick, className }: NavigationLinksProps
   const navItems = [
     { path: 'dashboard', label: 'Dashboard' },
     { path: 'bookings', label: 'Bookings' },
-    { path: 'financials', label: 'Financials' },
-    { path: 'maintenance', label: 'Maintenance' },
     { path: 'customers', label: 'Customers' },
     { path: 'assets', label: 'RVs' },
     { path: 'sitemap', label: 'Sitemap' },
+    // Commenting out non-core navigation items
+    // { path: 'financials', label: 'Financials' },
+    // { path: 'maintenance', label: 'Maintenance' },
   ];
 
   return (
