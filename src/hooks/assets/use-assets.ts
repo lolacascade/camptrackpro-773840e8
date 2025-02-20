@@ -8,20 +8,20 @@ export function useAssets() {
   const { organizationId, accountId } = useOrganization();
 
   return useQuery({
-    queryKey: ["assets", organizationId, accountId],
+    queryKey: ["rvs", organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         return [];
       }
 
       const { data, error } = await supabase
-        .from("assets")
+        .from("rvs")
         .select("*, customer:customers (*), site:sites (*)")
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
 
       if (error) {
-        console.error('Error fetching assets:', error);
+        console.error('Error fetching RVs:', error);
         throw error;
       }
 

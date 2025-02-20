@@ -20,11 +20,11 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
   const { organizationId, accountId } = useOrganization();
   const queryClient = useQueryClient();
 
-  const { data: assets } = useQuery({
-    queryKey: ['assets', organizationId, accountId],
+  const { data: rvs } = useQuery({
+    queryKey: ['rvs', organizationId, accountId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('assets')
+        .from('rvs')
         .select('*')
         .eq('organization_id', organizationId)
         .eq('account_id', accountId);
@@ -35,17 +35,15 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
     enabled: !!organizationId && !!accountId
   });
 
-  const options = (assets || []).map(asset => ({
-    value: String(asset.id),
-    label: `${asset.name} (${asset.asset_size})`
+  const options = (rvs || []).map(rv => ({
+    value: String(rv.id),
+    label: `${rv.make} (${rv.model})`
   }));
 
   const assetFields: Field[] = [
-    { name: 'name', label: 'Name', type: 'text', required: true },
-    { name: 'asset_name', label: 'Asset Name', type: 'text', required: true },
-    { name: 'asset_size', label: 'Size', type: 'text', required: true },
-    { name: 'asset_type', label: 'Type', type: 'text', required: true },
-    { name: 'daily_rate', label: 'Daily Rate', type: 'number', required: true }
+    { name: 'make', label: 'Make', type: 'text', required: true },
+    { name: 'model', label: 'Model', type: 'text', required: true },
+    { name: 'year', label: 'Year', type: 'number', required: false }
   ];
 
   return (
@@ -75,13 +73,13 @@ export function AssetSelect({ value, onSelect, onAssetCreated }: AssetSelectProp
         onEntityUpdated={(entity) => {
           if (entity?.id) {
             onAssetCreated(String(entity.id));
-            queryClient.invalidateQueries({ queryKey: ['assets', organizationId, accountId] });
+            queryClient.invalidateQueries({ queryKey: ['rvs', organizationId, accountId] });
           }
           setIsDrawerOpen(false);
         }}
         title="RV"
         fields={assetFields}
-        tableName="assets"
+        tableName="rvs"
       />
     </div>
   );

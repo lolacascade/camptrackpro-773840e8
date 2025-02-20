@@ -20,7 +20,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
     if (!session?.user?.id) {
       toast({
         title: "Error",
-        description: "You must be signed in to add assets.",
+        description: "You must be signed in to add RVs.",
         variant: "destructive",
       });
       return;
@@ -45,70 +45,64 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
     }
 
     try {
-      console.log('Creating asset with:', {
+      console.log('Creating RV with:', {
         ...newAsset,
         organization_id: organizationId,
         account_id: accountId
       });
 
       const assetData = {
-        asset_name: newAsset.asset_name,
-        asset_size: newAsset.asset_size || null,
-        asset_type: newAsset.asset_type || null,
-        site_id: newAsset.site_id,
+        make: newAsset.asset_name,
+        model: newAsset.asset_type || null,
+        year: null,
         customer_id: newAsset.customer_id,
-        name: newAsset.asset_name, // Set name equal to asset_name
-        type: newAsset.asset_type || null, // Set type equal to asset_type
-        status: 'available',
-        daily_rate: newAsset.daily_rate || 0,
-        user_id: session.user.id,
         organization_id: organizationId,
         account_id: accountId,
-        pricing_category: newAsset.pricing_category
+        user_id: session.user.id
       };
 
       if (asset?.id) {
         const { error } = await supabase
-          .from('assets')
+          .from('rvs')
           .update(assetData)
           .eq('id', asset.id)
           .select()
           .single();
 
         if (error) {
-          console.error('Error updating asset:', error);
+          console.error('Error updating RV:', error);
           throw error;
         }
 
         toast({
           title: "Success",
-          description: "Asset updated successfully.",
+          description: "RV updated successfully.",
         });
       } else {
         const { error } = await supabase
-          .from('assets')
+          .from('rvs')
           .insert([assetData])
           .select()
           .single();
 
         if (error) {
-          console.error('Error creating asset:', error);
+          console.error('Error creating RV:', error);
           throw error;
         }
 
         toast({
           title: "Success",
-          description: "Asset added successfully.",
+          description: "RV added successfully.",
         });
       }
 
       onClose();
       onAssetAdded();
     } catch (error: any) {
-      console.error('Error saving asset:', error);
+      console.error('Error saving RV:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to save asset. Please try again.",
+        description: error.message || "Failed to save RV. Please try again.",
         variant: "destructive",
       });
     }

@@ -37,7 +37,10 @@ export function useAvailableSlots(asset?: Asset) {
         if (error) throw error;
         
         if (isMounted) {
-          setAvailableSlots(data || []);
+          setAvailableSlots(data?.map(slot => ({
+            id: Number(slot.id),
+            name: slot.name
+          })) || []);
         }
       } catch (error) {
         console.error('Error fetching sites:', error);
