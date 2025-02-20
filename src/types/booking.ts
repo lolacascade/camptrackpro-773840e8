@@ -17,10 +17,10 @@ export interface Booking {
   id: string;
   customer_id: string;
   rv_id: string;
+  site_id: string;
   check_in: string;
   check_out: string;
   status: BookingStatus;
-  site_id: string;
   organization_id: string | null;
   account_id: string | null;
   created_at: string | null;

@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Customer } from "@/types/customer";
@@ -65,16 +66,6 @@ export function CustomerBasicInfo({ register, errors, defaultValues }: CustomerB
         {errors.email && (
           <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
         )}
-      </div>
-      
-      <div>
-        <Label htmlFor="phone">Phone</Label>
-        <Input 
-          id="phone" 
-          {...register('phone')} 
-          defaultValue={defaultValues?.phone}
-          className="mt-1" 
-        />
       </div>
     </div>
   );

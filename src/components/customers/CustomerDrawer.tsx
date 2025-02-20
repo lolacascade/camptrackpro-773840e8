@@ -1,9 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Customer } from "@/types/customer";
 import { useCustomerForm } from "./form/useCustomerForm";
 import { CustomerBasicInfo } from "./form/CustomerBasicInfo";
-import { CustomerAddress } from "./form/CustomerAddress";
 
 interface CustomerDrawerProps {
   customer: Customer | null;
@@ -18,8 +18,6 @@ export function CustomerDrawer({
   onClose, 
   onCustomerUpdated 
 }: CustomerDrawerProps) {
-  console.log('CustomerDrawer received customer:', customer); // Debug log
-  
   const {
     register,
     handleSubmit,
@@ -42,10 +40,6 @@ export function CustomerDrawer({
           <CustomerBasicInfo 
             register={register} 
             errors={errors} 
-            defaultValues={customer}
-          />
-          <CustomerAddress 
-            register={register} 
             defaultValues={customer}
           />
           <Button 

@@ -2,14 +2,13 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { DateRange } from "react-day-picker";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@supabase/auth-helpers-react";
 import { addDays } from "date-fns";
 import { Booking, BookingStatus } from "@/types/booking";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/use-organization";
 import { Customer } from "@/types/customer";
+import { supabase } from "@/integrations/supabase/client";
 
 type BookingFormData = {
   customer_id: string;
