@@ -8,8 +8,7 @@ export type TableName =
   | "bookings" 
   | "profiles"
   | "customer_notes"
-  | "booking_trends_data"
-  | "marina_details";
+  | "booking_trends_data";
 
 export interface Field {
   name: string;
