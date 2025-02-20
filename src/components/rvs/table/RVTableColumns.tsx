@@ -4,18 +4,21 @@ import { RV } from "@/types/rv";
 
 export const getRVColumns = (): Column<RV>[] => [
   {
-    header: "Make/Model",
-    accessorKey: "make",
-    cell: (rv: RV) => `${rv.make} ${rv.model}`
+    header: "Make",
+    accessorKey: "make"
+  },
+  {
+    header: "Model",
+    accessorKey: "model"
   },
   {
     header: "Year",
     accessorKey: "year",
-    cell: (rv: RV) => rv.year || 'N/A'
+    cell: (rv: RV) => rv.year || "N/A"
   },
   {
     header: "Site",
-    accessorKey: "site",
-    cell: (rv: RV) => rv.site?.name || 'Unassigned'
+    accessorKey: "site_id",
+    cell: (rv: RV) => rv.site_id || "Unassigned"
   }
 ];
