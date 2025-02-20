@@ -2,8 +2,17 @@
 import { Customer } from "./customer";
 import { Site } from "./site";
 import { Asset } from "./asset";
+import { DateRange } from "react-day-picker";
 
 export type BookingStatus = 'pending' | 'confirmed' | 'checked_in' | 'completed' | 'cancelled';
+export type BookingStatusFilter = BookingStatus | 'all';
+
+export interface BookingFilters {
+  searchTerm: string;
+  status: BookingStatusFilter;
+  page: number;
+  dateRange: DateRange | null;
+}
 
 export interface Booking {
   id: string;

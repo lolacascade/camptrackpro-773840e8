@@ -1,16 +1,9 @@
 
-import { Customer } from "@/types/customer";
-import { Site } from "@/types/site";
+import { Asset as BaseAsset } from '@/types/asset';
 
-export interface Asset {
-  id: string;
-  make: string;
-  model: string;
-  year: number | null;
-  customer_id: string | null;
-  customer?: Customer;
+export interface Asset extends BaseAsset {
   site_id: string | null;
-  site?: Site;
-  created_at: string;
-  updated_at: string;
+  status: 'available' | 'occupied' | 'maintenance';
+  asset_type: string;
+  asset_size: string;
 }
