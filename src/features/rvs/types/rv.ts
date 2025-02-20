@@ -6,6 +6,7 @@ export interface RVFormData {
   model: string;
   year: number | null;
   site_id?: string;
+  customer_id?: string;
 }
 
 export interface FeatureRV extends BaseRV {

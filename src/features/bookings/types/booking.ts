@@ -1,7 +1,6 @@
 
-import { Booking as BaseBooking, BookingStatus } from '@/types/booking';
+import { Booking as BaseBooking } from '@/types/booking';
 
-// Feature-specific booking form data
 export interface BookingFormData {
   customer_id: string;
   rv_id: string;
@@ -9,4 +8,5 @@ export interface BookingFormData {
   check_in: string;
   check_out: string;
   special_requirements?: string;
+  total_amount?: number;
 }
