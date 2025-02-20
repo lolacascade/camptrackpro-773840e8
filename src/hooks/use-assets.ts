@@ -1,21 +1,21 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Asset } from "@/types/asset";
+import { Asset } from "@/types/asset";
 import { useOrganization } from "@/hooks/use-organization";
 
 export function useAssets() {
   const { organizationId, accountId } = useOrganization();
 
   return useQuery({
-    queryKey: ["rvs", organizationId, accountId],
+    queryKey: ["assets", organizationId, accountId],
     queryFn: async () => {
       if (!organizationId || !accountId) {
         return [];
       }
 
       const { data, error } = await supabase
-        .from("rvs")
+        .from('rvs')
         .select(`
           *,
           customer:customers(
@@ -44,13 +44,13 @@ export function useAssets() {
         year: rv.year,
         customer_id: rv.customer_id,
         site_id: rv.site_id,
-        organization_id: organizationId,
-        account_id: accountId,
-        user_id: rv.user_id || '',
-        created_at: rv.created_at,
-        updated_at: new Date().toISOString(),
+        organization_id: rv.organization_id,
+        account_id: rv.account_id,
+        status: rv.status || 'available',
         customer: rv.customer,
-        site: rv.site
+        site: rv.site,
+        created_at: rv.created_at,
+        updated_at: rv.updated_at || rv.created_at
       })) as Asset[];
     },
     enabled: !!organizationId && !!accountId

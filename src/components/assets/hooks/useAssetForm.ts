@@ -4,6 +4,7 @@ import { Asset } from "@/types/asset";
 import { useSession } from "@supabase/auth-helpers-react";
 import { useAvailableSlots } from "./useAvailableSlots";
 import { useAssetSubmit } from "./useAssetSubmit";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface UseAssetFormProps {
   onClose: () => void;
@@ -14,6 +15,7 @@ interface UseAssetFormProps {
 
 export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAssetFormProps) {
   const session = useSession();
+  const { organizationId, accountId } = useOrganization();
   const availableSlots = useAvailableSlots(asset);
   const handleSubmit = useAssetSubmit({ onClose, onAssetAdded, asset });
 
@@ -23,6 +25,9 @@ export function useAssetForm({ onClose, onAssetAdded, customerId, asset }: UseAs
     year: asset?.year || null,
     customer_id: customerId || asset?.customer_id || null,
     site_id: asset?.site_id || null,
+    organization_id: organizationId || '',
+    account_id: accountId || '',
+    status: asset?.status || 'available',
   });
 
   return {

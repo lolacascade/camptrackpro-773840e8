@@ -1,21 +1,26 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { useOrganization } from "@/hooks/use-organization";
+import { useToast } from "@/hooks/use-toast";
 import { Asset } from "@/types/asset";
+import { useOrganization } from "@/hooks/use-organization";
+
+interface SlotInfo {
+  id: string;
+  name: string;
+}
 
 export function useAvailableSlots(asset?: Asset) {
   const { toast } = useToast();
-  const { organizationId, accountId, isLoading: isLoadingOrg } = useOrganization();
-  const [availableSlots, setAvailableSlots] = useState<Array<{ id: number; name: string }>>([]);
+  const { organizationId, accountId } = useOrganization();
+  const [availableSlots, setAvailableSlots] = useState<SlotInfo[]>([]);
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchAvailableSlots = async () => {
       try {
-        if (!organizationId || !accountId || isLoadingOrg) {
+        if (!organizationId || !accountId) {
           return;
         }
 
@@ -23,14 +28,13 @@ export function useAvailableSlots(asset?: Asset) {
           .from('sites')
           .select('id, name')
           .eq('organization_id', organizationId)
-          .eq('account_id', accountId)
-          .or(`status.eq.available${asset?.site_id ? `,id.eq.${asset.site_id}` : ''}`);
+          .eq('account_id', accountId);
 
         if (error) throw error;
         
         if (isMounted && data) {
           setAvailableSlots(data.map(slot => ({
-            id: Number(slot.id),
+            id: slot.id,
             name: slot.name
           })));
         }
@@ -51,7 +55,7 @@ export function useAvailableSlots(asset?: Asset) {
     return () => {
       isMounted = false;
     };
-  }, [toast, organizationId, accountId, asset, isLoadingOrg]);
+  }, [toast, organizationId, accountId, asset]);
 
   return availableSlots;
 }

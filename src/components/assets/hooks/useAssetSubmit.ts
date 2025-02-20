@@ -3,6 +3,7 @@ import { useSession } from "@supabase/auth-helpers-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Asset } from "@/types/asset";
+import { useOrganization } from "@/hooks/use-organization";
 
 interface UseAssetSubmitProps {
   onClose: () => void;
@@ -13,9 +14,10 @@ interface UseAssetSubmitProps {
 export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitProps) {
   const { toast } = useToast();
   const session = useSession();
+  const { organizationId, accountId } = useOrganization();
 
   const handleSubmit = async (newAsset: Partial<Asset>) => {
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !organizationId || !accountId) {
       toast({
         title: "Error",
         description: "You must be signed in to add RVs.",
@@ -24,7 +26,7 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
       return;
     }
 
-    if (!newAsset.make || !newAsset.model || !newAsset.site_id) {
+    if (!newAsset.make || !newAsset.model) {
       toast({
         title: "Error",
         description: "Please fill in all required fields.",
@@ -34,14 +36,15 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
     }
 
     try {
-      console.log('Creating RV with:', newAsset);
-
       const assetData = {
         make: newAsset.make,
         model: newAsset.model,
         year: newAsset.year,
         customer_id: newAsset.customer_id,
         site_id: newAsset.site_id,
+        organization_id: organizationId,
+        account_id: accountId,
+        status: newAsset.status || 'available'
       };
 
       if (asset?.id) {
@@ -49,7 +52,6 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
           .from('rvs')
           .update(assetData)
           .eq('id', asset.id)
-          .select()
           .single();
 
         if (error) throw error;
@@ -62,7 +64,6 @@ export function useAssetSubmit({ onClose, onAssetAdded, asset }: UseAssetSubmitP
         const { error } = await supabase
           .from('rvs')
           .insert([assetData])
-          .select()
           .single();
 
         if (error) throw error;
