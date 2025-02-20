@@ -19,34 +19,10 @@ export default function Sitemap() {
       required: true,
     },
     {
-      name: "location_identifier",
+      name: "location",
       label: "Location",
       type: "text",
-    },
-    {
-      name: "length_ft",
-      label: "Length (ft)",
-      type: "number",
-    },
-    {
-      name: "width_ft",
-      label: "Width (ft)",
-      type: "number",
-    },
-    {
-      name: "is_covered",
-      label: "Covered",
-      type: "checkbox",
-    },
-    {
-      name: "has_water",
-      label: "Water",
-      type: "checkbox",
-    },
-    {
-      name: "electricity_voltage",
-      label: "Electricity",
-      type: "text",
+      required: true,
     }
   ];
 
