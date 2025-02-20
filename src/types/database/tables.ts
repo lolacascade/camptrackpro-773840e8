@@ -92,15 +92,6 @@ export interface Tables {
     account_id: string;
     created_at: string;
   };
-  chat_history: {
-    id: string;
-    user_id: string;
-    message: string;
-    role: 'user' | 'assistant';
-    created_at: string;
-    organization_id: string;
-    account_id: string;
-  };
   customer_notes: {
     id: string;
     customer_id: string;
