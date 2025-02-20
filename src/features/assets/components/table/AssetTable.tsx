@@ -3,7 +3,6 @@ import { Asset } from "@/types/asset";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Edit2, ExternalLink } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -26,9 +25,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
     const term = searchTerm.toLowerCase();
     return assets.filter(asset => 
       asset.make?.toLowerCase().includes(term) ||
-      asset.model?.toLowerCase().includes(term) ||
-      asset.customer?.first_name?.toLowerCase().includes(term) ||
-      asset.customer?.last_name?.toLowerCase().includes(term)
+      asset.model?.toLowerCase().includes(term)
     );
   }, [assets, searchTerm]);
 
@@ -64,16 +61,14 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
             <TableRow>
               <TableHead>Make/Model</TableHead>
               <TableHead>Year</TableHead>
-              <TableHead>Customer</TableHead>
               <TableHead>Site</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredAssets.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-4">
+                <TableCell colSpan={4} className="text-center py-4">
                   No assets found
                 </TableCell>
               </TableRow>
@@ -85,17 +80,7 @@ export function AssetTable({ assets, onEdit, onViewDetails, isLoading }: AssetTa
                   </TableCell>
                   <TableCell>{asset.year || 'N/A'}</TableCell>
                   <TableCell>
-                    {asset.customer 
-                      ? `${asset.customer.first_name} ${asset.customer.last_name}`
-                      : 'Unassigned'}
-                  </TableCell>
-                  <TableCell>
                     {asset.site?.name || 'Unassigned'}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">
-                      {asset.status || 'Available'}
-                    </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
